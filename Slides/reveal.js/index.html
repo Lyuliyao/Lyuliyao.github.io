@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>comprehensve exam</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="node_modules/plotly.js-dist/plotly.js"></script>
+
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+                    <h3>
+                        TiTle
+                    </h3> 
+                    <p>
+                        <small>lyuliyao</small>
+                    </p>
+                </section>
+				<section data-menu-title="Multi-scale modeling:Background">
+					<section data-auto-animate>
+						<h4>
+							<div style="display:inline">
+								Multi-scale modeling:
+							</div> 
+							<div style="display:inline">
+								Background 
+							</div>
+						</h4>
+						<svg id="mySVG" width="1000" height="600">
+							<!-- Draw x and y axes -->
+							<line x1="50" y1="550" x2="950" y2="550" style="stroke:black;stroke-width:2" />
+							<line x1="50" y1="550" x2="50" y2="50" style="stroke:black;stroke-width:2" />
+							<defs>
+								<marker id="arrowhead" markerWidth="5" markerHeight="3.5" 
+								refX="0" refY="1.75" orient="auto">
+									<polygon points="0 0, 5 1.75, 0 3.5" fill="rgb(130, 176, 210)" stroke="rgb(130, 176, 210)" />
+								</marker>
+							</defs>
+							<line id="line_ms" x1="400" y1="450" x2="750" y2="225" stroke="rgb(130, 176, 210)" stroke-width="5" 
+							marker-end="url(#arrowhead)" />
+							<text id="text_ms" x="525" y="375" font-size="20" fill="rgb(130, 176, 210)" 
+							style="text-shadow: 2px 2px 4px rgba(150, 150, 150, 0.5);"
+							transform="translate(525,375) rotate(-34) translate(-525,-375)"
+							>
+								<tspan x="525" dy="1.2em">bottom-up /ab initio </tspan>
+								<tspan x="525" dy="1.2em">multi-scale modeling</tspan>
+							</text>
+							<line id="line_mi_me" x1="50" y1="275" x2="300" y2="275" style="stroke:rgb(87,66,102);stroke-width:3; stroke-dasharray: 5 5;" />
+							<line id="line_me_ma" x1="50" y1="125" x2="500" y2="125" style="stroke:rgb(87,66,102);stroke-width:3; stroke-dasharray: 5 5;" />
+							<text id="text_mi" x="60" y="375" font-size="25" fill="rgb(87,66,102)" 
+							>
+								microscopic
+							</text>
+							<text id="text_me" x="60" y="200" font-size="25" fill="rgb(87,66,102)" 
+							>
+								mesoscopic
+							</text>
+							<text id="text_ma" x="60" y="80" font-size="25" fill="rgb(87,66,102)" 
+							>
+								macroscopic
+							</text>
+						</svg>
+						<script src="./figure/multiscale.js">
+						</script>
+					</section>
+					<section  data-menu-title="The sixth problem" data-auto-animate>
+						<h4>
+							<div data-id="suptitle" style="display:inline">
+								Multi-scale modeling:
+							</div> 
+							<div style="display:inline">
+								Background 
+							</div>
+						</h4>
+						<div style="position:absolute; left: 50%">
+							<figure>
+								<p><img src="./figure/Hilbert-removebg.png"
+									style="width:50%"
+									alt="Eiffel tower">
+								<figcaption>
+									Hilbert, David. “Mathematical problems Trans”. Bull. Amer. Math. Soc 8 (1902): 437-479.
+								</figcaption>
+								</figure>
+							</div>
+								<div style="position:absolute; right: 50%">
+								<p align="left">
+									<small>
+										As to the axioms of the theory of probabilities, 
+										it seems to me desirable that their logical investigation
+											should be accompanied by a rigorous and satisfactory development
+											of the method of mean values in mathematical physics, 
+											and in particular in the kinetic theory of gases. 
+											... Boltzmann's work on the principles of mechanics suggests 
+											the problem of developing mathematically the limiting processes,
+											there merely indicated, which lead from the <font color="#C82423">atomistic view to
+											the laws of motion of continua.</font>
+										<br>
+										</small>
+								</p>
+							</div>
+					</section>
+                </section>
+				<section data-menu-title="Multi-scale modeling:Difficulties">
+					<section data-auto-animate>
+						<h4>
+							<div data-id="suptitle" style="display:inline">
+								Multi-scale modeling:
+							</div> 
+							<div style="display:inline">
+								Difficulties 
+							</div>
+						</h4>
+						<div style="position:absolute; left: 50%">
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png"
+								  style="width:50%"
+								  alt="Eiffel tower">
+								<figcaption>
+									Anderson, Philip W. "More is different" Science 177.4047 (1972): 393-396.
+								</figcaption>
+							  </figure>
+						</div>
+						<div style="position: absolute; right: 50%">
+							<div align="left">
+								<small>
+									The constructionist hypothesis breaks
+									down when confronted with <font color="#C82423">the twin
+									difficulties of scale and complexity.</font> The
+									behavior of large and complex aggregates of elementary particles, it turns
+									out, is not to be understood in terms
+									of a simple extrapolation of the properties of a few particles. Instead, at
+									each level of complexity entirely new
+									properties appear, and the understanding of the new behaviors requires research which I think is as fundamental
+									in its nature as any other.
+								<br>
+								</small>
+							</div>
+						</div>
+					</section>
+					<section data-auto-animate data-menu-title="Conflict">
+						<h4>
+							<div style="display:inline">
+								Multi-scale modeling:
+							</div> 
+							<div style="display:inline">
+								Difficulties 
+							</div>
+						</h4>
+						<div data-id="Accurate">
+							Accurate & <font color="#C82423">Scale</font>
+						</div>
+						<div data-id="Efficient">
+							Efficient & <font color="#C82423">Complexity</font>
+						</div>
+					</section>					
+					<section data-auto-animate data-menu-title="Accurate">
+						<h4>
+							Multi-scale modeling: Difficulties 
+						</h4>
+						<div data-id="Accurate">
+							Accurate & <font color="#C82423">Scale</font>
+						</div>
+						<p>
+							<small>
+								The changes being modeled no longer vary slowly on molecular dimensions
+								<br>
+								The discreteness of individual molecules is likely important for many nanoscale systems.
+							</small>
+						<p>
+							<div data-id="Efficient">
+								Efficient & <font color="#C82423">Complexity</font>
+							</div>
+					</section>
+				<section data-auto-animate data-menu-title="Efficient">
+					<h4>
+						Multi-scale modeling: Difficulties 
+					</h4>
+					<div data-id="Accurate">
+						Accurate & <font color="#C82423">Scale</font>
+					</div>
+						<div data-id="Efficient">
+							Efficient & <font color="#C82423">Complexity</font>
+						</div>
+					<p>
+					<p>
+					<p>
+						<small>
+							The number of molecules necessary for these simulations large
+							<br>
+							The time scales that need to be simulated increase.
+						</small>
+					</p>
+				</section>
+				<section data-auto-animate data-menu-title="Difficult">
+					<h4>
+						Multi-scale modeling: Difficulties 
+					</h4>
+					<div data-id="Accurate">
+						Accurate & <font color="#C82423">Scale</font>
+					</div>
+					<p>
+						<small>
+							How to build a accurate model accross different <font color="#C82423">scale</font>?
+						</small>
+					<p>
+					<div data-id="Efficient">
+						Efficient & <font color="#C82423">Complexity</font>
+					</div>
+					<p>
+						<small>
+							How to design a efficient algorithm capture the emgerment <font color="#C82423">complex</font> behavior?
+						</small>
+					<p>
+				</section>
+			</section>
+			<section>
+
+				<section data-auto-animate>
+					<h4>
+						Example: Molecular dynamics
+					</h4>
+				  </section>
+				  <section data-auto-animate data-menu-title="RDF">
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div>
+							<h5>
+								Radial Distribution Functio (RDF)
+							</h5>
+							<p>
+								<small>
+									\[ g(r) = \frac{V}{N} \cdot \frac{{dN(r)}}{{4\pi r^2 dr}} \]
+								</small>
+							</p>
+						</div>
+						<div
+							id=rdf
+							class="plotly-graph-div"
+							style="height:400; width:400;">
+						</div>
+						<script type="text/javascript" src="./text/rdf.js">
+						</script>
+					</div>
+				  </section>
+				  <section data-auto-animate data-menu-title="VACF">
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div>
+							<h5>
+								Velocity auto correlation function (VACF)
+							</h5>
+							<p>
+								<small>
+									\[ \frac{\lt v_i(t) \cdot v_i(0) \gt }{ \lt v_i(0) \cdot v_i(0) \gt } \]
+								</small>
+							</p>
+						</div>
+
+						<div
+							id=vacf
+							class="plotly-graph-div"
+							style="height:400; width:400;">
+						</div>
+						<script type="text/javascript" src="./text/vacf.js">
+						</script>
+					</div>
+				  </section>
+				</section>
+			</div>
+		</div>
+		
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script>
+		Reveal.initialize({
+			plugins: [ RevealMenu ],
+			titleSelector: ''
+		});
+		</script>
+	</body>
+</html>

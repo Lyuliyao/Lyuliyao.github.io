@@ -1,0 +1,24 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme[]{msubeamer}
+\usepackage[T1]{fontenc}
+% BACKGROUND CHOICES: windows(default),chevron,diamonds,antique,circles,ornate,eyes,hexagons
+
+\usepackage{multicol, bibentry}
+
+\title[Sample Pre]{\bfseries Local discontinuous Galerkin methods with novel basis for fractional diffusion equations with non-smooth solution}
+\author{\textbf{Liyao Lyu }$^1$, Zheng Chen $^2$}
+\institute{$^1$ Department of Computational Mathematics, Science and Engineering, Michigan State University lyuliyao@msu.edu\\
+$^2$Department of Mathematics, University of Massachusetts Dartmouth
+} % use this for where you're presenting
+
+\begin{document}
+
+\maketitleframe
+\begin{frame}{Abstract}
+In this paper, we develop a \textbf{novel local discontinuous Galerkin (LDG) methods} for \textbf{fractional diffusion equations} with \textbf{non-smooth solutions}.  
+We consider such problems, for which the solutions are not smooth at boundary, and therefore the traditional LDG methods with piecewise polynomial solutions suffer accuracy degeneracy.  The novel LDG methods utilize a solution information enriched basis, and simulate the problem on a paired special mesh, and \textbf{achieve optimal order of accuracy}. We analyze the $L^2$-stability and optimal error estimate in $L^2$-norm.  
+Finally, numerical examples are presented for validating the theoretical conclusions.
+\end{frame}
+
+
+\end{document}

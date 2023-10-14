@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>comprehensve exam</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>	
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; /* This will vertically center the content */
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center; /* This will vertically center the text */
+			justify-content: flex-end; /* This will align the text to the right */
+			padding-right: 20px; /* Some spacing between the name and the equation */
+		}
+		div.model .equation {
+			flex: 2;
+		}
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+			.particle {
+				fill: blue;
+				stroke: black;
+				stroke-width: 1;
+			}
+			.bond {
+				stroke: black;
+				stroke-width: 2;
+			}
+			cite {
+				font-size: 0.4em; /* Adjust the font size as needed */
+				display: block; /* Optional: To make the citation appear on a new line */
+				color:#444
+			}
+			.theorem, .proposition {
+				border: 1px solid #000;
+				padding: 10px;
+				margin: 10px 0;
+			}
+			.theorem {
+				background-color: #f0f0f0;
+			}
+			.proposition {
+				background-color: #e0e0e0;
+			}
+			.theorem h4, .proposition h4 {
+				margin: 0;
+				font-size: 1em;
+			}
+			.content {
+				margin-top: 5px;
+				font-size: 0.6em;
+			}
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="node_modules/d3/dist/d3.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+				  bm: ["{\\mathbf{#1}}", 1],
+   				  mb: ["{\\mathbf{#1}}", 1],
+				diff: "\\mathop{}\\!\\mathrm{d}",
+				MLMN: "\\mathcal{L}_\\mathcal{N}",
+				bz: "\\mathbf{z}",
+				br: "\\mathbf{r}",
+				bs: "\\mathbf{s}",
+				bF: "\\mathbf{F}",
+				intd: "\\mathrm{d}",
+				mbm:"\\mathbf{m}",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="node_modules/plotly.js-dist/plotly.js"></script>
+		<script src="./figure/md.js">
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<div style="text-align: center;">
+						<h4>
+							Consensus-based construction of high-dimensional free energy surface
+						</h4>
+					</div>
+					<div style="margin-left: auto; text-align: left; font-size: 0.7em;">
+						<p>
+							lyuliyao <br>
+							Department of Computational Mathematics, Science & Engineering <br>
+							Michigan State University
+						</p>
+					</div>
+					<aside class="notes">
+						Today, I’m going to talk Consensus-based construction of high-dimensional free energy surface.
+					</aside>
+                </section>
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script>
+			Reveal.initialize({
+			slideNumber: 'c/t',
+			plugins: [ RevealMenu ],
+			titleSelector: '',
+			menu: {
+				titleSelector: 'h1, h2', 
+				hideMissingTitles: true
+			}
+		});
+		</script>
+	</body>
+</html>

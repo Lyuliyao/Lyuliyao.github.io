@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>comprehensve exam</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+								<div>
+									<table>
+										<thead>
+											<tr>
+												<th rowspan="2">Method</th>
+												<th colspan="2">Accuracy</th>
+												<th colspan="3">Time</th>
+											</tr>
+											<tr>
+												<th>l2 error</th>
+												<th>l∞ error</th>
+												<th>Simulation</th>
+												<th>Train</th>
+												<th>Total</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td rowspan="2">VES</td>
+												<td>5.39</td>
+												<td>21.03</td>
+												<td colspan="3">47.5</td>
+											</tr>
+											<tr></tr>
+											<tr>
+												<td rowspan="2">RiD</td>
+												<td>1.52</td>
+												<td>9.46</td>
+												<td>6.25</td>
+												<td>3.79 (GPU)</td>
+												<td>10.04</td>
+											</tr>
+											<tr></tr>
+											<tr>
+												<td rowspan="2">CES</td>
+												<td rowspan="2">1.45</td>
+												<td rowspan="2">6.74</td>
+												<td rowspan="2">0.88 × 10</td>
+												<td>0.18 (CPU)</td>
+												<td>8.98</td>
+											</tr>
+											<tr>
+												<td>0.13 (GPU)</td>
+												<td>8.93</td>
+											</tr>
+											<tr></tr>
+										</tbody>
+									</table>
+						</div>
+				</div>
+		</div>
+		
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script>
+			Reveal.initialize({
+			plugins: [ RevealMenu ],
+			titleSelector: '',
+			menu: {
+				titleSelector: 'h1, h2', 
+				hideMissingTitles: true
+			}
+		});
+		</script>
+	</body>
+</html>

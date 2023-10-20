@@ -139,7 +139,7 @@
 					<div>
 						<figure>
 							<p>
-								<img  style="width:80%" src="./figure/FES.jpeg">
+								<img  style="width:80%" src="./figure/FES.png">
 							</p>
 						</figure>
 						<cite>
@@ -150,10 +150,12 @@
 					<aside class="notes">
 						<p>
 							<p> Constructing free energy surface is an important problem for many chemical and biology problems</p>
-							<p> people used to use polynomials to represent FES.</p>
-							<p> Motivated by NN's strong ability to represnt high dimensional fucntion</p>
-							<p> Many research put efforts to represent high-dimensional Free Energy Surfaces (FES) using neural networks.</p>
-							<p> However, the challenge is twofold: it's not only about represnting and parameterizing the high-dimensional FES, but also about effectively sampling this high-dimensional space. </p>
+							<p> It contains many important information of the complex system.</p>
+							<p>For example, the minimum and the local minima usually represents the stable and metastable state of the system</p>
+							<p>FES is also important to some kenitic propeties such as transtion path or energy barrier between two metastable state.</p>
+							<p>Usually reconstruct FES is based on the bolzman relation</p>
+							<p> It relates the FES with the PDF of finding a particle in a particular state.</p>
+							<p>The accurate construction of FES remains a practical challenge due to the high dimensionality and the prevalence of energy barriers</p>
 						</p>
 					</aside>
 				</section>
@@ -185,6 +187,14 @@
 							</figure>
 						</div>
 					</div>
+					<aside class="notes">
+						<p>The prevalence of energy barriers means the transtion between two metastable states is a rare event.</p>
+						<p>The probability of the trasition happens will decrease exponentially with the height of the energy bar.</p>
+						<p> Several ingenious methods based on importance sampling have been developed, such as umbrella sampling, histogram reweighting,metadynamics, variational enhanced sampling</p>
+						<p> They typically add a bias potential here to increase the probability of transition from one state to the other.</p>
+						<p> The finial reconstruction of the FES is based on the PDF estimation under the bias potential</p>
+						<p> Another type of method is based on increasing the temperature artificially, the increased the temperature of decrease the energy barrier and increase the probability of transtion happens.</p>
+					</aside>
 				</section>
 				<section data-auto-animate>
 					<h4>Main Challenges</h4>
@@ -216,10 +226,16 @@
 						</p>
 					</div>
 						<aside class="notes">
-							<p>
-								Many present job just discretize the space and collect data on the mesh point.<br>
-								However the number of mesh point will increase expontialy as the number of variables increase <br>
-							</p>
+							<p> Another difficulty of the reconstruct the FES due to the high dimensionality.</p>
+							<p> Towards the high dimensional problem, uniformly sampling all over the space can be computational unachiaible.</p>
+							<p> A typical idea is add some adaptives in to the sampling, just like adaptive FEM, you may familar.</p>
+							<p> The typical idea is use posterior error enhanced sampling</p>
+							<p> The numerical method to achieve this in high dimension function approximate is in general open.</p>
+							<p> Some recent attemps to this goal.</p>
+							<p> In Rid, multi NN is trained on the same data set</p>
+							<p> They hope in large error region the different NN will have different value</p>
+							<p> Thus the std of the NN can be used to as an indicator to bias the potential.</p>
+							<p> In the present work, we want to develop a method achieve both configuration space exploration and posterior error enhanced sampling</p>
 						</aside>
 				</section>
 				<section data-auto-animate>
@@ -261,10 +277,11 @@
 					</div>
 
 					<aside class="notes">
-						<p>In this study, we introduce a Posterior Error Driven Sampling method.</p>
-						<p>The residual here is typical l2 error on the samping points. A is the NN represented FES and F is the force on the sampling points.</p>
-						<p>We introduce a probability density function q.</p>
-						<p>We also maximize the loss with respect to sampling distribution q .</p>
+						<p>To achieve this goal, we introduce a min-max problem.</p>
+						<p>The min problem is common, give some sampling points in the training set, say they satisfies the distribution q</p>
+						<p> we ask minize the loss funtion defined as a L2 error of the negative gradient of parameterized FES and force sampled from full dynamics.</p>
+						<p> In max problem, give a trained FES, we want to obtain refine our training set or sampling points</p>
+						<p> Intuitively, we want to add more points where error is large, thus we maximize the loss with respect the distribution q</p>
 					 </aside>
 				</section>
 				<section data-auto-animate>
@@ -306,10 +323,14 @@
 						
 					</div>
 					<aside class="notes">
-						<p>Consequently, we introduce entropy regularization and add a minius sign to make maximation to minization.</p>
+						<p> The minization problem is relative common, so we focus on the maximum problem first.</p>
+						<p> The solution of the maximum problem is delta function localed at the maximum error points.</p>
+						<p> However, this task can not be easily achievable, it's a high dimensional no convex optimization problem.</p>
+						<p> It's has a strong connection with the difficulty we mentioned before, the high energy bar on the FES</p>
+						<p> So typically we want to add some entropy regularization to give our algorithm some exploration ability</p>
+						<p> Also we add a minius sign to make maximation to minization.</p>
 						<p>The problem is convex for a Probability Density Function (PDF) \( q \), with a unique global minimum.</p> 
-						<p> The problem still has several difficulty. The normalization Z^* is in reality a high dimensional integration, which again has curse of dimensionality</p>
-						<p> Many people from adversarial learning may hope to use another network to represent L or q here. But sample the error space is the same difficult with free energy surface.</p>
+						<p> kappa_h works as a </p>
 					 </aside>
 				</section>
 				<section data-auto-animate>
@@ -340,6 +361,8 @@
 							 \end{split}
 							\]
 						</div>
+						<sapn style="color:#C82423;">How many \(N_w\) we need?</sapn>
+
 					</div>
 					<div>
 						<embed src="./figure/Laplaces_method.svg" type="image/svg+xml"/>  
@@ -386,17 +409,7 @@
 							</div>
 						</ul>
 					</div>
-				<div class="proposition">
-					<ul>
-					<div>Remark 2 </div>
-					<cite>
-						(Theorem 3.1) Carrillo, José A., et al. "A consensus-based global optimization method for high dimensional machine learning problems." ESAIM: Control, Optimisation and Calculus of Variations 27 (2021): S5.
-					</cite>
-					<div class="content">
-						<p>The convergence of the method, which is exponential in time, is guaranteed with parameter constraints independent of the dimensionality.</p>
-					</div>
-					</ul>
-				</div>
+		
 				</section>
 				<section data-auto-animate>
 					<h4>
@@ -540,9 +553,6 @@
 						</li>
 						<li>
 							We introduce a <font color="#C82423">posterior errors driven </font>sampling process.
-						</li>
-						<li>
-							McKean stochastic equation used to overcome the <font color="#C82423">curse of dimensionality</font>. 
 						</li>
 					</ul>
 				</section>

@@ -1,7 +1,7 @@
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-function generateAnimation(svgID,buttonID){
+function generateAnimation(svgID,buttonID,N_mol,scale){
 var svg = d3.select("#" + svgID);
 var width = +svg.attr("width");
 var height = +svg.attr("height");
@@ -14,7 +14,7 @@ svg.append("rect")
     .style("fill", "none")
     .style("stroke-width", 10);
 
-const particleRadius = 20;
+const particleRadius = 20*scale;
 const k = 10; // 弹簧常数
 const dt = 0.02;
 const gamma = 1; // 摩擦系数
@@ -22,7 +22,8 @@ const temperature = 100; // 温度
 const kB = 1; // 玻尔兹曼常数
 const alpha = 100;
 const naturalDistance = 1.7 * particleRadius; // 两粒子之间的自然距离
-var N_mol = 3;
+// You can access the scale in a similar way
+
 var time = 0;
 const N_atom_per_list = 3;
 const N_list = 6;
@@ -39,8 +40,16 @@ svg.append("rect")
     .style("stroke-width", 10);
 const numParticles = N;
 const numBond = N_atom_per_list*N_list*N_mol
-const colorScale = d3.scaleSequential(d3.interpolateRainbow)
-.domain([0, N_mol]);
+if (N_mol>3){
+    var colorScale = d3.scaleSequential(d3.interpolateRainbow)
+    .domain([0, N_mol]);
+}
+else{
+    var colorScale = d3.scaleOrdinal()
+    .domain([0, N_mol-1])
+    .range(["rgba(0,47,167)", "rgba(187,151,39)", "rgba(84,179,69)"]);
+}
+    
 const bondData = Array(numBond).fill().map((_, i) => ({
     l: 0,
     r: 0,
@@ -51,7 +60,7 @@ const bond_tmp = Array(N_atom_per_list*N_list).fill().map((_, i) => ({
 }));
 const particlesData = Array(numParticles).fill().map((_, i) => ({
     x: i * (particleRadius * 2 + 10) + particleRadius + 10,
-    y: 250 + (Math.random() - 0.5) * 100,
+    y: 0.5*height + (Math.random() - 0.5) * 0.4*height,
     vx: 0,
     vy: 0,
     fx: 0,
@@ -60,7 +69,7 @@ const particlesData = Array(numParticles).fill().map((_, i) => ({
 }));
 var index = 0
 particlesData[0].x = (particleRadius * 2 + 10) + particleRadius + 10;
-particlesData[0].y = 250 + (Math.random() - 0.5) * 100;
+particlesData[0].y = 0.5*height + (Math.random() - 0.5) * 0.4*height;
 for (let i = 0; i < N_list ; i++) {
     for (let j = 0; j < N_atom_per_list ; j++){
         if (j == 0)

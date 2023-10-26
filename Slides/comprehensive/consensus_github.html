@@ -255,7 +255,10 @@
 								<li>
 									<sapn style="color:#C82423;"> 	Maximum problem </sapn>:</li>
 									 optimize the Sampling Distribution given the trained FES 
-							</ul>
+								<li>
+									<sapn style="color:#C82423;"> Iteratively solving Minization and Maximation problems gives the constructed FES.</sapn>
+								</li>
+								</ul>
 						</div>
 						<div>
 							<p style="font-size: 0.8em;">
@@ -277,8 +280,8 @@
 					</div>
 
 					<aside class="notes">
-						<p>To achieve this goal, we introduce a min-max problem.</p>
-						<p>The min problem is common, give some sampling points in the training set, say they satisfies the distribution q</p>
+						<p> To achieve this goal, we introduce a min-max problem.</p>
+						<p> The min problem is common, give some sampling points in the training set, say they satisfies the distribution q</p>
 						<p> we ask minize the loss funtion defined as a L2 error of the negative gradient of parameterized FES and force sampled from full dynamics.</p>
 						<p> In max problem, give a trained FES, we want to obtain refine our training set or sampling points</p>
 						<p> Intuitively, we want to add more points where error is large, thus we maximize the loss with respect the distribution q</p>
@@ -385,7 +388,6 @@
 							&\text{Second Momentum} & V_t & = \kappa_t\sum_{i=1}^{N_{w}} (\bz^i_t-\mbm_t)(\bz^i_t-\mbm_t)^T \hat{p}(\bz^i_t)\\
 							&\text{Weighted Distribution} & 
 							\hat{p} (\mb z) & =  \frac{\exp {(-\kappa_l \MLMN^-(\bz^i))}}{\sum_{i=1}^{N_w}\exp {(-\kappa_l \MLMN^-(\bz^i)})}
-							\\
 							\end{aligned}
 							\]
 						</div>
@@ -409,7 +411,14 @@
 							</div>
 						</ul>
 					</div>
-		
+				</section>
+
+				<section>
+					<div>
+						<p>
+							<img  style="width:80%" src="./figure/consensus.pdf">
+						</p>
+					</div>
 				</section>
 				<section data-auto-animate>
 					<h4>

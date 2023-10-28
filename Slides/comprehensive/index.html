@@ -819,7 +819,6 @@
 								generateAnimation("MD3","updateValues3",12,0.5);
 							</script>
 						</div>
-					
 						</div>
 				</section>
 				<section data-auto-animate>
@@ -993,7 +992,10 @@
 						<h4>
 							Future work
 						</h4>
-						<svg id="mySVG" width="1000" height="600">
+						<div style="font-size: 0.6em">
+							The twin difficulties of <font color="#C82423">scale</font> and <font color="#C82423"> complexity </font> is general in Multiscale Modeling.
+						</div>
+						<svg id="mySVG" width="1000" height="600" viewBox="-125 0 1250 750" >
 							<!-- Draw x and y axes -->
 							<line x1="50" y1="550" x2="950" y2="550" style="stroke:black;stroke-width:2" />
 							<line x1="50" y1="550" x2="50" y2="50" style="stroke:black;stroke-width:2" />
@@ -1044,160 +1046,36 @@
 							<br>
 						</aside>
 					</section>
-
-						<section data-auto-animate>
-							<h4>Coarse-Graining Variable Optimization</h4>
-							<aside class="notes">
-								<p>Let’s delve into the intricacies, not just limited to dynamic equations, but extending to the selection of dynamic coordinates. Consider water models as a prime example. We have various coordinates, ranging from one to six, each designed to represent water and capture distinct behaviors. The careful selection of these coordinates is deeply rooted in physical insight, akin to the model-building we’ve discussed earlier.</p>
-								<p>As we navigate through the complexity of molecular structures, this task becomes increasingly challenging. Here, the prospect of data-driven coordinate selection emerges as a potential alternative to the traditional approach, which is predominantly reliant on human intelligence.</p>
-								<p>In the realm of extensive CGMD systems, the center of mass (COM) takes center stage. However, when it comes to modeling non-Newtonian fluids, known for their complex flow behavior, accurately capturing the deformation of polymers is essential. This crucial aspect is often oversimplified when the focus is solely on COM. Therefore, our ongoing project aims to underscore the significance of dynamic coordinate selection in faithfully depicting macroscopic rheology behavior.</p>
-							</aside>
-						</section>
-					</section>
 					<section data-auto-animate>
-						<h4>Coarse-Graining Variable Optimization</h4>
-						<div data-id="allmap">
-						\[
-						\begin{split}
-						\phi(\mathbf{z}) &= \left[\phi^Q (\mathbf{q}), \phi^P (\mathbf{p})\right] \\
-						\phi &: \mathbb{R}^{6nM} \to \mathbb{R}^{6NM}
-						\end{split}
-						\]
-						</div>
-						<aside class="notes">
-							<p>For simplicity, let’s switch up our notation a bit. Imagine we have a full MD system made up of \( M \) molecules, each containing \( n \) atoms. To make things straightforward, we'll assume the mass of each is \( 1 \).</p>
-							<p>We represent the CG variables by associating each molecule with \( N \) CG particles.</p>
-						</aside>
-					</section>
-					<section data-auto-animate>
-						<h4>Coarse-Graining Variable Optimization</h4>
-						<div data-id="allmap" >
-							\[
-							\begin{split}
-							\phi(\mathbf{z}) &= \left[\phi^Q (\mathbf{q}), \phi^P (\mathbf{p})\right] \\
-							\phi &: \mathbb{R}^{6nM} \to \mathbb{R}^{6NM}
-							\end{split}
-							\]
-							</div>
-						<div>
-						\[
-						\begin{split}
-						\phi &=\otimes^M\hat{\phi} \\
-						\hat{\phi} &: \mathbb{R}^{6n} \to \mathbb{R}^{6N}
-						\end{split}
-						\]
-						</div>
-						<aside class="notes">
-							<p>Let’s say the CG variable is figured out based on what’s going on inside the molecule. So, we can use a direct product formula to represent it, making our lives a bit easier!</p>
-						 </aside>
-						 
-						
-					</section>
-					<section data-auto-animate>
-						<p>In this project, we assume that the coarse-grained map is defined by a matrix \( W \in \mathbb{R}^{N\times n} \). We desire that \( W \) satisfies several properties:</p>
-						<ul>
-							<li>Each element \( w_{ij} \) of the matrix \( W \) is in the interval \([0,1]\).</li>
-							<li>The sum of the elements in each column of \( W \) is 1, i.e., \( \sum_i w_{ij} =1 \).</li>
-						</ul>
-						<aside class="notes">
-							<p>We’re also assuming the CG variables are linear and can be figured out by a matrix W, which has a few properties we need to keep in mind…</p>
-							<p> 
-								The second property make sure we can still used the Netwon's thrid law rather than deal with diagnoal term separately
-							</p>
-						</aside>
-					</section>
-
-					<section data-auto-animate>
-						The CG map is thus defined as:
-					\[
-					\begin{split}
-					\hat{\phi}^Q_W(\mathbf{z}^I) &= \frac{\sum_{j} w_{ij} \mathbf{q}^I_j}{\sum_j w_{ij}}\\
-					\hat{\phi}^P_W(\mathbf{z}^I) &= \sum_{j} w_{ij} \mathbf{p}^I_j;
-					\end{split}
-					\]
-					<aside class="notes">
-						<p>So, this is how we define the CG map based on W</p>
-					 </aside>
-					 
-					</section>
-					<section data-auto-animate>
-						<h4>
-							Maximum Rayleigh quotient to obtain CG variable
-						</h4>
-					</section>
-					<aside class="notes">
-						<p>Next, we address the determination of the matrix W through an optimization problem.</p>
-					 </aside>
-					<section data-auto-animate>
-						<h4>
-							Maximum Rayleigh quotient to obtain CG variable
-						</h4>
-						<div data-id="liu">
-							\[
-							\mathbf{\phi}_W(\mathbf{z}(t)) = {\rm e}^{\mathcal{L} t}\phi_W(\mathbf{z}(0))
-							\]
-						</div>
-						<aside class="notes">
-							<p>The temporal evolution of the CG variable is characterized by a Liouville operator.</p>
-						 </aside>
-					</section>
-					<section data-auto-animate>
-						<h4>
-							Maximum Rayleigh quotient to obtain CG variable
-						</h4>
-						<div data-id="liu">
-							\[
-							\mathbf{\phi}_W(\mathbf{z}(t)) = {\rm e}^{\mathcal{L} t}\phi_W(\mathbf{z}(0))
-							\]
-						</div>
-						<div>
-							\[
-							\max_W \frac{\phi_W(\mb z(0)){\rm e}^{\mathcal{L} t}\phi_W(\mathbf{z}(0))}{\phi_W(\mathbf{z}(0)) \phi_W(\mathbf{z}(0))}
-							\]
-						</div>
-						<aside class="notes">
-							<p>The slowest mode of the Liouville operator can be discerned utilizing the Maximum Rayleigh quotient. This is intrinsically related to the auto-correlation function previously discussed. In practice, we employ VACF exclusively and opt for a time domain rather than a specific time.</p>
-						 </aside>
-					</section>
-					<section data-auto-animate>
-						<h4>
-							1D Reverse Poiseuille Flow
-						</h4>
-						<div style="display: flex; justify-content: center; align-items: center;">
-						<div>
+						<div style="display: flex; flex-direction: center; align-items: center; font-size: 0.8em">
+						<div style="color: #BB9727; font-size: 0.8em">
+							<ul>
+								<li style="margin-right: 15px;">Variable Selection</li>
+								<li style="margin-right: 15px;">Data Sampling</li>
+								<li style="margin-right: 15px;">Model Construction</li>
+							</ul>
 							<figure>
-								<p><img src="./figure/res_flow.png" style="width: 50%; height: 50%;"></p>
+								<img src="./figure/res_flow.png" alt="Reverse Poiseuille Flow" style="width: 50%; height: 50%;">
+							</figure>
+						</div>
+						<div>
+							Reverse Poiseuille Flow
+							<figure>
+								<img src="./figure/res_flow.png" alt="Reverse Poiseuille Flow" style="width: 100%; height: 100%;">
 							</figure>
 						</div>
 						</div>
-						<aside class="notes">
-							<p>We apply our methodology to a reverse Poiseuille flow. By dividing the domain in the z direction, a reverse force is applied in the opposite direction along the x-axis, resulting in a distinct velocity profile in the x component of the average velocity in the z direction.</p>
-						 </aside>
 					</section>
-					<section data-auto-animate data-menu-title="VHF">
+				    <section data-auto-animate>
 						<h4>
 							1D Reverse Poiseuille Flow
 						</h4>
-						<div style="display: flex; justify-content: center; align-items: center;">
-						<div>
-							<figure>
-								<p><img src="./figure/res_flow.png" ></p>
-							</figure>
-						</div>
-						<div style="display: flex; justify-content: center; align-items: center;">
-							<div
-								id=vx
-								class="plotly-graph-div"
-								style="height:300; width:300;">
+						<div style="align-items: center; height: 300px; width: 300px;">
+							<div id="vx" class="plotly-graph-div">
 							</div>
 							<script type="text/javascript" src="./text/vx.js">
 							</script>
 						</div>
-						
-						</div>
-						<aside class="notes">
-							<p>During this process, the deformation of the polymer is intertwined with fluid flow, exhibiting rheological behavior. It is demonstrable that with additive CG, we are able to capture these contributions, which are oversimplified by COM.</p>
-						 </aside>
 					</section>
 				</div>
 		</div>

@@ -4,7 +4,7 @@
  *
  * This theme is Copyright (C) 2012-2013 Owen Versteeg, http://owenversteeg.com - it is MIT licensed.
  */
-.reveal a {
+ .reveal a {
   line-height: 1.3em;
 }
 
@@ -16,7 +16,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
  * GLOBAL STYLES
  *********************************************/
 :root {
-  --r-background-color: #F0F1EB;
+  --r-background-color: #e0eee8;
   --r-main-font: Palatino Linotype, Book Antiqua, Palatino, FreeSerif, serif;
   --r-main-font-size: 40px;
   --r-main-color: #000;
@@ -34,14 +34,13 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   --r-heading2-size: 2.11em;
   --r-heading3-size: 1.55em;
   --r-heading4-size: 1em;
+  --r-heading5-size: 0.8em;
   --r-code-font: monospace;
   --r-link-color: #51483D;
   --r-link-color-dark: #25211c;
   --r-link-color-hover: #8b7c69;
   --r-selection-background-color: #26351C;
   --r-selection-color: #fff;
-  --r-overlay-element-bg-color: 0, 0, 0;
-  --r-overlay-element-fg-color: 240, 240, 240;
 }
 
 .reveal-viewport {
@@ -108,6 +107,10 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 
 .reveal h4 {
   font-size: var(--r-heading4-size);
+}
+
+.reveal h5 {
+  font-size: var(--r-heading5-size);
 }
 
 .reveal h1 {
@@ -245,9 +248,9 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 }
 
 .reveal table {
-  margin: auto;
   border-collapse: collapse;
-  border-spacing: 0;
+  width: 50%;
+  margin-top: 20px;
 }
 
 .reveal table th {
@@ -256,14 +259,14 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 
 .reveal table th,
 .reveal table td {
-  text-align: left;
-  padding: 0.2em 0.5em 0.2em 0.5em;
-  border-bottom: 1px solid;
+  border: 1px solid black;
+  text-align: center;
+  padding: 8px;
 }
 
-.reveal table th[align=center],
-.reveal table td[align=center] {
-  text-align: center;
+.reveal table th[align=left],
+.reveal table td[align=left] {
+  text-align: left;
 }
 
 .reveal table th[align=right],
@@ -290,11 +293,11 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   display: inline-block;
   font-size: 0.6em;
   line-height: 1.2em;
-  vertical-align: top;
+  vertical-align: center;
 }
 
 .reveal small * {
-  vertical-align: top;
+  vertical-align: center;
 }
 
 .reveal img {

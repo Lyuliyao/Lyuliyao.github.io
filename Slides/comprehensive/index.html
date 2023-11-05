@@ -105,7 +105,7 @@
 				<section>
 					<div style="text-align: center;">
 						<h4>
-							Integration of deep learning technology in the construction of multiscale models
+							Comprehensive Exam?
 						</h4>
 					</div>
 					<div style="margin-left: auto; text-align: left; font-size: 0.7em;">
@@ -501,14 +501,13 @@
 										<tr>
 											<th rowspan="2">Method</th>
 											<th colspan="2">Accuracy</th>
-											<th colspan="3">Time</th>
+											<th colspan="2">Time</th>
 										</tr>
 										<tr>
 											<th>\(l_2\) error</th>
 											<th>\(l_\infty\) error</th>
 											<th>Simulation</th>
 											<th>Train</th>
-											<th>Total</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -516,29 +515,26 @@
 											<td rowspan="2">VES</td>
 											<td>5.39</td>
 											<td>21.03</td>
-											<td colspan="3">47.5</td>
+											<td colspan="2">47.5</td>
 										</tr>
 										<tr></tr>
 										<tr>
 											<td rowspan="2">RiD</td>
-											<td>1.52</td>
-											<td>9.46</td>
-											<td>6.25</td>
-											<td>3.79(GPU)</td>
-											<td>10.04</td>
+											<td>3.15</td>
+											<td>11.04</td>
+											<td>17.98</td>
+											<td>0.22(GPU)</td>
 										</tr>
 										<tr></tr>
 										<tr>
 											<td rowspan="2">CES</td>
-											<td rowspan="2">1.45</td>
-											<td rowspan="2">6.74</td>
-											<td rowspan="2">0.88 × 10walkers</td>
+											<td rowspan="2">1.88</td>
+											<td rowspan="2">10.68</td>
+											<td rowspan="2">0.23 × 10walkers</td>
 											<td>0.18(CPU)</td>
-											<td>8.98</td>
 										</tr>
 										<tr>
 											<td>0.13(GPU)</td>
-											<td>8.93</td>
 										</tr>
 										<tr></tr>
 									</tbody>
@@ -568,21 +564,18 @@
 										<tr>
 											<th>Simulation</th>
 											<th>Train</th>
-											<th>Total</th>
 										</tr>
 									</thead>
 									<tbody>
 										<tr>
 											<td>RiD</td>
-											<td>117</td>
-											<td>79 (GPU)</td>
-											<td>196</td>
+											<td>423.33</td>
+											<td>8 (GPU)</td>
 										</tr>
 										<tr>
 											<td>CES</td>
 											<td>4.81× 20walkers</td>
-											<td>0.66 (GPU)</td>
-											<td>97</td>
+											<td>0.84 (GPU)</td>
 										</tr>
 									</tbody>
 								</table>
@@ -658,7 +651,7 @@
 							- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds}_{\text{Memory part}} 
 							+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
 							\]
-
+						</div>
 					</div>
 					<div style="display: flex; flex-direction: center; align-items: center;">
 						<div style="font-size:0.6em; text-align:left;">
@@ -674,11 +667,11 @@
 							Oversimplication In Non-Conservative part <span style="color: #C82423;"> undiscovered</span>
 						</div>
 						<div>
-							<svg id="MD1" width="400" height="400"></svg>
+							<svg id="MD1" width="300" height="300"></svg>
 							<div>
 								<button id="updateValues1">Update</button>
 								<script>
-									generateAnimation("MD1","updateValues1",3,1);
+									generateAnimation("MD1","updateValues1",3,0.75);
 								</script>
 							</div>
 						</div>
@@ -849,15 +842,44 @@
 							</h5>
 							<p>
 								<small>
-									\[ \frac{\lt v_i(t) \cdot v_i(0) \gt }{ \lt v_i(0) \cdot v_i(0) \gt } \]
+									\[ c(t)=\frac{\lt v_i(t) \cdot v_i(0) \gt }{ \lt v_i(0) \cdot v_i(0) \gt } \]
 								</small>
 							</p>
-						</div>
+							<div style="font-size: 0.5em;" data-id="table">
+								<table border="1">
+									<tr>
+										<th>Model</th>
+										<th>Temporal</th>
+										<th>Spatial</th>
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">M-DPD</td>
+										<td>Markovian</td>
+										<td>Pairwise</td>
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">NM-GLE</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Isotropic</td>
 
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">NM-DPD</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Pairwise</td>
+									</tr>
+									<tr>
+										<td style="color:red; white-space: nowrap;">NM-MB</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Manybody</td>
+									</tr>
+								</table>
+							</div>
+						</div>
 						<div
 							id=vacf
 							class="plotly-graph-div"
-							style="height:400; width:400;">
+							style="height:450; width:450;">
 						</div>
 						<script type="text/javascript" src="./text/vacf.js">
 						</script>
@@ -877,6 +899,36 @@
 									\[ C^{xx}(t; r_0) = \mathbb{E}[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t) \vert Q_{ij}(0) = r_0] \]
 								</small>
 								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 							<div
 								id=vccf
@@ -898,9 +950,39 @@
 								</h5>
 								<p>
 									<small>
-									\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).
-								</small>
-									</p>
+									\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).		
+									</small>
+								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 							<div
 								id=vhf
@@ -929,8 +1011,38 @@
 									\tilde{\mb u} &= 1/M\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
 									\end{split}
 									\]
-								</small>
+									</small>
 								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 							<div
 								id=long_corr
@@ -960,11 +1072,41 @@
 									\]
 								</small>
 								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 							<div
 								id=trans_corr
 								class="plotly-graph-div"
-								style="height:400; width:400;">
+								style="height:300; width: 300;">
 							</div>
 							<script type="text/javascript" src="./text/trans_corr.js">
 							</script>
@@ -1048,33 +1190,88 @@
 					</section>
 					<section data-auto-animate>
 						<div style="display: flex; flex-direction: center; align-items: center; font-size: 0.8em">
-						<div style="color: #BB9727; font-size: 0.8em">
-							<ul>
+						<div>
+							<ul style="color: #BB9727; font-size: 0.8em">
 								<li style="margin-right: 15px;">Variable Selection</li>
 								<li style="margin-right: 15px;">Data Sampling</li>
 								<li style="margin-right: 15px;">Model Construction</li>
 							</ul>
-							<figure>
-								<img src="./figure/res_flow.png" alt="Reverse Poiseuille Flow" style="width: 50%; height: 50%;">
-							</figure>
+							<div>
+								<figure>
+									<img src="./figure/res_flow.png" alt="Reverse Poiseuille Flow" style="width: 500px; height: auto;">
+								</figure>
+								
+							</div>
 						</div>
 						<div>
-							Reverse Poiseuille Flow
 							<figure>
-								<img src="./figure/res_flow.png" alt="Reverse Poiseuille Flow" style="width: 100%; height: 100%;">
+								<img src="./figure/Rg.png" style="width:500px; height: auto;">
 							</figure>
+							<div style="font-size: 0.8em">
+								\[R_g^2 = \frac{1}{M} \sum_i m_i (r_i - r_{\text{cm}})^2\]
+							</div>
+							
 						</div>
+						</div>
+						<div style="font-size: 0.8em">
+							Elastic and Viscous behaviour is coupled.
 						</div>
 					</section>
 				    <section data-auto-animate>
-						<h4>
-							1D Reverse Poiseuille Flow
-						</h4>
-						<div style="align-items: center; height: 300px; width: 300px;">
-							<div id="vx" class="plotly-graph-div">
+							
+						<div style="display: flex; flex-direction: center; align-items: center; font-size: 0.8em">
+							<div>
+								<div style="height: 500px; width: 500px;">
+									1D Reverse Poiseuille Flow
+									<div id="vx" class="plotly-graph-div">
+									</div>
+									<script type="text/javascript" src="./text/vx.js">
+									</script>
+								</div>
 							</div>
-							<script type="text/javascript" src="./text/vx.js">
-							</script>
+						<div>
+							<div style="height: 500px; width: 500px;">
+								Vortex Flow
+								<div id="vortex" class="plotly-graph-div">
+								</div>
+								<script type="text/javascript" src="./text/vortex.js">
+								</script>
+							</div>
+						</div>
+						</div>
+					</section>
+					<section data-auto-animate>
+						<h4>
+							Course
+						</h4>
+						<div style="overflow-y: auto; max-height: 400px; font-size:0.6em; display: flex; flex-direction: column; align-items:center;">
+							<table border="1" style="white-space: nowrap;">
+								<thead>
+									<tr>
+										<th>Course</th>
+										<th>Description</th>
+										<th>Units</th>
+										<th>When</th>
+										<th>Grade</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr><td>MTH 922</td><td>Harmonic Analysis</td><td>3.00</td><td>FS2023</td><td>In Progress</td></tr>
+									<tr><td>CMSE 890</td><td>Selected Topics in CMSE</td><td>3.00</td><td>SS2023</td><td>4.0</td></tr>
+									<tr><td>MTH 849</td><td>Partial Differential Equations</td><td>3.00</td><td>SS2023</td><td>4.0</td></tr>
+									<tr><td>ME 922</td><td>Thermoelast & Viscoelasticity</td><td>3.00</td><td>SS2022</td><td>4.0</td></tr>
+									<tr><td>STT 964</td><td>Stochastic Analysis</td><td>3.00</td><td>SS2021</td><td>4.0</td></tr>
+									<tr><td>CMSE 821</td><td>Num Methods for Diff Equations</td><td>3.00</td><td>SS2021</td><td>4.0</td></tr>
+									<tr><td>CMSE 823</td><td>Numerical Linear Algebra</td><td>3.00</td><td>SS2021</td><td>4.0</td></tr>
+									<tr><td>PHY 851</td><td>Quantum Mechanics I</td><td>3.00</td><td>FS2022</td><td>3.5</td></tr>
+									<tr><td>CMSE 822</td><td>Parallel Computing</td><td>3.00</td><td>FS2021</td><td>4.0</td></tr>
+									<tr><td>STT 886</td><td>Stochastic Processes & App</td><td>3.00</td><td>FS2020</td><td>4.0</td></tr>
+									<tr><td>ME 830</td><td>Fluid Mechanics I</td><td>3.00</td><td>FS2020</td><td>4.0</td></tr>
+									<tr><td>CMSE 820</td><td>Math Foundations of Data Sci</td><td>3.00</td><td>FS2020</td><td>3.5</td></tr>
+									<tr><td>Total</td><td>Math Foundations of Data Sci</td><td>3.00</td><td>FS2020</td><td>3.5</td></tr>
+
+								</tbody>
+							</table>
 						</div>
 					</section>
 				</div>

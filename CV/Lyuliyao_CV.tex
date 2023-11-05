@@ -16,14 +16,7 @@
 \documentclass[a4paper,10pt,utf8]{article} % Default font size and paper size
 \usepackage{fontspec} % For loading fonts
 \usepackage{eurosym}
-\usepackage{xeCJK}%中文字体
-\usepackage {ctex}
-%% IF YOU WANT TO COMPILE THIS TEX LOCALLY, COMMENT THE FOLLOWING LINES IF THE FONTS ARE NOT INSTALLED
-\defaultfontfeatures{Mapping=tex-text}
-\setmainfont{Fontin-Regular.otf}[
-BoldFont       = Fontin-Bold.otf ,
-ItalicFont     = Fontin-Italic.otf ,
-SmallCapsFont  = Fontin-SmallCaps.otf ]
+
 %% UNTIL HERE 
 
 \usepackage{xunicode,xltxtra,url,parskip} % Formatting packages
@@ -66,16 +59,12 @@ SmallCapsFont  = Fontin-SmallCaps.otf ]
 %	NAME AND CONTACT INFORMATION
 %----------------------------------------------------------------------------------------
 \par{\centering{\Huge \textsc{Lyu Liyao}}\bigskip\par} % Your name
-\par{\centering{\Huge \kaishu 吕力遥}\bigskip\par}
 
 \section{Personal Data}
 \begin{table}[ht]
 \centering{
 \begin{tabular}{rl}
-\textsc{Name:} 						& \kaishu 吕力遥  (Lyu Liyao)\\
-\textsc{Address:} 					& School of Mathematical Sciences\\
-									& Soochow University, P.R. China \\
-\textsc{Phone:} 					& +86 18015416145\\
+\textsc{Name:} 						& Lyu Liyao\\
 \textsc{email:} 					& lyuliyao[at]msu[DOT]edu\\
 \textsc{Website:}					& lyuliyao.github.io\\
 \end{tabular}
@@ -97,8 +86,12 @@ Sept. 2016 - Present 					& \textit{Soochow University, Suzhou, China}\\
 
 Jan. 2019 - May. 2019 					& \textit{University of California Berkeley, CA, USA}\\
           							& Exchange Student  \\
-Sep. 2020 - Present 			&\textit{Michigan State University, MI, USA}\\
-								& Phd Student         							
+\multicolumn{2}{c}{} \\	% this is just an empty row
+Sep. 2020 - Sep. 2021 			&\textit{Michigan State University, Online (because of Covid)} \\
+& Phd Student\\
+\multicolumn{2}{c}{} \\	% this is just an empty row
+Sep. 2021 - Present			&\textit{Michigan State University, MI, USA}\\
+								& Phd Student   							
 \end{tabular}
 %%END TABLE
 
@@ -121,16 +114,6 @@ Sep. 2020 - Present 			&\textit{Michigan State University, MI, USA}\\
 	 &  Funded By: Undergraduate Training Program for Innovation and Entrepreneurship, Soochow University \\
 \end{tabular}
 %----------------------------------------------------------------------------------------
-%	Leadership experiences
-%----------------------------------------------------------------------------------------
-\section{LEADERSHIP EXPERIENCES AND ACTIVITIES}
-\begin{tabular}{r|p{11cm}}
-	Jul. 2018 - Jul. 2019 		& Soochow University, CW Chu College, Suzhou, China \\
-								&  President of Students' Association for Science and Technology \\
-								& \footnotesize Organized approximately 50 oral defenses annually for undergraduates’ research projects in the college \\
-								& \footnotesize Organized technical culture festival with over four hundred undergraduates and some local citizens participate\\
-								& \footnotesize Awarded with outstanding Students' Association for Science and Technology during the period.
-\end{tabular}
 
 %----------------------------------------------------------------------------------------
 %	SCHOLARSHIPS AND ADDITIONAL INFO
@@ -162,21 +145,25 @@ Sep. 2020 - Present 			&\textit{Michigan State University, MI, USA}\\
 \section{Publication}
 
 \begin{small}
-\textbf{Liyao Lyu}, Zheng Chen.2020. "Local discontinuous Galerkin methods with novel basis for fractional diffusion equations with non-smooth solutions." Communications on Applied Mathematics and Computation. 10.1007/s42967-020-00104-3
 
-Shi Jin, Jingrun Chen, \textbf{Liyao Lyu}.2020."A consensus-based global optimization method with adaptive momentum estimation" Arvix.
+\textbf{L. Lyu}, and H. Lei. Construction of coarse-grained molecular dynamics with many-body non-Markovian memory. Phys. Rev. Lett. 131:177301, 2023
 
-\textbf{Liyao Lyu}, Zheng Chen.2020."Local discontinuous Galerkin methods with novel basis for fractional diffusion equations with non-smooth solutions". 2020.
-	Communications on Applied Mathematics and Computation.
+\textbf{L. Lyu}, Z. Zhang, M. Chen, and J. Chen. MIM: A deep mixed residual method for solving high-order partial differential equations. J. Comput. Phys. 452:110930, 2022. 
 
-\textbf{Liyao Lyu}, Keke Wu, Rui Du*, Jingrun Chen*.2020.
-"Enforcing exact boundary and initial conditions in the deep mixed residual method." Arxiv.
+J. Chen, S. Jin, and \textbf{L. Lyu}. A Consensus-Based Global Optimization Method with Adaptive Momentum Estimation.
+Commun. Comput. Phys. 31(4): 1296-1316, 2022.
 
-\textbf{Liyao Lyu}, Zhen Zhang , Minxin Chen*, Jingrun Chen*. 2020. "MIM: A deep mixed residual method for solving high-order partial differential equations." Arxiv. 
+\textbf{L. Lyu}, and Z. Chen. Local discontinuous Galerkin methods with novel basis for fractional diffusion equations with non-smooth solutions. Commun. Appl. Math. Comput.  4(1): 227-249, 2022.
 
-Chen, Jingrun, Rui Du, Panchi Li, and \textbf{Liyao Lyu} . 2020. “Quasi-Monte Carlo sampling for machine-learning partial differential equations” Numerical Mathematics Theory Methods and Applications. 
+J. Chen, S. Jin, and \textbf{L. Lyu}. A Deep Learning Based Discontinuous Galerkin Method for Hyperbolic Equations with Discontinuous Solutions and Random Uncertainties. J. Comp. Math. to appear.
 
-\textbf{Liyao Lyu} , Zhiwen Zhang*, and Jingrun Chen*. 2020. “A Qmc-Deep Learning Method for Diffusivity Estimation in Random Domains.” Numerical Mathematics Theory Methods and Applications. 
+S. Liang, \textbf{L. Lyu}, C. Wang, and H. Yang. Reproducing activation function for deep learning. arXiv Preprint:arXiv:2101.04844, 2021.
+
+\textbf{L. Lyu}, K. Wu, R. Du, and J. Chen. Enforcing Exact Boundary and Initial Conditions in the Deep Mixed Residual Method. CSIAM Trans. Appl. Math. 2(4): 748, 2021.
+
+J. Chen, R. Du, P. Li, and \textbf{L. Lyu}. Quasi-Monte Carlo sampling for machine-learning partial differential equations. Numer. Math. Theor. Meth. Appl. 14(2): 377, 2021
+
+\textbf{L. Lyu} , Z. Zhang, and J. Chen. A Qmc-Deep Learning Method for Diffusivity Estimation in Random Domains. Numer. Math. Theor. Meth. Appl. 13(4): 908, 2020.
 
 
 \end{small}

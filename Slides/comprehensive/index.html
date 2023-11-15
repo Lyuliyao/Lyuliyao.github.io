@@ -69,10 +69,6 @@
 				margin-top: 5px;
 				font-size: 0.6em;
 			}
-		table.td, th {
-			text-align: center;
-			vertical-align: middle;
-		}
 		</style>
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -109,7 +105,7 @@
 				<section>
 					<div style="text-align: center;">
 						<h4>
-							Comprehensive Exam?
+							Machine Learning-based Coarse-Grained models for molecular systems
 						</h4>
 					</div>
 					<div style="margin-left: auto; text-align: left; font-size: 0.7em;">
@@ -133,23 +129,52 @@
 						</div>
 					</h4>
 					<div style="display: flex; align-items: center; justify-content: center; width: 100%;">
-						<div>
+						<div style="width:500px">
 							<figure style="margin-right: 5%;">
-								<img src="./figure/Dirac.png" style="width:70%" alt="Eiffel tower">
+								<img src="./figure/Dirac.png" style="object-fit: cover;" alt="Eiffel tower">
 							</figure>
 							<cite>
-								Dirac, Paul Adrien Maurice. "Quantum mechanics of many-electron systems." Proceedings of the Royal Society of London. 1929.
+								Dirac, Paul Adrien Maurice. "Quantum mechanics of many-electron systems."
 							</cite>
 						</div>
 						<div align="left">
+							<div style="margin-bottom: 50px; margin-right: 100px;">
+								<small>
+									The right physical principle for most of what we are interested in is already provided by the principles of quantum mechanics (QM). <br>
+								</small>
+							</div>
+							<div style="margin-left:100px;">
 							<small>
-								The right physical principle for most of what we are interested in is already provided by the principles of quantum mechanics (QM), there is no need to look further. <br>
+								The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
 							</small>
+							</div>
+							<div style="margin-left:100px;">
+								<small>
+									The constructionist hypothesis breaks
+									down when confronted with <font color="#C82423">the twin
+									difficulties of scale and complexity.</font>
+								</small>
+							</div>
+							<div style="font-size: 0.6em;" align="center">
+								<br>
+								<font color="#C82423">Scale - High Dimensionality - Curse of Dimensionality </font> <br>
+								<font color="#C82423">Complexity - Empirical Model - Oversimplification</font>
+							</div>
+						</div>
+						<div style="width:500px">
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png"
+									style="width:300px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+							</figure>
+							<cite>
+								Anderson, Philip W. "More Is Different: Broken symmetry and the nature of the hierarchical structure of science."
+							</cite>
 						</div>
 					</div>
 				</section>
-				
-				<section data-auto-animate>
+				<!-- <section data-auto-animate>
 					<h4>
 						<div data-id="suptitle" style="display:inline">
 							Multi-scale modeling:
@@ -174,11 +199,7 @@
 									in its nature as any other.
 								</small>
 							</div>
-							<div style="font-size: 0.6em;">
-								<br>
-								<font color="#C82423">Scale - High Dimensionality - Curse of Dimensionality </font> <br>
-								<font color="#C82423">Complexity - Empirical Model - Oversimplification</font>
-							</div>
+
 						</div>
 						<div>
 							<figure>
@@ -198,24 +219,37 @@
 						<br>
 						This intricate challenge remained largely ignored until Anderson underscored, that the constructivist hypothesis falters when faced with the challenges of scale and complexity.
 					</aside>
-				</section>
+				</section> -->
 				<section data-auto-animate>
 					<h4>
-						Free Energy Surface
+						Example: Protein folding
 					</h4>
 					<div style="display: flex; justify-content: center; align-items: center;">
 					<div>
+						<div style="font-size: 0.8em;">
+							<ul>
+								<li>\(\br\): positions of the atoms in a protein</li>
+								<li>\(U(\br)\): potential of the micro-scale coordinates  \(\br\)</li>
+								<li>\(\bz = \bs(\br)\): collective variables (CVs)</li>
+								<li>\(A(\bz)\): free energy surface (FES)
+								</li>
+							</ul>
+
+						</div>
+						<div style="font-size: 0.6em;">
+						\[
+						\begin{aligned}
+						A(\bz)  =  -\frac{1}{\beta}\ln \rho(\bz) \quad \rho(\bz) =  \frac{\int e^{(-\beta U(\br))} \delta(\bs(\br)-\bz) \intd \br}{Z}\\
+						\end{aligned}
+						\]
+						</div>
 						<small>
-							\[
-							\begin{aligned}
-							& \text{FES}:& & A(\bz)  =  -\frac{1}{\beta}\ln \rho(\bz)\\
-							& \text{CVs}:& & \bz = \bs(\br)\\
-							& \text{PDF}:& & \rho(\bz) =  \frac{\int e^{(-\beta U(\br))} \delta(\bs(\br)-\bz) \intd \br}{Z}\\
-							& \text{Potential}:  & &U(\br)   \text{ of the micro-scale coordinates } \br \\
-							\end{aligned}
-							\]
+							<font color="#C82423">
+								How to comstruct Free Energy Surface?
+							</font>
 						</small>
 					</div>
+
 					<div>
 						<figure>
 							<p>
@@ -505,7 +539,7 @@
 										<tr>
 											<th rowspan="2">Method</th>
 											<th colspan="2">Accuracy</th>
-											<th colspan="2">Time</th>
+											<th colspan="2">Time (h)</th>
 										</tr>
 										<tr>
 											<th>\(l_2\) error</th>
@@ -519,21 +553,21 @@
 											<td rowspan="2">VES</td>
 											<td>5.39</td>
 											<td>21.03</td>
-											<td colspan="2">47.5</td>
+											<td colspan="3">47.5</td>
 										</tr>
 										<tr></tr>
 										<tr>
 											<td rowspan="2">RiD</td>
-											<td>3.15</td>
-											<td>11.04</td>
+											<td>1.52</td>
+											<td>9.46</td>
 											<td>17.98</td>
 											<td>0.22(GPU)</td>
 										</tr>
 										<tr></tr>
 										<tr>
 											<td rowspan="2">CES</td>
-											<td rowspan="2">1.88</td>
-											<td rowspan="2">10.68</td>
+											<td rowspan="2">1.45</td>
+											<td rowspan="2">6.74</td>
 											<td rowspan="2">0.23 × 10walkers</td>
 											<td>0.18(CPU)</td>
 										</tr>
@@ -563,7 +597,7 @@
 									<thead>
 										<tr>
 											<th rowspan="2">Method</th>
-											<th colspan="3">Time</th>
+											<th colspan="2">Time</th>
 										</tr>
 										<tr>
 											<th>Simulation</th>
@@ -573,7 +607,7 @@
 									<tbody>
 										<tr>
 											<td>RiD</td>
-											<td>423.33</td>
+											<td>423</td>
 											<td>8 (GPU)</td>
 										</tr>
 										<tr>
@@ -641,6 +675,11 @@
 								Can the non-conservative part be <font color="#C82423">simplified</font> in the treatment?
 							</li>
 						</ul>
+
+						<p>
+							Oversimplication In Conservative part
+							\(A(\mathbf{\mb r_1,\mb r_2,\cdots})\neq A_1(\mb r_1)A_2(\mb r_2) \cdots\)
+						</p>
 					</div>
 				</section>					
 						
@@ -659,15 +698,18 @@
 					</div>
 					<div style="display: flex; flex-direction: center; align-items: center;">
 						<div style="font-size:0.6em; text-align:left;">
+							<ul>
+								<li>\(\mb Q\): center of mass (COM) of molecular</li>
+								<li>\(\mb P\): momentum of COM</li>
+								<li>\(\mb V\): velocity of COM</li>
+							</ul>
 							<p>
 							The Mori-Zwanzig formalism is perfectly <font color="#C82423">general</font>.
 							</p>
 							<p>
 							In practice, one has to resort to <font color="#C82423">simple</font> approximations.
 							</p>
-							<p>
-								Oversimplication In Conservative part neglect Complexity:\(V(\mathbf{\mb Q_1,\mb Q_2,\cdots})\neq V_1(\mb Q_1)V_2(\mb Q_2) \cdots\)
-							</p>
+					
 							Oversimplication In Non-Conservative part <span style="color: #C82423;"> undiscovered</span>
 						</div>
 						<div>
@@ -838,6 +880,41 @@
 							For each molecule, we construct an environment-embedded coordinate. Here, Q_ij represents the distance vector between each pair of molecules. By utilizing the coordinates of particles within the cutoff distance of the central coordinate, we determine K general coordinates. Specifically, f acts as a network, and Qij is the distance vector of the central vector. By applying some nonlinear activation to the original coordinate, we obtain a general coordinate that is symmetric in R3K.
 							</aside>
 				</section>
+				<section data-auto-animate data-menu-title="RDF">
+					<div>
+						<small>
+							\[ 
+							\dot{\mathbf{P}} = \underbrace{-\nabla V(\mathbf{Q})}_{\text{conservative part}} 
+							- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds}_{\text{Memory part}} 
+							+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
+							\]
+						</small>
+					</div>
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div>
+							<h5>
+								Radial Distribution Function (RDF)
+							</h5>
+							<p>
+								<small>
+									\[ g(r) = \frac{V}{N} \cdot \frac{{dN(r)}}{{4\pi r^2 dr}} \]
+								</small>
+							</p>
+						</div>
+
+						
+						<div
+						id=rdf
+						class="plotly-graph-div"
+						style="height:450; width:450;">
+						</div>
+						<script type="text/javascript" src="./text/rdf.js">
+						</script>
+				
+					<aside class="notes">
+						First up, we’re diving into some structural properties, like the Radial Distribution Function (RDF). It’s interesting to note that the RDF relies solely on the conservative term, and our application of the many-body conservative term allows us to nail it precisely!
+						</aside>
+				  </section>
 				  <section data-auto-animate data-menu-title="VACF">
 					<div style="display: flex; justify-content: center; align-items: center;">
 						<div>
@@ -1272,7 +1349,7 @@
 									<tr><td>STT 886</td><td>Stochastic Processes & App</td><td>3.00</td><td>FS2020</td><td>4.0</td></tr>
 									<tr><td>ME 830</td><td>Fluid Mechanics I</td><td>3.00</td><td>FS2020</td><td>4.0</td></tr>
 									<tr><td>CMSE 820</td><td>Math Foundations of Data Sci</td><td>3.00</td><td>FS2020</td><td>3.5</td></tr>
-									<tr><td>Total</td><td>Math Foundations of Data Sci</td><td>3.00</td><td>FS2020</td><td>3.5</td></tr>
+									<tr><td>Total</td><td>		</td><td>3.00</td><td>FS2020</td><td>3.5</td></tr>
 
 								</tbody>
 							</table>
@@ -1295,7 +1372,7 @@
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
 			});
 		</script>
-		<!-- <script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
 		<script>
 			Reveal.initialize({
 			slideNumber: 'c/t',
@@ -1305,7 +1382,7 @@
 				titleSelector: 'h1, h2, h3, h4', 
 				hideMissingTitles: true
 			}
-		}); -->
+		});
 		</script>
 	</body>
 </html>

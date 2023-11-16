@@ -693,7 +693,7 @@
 					<div data-id="MZCG">
 						<div class="equation" style="font-size:0.8em;">
 							\[ 
-							\dot{\mathbf{P}} = \underbrace{-\nabla V(\mathbf{Q})}_{\text{conservative part}} 
+							\dot{\mathbf{P}} = \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
 							- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds}_{\text{Memory part}} 
 							+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
 							\]
@@ -706,6 +706,9 @@
 								<li>\(\mb P\): momentum of COM</li>
 								<li>\(\mb V\): velocity of COM</li>
 							</ul>
+							<p>
+								Invariant distribution \(\rho(\mb Q, \mb P) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 })]\)
+							</p>
 							<p>
 							The Mori-Zwanzig formalism is perfectly <font color="#C82423">general</font>.
 							</p>
@@ -729,7 +732,7 @@
 				<section data-auto-animate>
 					<div data-id="MZCG">
 						<div class="equation" style="font-size:0.8em;">
-						\[ \dot{\mathbf{P}} = -\nabla V(\mathbf{Q}) - \int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds   + \mathbf{R}(t) \]
+						\[ \dot{\mathbf{P}} = -\nabla U(\mathbf{Q}) - \int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds   + \mathbf{R}(t) \]
 						</div>
 					</div>
 					<small>
@@ -887,7 +890,7 @@
 					<div>
 						<small>
 							\[ 
-							\dot{\mathbf{P}} = \underbrace{-\nabla V(\mathbf{Q})}_{\text{conservative part}} 
+							\dot{\mathbf{P}} = \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
 							- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds}_{\text{Memory part}} 
 							+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
 							\]
@@ -900,7 +903,11 @@
 							</h5>
 							<p>
 								<small>
-									\[ g(r) = \frac{V}{N} \cdot \frac{{dN(r)}}{{4\pi r^2 dr}} \]
+								Invariant distribution \(\rho(\mb Q, \mb P) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 })]\)
+								\[ g(r) = \frac{V}{N} \cdot \frac{{dN(r)}}{{4\pi r^2 dr}} \]
+								<span style="color:#C82423">
+									Structure properties \(g(r)\) depends only on conservative part.
+								</span>
 								</small>
 							</p>
 						</div>

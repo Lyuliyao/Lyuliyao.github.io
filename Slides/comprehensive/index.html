@@ -486,10 +486,10 @@
 					</div>
 				</section>
 				<section data-auto-animate>
-					<h4>
+					<h4 style="font-size: 0.7em;">
 						Exploitation and Exploration in McKean stochastic differential equation
 					</h4>
-					<div>
+					<div style="font-size: 0.7em;">
 						\[
 						\dot{\bz}^i_t = - \frac{1}{\gamma}\nabla_\bz G(\bz^i_t;\mb m_t ,V_t) + \sqrt{\frac{2}{\kappa_h\gamma}} \mathbf\xi_i(t)
 						\]
@@ -504,6 +504,9 @@
 							\hat{p} (\mb z) & =  \frac{\exp {(-\kappa_l \MLMN^-(\bz^i))}}{\sum_{i=1}^{N_w}\exp {(-\kappa_l \MLMN^-(\bz^i)})}
 							\end{aligned}
 							\]
+							<sapn style="color:#C82423;">
+								Unlike Lagevin dynamics, \(G\) depends on the distribution.
+							</sapn>
 						</div>
 
 					<aside class="notes">
@@ -658,7 +661,7 @@
 					<div style="font-size: 0.8em;">
 						<ul>
 							<li>
-								The difficulty of construct FES is not only on overcoming energy barrier but also in <font color="#C82423">high dimensionality</font>.
+								The difficulty of constructing FES is not only on overcoming energy barrier but also in <font color="#C82423">high dimensionality</font>.
 								We introduce a <font color="#C82423">posterior errors driven </font>sampling process.
 							</li>
 						</ul>
@@ -710,7 +713,7 @@
 							In practice, one has to resort to <font color="#C82423">simple</font> approximations.
 							</p>
 					
-							Oversimplication In Non-Conservative part <span style="color: #C82423;"> undiscovered</span>
+							Oversimplication In Non-Conservative part <span style="color: #C82423;"> under-explored.</span>
 						</div>
 						<div>
 							<svg id="MD1" width="300" height="300"></svg>
@@ -737,7 +740,7 @@
 							&\text{M-DPD(Markovian-Pairwise)} \\& \dot{\mb P_i}  = \mb F_i^C - \sum_{j} \mb K(Q_{ij})\mb V_j + \mb R(t).\\
 							&\text{NM-GLE(Non Markovian-Isotropic)}\\ & \dot{\mb P} = \mb F^C - \int_0^t \mb K(t-s) \mb V(s) \diff s + \mb R(t).\\
 							&\text{NM-DPD(Non Markovian-Pairwise)}\\ & \dot{\mb P}_i =  \mb F^C_{i} - \sum_j \int_0^t \mb K(Q_{ij},t-s) \mb V_{ij}(s) \diff s +  \sum_j\mb R_{ij}(t).\\
-							&\color{red}{\text{Our Model}}\\ & \dot{\mb P} =  \mb F^C -  \bm\Xi(\mb Q)\int_0^t {\rm e}^{- \bm\Lambda (t-s)}\bm\Xi(\mb Q)^T \mb V_{ij}(s) \diff s +  \mb R(t),.
+							&\color{red}{\text{Our Model(Manybody)}}\\ & \dot{\mb P} =  \mb F^C -  \bm\Xi(\mb Q)\int_0^t {\rm e}^{- \bm\Lambda (t-s)}\bm\Xi(\mb Q)^T \mb V_{ij}(s) \diff s +  \mb R(t),.
 							\end{align}
 							\]
 						</div>
@@ -1202,11 +1205,11 @@
 						<div style="font-size: 0.8em;">
 							<ul>
 								<li>
-									The difficulty of construct FES is not only on overcoming energy barrier but also in <font color="#C82423">high dimensionality</font>.
+									The difficulty of constructing FES is not only on overcoming energy barrier but also in <font color="#C82423">high dimensionality</font>.
 									We introduce a posterior errors driven <font color="#BB9727"> sampling </font> process.
 								</li>
 								<li>
-									The previous empirical formula for the non-conservative term tended to <span style="color:#C82423">oversimplify the complexity</span> (many-body nature) of the original system. Our <span style="color:#BB9727">model construction</span> preserves the heterogeneous energy dissipation among the CG particles and accurately predicts the dynamics at the collective scale.
+									The previous empirical formula for the non-conservative term tended to <span style="color:#C82423">oversimplify the complexity</span> (many-body nature) of the original system. Our <span style="color:#BB9727">model</span> preserves the heterogeneous energy dissipation among the CG particles and accurately predicts the dynamics at the collective scale.
 								</li>
 							</ul>
 						</div>

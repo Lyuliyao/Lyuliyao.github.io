@@ -1,4 +1,5 @@
 window.PLOTLYENV = window.PLOTLYENV || {}
+        
 if (document.getElementById('vortex')) {
     Plotly.newPlot(
         'vortex',
@@ -7,3 +8,5 @@ if (document.getElementById('vortex')) {
         {"editable":false,"responsive":true,"staticPlot":false,"scrollZoom":true},
     )
 }
+
+        

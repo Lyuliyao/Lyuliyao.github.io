@@ -278,10 +278,10 @@
 					<div>
 						<div>
 							<ul>
-								<li>\(\br\): positions of the atoms in a protein</li>
-								<li>\(U(\br)\): potential of the micro-scale coordinates  \(\br\)</li>
-								<li>\(\bz = \bs(\br)\): collective variables (CVs)</li>
-								<li>\(A(\bz)\): free energy surface (FES)
+								<li>\(\bq\): positions of the atoms in a protein</li>
+								<li>\(U(\bq)\): potential of the micro-scale coordinates  \(\br\)</li>
+								<li>\(\bQ = \bs(\bq)\): collective variables (CVs)</li>
+								<li>\(A(\bQ)\): free energy surface (FES)
 								</li>
 							</ul>
 
@@ -290,7 +290,7 @@
 							<p>
 								\[
 								\begin{aligned}
-								A(\bz)  =  -\frac{1}{\beta}\ln \rho(\bz) \quad \rho(\bz) =  \frac{\int e^{(-\beta U(\br))} \delta(\bs(\br)-\bz) \intd \br}{Z}\\
+								A(\bQ)  =  -\frac{1}{\beta}\ln \rho(\bQ) \quad \rho(\bQ) =  \frac{\int e^{(-\beta U(\bq))} \delta(\bs(\bq)-\bQ) \intd \br}{Z}\\
 								\end{aligned}
 								\]
 							</p>
@@ -420,7 +420,6 @@
 								\):Force Calculated from full MD
 								<br>
 								\(f(\bQ)\): Sampling Distribution
-
 							</p>
 						</div>
 						<div>
@@ -457,6 +456,12 @@
 					<h4>
 						Maximum Problem : exploration
 					</h4>
+					<div>
+						<p>
+						Reformulation the direct construction of \(U(\bQ)\) by seeking NN representation \( A_{\mathcal N}(\bQ)\)
+							\(\min_{\mathcal{N}}\max_f \int_\Gamma \underbrace{\|-\nabla_\bz A_{\mathcal N}(\bQ) - \bF(\bQ)\|^2}_{\MLMN(\bQ): \text{Residual Error} } \quad f(\bQ) \intd\bQ\) 
+						</p>
+					</div>
 						<div align="left">
 							<ul>
 								<li>
@@ -477,7 +482,7 @@
 							</ul>
 						</div>
 						<div>
-							<sapn style="color:#C82423;"> How to sampling accoding to \(q^*\)?</sapn>
+							<sapn style="color:#C82423;"> How to sampling accoding to \(f^*(\bQ)\)?</sapn>
 						</div>
 					<aside class="notes">
 						<p> The minization problem is relative common, so we focus on the maximum problem first.</p>
@@ -615,7 +620,13 @@
 									</tbody>
 								</table>
 							</small>
+							<figure>
+								<p>
+									<img  style="width:80%" src="./figure/alanine.png">
+								</p>
+							</figure>
 							</div>
+							
 						<div
 							id=ala2
 							class="plotly-graph-div"
@@ -789,7 +800,7 @@
 						</li> 
 							Translation: \(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
 							Rotation:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
-							Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_{\sigma(1)},\cdots,\mathrm{U}\bQ_{\sigma(M)}) = \mathrm{U}\mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)
+							Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
 					</ul>
 					<div style="display: flex; justify-content: space-around;">
 						<div>
@@ -861,9 +872,11 @@
 								</li> 
 									Translation Symmetry: \(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
 									Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
-									Permutation  invariance: \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_{\sigma(1)},\cdots,\mathrm{U}\bQ_{\sigma(M)}) = \mathrm{U}\mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)
+									Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
 								<li>
 									<font color="#C82423">Extensive</font>
+									<br>
+									Trained on \(\frac{3 \text{ molecular}}{2 \times 2 \text{ periodic box}}\) applied on \(\frac{12 \text{ molecular}}{4 \times 4 \text{ periodic box}}\) 
 								</li>
 							</ul>
 								<svg id="MD2" width="200" height="200"> </svg>

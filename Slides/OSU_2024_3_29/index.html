@@ -362,48 +362,6 @@
 						<p> Another type of method is based on increasing the temperature artificially, the increased the temperature of decrease the energy barrier and increase the probability of transtion happens.</p>
 					</aside>
 				</section>
-				<!-- <section data-auto-animate>
-					<h4>Main Challenges</h4>
-					<div data-id="EB">
-						<p>
-							The Prevalence of Energy Barriers <br>
-						</p>
-					</div>
-					<div data-id="EBP" style="font-size: 0.8em;">
-						<p>
-							<span style="color: #C82423;"> Explore the phase space by overcoming energy barriers </span> 
-						</p>
-					</div>
-					<div data-id="HD">
-						<br>
-						<p>
-							The High Dimensionality 
-						<sapn style="color:blue;"> (Open) </sapn>
-						</p>
-					</div>
-					<div style="font-size: 0.7em;">
-						<p>
-							<font color="#C82423"> Exploite the posterior error to adaptively optimize the sampling ponits.</font>
-						</p>
-					</div>
-					<div style="font-size: 0.7em;">
-						<p>
-							<sapn style="color:blue;">Recent Attempts</sapn>: Reinforce Dynamics (Uncertainty Indicator+ Multi DNN)
-						</p>
-					</div>
-						<aside class="notes">
-							<p> Another difficulty of the reconstruct the FES due to the high dimensionality.</p>
-							<p> Towards the high dimensional problem, uniformly sampling all over the space can be computational unachiaible.</p>
-							<p> A typical idea is add some adaptives in to the sampling, just like adaptive FEM, you may familar.</p>
-							<p> The typical idea is use posterior error enhanced sampling</p>
-							<p> The numerical method to achieve this in high dimension function approximate is in general open.</p>
-							<p> Some recent attemps to this goal.</p>
-							<p> In Rid, multi NN is trained on the same data set</p>
-							<p> They hope in large error region the different NN will have different value</p>
-							<p> Thus the std of the NN can be used to as an indicator to bias the potential.</p>
-							<p> In the present work, we want to develop a method achieve both configuration space exploration and posterior error enhanced sampling</p>
-						</aside>
-				</section> -->
 				<section data-auto-animate>
 					<h4>
 						Main Idea
@@ -499,29 +457,32 @@
 					<h4>
 						Maximum Problem : exploitation
 					</h4>
-					<div style="display: flex; justify-content: center; align-items: center;">
-					<div align="left">
-						<p>
-							Main idea: To approximate \(f^*(\bQ)\) near the max-residual point, exploit the Laplace's principle
-							\[
-							\lim_{k_l\to \infty} -\frac{1}{\kappa_l} \log\left(\int \exp\left(-\kappa_l h(\bQ)\right)\intd \rho ^*(\bQ)\right) = h(\bQ^*)
-							\]
-							Given a collection of sample points \(\{\bQ^i\}_{i=1}^{N_w}\), construct the local quadratic approximation
-							\[
-							 \MLMN^-(\bQ)   \approx G(\bQ) = \frac{1}{2} (\bQ-\mbm)^T V^{-1}(\bQ-\mbm) \\
-							f^*(\bQ)\approx  \exp(-\kappa_h G(\bQ))/\tilde{Z}
-							\]
-							The first two moments determined by low temperature approximation
-							\[
-							\mbm \approx 
-							\sum_{i=1}^{N_w} \mb Q^i \hat{p}(\mb Q^i) \quad 
-							V  \approx \kappa_t \sum_{i=1}^{N_w}  (\bQ^i-\mbm_t) (\bQ^i-\mbm_t)^T \hat{p}(\mb Q^i)\\
-							\hat{p} (\mb z) =  \frac{\exp {(-\kappa_l \MLMN^-(\bz^i))}}{\sum_{i=1}^{N_w}\exp {(-\kappa_l \MLMN^-(\bz^i)})}\\
-							\]
-						</p>
-					</div>
-					<div>
-						<embed src="./figure/Laplaces_method.svg" type="image/svg+xml"/>  
+					<div style="display: flex; justify-content: left; align-items: center;">
+						<div align="left" style="font-size: 0.8em;">
+							<p>
+								Main idea: To approximate \(f^*(\bQ)\) near the max-residual point, exploit the Laplace's principle
+								\[
+								\lim_{k_l\to \infty} -\frac{1}{\kappa_l} \log\left(\int \exp\left(-\kappa_l h(\bQ)\right)\intd \rho ^*(\bQ)\right) = h(\bQ^*)
+								\]
+								Given a collection of sample points \(\{\bQ^i\}_{i=1}^{N_w}\), construct the local quadratic approximation
+								\[
+								\MLMN^-(\bQ)   \approx G(\bQ) = \frac{1}{2} (\bQ-\mbm)^T V^{-1}(\bQ-\mbm) \\
+								f^*(\bQ)\approx  \exp(-\kappa_h G(\bQ))/\tilde{Z}
+								\]
+								The first two moments determined by low temperature approximation
+								\[
+								\mbm \approx 
+								\sum_{i=1}^{N_w} \mb Q^i \hat{p}(\mb Q^i) \quad 
+								V  \approx \kappa_t \sum_{i=1}^{N_w}  (\bQ^i-\mbm_t) (\bQ^i-\mbm_t)^T \hat{p}(\mb Q^i)\\
+								\hat{p} (\mb z) =  \frac{\exp {(-\kappa_l \MLMN^-(\bz^i))}}{\sum_{i=1}^{N_w}\exp {(-\kappa_l \MLMN^-(\bz^i)})}\\
+								\]
+							</p>
+						</div>
+						<div>
+							<figure style="width:200px">
+								<img style="width:200px;"  src="./figure/Laplaces_method.png">
+							</figure>
+						</div>
 					</div>
 				</section>
 				<section data-auto-animate>

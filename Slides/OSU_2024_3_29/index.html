@@ -127,10 +127,10 @@
 				<section data-auto-animate data-menu-title="Multi-scale modeling:Background">
 					<h4>
 						<div style="display:inline">
-							Multi-scale modeling:
+							Background:
 						</div> 
 						<div style="display:inline">
-							Background 
+							Multi-scale modeling
 						</div>
 					</h4>
 					<div style="display: flex; align-items: center; justify-content: center; width: 100%;">
@@ -226,47 +226,50 @@
 					</aside>
 				</section> -->
 				<section data-auto-animate>
-					<h4>
-						Problem setup: Coarse Grained Molecular Dynamics
-					</h4>
-					<div style="text-align:left">
-						<p>
-						Full models: Hamiltonian dynamics \(\bz = (\bq,\bp)\in \mathbb{R}^{2N_{MD}}\) 
-						\[
-						\begin{align}
-						\dot \bq &= \bp \\
-						\dot \bp &= -\nabla_\bq U(\bq)
-						\end{align}\]
-						</p>
-						<p>
-							How to build a coarse grained model for \(\bZ = (\bQ,\bP) \in \mathbb{R}^{2N_{CG}} \quad N_{CG} &ll; N_{MD} \)
-						</p>
+					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="text-align: left;">
+							<p>
+								Full models: Hamiltonian dynamics \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
+								\[
+								\begin{align}
+								\dot{\bq} &= \bp \\
+								\dot{\bp} &= -\nabla_{\bq} U(\bq)
+								\end{align}
+								\]
+							</p>
+							<p>
+								Construct a coarse-grained model for \(\bZ = (\bQ, \bP) \in \mathbb{R}^{2N_{CG}}\)
+								\[
+								\dot{\mathbf{P}} = \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
+									- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \dot \bQ(s) ds}_{\text{Memory part}} 
+									+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
+								\]
+							</p>
+							<p style="font-size: 0.5em;">
+								Examples include:
+								<ul style="font-size: 0.5em;">
+									<li>Center of mass in polymeric fluids (extensive system)</li>
+									<li>Important distances or angles in biomolecules (non-extensive system)</li>
+								</ul>
+							</p>
 						</div>
-					<div style="display: flex; flex-direction: center; align-items: center;">
-					<div style="text-align:left">
-						<p>
-							For example, 
-							<ul>
-								<li>
-									center of mass (COM) in polymeric fluids (Extensive System)
-								</li>
-								<li>
-									Important distance or angle in a biomolecules  (Non-Extensive System)
-								</li>
-							</ul>
-						</p>
-						<figure style="text-align:center; margin:auto;">
-							<img style="width:50%" src="./figure/alanine.png">
-							<figcaption>\(\phi\) and \(\psi\) dihedral angles of alanine peptide</figcaption>
-						</figure>
-					</div>
-					<div style="margin-left:auto">
-						<svg id="MD1" width="300" height="300"></svg>
 						<div>
-							<button id="updateValues1">Update</button>
-							<script>
-								generateAnimation("MD1","updateValues1",3,0.75);
-							</script>
+							<div>
+								<svg id="MD1" width="300" height="300"></svg>
+								<button id="updateValues1" style="height:2px;width:1px"></button>
+								<script>
+									generateAnimation("MD1", "updateValues1", 3, 0.75);
+								</script>
+								<p style="font-size: 0.4em; font-family:'Times New Roman', Times, serif">
+									Extensive system in periodical boudary condition
+								</p>
+							</div>
+							<figure style="text-align: center; margin: auto;">
+								<img style="width: 50%" src="./figure/alanine.png">
+							</figure>
+							<p style="font-size: 0.4em; font-family:'Times New Roman', Times, serif">\(\phi\) and \(\psi\) dihedral angles of the alanine peptide</p>
+
 						</div>
 					</div>
 				</section>

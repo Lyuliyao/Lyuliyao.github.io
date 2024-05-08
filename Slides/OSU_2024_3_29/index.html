@@ -228,7 +228,23 @@
 				<section data-auto-animate>
 					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
 					<div style="display: flex; justify-content: space-between; align-items: center;">
-						<div style="text-align: left;">
+						<div style="flex: 1;text-align: left;">
+							<p>
+								Full models: Hamiltonian dynamics \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
+								\[
+								\begin{align}
+								\dot{\bq} &= \bp \\
+								\dot{\bp} &= -\nabla_{\bq} U(\bq)
+								\end{align}
+								\]
+							</p>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 1;text-align: left;">
 							<p>
 								Full models: Hamiltonian dynamics \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
 								\[
@@ -239,25 +255,40 @@
 								\]
 							</p>
 							<p>
-								Construct a coarse-grained model for \(\bZ = (\bQ, \bP) \in \mathbb{R}^{2N_{CG}}\)
+								Coarse-grained model: dynamics of collective variable (CV) \(\bZ = (\bQ, \bP) \in \mathbb{R}^{2N_{CG}}\) 
+
+							</p>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 2;text-align: left;">
+							<p>
+								Full models: Hamiltonian dynamics of phase variable \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
 								\[
-								\dot{\mathbf{P}} = \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
-									- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \dot \bQ(s) ds}_{\text{Memory part}} 
-									+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
+								\begin{align}
+								\dot{\bq} &= \bp \\
+								\dot{\bp} &= -\nabla_{\bq} V(\bq)
+								\end{align}
 								\]
 							</p>
-							<p style="font-size: 0.5em;">
+							<p>
+								Coarse-grained model: dynamics of collective variable (CV) \(\bZ = (\bQ, \bP) \in \mathbb{R}^{2N_{CG}}\) 
+							</p>
+							<p>
 								Examples include:
-								<ul style="font-size: 0.5em;">
+								<ul>
 									<li>Center of mass in polymeric fluids (extensive system)</li>
 									<li>Important distances or angles in biomolecules (non-extensive system)</li>
 								</ul>
 							</p>
 						</div>
-						<div>
+						<div style="flex: 1;">
 							<div>
-								<svg id="MD1" width="300" height="300"></svg>
 								<button id="updateValues1" style="height:2px;width:1px"></button>
+								<svg id="MD1" width="250" height="250" style="margin-bottom: 0 auto;"></svg>
 								<script>
 									generateAnimation("MD1", "updateValues1", 3, 0.75);
 								</script>
@@ -265,68 +296,71 @@
 									Extensive system in periodical boudary condition
 								</p>
 							</div>
-							<figure style="text-align: center; margin: auto;">
-								<img style="width: 50%" src="./figure/alanine.png">
+							<figure style="text-align: center; margin: 0 auto;">
+								<img style="width: 50%; margin-bottom: 0;" src="./figure/alanine.png">
 							</figure>
 							<p style="font-size: 0.4em; font-family:'Times New Roman', Times, serif">\(\phi\) and \(\psi\) dihedral angles of the alanine peptide</p>
-
 						</div>
 					</div>
 				</section>
 				<section data-auto-animate>
-					<h4>
-						Example: Protein folding (Non-Extensive System)
-					</h4>
-					<div style="display: flex; justify-content: center; align-items: center;">
-					<div>
-						<div>
-							<ul>
-								<li>\(\bq\): positions of the atoms in a protein</li>
-								<li>\(U(\bq)\): potential of the micro-scale coordinates  \(\br\)</li>
-								<li>\(\bQ = \bs(\bq)\): collective variables (CVs)</li>
-								<li>\(A(\bQ)\): free energy surface (FES)
-								</li>
-							</ul>
-
-						</div>
-						<div>
+					<h4>Main Challenge</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 1;text-align: left;">
 							<p>
+								Following the Zwangzig's projection, the dynamics of \([\bQ,\bP] = [\phi_q(\bq),\phi_p(\bp,\bq)]\) takes
 								\[
 								\begin{aligned}
-								A(\bQ)  =  -\frac{1}{\beta}\ln \rho(\bQ) \quad \rho(\bQ) =  \frac{\int e^{(-\beta U(\bq))} \delta(\bs(\bq)-\bQ) \intd \br}{Z}\\
+								\dot \bQ &= \bP\\
+								\dot{\mathbf{P}} &= \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
+									- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \dot \bQ(s) ds}_{\text{Memory part}} 
+									+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
 								\end{aligned}
 								\]
 							</p>
-						</div>
-						<small>
-							<font color="#C82423">
-								How to construct Free Energy Surface?
-							</font>
-						</small>
-					</div>
-
-					<div>
-						<figure>
 							<p>
-								<img  style="width:80%" src="./figure/alanine.png">
-								<img  style="width:80%" src="./figure/FES.png">
+								The modeling term \(U\) and \(\mathbf K\) are unknown in general
 							</p>
-						</figure>
-						<cite>
-							Dill, Ken A., and Justin L. MacCallum. "The protein-folding problem, 50 years on." science 338.6110 (2012): 1042-1046.
-						</cite>
+							<p>
+								<ul>
+								</ul>
+							</p>
+						</div>
 					</div>
+				</section>
+				
+				<section data-auto-animate>
+					<h4>
+						Free energy constuction
+					</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 2; ">
+							<ul>
+								<li>\(\bq\): positions of the atoms in a protein</li>
+								<li>\(V(\bq)\): potential of the micro-scale coordinates  \(\br\)</li>
+								<li>\(\bQ = \phi(\bq)\): CVs</li>
+								<li>\(U(\bQ)\): free energy surface (FES)</li>
+							</ul>
+							<div>
+								<p>
+									\[
+									\begin{aligned}
+									&U (\bQ)  =  -\frac{1}{\beta}\ln \rho(\bQ) \\ 
+									&\rho(\bQ) =  \frac{\int e^{(-\beta V(\bq))} \delta(\bs(\bq)-\bQ) \intd \br}{Z}\\
+									\end{aligned}
+									\]
+								</p>
+							</div>
+						</div>
+				
+						<div style="flex: 1;">
+							<figure>
+								<img style="width: 80%" src="./figure/alanine.png" alt="Alanine">
+							</figure>
+						</div>
 					</div>
 					<aside class="notes">
-						<p>
-							<p> Constructing free energy surface is an important problem for many chemical and biology problems</p>
-							<p> It contains many important information of the complex system.</p>
-							<p>For example, the minimum and the local minima usually represents the stable and metastable state of the system</p>
-							<p>FES is also important to some kenitic propeties such as transtion path or energy barrier between two metastable state.</p>
-							<p>Usually reconstruct FES is based on the bolzman relation</p>
-							<p> It relates the FES with the PDF of finding a particle in a particular state.</p>
-							<p>The accurate construction of FES remains a practical challenge due to the high dimensionality and the prevalence of energy barriers</p>
-						</p>
+						<p>Constructing free energy surface is an important problem for many chemical and biology problems. It contains many important information of the complex system. For example, the minimum and the local minima usually represents the stable and metastable state of the system. FES is also important to some kinetic properties such as transition path or energy barrier between two metastable state. Usually, reconstructing FES is based on the Boltzmann relation. It relates the FES with the PDF of finding a particle in a particular state. The accurate construction of FES remains a practical challenge due to the high dimensionality and the prevalence of energy barriers.</p>
 					</aside>
 				</section>
 				<section data-auto-animate>

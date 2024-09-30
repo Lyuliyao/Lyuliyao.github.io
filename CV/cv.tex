@@ -1,0 +1,390 @@
+%-------------------------
+% Resume in Latex
+% Author : Shubhi Rani
+% License : MIT
+%------------------------
+
+\documentclass[letterpaper,10.8pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[pdftex]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{makecell}
+
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.375in}
+\addtolength{\evensidemargin}{-0.375in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1in}
+
+\urlstyle{rm}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-3pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[2]{
+  \item\small{
+    \textbf{#1}{: #2 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeItemWithoutTitle}[1]{
+  \item\small{
+    {\vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+
+\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-4pt}}
+
+\renewcommand{\labelitemii}{$\circ$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  CV STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{titlesec}
+
+
+\definecolor{MSBblue}{rgb}{0.204, 0.353, 0.541}
+\definecolor{MSLightBlue}{rgb}{0.31, 0.506, 0.741}
+\definecolor{Myred}{rgb}{0.71, 0.22, 0.29}
+
+\titleformat*{\section}{\large\bfseries\color{MSBblue}}
+
+
+\begin{document}
+
+%----------HEADING-----------------
+\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+  \textbf{{\LARGE Liyao Lyu}} & \\
+   \\
+   Department of Computational Mathematics, Science and Engineering & \textbf{Homepage}: 
+ \href{lyuliyao.github.io}{lyuliyao.github.io}\\
+  Michigan State University & \textbf{Email}: \href{mailto:lyuliyao@msu.edu}{lyuliyao@msu.edu} 
+\end{tabular*}
+
+% \section{Employment}
+%   \resumeSubHeadingListStart
+
+      
+% 	   %{\scriptsize \textit{Advisor: Jose Blanchet \& Lexing Ying.}}
+%   \resumeSubheading
+%       {\color{MSLightBlue}Northwestern University}{Evanston, Illinois}
+%       {\makecell[l]{Assistant Professor, Industrial Engineering \& Management Sciences\\Adjunct Assistant Professor}}{\makecell{Sep 2024 - \emph{Now}\\Sep 2023 - Sep 2024}}
+      
+%    \resumeSubheading
+%       {\color{MSLightBlue}NewYork University}{NewYork, NY}
+%       {Courant Instructor, Courant Institute of Mathematical Sciences}{Sep 2023 - Sep 2024 }
+%   \resumeSubHeadingListEnd
+
+%-----------EDUCATION-----------------
+\section{Education}
+  \resumeSubHeadingListStart
+
+      
+	   %{\scriptsize \textit{Advisor: Jose Blanchet \& Lexing Ying.}}
+    \resumeSubheading
+      {\color{MSLightBlue}Michigan State University}{East Lansing, MI}
+      {Ph.D., Department of Computational Mathematics, Science and Engineering;}{Sep 2020 - Present}
+      
+	{\scriptsize \textit{Advisor: Huan Lei}}
+	    
+    \resumeSubheading
+      {\color{MSLightBlue}UC Berkeley Extension}{Berkeley, CA}
+      {Completed coursework in numerical solution of PDE
+      and Mathematical Methods for Optimization;}{Jan 2019-May 2019}
+
+  \resumeSubheading
+      {\color{MSLightBlue}Soochow University}{Suzhou, Jiang Su}
+      {Bachelor of Science(BS): Mathematics}{Sep. 2016 - Jul. 2020}
+
+	{\scriptsize \textit{Advisor: Jingrun Chen}}
+      
+  \resumeSubHeadingListEnd
+
+%
+
+%--------PROGRAMMING SKILLS------------
+% \section{Research Interest}
+% My research develop a hybrid scientific research discipline that integrating domain knowledge (e.g., physical models, scientific guiding principles) with data-driven prediction and decision-making. This gives a holistic framework that provides a principled way to build "gray-box" machine learning that integrate observational data and scientific knowledge. My research tackles both theoretical and methodological challenges that builds scalable algorithms with \emph{optimal} information-theoretical and computational complexity with rigorous uncertainty quantification. Current research is motivated from ongoing interdisciplinary collaborative projects in quantum chemistry and mechanical engineering.
+% \vspace{-0.1in}
+% 	\resumeSubHeadingListStart
+% 	\resumeSubItem{\color{MSLightBlue}Theoretical Tools}{}
+% 	\resumeItemListStart
+% 	\resumeSubItem{\color{MSLightBlue}Computational Math}{Inverse Problem, Reproducing Kernel Hilbert Space, Optimal Control}
+% 	\resumeSubItem{\color{MSLightBlue}Statistics}{Non-parametric Statistics, Semi-parametric Statistics, Empirical Process }
+% 	\resumeSubItem{\color{MSLightBlue}Applied Probability}{Sampling, Stochastic Control, Optimal Transport}
+% 	\resumeSubItem{\color{MSLightBlue}Machine Learning}{Robust Machine Learning, Deep Learning Theory, Computational Lower Bound}
+% 	\resumeItemListEnd
+	
+% 	\resumeSubItem{\color{MSLightBlue}Applications}{}
+% 	\resumeItemListStart
+% 	\resumeSubItem{\color{MSLightBlue}Scientific Machine Learning}{ Machine Learning Solving PDEs, Machine Learning for Quantum Chemistry, Experiment Design, Uncertainty Quantification}
+% 	\resumeSubItem{\color{MSLightBlue}Control}{Continuous Depth Neural Network}
+%  \resumeSubItem{\color{MSLightBlue}Sample Efficient Machine Learning}{Transfer Learning, Reasoning, Few-shot Learning, Data Selection}
+% 	\resumeItemListEnd
+	
+% \resumeSubHeadingListEnd
+%-----------Awards-----------------
+% \section{Selected Honors and Awards}
+% \begin{description}[font=$\bullet$]
+% \item {Conference on Parsimony and Learning (CPAL) Rising Star Award \hfill 2024}
+% \item {Rising Star in Data Science (University of Chicago) \hfill 2022}
+% \item{Stanford Interdisciplinary Graduate Fellowship \hfill 2021-2024}
+% \item {ICML Top Reviewers  2020, Neurips Top Reviewers 2022}
+% \item {SenseTime Scholarship (30 undergraduates per year in the field of AI) \hfill 2018-2019}
+% \item {Excellent Graduate of Elite Training Program of Applied Mathematics \hfill 2019}
+% \item {National Innovation Research Funding for Undergraduate \hfill 2017-2018}
+% \item {China Mathematics Olympiad, Gold Medal \hfill 2014} 
+% \end{description}
+
+\section{Publication List (\href{https://scholar.google.com/citations?hl=en&user=qx0FzMAAAAAJ&view_op=list_works&authuser=1&sortby=pubdate}{Google Scholar})}
+
+\begin{enumerate}
+\setlength{\itemsep}{0pt}
+    \setlength{\itemsep}{0pt}
+    \setlength{\parskip}{0pt}
+    
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Huan Lei.\textbf{ On the generalization ability of coarse-grained molecular dynamics models for non-equilibrium processes}, \emph{arXiv: 2409.11519}, 2024.
+
+\item Sengwei Liang, \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Chunmei Wang, Haizhao Yang.\textbf{ Reproducing activation function for deep learning}, \emph{Communications in Mathematical Sciences}, 2024.
+
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Huan Lei. \textbf{ Consensus-based construction of high-dimensional free energy surface}, \emph{arXiv: 2311.05009}, 2023.
+
+
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Huan Lei.\textbf{ Construction of coarse-grained molecular dynamics with many-body non-Markovian memory}, \emph{Physical Review Letters},  2023
+
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Zhen Zhang, Minxin Chen, Jingrun Chen.\textbf{ MIM: A deep mixed residual method for solving high-order partial differential equations}, \emph{Journal of Computational Physics},  2022. 
+
+\item Jingrun Chen, Shi Jin, \textbf{{{\color{MSLightBlue}Liyao Lyu}}}.\textbf{ A Consensus-Based Global Optimization Method with Adaptive Momentum Estimation}, \emph{Communications in Computational Physics}, 2022.
+
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Zheng Chen.\textbf{ Local discontinuous Galerkin methods with novel basis for fractional diffusion equations with non-smooth solutions}, \emph{Communications on Applied Mathematics and Computation}, 2022.
+
+\item Jingrun Chen, Shi Jin, \textbf{{{\color{MSLightBlue}Liyao Lyu}}}.\textbf{ A Deep Learning Based Discontinuous Galerkin Method for Hyperbolic Equations with Discontinuous Solutions and Random Uncertainties}, \emph{Journal of Computational Mathematics}, 2023.
+
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Keke Wu, Rui Du, Jingrun Chen.\textbf{  Enforcing Exact Boundary and Initial Conditions in the Deep Mixed Residual Method}, \emph{CSIAM Transactions on Applied Mathematics}, 2021.
+
+\item  Jingrun Chen, Rui Du, Panchi Li, \textbf{{{\color{MSLightBlue}Liyao Lyu}}}.\textbf{ Quasi-Monte Carlo sampling for machine-learning partial differential equations}, \emph{Numerical Mathematics: Theory, Methods and Applications}, 2021
+
+\item \textbf{{{\color{MSLightBlue}Liyao Lyu}}}, Zhiwen Zhang, Jingrun Chen.\textbf{ A Qmc-Deep Learning Method for Diffusivity Estimation in Random Domains}. \emph{Numerical Mathematics: Theory, Methods and Applications}, 2020.
+
+
+
+\end{enumerate}
+
+%-----------EXPERIENCE-----------------
+\section{Visiting Position}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+    {\color{MSLightBlue}University of Massachusetts Dartmouth}{MA, USA}
+    {\textbf{\emph{Host}}
+          {Zheng Chen.} \quad \emph{Local Discontinuous Galerkin Method for Fractional Diffusion
+Equation}}{Aug 2019 -  Nov 2019}
+
+\resumeSubHeadingListEnd
+      
+      
+      \resumeSubHeadingListStart
+    \resumeSubheading
+    {\color{MSLightBlue}Hong Kong University of Science and Technology}{Hong Kong}
+    {\textbf{\emph{Host}}
+          {Yang Xiang.}\quad \emph{} }{Jul 2019 -  Aug 2019}
+\resumeSubHeadingListEnd
+
+% \resumeSubHeadingListStart
+% \resumeSubheading
+%     {\color{MSLightBlue}Microsoft Research}{Beijing}
+%     {\textbf{\emph{Host}}
+%           {David Wipft.}
+%           \quad \emph{Theory for VAE.} }{Jan 2019 -  July 2021}
+
+%    \resumeSubHeadingListEnd
+   
+%       \resumeSubHeadingListStart
+%     \resumeSubheading
+%     {\color{MSLightBlue}Massachusetts Institute of Technology}{Boston, MA}
+%     {\textbf{\emph{Host}}
+%           {Justin Solomon.}
+%           \quad \emph{Fast computation of sparse optimal transport}}{Jul 2018 -  Sep 2018}
+% \resumeSubHeadingListEnd
+
+
+%-----------PROJECTS-----------------
+
+
+%-------------------------------------------
+
+\section{Professional Service}
+\begin{description}[font=$\bullet$]
+% \item \textbf{\color{MSLightBlue}Area Chair}: AISTATS (2024-), Neurips (2024-), ICML 2024 AI for Science Workshop
+% \item \textbf{\color{MSLightBlue}Tutorial}:
+% \begin{itemize}
+    % \item AAAI 2024: Recent Advance in Physics-Informed Machine Learning (with Prof. \emph{Grant Rostkoff})
+% \end{itemize}
+\item \textbf{\color{MSLightBlue}Reviewer}: SIAM Journal on Optimization
+
+    % \item ICML2020 Top Reviewers,  Neurips 2022 Top Reviewers
+    % \item \textbf{\color{MSLightBlue}Workshop/Session Organization:} ICCOPT 2022, SIAM OP 23 (with \emph{Jiajin Li})
+\end{description}
+
+% \section{Students}
+% \textbf{\color{MSLightBlue}Supervised Undergraduates}
+% \begin{itemize}
+%     \item {\color{MSLightBlue}Wenlong Ji} (PKU), 2021, (Next Position: Stanford Ph.D.) \hfill First author paper published in {\color{MSLightBlue}ICLR 2022}
+%     \item {\color{MSLightBlue}Haoxuan Chen} (Caltech), 2021, (Next Position: Stanford Ph.D.)\hfill First author paper published in {\color{MSLightBlue}ICLR 2022}
+%     \item {\color{MSLightBlue}Jikai Jin} (PKU), 2022, (Next Position: Stanford Ph.D.)\hfill First author paper published in {\color{MSLightBlue}ICLR 2023}
+%     \item {\color{MSLightBlue}Kaizhao Liu} (PKU), 2023, \hfill First author paper published in {\color{MSLightBlue}ICML 2024}
+% \end{itemize}
+% \textbf{\color{MSLightBlue}Thesis Defense Committee}
+% \begin{itemize}
+%     \item Suraj Yerramilli ({\color{MSLightBlue}Northwestern})
+%     \item Yan Sun ({\color{MSLightBlue}Gatech})
+% \end{itemize}
+\section{Teaching}
+
+
+\textbf{\color{MSLightBlue}Teaching assistant at Michgan State University}
+\begin{itemize}
+    \item CMSE 801 Numerical Linear Algebra, Fall 2024-2025
+    \item CMSE 803 Numerical Methods for Differential Equations, Fall 2024-2025 
+\end{itemize}
+% \textbf{\color{MSLightBlue}Teaching at New York University}
+% \begin{itemize}
+    % \item Math-UA 140 Linear Algebra, Session D and E, Spring 2023-2024
+
+
+    % \emph{Course Evaluation: 
+    % \begin{itemize}
+    %     \item How effective was the instructor in explaining challenging concepts and methods?\\ \hfill \textbf{\emph{Session D}: 4.44/5, }\textbf{\emph{Session E}: 4.00/5} 
+    %     \item How inclusive did you find this class environment towards people of diverse backgrounds?\\ \hfill \textbf{\emph{Session D}: 4.44/5, },\textbf{\emph{Session E}: 4.38/5} 
+    %     \item How well did the instructor create an environment that promoted the success of students with diverse backgrounds and experiences?  \hfill \textbf{\emph{Session D}: 4.56/5, }\textbf{\emph{Session E}: 4.46/5} 
+    %     \item How accessible was the instructor to students (e.g., via e-mail and office hours)?\\ \hfill \textbf{\emph{Session D}: 4.67/5, }\textbf{\emph{Session E}: 4.46/5} 
+    % \end{itemize}}
+
+% \end{itemize}
+
+
+
+
+
+\section{Invited Talks}
+\textbf{\color{MSLightBlue} Machine Learning based Coarse-Grained Models for Molecular Systems}
+\\
+SIAM Conference on Computational Science and Engineering (CSE25) \hfill 2025.03\\
+CompMath PI Meeting 2024 (Poster) \hfill 2024.07\\
+Scale Bridging Meeting and Workshop(Poster), Los Alamos, NM, USA \hfill 2024.05\\
+Student Computational Math Seminar, The Ohio State University
+\hfill  2024.03\\
+SIAM New York-New Jersey-Pennsylvania Section (SIAM-NNP), NJ, USA \hfill 2023.10\\
+The 2023 SIAM Great Lakes Meeting, East Lansing, USA  \hfill 2023.10 \\
+
+\textbf{\color{MSLightBlue} A Deep Learning Based  Discontinuous Galerkin Method for Hyperbolic Equations with Discontinuous Solutions and Random Uncertainties}\\
+
+IMA Workshop on the Mathematical Foundation and Applications of Deep Learning,Virtual \hfill 2021.09
+% \textbf{\color{MSLightBlue}Simulation-Calibrated Scientific Machine Learning}\\
+% SIAM Conference on Computational Science and Engineering (CSE25) \hfill 2025.03\\
+% SNAPP Seminar \url{https://sites.google.com/view/snappseminar/upcoming-seminars} \hfill  2024.11\\
+% INFORMS annual meeting 2024 (Invited by \emph{Yao Xie}) \hfill 2024.10\\
+% SIAM+Applied Math Seminar, University of Florida\hfill 2024.09\\ 
+% Machine Learning+X Seminar -- The Crunch Group, Brown University \hfill 2024.06\\
+% Statistical Seminar ISYE Gatech  \hfill 2024.04\\
+% FAI Seminar \url{https://www.fai-seminar.ac.cn/}  \hfill 2024.04\\
+% 58th Annual Conference on
+% Information Sciences and Systems, Princeton University (Invited by \emph{Zhuoran Yang}) \hfill 2024.03\\
+% Conference on Parsimony and Learning (CPAL) \hfill 2024.01\\
+% Data Science Week, Purdue University \hfill 2023.11\\
+% NYU Courant Instructor Day \hfill 2023.11\\
+% Applied Math Colloquium,  Columbia University \hfill 2023.10\\
+% Northwestern IEMS Brown Bag Seminar \hfill 2023.10\\
+% NYU Courant SML reading group \hfill 2023.09\\
+% OR Student Seminar \hfill 2023.06\\
+% Informs APS meeting\hfill 2023.06\\
+% King Abdullah University of Science and Technology \hfill 2023.07\\
+% \textbf{\color{MSLightBlue}Machine learning and Experiment Design for Panel Data}\\
+% Allerton Conference, UIUC\hfill 2024.09\\ 
+% The Conference on Uncertainty in Artificial Intelligence  \hfill 2024.07\\
+% Stanford Causal Inference Conference \hfill 2022.11\\
+% CUHK \hfill 2022.09\\
+% Stanford OR Student Seminar \hfill 2022.05\\
+% \textbf{\color{MSLightBlue}Epi-Convergent Data-Driven Approximation: A Unified View of Pessmestic and Optimistic }\\
+% SIAM Conference on Optimization (Invited by \emph{Jiajin Li}) \hfill 2023.05\\
+% \textbf{\color{MSLightBlue}Machine learning for numerical PDE: Scaling Law, Optimization  and Minimax Optimality }\\
+% INFORMS Annual Meeting 2023 (Invited by \emph{Shancong Mou}) \hfill 2023.10\\
+% Fudan University \hfill 2023.09\\
+% The International Council for Industrial and Applied Mathematics (ICIAM) (Invited by \emph{Yulong Lu})\hfill 2023.08\\
+% CBMS Conference: Deep Learning and Numerical PDEs \hfill 2023.06\\
+% NYU Courant \hfill 2023.02\\
+% Northwestern IEMS \hfill 2023.02\\
+% Columbia IEOR \hfill 2023.02\\
+% Chicago Data Science Institute \hfill 2022.11\\
+% Duke University \hfill 2022.10\\
+% Peking University \hfill 2022.09\\
+% ICCOPT \hfill 2022.07\\
+% CNLS Annual Conference, Los Alamos National Laboratory \hfill 2022.05\\
+% Institute of Mathematics and Scientific Computing, University of Graz, Austria \hfill 2022.04\\
+% Wuhan University \hfill 2022.03\\
+% Stanford OR Student Seminar \hfill 2022.02\\
+% Machine Learning+X Seminar -- The Crunch Group,, Brown University \hfill 2021.12\\
+% CMS, Caltech \hfill 2021.10\\
+% CAM Seminar, Peking University \hfill 2021.07\\
+
+
+% \textbf{\color{MSLightBlue}Implicit Regularization for Algorithm Design: Neural Collapse and Worst Group Generalization}\\
+% VinAI seminar series \hfill 2022.03\\
+
+
+% \textbf{\color{MSLightBlue} Continuous Time Formulation of Deep Neural Network: Modeling and Optimization}\\
+% Forum on Artificial Intelligence Frontiers (Beijing, China) \hfill 2018.03\\
+% Machine Learning Theory Workshop (Peking University) \hfill 2018.06\\
+% The Level Set Collective, UCLA \hfill 2018.08\\
+% SenseTime Scholarship Award Ceremony \hfill 2019.01\\
+% PengCheng Lab, Shenzhen\hfill 2019.03\\
+% Google Machine Learning Research Seminar, Beijing \hfill 2019.07\\
+% University Of Tokyo\hfill 2019.08\\
+% East China Normal University\hfill 2019.08\\
+% Stanford University Applied Math Seminar\hfill 2019.09\\
+% Stanford University Guibas Lab \hfill 2020.06\\
+% Optimal Transport Seminar University of South Carolina \hfill2020.06\\
+% RADAResearch Lab UC Berkeley \hfill 2020.07\\
+% One World Seminar On the Mathematics of Machine Learning \hfill 2020.08\\
+% VITA seminar, UT Austin\hfill 2020.09\\
+% IEEE Workshop on Seeking Low-dimenionality in DNN\hfill 2020.11\\
+% 2020 INFORMS Annual Meeting (Invited by \emph{Renyuan Xu}) \hfill 2020.12\\
+% International Conference:Differential Equations for Data Science 2021 (Kyoto University) \hfill 2021.03\\
+
+
+\end{document}

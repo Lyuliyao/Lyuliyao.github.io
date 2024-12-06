@@ -20,23 +20,133 @@
         <div id="main">
             <div class="inner">
                 <header id="header">
-                    <a href="index.html" class="logo"><strong>Lyu Liyao's </strong> Home Page</a>
+                    <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
                 </header>
                 <section>
                     <header class="main">
-                        <h2>Research</h2>
+                        <h2>Research Interests</h2>
+                        <ul>
+                            <li> 
+                                <strong style="font-size: 1.8em;">
+                                    Multiscale Modeling
+                                </strong>
+                                <br>
+                                Coarse Grained Molecular Dynamics, Mori-Zwanzig Formalism, generalized Langevin Equation, Model Reduction
+                            </li>
+                            <li>
+                                <strong style="font-size: 1.8em;">
+                                    Optimization
+                                </strong>
+                                <br>
+                                Consensus Based Optimization, Consensus Based Sampling, Stochasitc Optimal Control
+                            </li>
+                            <li>
+                                <strong style="font-size: 1.8em;">
+                                    Scientific Computing
+                                </strong>
+                                <br>
+                                Mixed Redisual Method, Deep Learning Based Discontinuous Galerkin Method, Reproducing Activation Function 
+                            </li>
+                        </ul>
                     </header>
+                    <h3>
+                        Machine Learning and Multiscale Modeling
+                    </h3>
+                    <p>
+                        Developing innovative machine learning methodologies to enhance bottom-up multiscale modeling and accurately predict complex physical phenomena.
+                    </p>
+                    <ul>
+                        <li>
+                            A <strong>non-conservative memory term</strong> is critical for coarse-grained molecular dynamics (CGMD).
+                            <div style="display: flex; align-items: flex-start;">
+                                <!-- Ordered List -->
+                                <ol style="flex: 1;">
+                                    <li>
+                                        <strong>Many-body Dissipative Interactions:</strong><br>
+                                        Introduced a machine-learning-based coarse-grained molecular dynamics (CGMD) model leveraging the Mori-Zwanzig formalism to include non-Markovian many-body memory interactions.
+                                    </li>
+                                    <li>
+                                        <strong>Neural Networks Respect Physical Symmetries:</strong><br>
+                                        Design neural networks that respect physical symmetries (e.g., rotational, translational, permutation) to model complex friction matrix accurately.
+                                    </li>
+                                    <li>
+                                        <strong>Accuracy beyond Mean-field Metrics:</strong><br>
+                                        Instead of matching the mean-field metrics such as the velocity autocorrelation function, the present model is constructed based on the Mori-Zwanzig formalism and naturally inherits the heterogeneous information.
+                                    </li>
+                                </ol>
+                                
+                                <!-- Embed the Plotly animation -->
+                                <iframe src="./html/von_hove.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                            </div>
+                        </li>
+                        <li>
+                            Coarse-Grained Molecular Dynamics Models for <strong>Non-Equilibrium Processes</strong>
+                            <div style="display: flex; align-items: flex-start;">
+                                <ol style="flex: 1;">
+                                    <li>
+                                        <strong> Generalization Challenge: </strong> <br>
+                                        Applicability to various non-equilibrium processes is generally unwarranted due to the inconsistency in the conditional distribution.
+                                    </li>
+                                    <li>
+                                        <strong> Training CG variables:</strong><br>
+                                        Seeking a set of auxiliary CG variables based on the time-lagged independent component analysis
+                                        to minimize the entropy contribution of the unresolved variables.
+                                    </li>
+                                </ol>
+                                <iframe src="./html/vel_evol.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                                </div>
+                        </li>
+                    </ul>
                     <h4>
-                        Machine learning methodology for multiscale modeling(model reduction) 
+                        Algorithms of Scientific Machine Learning
                     </h4>
-                    My main interest currently is developing methodology for data-driven bottom-up/ first principle multiscale modeling.
-                    <h4>
-                        Algorithms of Scientifc Machine learning 
-                    </h4>
+                    <ul>
+                        <li>
+                        <strong>Deep Mixed Residual Method (MIM) </strong>  design for solving <strong>high-order</strong> partial differential equations   
+                        <div style="display: flex; align-items: flex-start;">
+                            <ol style="flex: 1;">
+                                <li>
+                                    <strong> Mixed Residual: </strong> <br>
+                                    Rewrite a high-order PDE into a first-order system,in the same spirit as local discontinuous Galerkin method and mixed finite element method 
+                                </li>
+                                <li>
+                                    <strong> Flexibility in Network Design:</strong><br>
+                                    Allows for different configurations, such as using the same or different DNNs for various unknown functions.
+                                </li>
+                                <li>
+                                <strong> Enforce Boundary Condition :</strong><br>
+                                     Design DNNs satisfy boundary and initial conditions automatically in a systematic manner
+                                </li>
+                            </ol>
+                            <iframe src="./html/biharmonic_2D_all.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                        </div>
+                        </li>
+                        <strong> Deep Learning Based Discontinuous Galerkin Method (D2GM)  </strong>   to solve hyperbolic equations with <strong>discontinuous solutions</strong> and
+                        <strong>random uncertainties </strong>
+                        <div style="display: flex; align-items: flex-start;">
+                            <ol style="flex: 1;">
+                                <li>
+                                    <strong> Discontinuities of the solutions: </strong> <br>
+                                    Using the weak formulation and discontinuous element basis, the D2GM
+                                    is able to approximate discontinuous PDE solutions with high accuracy
+                                </li>
+                                <li>
+                                    <strong> High-dimensional Random Space:</strong><br>
+                                    Using the mini-batch sampling with controllable number of samples,
+                                    the D2GM overcomes the curse of dimensionality.
+                                </li>
+                            </ol>
+                            <iframe src="./html/Burgers.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                        </div>
+                        </li>
+                    </ul>
 
                     <h4>
-                        Gradient free optimization method
+                        Gradient-Free Optimization Methods
                     </h4>
+                    <p>
+                        Exploring novel optimization strategies that bypass traditional gradient calculations to solve complex, multidimensional problems.
+                    </p>
                 </section>
             </div>
         </div>

@@ -1,0 +1,7 @@
+title: My Jekyll Site
+description: A site built with Jekyll and GitHub Pages
+theme: jekyll-theme-primer
+exclude:
+  - node_modules
+  - vendor
+  - Slides/CSE_2025/node_modules

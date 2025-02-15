@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Machine Learning-based Coarse-Grained models for molecular systems</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>	
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; /* This will vertically center the content */
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center; /* This will vertically center the text */
+			justify-content: flex-end; /* This will align the text to the right */
+			padding-right: 20px; /* Some spacing between the name and the equation */
+		}
+		div.model .equation {
+			flex: 2;
+		}
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+			.particle {
+				fill: blue;
+				stroke: black;
+				stroke-width: 1;
+			}
+			.bond {
+				stroke: black;
+				stroke-width: 2;
+			}
+			cite {
+				font-size: 0.4em; /* Adjust the font size as needed */
+				display: block; /* Optional: To make the citation appear on a new line */
+				color:#444
+			}
+			.theorem, .proposition {
+				border: 1px solid #000;
+				padding: 10px;
+				margin: 10px 0;
+			}
+			.theorem {
+				background-color: #f0f0f0;
+			}
+			.proposition {
+				background-color: #e0e0e0;
+			}
+			.theorem h4, .proposition h4 {
+				margin: 0;
+				font-size: 1em;
+			}
+			.content {
+				margin-top: 5px;
+				font-size: 0.6em;
+			}
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+			   diff: "\\mathop{}\\!\\mathrm{d}",
+			   MLMN: "\\mathcal{L}_\\mathcal{N}",
+			   bz: "\\mathbf{z}",
+			   bZ: "\\mathbf{Z}",
+			   bp: "\\mathbf{p}",
+			   bq: "\\mathbf{q}",
+			   bP: "\\mathbf{P}",
+			   bQ: "\\mathbf{Q}",
+			   bV: "\\mathbf{V}",
+			   br: "\\mathbf{r}",
+			   bs: "\\mathbf{s}",
+			   bF: "\\mathbf{F}",
+			   CM: "\\mathcal M_\\beta",
+			   l: "\\left",
+			   r: "\\right",
+			   intd: "\\mathrm{d}",
+			   mbm:"\\mathbf{m}",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script src="./figure/md.js"></script>
+		<script src="./figure/title.js"></script>
+
+	</head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-CQSV68665C');
+	</script>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-menu-title="Coarse-Grained Molecular Dynamics">
+					<div style="text-align: center; margin-bottom: 20px;font-weight: 700;">
+						<h1 id="title-text" style="margin-top: -100px;">
+						</h1>
+						<h2 id="subtitle-text"></h2>
+					</div>
+					<div style="text-align: center; margin-top: 20px;">
+						<svg id="MD1" width="750" height="300" style="border: none;"></svg>
+						<div>
+							<button id="updateValues1"></button>
+							<script>
+								title("MD1","updateValues1",30,0.75);
+							</script>
+						</div>
+					</div>
+					<div style="text-align: center; font-weight: 400; margin-top: -10px;">
+						<p id="author" style="margin-bottom: 2px; font-size: 1.2em;"></p>
+						<p id="department" style="margin-bottom: 2px; font-size: 1em;"></p>
+						<p id="school" style="margin-bottom: 0; font-size: 1em;"></p>
+					</div>
+					<script>
+						function typeText(elementId, text, speed) {
+							let i = 0;
+							function type() {
+								if (i < text.length) {
+									document.getElementById(elementId).innerHTML += text.charAt(i);
+									i++;
+									setTimeout(type, speed);
+								}
+							}
+							type();
+						}
+						document.addEventListener("DOMContentLoaded", function() {
+							typeText("title-text", "Coarse-Grained Molecular Dynamics", 50);
+							setTimeout(() => typeText("subtitle-text", "with Many-Body Non-Markovian Memory", 50), 1000);
+							setTimeout(() => typeText("author", "Liyao Lyu", 50), 2000);
+							setTimeout(() => typeText("department", "Department of Computational Mathematics, Science & Engineering", 50), 2500);
+							setTimeout(() => typeText("school", "Michigan State University", 50), 3000);
+						});
+					</script>
+					<aside class="notes">
+						Today, I’m going to explore how we can integrate deep learning technology to enhance the construction of multiscale models.
+					</aside>
+                </section>
+				<section data-auto-animate>
+					<h3>Mori-Zwanzig Formalism</h3>
+				
+					<div style="text-align: left;">
+						<p>In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b>
+						   follow:
+						</p>
+					</div>
+				
+					<div data-id="MZCG">
+						\[
+						\begin{aligned}
+						\dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
+						\dot{\mathbf{P}} &= 
+						\underbrace{-\nabla U(\mathbf{Q})}_{\text{Conservative Force}} 
+						- \underbrace{\int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds}_{\text{Memory Contribution}} 
+						+ \underbrace{\mathbf{R}(t)}_{\text{Random Force}}.
+						\end{aligned}
+						\]
+					</div>
+
+					<div style="display: flex; justify-content: center; margin-top: 10px;">
+						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 300px)); ">
+							<li><b>\( \mathbf{Q} \)</b>: Center of mass</li>	
+							<li><b>\( \mathbf{P} \)</b>: Total momentum</li>	
+							<li><b>\( \mathbf{V} \)</b>: Velocity</li>	
+							<li><b>\( \mathbf{M} \)</b>: Mass matrix</li>
+						</ul>
+					</div>
+					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
+						<ul>
+							<li class="fragment fade-in-then-semi-out">
+							The Mori-Zwanzig formalism is perfectly <font color="#C82423">general</font>. 
+							</li>
+							<li class="fragment fade-in-then-semi-out">
+							In practice, one has to resort to very <font color="#C82423">simple and ad hoc</font>  approximations.
+						 	</li>
+							<li class="fragment fade-in-then-semi-out">
+							Oversimplicationn of Memory Contribution <font color="#C82423">under-explored</font>.
+							</li>
+						</ul>
+					</div>
+					<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+						<div>
+							Zwanzig, Robert.
+							Nonequilibrium statistical mechanics. Oxford university press, 2001.
+						</div>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Ad hoc Approximations</h3>
+				
+					<div style="text-align: left;">
+						<p>In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b>
+						   follow:
+						</p>
+					</div>
+				
+					<div data-id="MZCG">
+						\[
+						\begin{aligned}
+						\dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
+						\dot{\mathbf{P}} &= 
+						\underbrace{-\nabla U(\mathbf{Q})}_{\text{Conservative Force}} 
+						- \underbrace{\int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds}_{\text{Memory Contribution}} 
+						+ \underbrace{\mathbf{R}(t)}_{\text{Random Force}}.
+						\end{aligned}
+						\]
+					</div>
+					<div style="display: flex; justify-content: center; margin-top: 10px; font-size: 0.9em">
+						<ul 
+							style="list-style: none; padding: 0; 
+								   display: grid; grid-template-columns: repeat(2, minmax(200px, 500px)); 
+								   gap: 15px; justify-content: center;">
+							<li class="fragment fade-in-then-semi-out " data-fragment-index="1"><b>Markovian-Pairwise (M-DPD)</b></li>
+							<li class="fragment fade-in-then-semi-out " data-fragment-index="1">
+								\(
+								\dot{\mathbf{P}}_i = \mathbf{F}_i^C - \sum_{j} \mathbf{K}(Q_{ij}) \mathbf{V}_j + \mathbf{R}(t).
+								\)
+							</li>
+					
+							<li class="fragment fade-in-then-semi-out " data-fragment-index="2"><b>Non-Markovian Isotropic (NM-GLE)</b></li>
+							<li class="fragment fade-in-then-semi-out " data-fragment-index="2">
+								\(
+								\dot{\mathbf{P}} = \mathbf{F}^C - \int_0^t \mathbf{K}(t-s) \mathbf{V}(s) \, ds + \mathbf{R}(t).
+								\)
+							</li>
+					
+							<li class="fragment fade-in-then-semi-out " data-fragment-index="3"><b>Non-Markovian Pairwise (NM-DPD)</b></li>
+							<li class="fragment fade-in-then-semi-out " data-fragment-index="3">
+								\(
+								\dot{\mathbf{P}}_i = \mathbf{F}^C_{i} - \sum_j \int_0^t \mathbf{K}(Q_{ij}, t-s) \mathbf{V}_{ij}(s) \, ds + \sum_j \mathbf{R}_{ij}(t).
+								\)
+							</li>
+					
+							<li class="fragment fade-in " data-fragment-index="4">
+								<b style="color: #C82423;">Non-Markovian Manybody (Our Model)</b>
+							</li>
+							<li class="fragment fade-in " data-fragment-index="4">
+								\(
+								\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
+								\)
+							</li>
+						</ul>
+					</div>
+					
+					<!-- Additional Explanation -->
+					<div class="fragment fade-in-then-semi-out" data-fragment-index="5" style="text-align: left; font-size: 0.85em; margin-top: 10px; margin-bottom: 20px;">
+						where \( \bm{\Xi}\) is neural network encode the <b style="color: #C82423;">manybody</b> and \( \bm{\Lambda} \) are learnable parameters encode the <b style="color: #C82423;">Non-Markovian</b>.
+					</div>
+					<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+						<div><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>.
+							Construction of coarse-grained molecular dynamics with many-body non-Markovian memory.
+							<em>Physical Review Letter</em>, 2023.
+							<a href="https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.131.177301" 
+							class="logo">[PDF]</a>
+						</div>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Important New Issues</h3>
+					
+					<div style="display: flex; flex-direction: center; align-items: center">
+						
+						<div>
+							<ul class="fragment fade-in" data-fragment-index="1">
+								<li> Neural Networks Respect Physical Symmetries
+									<ol>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
+											Translation: \(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+										</li>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
+											Rotation:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+										</li>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
+											Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+										</li>
+									</ol>
+								</li>
+								<li class="fragment fade-in-then-semi-out" data-fragment-index="5"> Extensive 
+								</li>
+							</ul>
+						</div>
+						<div class="fragment fade-in-then-out" data-fragment-index="4" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+							<div>
+								<svg id="canvas1"></svg>
+								<p style="font-size: 20px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+								<div class="matrix">
+								<table style="font-size: 20px;">
+									<tr>
+										<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma114"><sub>1</sub></span><span id="gamma131"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma122"><sub>2</sub></span><span id="gamma115"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma123"><sub>2</sub></span><span id="gamma125"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma124"><sub>2</sub></span><span id="gamma132"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma133"><sub>3</sub></span><span id="gamma116"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma134"><sub>3</sub></span><span id="gamma126"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma135"><sub>3</sub></span><span id="gamma136"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+									</tr>
+								</table>
+							</div>
+								<button id="clearButton1">Clear</button>
+							</div>
+							<div>
+							<svg id="canvas2"></svg>
+							<p style="font-size: 20px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+							<div class="matrix">
+								<table style="font-size: 20px;">
+									<tr>
+										<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma214"><sub>1</sub></span><span id="gamma231"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma222"><sub>2</sub></span><span id="gamma215"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma223"><sub>2</sub></span><span id="gamma225"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma224"><sub>2</sub></span><span id="gamma232"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma233"><sub>3</sub></span><span id="gamma216"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma234"><sub>3</sub></span><span id="gamma226"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma235"><sub>3</sub></span><span id="gamma236"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+									</tr>
+								</table>
+							</div>
+							<button id="clearButton2">Clear</button>
+							</div>
+							<script src="./figure/permutation.js"></script>
+						</div>
+					</div>
+				</section>
+
+
+				<section data-auto-animate>
+					<div style="display: flex; align-items: left;">
+						<div>
+							<ul>
+								<li class="fragment fade-in" data-fragment-index="1">
+									Nueral Network Representation
+									<ul>
+										<li class="fragment fade-in" data-fragment-index="2">
+											\( \hat{ \mathbf Q}^k_i = \mathbf{Q}_i \oplus \sum_{l\in\mathcal{N}_i} f^k(|\mathbf{Q}_{il}|) \mathbf{Q}_{il} \) <br> 
+										</li>
+										<li class="fragment fade-in" data-fragment-index="3">
+											\( \hat{\mathbf{Q}}_{ij}^{k} = \hat{\mathbf{Q}}_i^{k} - \hat{\mathbf{Q}}_j^{k} \)  <br>
+										</li>
+										<li class="fragment fade-in" data-fragment-index="4">
+											\(\boldsymbol{\Xi}^n_{ij} = \sum_{k=1}^K h_{n,k}(\hat{ \mathbf Q}_{ij}^T \hat{ \mathbf Q}_{ij} ) \hat{ \mathbf Q}_{ij}^k \otimes \hat{ \mathbf Q}_{ij}^k\)
+										</li>
+										<li class="fragment fade-in" data-fragment-index="5">
+											\(\bm{\Lambda} =  \bm{S} \bm{S}^T + \bm{A}\)  where \(\bm{S}\) is symmetric <br>  and  \(\bm{A}\) is anti-symmetric.
+										</li>
+									</ul>
+								</li>
+								<li class="fragment fade-in" data-fragment-index="5">
+									The construction satisfies the symmetry constraint.
+								</li>
+								<li class="fragment fade-in" data-fragment-index="6">
+									The construction easy to do simulation.
+									\[
+									\begin{aligned}
+									\dot{\mb Q} &= \mb M^{-1}\mb P \\
+									\dot{\mb P} &= -\nabla U(\mb Q) + \bm \Xi(\mb Q)\bm\zeta \\
+									\dot{\bm\zeta} &= - \bm \Xi(\mb Q)^T \mb V - \bm\Lambda \bm\zeta + \bm \xi(t). 
+									\end{aligned}
+									\]
+								</li>
+
+							</ul>
+						</div>
+						<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+							<figure style="height: 7cm;" class="fragment fade-in" data-fragment-index="2">
+								<img src="./figure/Q.png">
+							</figure>
+							<figure style="height: 7cm;" class="fragment fade-in" data-fragment-index="3">
+								<img src="./figure/hatQ.png">
+							</figure>
+						</div>
+					</div>
+					<div  style="text-align: left;">
+						<ul>
+							<li class="fragment fade-in" data-fragment-index="7">
+								By choosing the white noise \(\bm\xi(t)\) following
+								\(
+								\left\langle  \bm \xi(t) \bm \xi(t') \right\rangle = \beta^{-1}(\bm\Lambda + \bm\Lambda^T) \delta(t-t'),
+								\)
+								model  retains the consistent invariant distribution 
+								\[
+								\rho_{\rm eq}(\mb Q, \mb P, \bm\xi) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 + \bm \zeta^T \bm\zeta/2})]
+								\]
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h3> Data Collection</h3>
+					<div>
+						<ul>
+							<li>
+								For a given configuration \(\bm {Q}\), theorically, 
+								\[
+								\mb K(\bm {Q}, t) = \mathcal{P}_{\mb Z}[({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\mathcal{Q}_{\bm Z} \mathcal{L}\mb P) (\mathcal{Q}_{\bm Z} \mathcal{L}\mb P)^T],
+								\]
+								where \(\mb Z = [\mb Q,\mb P]\) is CG variable.
+							</li>
+							<li>
+								\(
+								\mathcal{P}_{\bm Z} f(\mb z) := \mathbb{E}[f(\mb z) \vert \phi(\mb z) = \bm Z ],
+								\)
+							<li>
+								\(\phi(\mb z) \) is the map from full variable \(\mb z = [\mb p,\mb q]\) to CG variable.
+							</li>
+							<li>
+								\(\mathcal{Q}_{\bm Z} = \mb I - \mathcal{P}_{\bm Z}\).
+							</li>
+							<li>
+								The orthogonal dynamics \({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\) is computationally intractable.
+							</li>
+							<li>
+								Introduce the constrained dynamics \(\tilde{z}(t) = {\rm e}^{\mathcal{R}_{\bm Z} \mathcal{L} t}z(0)\)
+								\[
+								\begin{aligned}
+								\dot{\mb q}_\mu &= \frac{\mb p_\mu}{m_\mu} -  \frac{\mb P_i}{M_i} \\
+								\dot{\mb p}_\mu &= \mb f_\mu - \frac{m_\mu}{M_i} F_i
+								\end{aligned}
+								\]
+							</li>
+							<li>
+								\[
+									\mb K_{\rm MZ}(\bm {Q} , t) = \left \langle  \delta \mb F(t) \delta \mb F(0)^T\right\rangle ,
+								\]	
+								where \(\delta \mb F = \mb F - \mathcal{P}_{\bm Z }(\mb F)\) is the fluctuation force. 
+							</li>
+						</ul>
+					</div>
+				</section>	
+				<section data-auto-animate>
+					<h3>Data Collection</h3>
+					<div>
+						<ul>
+							<li class="fragment fade-in" data-fragment-index="1">
+								For a given configuration \(\bm {Q}\), theoretically:
+								\[
+								\mb K(\bm {Q}, t) = \mathcal{P}_{\mb Z}[({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\mathcal{Q}_{\bm Z} \mathcal{L}\mb P) (\mathcal{Q}_{\bm Z} \mathcal{L}\mb P)^T],
+								\]
+								where \(\mb Z = [\mb Q,\mb P]\) represents the coarse-grained (CG) variables.
+							</li>
+							<li class="fragment fade-in" data-fragment-index="2">
+								The projection operator:
+								\[
+								\mathcal{P}_{\bm Z} f(\mb z) := \mathbb{E}[f(\mb z) \vert \phi(\mb z) = \bm Z ]
+								\]
+							</li>
+							<li class="fragment fade-in" data-fragment-index="3">
+								\(\phi(\mb z)\) maps the full variable \(\mb z = [\mb p,\mb q]\) to the coarse-grained variable.
+							</li>
+							<li class="fragment fade-in" data-fragment-index="4">
+								The orthogonal projection operator is given by:
+								\[
+								\mathcal{Q}_{\bm Z} = \mb I - \mathcal{P}_{\bm Z}
+								\]
+							</li>
+							<li class="fragment fade-in-then-out" data-fragment-index="5">
+								The orthogonal dynamics \({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\) is computationally intractable.
+							</li>
+							<li class="fragment fade-in" data-fragment-index="6">
+								To overcome this, we introduce restrained dynamics \(\tilde{z}(t) = {\rm e}^{\mathcal{R}_{\bm Z} \mathcal{L} t}z(0)\):
+								\[
+								\begin{aligned}
+								\dot{\mb q}_\mu = \frac{\mb p_\mu}{m_\mu} -  \frac{\mb P_i}{M_i} \quad
+								\dot{\mb p}_\mu = \mb f_\mu - \frac{m_\mu}{M_i} F_i
+								\end{aligned}
+								\]
+							</li>
+							<li class="fragment fade-in" data-fragment-index="7">
+								The Mori-Zwanzig (MZ) memory kernel is approximated as:
+								\[
+								\mb K_{\text{MZ}}(\bm {Q} , t) = \left \langle  \delta \mb F(t) \delta \mb F(0)^T\right\rangle,
+								\]
+								where \(\delta \mb F = \mb F - \mathcal{P}_{\bm Z }(\mb F)\) represents the fluctuation force.
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section data-auto-animate data-menu-title="VACF">
+					<h3>
+						Numerical Result
+					</h3>
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div style="text-align:left">
+								Velocity auto correlation function (VACF)
+							<p>
+									\[ c(t)=\frac{\lt V_i(t) \cdot V_i(0) \gt }{ \lt V_i(0) \cdot V_i(0) \gt } \]
+							</p>
+							<div style="text-align:left; font-size:0.8em" data-id="table">
+								<table border="1">
+									<tr>
+										<th>Model</th>
+										<th>Temporal</th>
+										<th>Spatial</th>
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">M-DPD</td>
+										<td>Markovian</td>
+										<td>Pairwise</td>
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">NM-GLE</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Isotropic</td>
+
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">NM-DPD</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Pairwise</td>
+									</tr>
+									<tr>
+										<td style="color:red; white-space: nowrap;">NM-MB</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Manybody</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div
+							id=vacf
+							class="plotly-graph-div"
+							style="height:450; width:450;">
+						</div>
+						<script type="text/javascript" src="./text/vacf.js">
+						</script>
+					</div>
+					<aside class="notes">
+						Next, we’re exploring isotropic dynamic properties, such as the Velocity Auto Correlation Function (VACF), which measures the time correlation of a particle's velocity. Notice how our model, marked as NM-MB (red), and the state-independent GLE (purple) are spot on! This is because the GLE model uses the memory kernel as a free parameter to fit the VACF. As Von Neumann said, with four free parameters, one can draw an elephant! It’s not surprising, but it doesn’t mean GLE can recover the dynamics accurately.
+						</aside>
+					</section>
+					<section data-auto-animate data-menu-title="VCCF">
+						<h3>
+							Numerical Result
+						</h3>
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div style="text-align:left">
+									Velocity cross correlation function (VCCF)
+								<p>
+									\[ C^{xx}(t; r_0) = \mathbb{E}[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t) \vert Q_{ij}(0) = r_0] \]
+								</p>
+								<div style="font-size: 0.8em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=vccf
+								class="plotly-graph-div"
+								style="height:400; width:400;">
+							</div>
+							<script type="text/javascript" src="./text/vccf.js">
+							</script>
+						</div>
+						<aside class="notes">
+							If we delve deeper into metrics like the Velocity Cross Correlation Function (VCCF), which represents the momentum transfer rate at a fixed distance, we see that GLE falls short, but our model still captures the main contribution. It’s also worth noting that NM-DPD shows decent results, but that’s because it uses VCCF as a fitting target.
+							</aside>
+					</section>
+					<section data-auto-animate data-menu-title="VHF">
+						<h3>
+							Numerical Result
+						</h3>
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div style="text-align:left">
+								van Hove function (VHF)
+								<p>
+									\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).		
+								</p>
+								<div style="font-size: 0.8em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=vhf
+								class="plotly-graph-div"
+								style="height:400; width:400;">
+							</div>
+							<script type="text/javascript" src="./text/vhf.js">
+							</script>
+						</div>
+						<aside class="notes">
+							Let’s look at another property, the van Hove Function (VHF), which is essentially a time evolution of the RDF. It measures the probability of finding a particle at time t with distance r from the central particle. Here, both NM-DPD and NM-GLE fall short, but our model stands strong!
+							</aside>
+					</section>
+					<section data-auto-animate data-menu-title="Hydromode">
+						<h3>
+							Numerical Result
+						</h3>
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div style="text-align:left">
+									normalized correlations of the Longitudinal Hydrodynamic Modes
+								<p>
+									\[ 
+									\begin{split}
+									C_L(t) &= \langle \tilde{u}_1(t)\tilde{u}_1(0)\rangle \\
+									\tilde{\mb u} &= \frac{1}{M}\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
+									\end{split}
+									\]
+								</p>
+								<div style="font-size: 0.8em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=long_corr
+								class="plotly-graph-div"
+								style="height:400; width:400;">
+							</div>
+							<script type="text/javascript" src="./text/long_corr.js">
+							</script>
+							<aside class="notes">
+								We can also explore the correlation of wave propagation modes, which represent the coefficients of the linearized NV equation in the spectrum domain. In the longitudinal direction, both NM-DPD and our model perform well, as the conservative term mainly contributes in this direction.
+								</aside>
+					</section>
+					<section data-auto-animate data-menu-title="Hydromode">
+						<h3>
+							Numerical Result
+						</h3>
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div style="text-align:left">
+									normalized correlations of the Transverse Hydrodynamic Modes
+								</h5>
+								<p>
+									\[ 
+									\begin{split}
+									C_L(t) &= \langle \tilde{u}_2(t)\tilde{u}_2(0)\rangle \\
+									\tilde{\mb u} &= \frac{1}{M}\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
+									\end{split}
+									\]
+								</p>
+								<div style="font-size: 0.8em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=trans_corr
+								class="plotly-graph-div"
+								style="height:300; width: 300;">
+							</div>
+							<script type="text/javascript" src="./text/trans_corr.js">
+							</script>
+							<aside class="notes">
+								However, when it comes to the transverse term, our model clearly outshines the others.
+								</aside>
+					</section>
+				</div>
+		</div>
+		
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script>
+			Reveal.initialize({
+				slideNumber: 'c/t',
+				width: 1000,
+				height: 800,
+				menu: {
+					titleSelector: 'h1, h2, h3', 
+					hideMissingTitles: true
+				},
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes , RevealMenu]
+			});
+		</script>
+	</body>
+</html>

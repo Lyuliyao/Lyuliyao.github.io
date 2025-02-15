@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Machine Learning-based Coarse-Grained models for molecular systems</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>	
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; /* This will vertically center the content */
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center; /* This will vertically center the text */
+			justify-content: flex-end; /* This will align the text to the right */
+			padding-right: 20px; /* Some spacing between the name and the equation */
+		}
+		div.model .equation {
+			flex: 2;
+		}
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+			.particle {
+				fill: blue;
+				stroke: black;
+				stroke-width: 1;
+			}
+			.bond {
+				stroke: black;
+				stroke-width: 2;
+			}
+			cite {
+				font-size: 0.4em; /* Adjust the font size as needed */
+				display: block; /* Optional: To make the citation appear on a new line */
+				color:#444
+			}
+			.theorem, .proposition {
+				border: 1px solid #000;
+				padding: 10px;
+				margin: 10px 0;
+			}
+			.theorem {
+				background-color: #f0f0f0;
+			}
+			.proposition {
+				background-color: #e0e0e0;
+			}
+			.theorem h4, .proposition h4 {
+				margin: 0;
+				font-size: 1em;
+			}
+			.content {
+				margin-top: 5px;
+				font-size: 0.6em;
+			}
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+			   diff: "\\mathop{}\\!\\mathrm{d}",
+			   MLMN: "\\mathcal{L}_\\mathcal{N}",
+			   bz: "\\mathbf{z}",
+			   bZ: "\\mathbf{Z}",
+			   bp: "\\mathbf{p}",
+			   bq: "\\mathbf{q}",
+			   bP: "\\mathbf{P}",
+			   bQ: "\\mathbf{Q}",
+			   br: "\\mathbf{r}",
+			   bs: "\\mathbf{s}",
+			   bF: "\\mathbf{F}",
+			   CM: "\\mathcal M_\\beta",
+			   l: "\\left",
+			   r: "\\right",
+			   intd: "\\mathrm{d}",
+			   mbm:"\\mathbf{m}",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script src="./figure/md.js"></script>
+
+	</head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-CQSV68665C');
+	</script>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<div style="text-align: center;">
+						<h4>
+						</h4>
+					</div>
+					<div style="margin-left: auto; text-align: left;">
+						<p>
+							lyuliyao <br>
+							Department of Computational Mathematics, Science & Engineering <br>
+							Michigan State University
+						</p>
+					</div>
+					<aside class="notes">
+						Today, I’m going to explore how we can integrate deep learning technology to enhance the construction of multiscale models.
+					</aside>
+                </section>
+				<section data-auto-animate data-menu-title="Research Experience">
+					<h2>
+						Research Experience
+					</h2>
+					<div style="margin-left: auto;text-align: left;">
+						<ol>
+							<li>
+								<strong>Machine learning methodology for multiscale modeling</strong>
+								<ul>
+									<li>
+										Many-body Dissipative Interactions
+									</li>
+									<li>
+										Neural Networks Respect Physical Symmetries
+									</li>
+									<li>
+										Accuracy beyond Mean-field Metrics
+									</li>
+									<li>
+										Non-Equilibrium Processes
+									</li>
+								</ul>
+							</li>
+							<li>
+							<strong>Gradient-Free Optimization Methods</strong> 
+							<ul>
+								<li>Momentum based consensus based optimization</li>
+								<li>Appliation on sampling and  control</li>
+							</ul>
+							</li>
+							<li>
+								<strong>Algorithms of Scientific Machine Learning</strong> 
+							<ul>
+								<li>Mixed Residual</li>
+								<li>Flexibility in Network Design</li>
+								<li>Enforce Boundary Condition </li>
+							</ul>
+							</li>
+						</ol>
+					</div>
+				</section>
+				
+				<section data-auto-animate>
+					<h4>
+						Machine learning methodology for multiscale modeling
+					</h4>
+					<div style="text-align:left">
+						Following the Mori-Zwanzig formalism, the dynamics of CG variable \(\bQ, \bP\) takes
+							\[ 
+							\dot{\mathbf{P}} = \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
+							- \underbrace{\int_0^t \color{red}{\mathbf{K}(\mathbf{Q}(s), t-s) }\dot \bQ(s) ds}_{\text{Memory part}} 
+							+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
+							\]
+					</div>
+					<div style="display: flex; flex-direction: center; align-items: center">
+						<div>
+							<ol>
+								<div>
+									<li class="fragment fade-in" data-fragment-index="1">
+										Many-body Dissipative Interactions
+										<div class="fragment fade-in-then-semi-out " data-fragment-index="2" style="font-size:0.8em;">
+											Markovian-Pairwise: \( \dot{\mb P_i}  = \mb F_i^C - \sum_{j} \mb K(Q_{ij})\mb V_j + \mb R(t)\)<br>
+											Non Markovian-Isotropic:  \( \dot{\mb P} = \mb F^C - \int_0^t \mb K(t-s) \mb V(s) \diff s + \mb R(t)\)<br>
+										<span style="color: red;"> (Our Model) Non Markovian-Manybody:</span>	 \(\dot{\mb P} =  \mb F^C -  \bm\Xi(\mb Q)\int_0^t {\rm e}^{- \bm\Lambda (t-s)}\bm\Xi(\mb Q)^T \mb V_{ij}(s) \diff s +  \mb R(t).\)<br>
+										</div>
+									</li>
+									<li class="fragment fade-in" data-fragment-index="3">
+										Neural Networks Respect Physical Symmetries
+										<div class="fragment fade-in-then-semi-out " data-fragment-index="4" style="font-size:0.8em;">
+												Translation: \(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+												Rotation:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+												Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+										</div>
+									</li>
+									<li class="fragment fade-in" data-fragment-index="6">
+										Accuracy beyond Mean-field Metrics
+									</li>
+									<li class="fragment fade-in" data-fragment-index="7">
+										Non-Equilibrium Processes
+									</li>
+								</div>
+							</ol>
+						</div>
+						<div class="fragment fade-in-then-out" data-fragment-index="5" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+							<div>
+								<svg id="canvas1"></svg>
+								<p style="font-size: 20px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+								<div class="matrix">
+								<table style="font-size: 20px;">
+									<tr>
+										<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma114"><sub>1</sub></span><span id="gamma131"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma122"><sub>2</sub></span><span id="gamma115"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma123"><sub>2</sub></span><span id="gamma125"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma124"><sub>2</sub></span><span id="gamma132"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma133"><sub>3</sub></span><span id="gamma116"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma134"><sub>3</sub></span><span id="gamma126"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma135"><sub>3</sub></span><span id="gamma136"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+									</tr>
+								</table>
+							</div>
+								<button id="clearButton1">Clear</button>
+							</div>
+							<div>
+							<svg id="canvas2"></svg>
+							<p style="font-size: 20px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+							<div class="matrix">
+								<table style="font-size: 20px;">
+									<tr>
+										<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma214"><sub>1</sub></span><span id="gamma231"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma222"><sub>2</sub></span><span id="gamma215"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma223"><sub>2</sub></span><span id="gamma225"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma224"><sub>2</sub></span><span id="gamma232"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma233"><sub>3</sub></span><span id="gamma216"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma234"><sub>3</sub></span><span id="gamma226"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma235"><sub>3</sub></span><span id="gamma236"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+									</tr>
+								</table>
+							</div>
+							<button id="clearButton2">Clear</button>
+							</div>
+							<script src="./figure/permutation.js"></script>
+						</div>
+					</div>
+					<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+						<div>
+							<b>Liyao Lyu</b>, Huna Lei<sup>*</sup>. 2024
+							"On the generalization ability of coarse-grained molecular dynamics models for non-equilibrium processes"
+							<em>Arxiv</em>
+						</div>
+						<div><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>. 2023.
+							"Construction of coarse-grained molecular dynamics with many-body non-Markovian memory"
+							<em>Physical Review Letters</em>
+							<a href="https://journals.aps.org/prl/pdf/10.1103/PhysRevLett.131.177301" 
+							class="logo">[PDF]</a>
+						</div>
+					</div>
+				</section>
+
+
+
+
+				<section data-auto-animate>
+					<div>
+						<h4>
+							Consensus-Based Optimization and Sampling
+						</h4>
+						<div style="text-align:left"> 
+							Let \(J:\mathbb R^d \to  \mathbb R\)  be a function. The problem we consider is given by \(\arg\min_{\Theta\in \mathbb R ^d} f(\Theta)\).<br>
+							<div class="fragment fade-in" data-fragment-index="1" >
+									Original Consensus-Based Optimization
+									<div class="fragment semi-fade-out" data-fragment-index="2" style="text-align:left; font-size:0.8em"> 
+									\(
+										\Theta^i_{t+1} = \Theta^i_t -\lambda  (\Theta^i_t - M)+\sqrt{\lambda}\sigma|(\Theta^i_t - M)|\xi_{\theta}^i,
+									\)
+									where \(M=\sum\limits_{k} \frac{\Theta_t^k w^k}{\sum\limits_{i} w^i}\), \(w^i = \exp\left ( -\beta \mathcal J^i\right ) \) and  \(\xi_{\theta}^i\sim \mathcal N(0,1)\).
+								</div>
+							</div>
+							<div class="fragment fade-in" data-fragment-index="3" >
+								<span style="color:red">Momentum based Consensus-Based Optimization</span>
+								<div class="fragment semi-fade-out" data-fragment-index="4" style="text-align:left; font-size:0.8em"> 
+								\[
+								\begin{aligned}
+								\Theta^i_{t+1} = \Theta^i_t +\lambda \Omega^i_t - \gamma_1\lambda  (\Theta^i_t - M)+\sqrt{\lambda}\xi_{\theta}^i, \quad 
+								\Omega^i_{t+1} = \Omega^i_t - \lambda m (\Theta^i_t - M) -\lambda \gamma_2 \Omega^i_t  + \sigma(t)\sqrt{\lambda m}  \xi_{\omega}^i.
+								\end{aligned}
+								\] 
+								</div>
+							</div>
+							<div class="fragment fade-in" data-fragment-index="5" >
+								The mean-field limit of the model is given by
+								<div class="fragment semi-fade-out" data-fragment-index="6" style="text-align:left; font-size:0.8em"> 
+								\begin{equation}
+								\label{equ:mean_M_CBO}
+									\begin{aligned}
+									\intd \bar{\Theta}_t =    \bar\Omega_t  \intd t  -\gamma_1  \l (\bar\Theta_t - \mathcal{M}_\beta[\mu_t] \r )\intd t+\sigma(t)\intd W_{\theta,t},\quad 
+									\intd 
+								\bar{\Omega}_t = 
+								- m \l (\bar\Theta_t - \mathcal{M}_\beta[\mu_t] \r ) \intd t -\gamma_2 \bar \Omega_t \intd t + \sqrt{m} \sigma(t)\intd W_{\omega,t},
+									\end{aligned}
+								\end{equation}
+								where 
+								\(
+								\CM[\mu] = \frac{\int \theta \exp(-\beta \mathcal J(\theta)\mu(\intd \theta)}{\int  \exp(-\beta \mathcal J(\theta)\mu(\intd \theta)}
+								\), 
+								\(\mu_t(\theta)  = \int \rho_t(\theta,\intd \omega)\), and \(\rho_t = Law (\bar{\Theta}_t,\bar\Omega_t)\).
+								</div>
+							</div>
+							<div class="fragment fade-in" data-fragment-index="7" >
+								Then the corresponding Fokker-Planck equation is 
+								<div class="fragment semi-fade-out" data-fragment-index="8" style="text-align:left; font-size:0.8em"> 
+								\begin{equation}
+								\label{equ:FP_M_CBO}
+								\begin{aligned}
+									\partial_t \rho_t =&  -\nabla_\theta\cdot \l ( \l ( \omega-\gamma_1(\theta-\CM [\mu_t])\r ) \rho_t\r )   + \nabla_\omega\cdot  \l ( \l( m \l (\theta - \CM \l [\mu_t \r] \r ) +\gamma_2 \omega\r)\rho_t\r )  +\frac{\sigma(t)^2m}{2} \Delta_\omega \rho_t+\frac{\sigma(t)^2 }{2} \Delta_\theta \rho_t.
+								\end{aligned}
+								\end{equation}
+								</div>
+							</div>
+							<div class="fragment fade-in" data-fragment-index="8" >
+								Define the energy functional as 
+								\(
+									E[\rho] = \frac{1}{2} \int \|\theta-\tilde\theta\|^2+ m^{-1}\|\omega\|^2 \intd\rho,
+								\)
+								we have the exponential decay 
+								\(E[\rho_t] \leq E[\rho_0]\exp(-(1-\tau)\lambda t)\)
+								and, up to a constant, the same behavior for \(W^2_2(\rho_t,\delta_{(\tilde\theta,0)})\).
+							</div>
+							<div class="fragment fade-in" data-fragment-index="9" >
+								Application:<br>
+								<ul>
+									<li>
+										Optimization: high dimensional (up to \(1000\)) nonconvex target function, Deep Ritz for solivng PDE.
+									</li>
+									<li>
+										Enhance sampling for construction free energy surface.
+									</li>
+									<li>
+										Stochastic (mean field) optimal control: update the policy without taking the gradient.
+									</li>
+								</ul>
+							</div>
+
+									<!-- <div style="font-size: 0.8em;">Proposition:</div>
+										<p>
+											Suppose \(\mathcal{L}^{-1}\)takes a local approximation in the quadratic form, by choosing
+											the following first two moments with \(\kappa_t=\kappa_l+\kappa_h\) 
+											\[\mbm_t = 
+								\sum_{i=1}^{N_w} \mb Q^i \hat{p}(\mb Q^i) \quad  \text{and} \quad  V_t = \kappa_t \sum_{i=1}^{N_w}  (\bQ^i-\mbm_t) (\bQ^i-\mbm_t)^T \hat{p}(\mb Q^i)\]
+								The distribution of the random walkers approaches \( q_t \to \frac{\exp{(-\kappa_h \mathcal{L}^- (\mathbf{z}))}}{\int \exp {(-\kappa_h \mathcal{L}^- (\mathbf{z}))} \, d\mathbf{z}} \) as \( t \to \infty \).
+							</p>
+						</div> -->
+					</div>
+					<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+						<div>Jingrun Chen, Shi Jin, <b>Liyao Lyu</b>. 2022. 
+							"A Consensus-Based Global Optimization Method with Adaptive Momentum Estimation" 
+							<em>Communications in Computational Physics</em> 
+							<a href="http://global-sci.org/intro/article_detail/cicp/20385.html" 
+							class="logo">[PDF]</a>
+						</div>
+						<div><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>. 2024.
+							"Consensus-based construction of high-dimensional free energy surface"
+							<em>Arxiv</em>
+						</div>
+						<div><b>Liyao Lyu</b>, Jingrun Chen<sup>*</sup>. 2024.
+							"Consensus Based Stochastic Control"
+							<em>In Prepare</em>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h4>
+						Algorithms of Scientific Machine Learning
+					</h4>
+					<ul>
+						<li>
+						<strong>Deep Mixed Residual Method (MIM) </strong>  design for solving <strong>high-order</strong> partial differential equations   
+						<div style="display: flex; align-items: flex-start;">
+							<ol style="flex: 1;">
+								<li>
+									<strong> Mixed Residual: </strong> <br>
+									Rewrite a high-order PDE into a first-order system,in the same spirit as local discontinuous Galerkin method and mixed finite element method 
+								</li>
+								<li>
+									<strong> Flexibility in Network Design:</strong><br>
+									Allows for different configurations, such as using the same or different DNNs for various unknown functions.
+								</li>
+								<li>
+								<strong> Enforce Boundary Condition :</strong><br>
+									 Design DNNs satisfy boundary and initial conditions automatically in a systematic manner
+								</li>
+							</ol>
+							<iframe src="../../html/biharmonic_2D_all.html" width="600" height="300" style="border:none; flex: 1; margin-left: 20px;"></iframe>
+						</div>
+						</li>
+						<strong> Deep Learning Based Discontinuous Galerkin Method (D2GM)  </strong>   to solve hyperbolic equations with <strong>discontinuous solutions</strong> and
+						<strong>random uncertainties </strong>
+						<div style="display: flex; align-items: flex-start;">
+							<ol style="flex: 1;">
+								<li>
+									<strong> Discontinuities of the solutions: </strong> <br>
+									Using the weak formulation and discontinuous element basis, the D2GM
+									is able to approximate discontinuous PDE solutions with high accuracy
+								</li>
+								<li>
+									<strong> High-dimensional Random Space:</strong><br>
+									Using the mini-batch sampling with controllable number of samples,
+									the D2GM overcomes the curse of dimensionality.
+								</li>
+							</ol>
+							<div style="text-align: center; flex: 1; margin-left: 20px;">
+								<iframe src="../../html/Burgers.html" width="600" height="300" style="border:none;"></iframe>
+							</div>
+						</div>
+						</li>
+					</ul>
+				</section>
+				</div>
+		</div>
+		
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script>
+			Reveal.initialize({
+				slideNumber: 'c/t',
+//				titleSelector: '',
+				menu: {
+					titleSelector: 'h1, h2, h3', 
+					hideMissingTitles: true
+				},
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes , RevealMenu]
+			});
+		</script>
+	</body>
+</html>

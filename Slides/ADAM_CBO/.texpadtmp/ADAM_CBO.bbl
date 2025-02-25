@@ -1,0 +1,457 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.1 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global}
+  \entry{Qian1999Jan}{article}{}
+    \name{author}{1}{}{%
+      {{hash=QN}{%
+         family={Qian},
+         familyi={Q\bibinitperiod},
+         given={Ning},
+         giveni={N\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Pergamon}%
+    }
+    \strng{namehash}{QN1}
+    \strng{fullhash}{QN1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \verb{doi}
+    \verb 10.1016/S0893-6080(98)00116-6
+    \endverb
+    \field{issn}{0893-6080}
+    \field{number}{1}
+    \field{pages}{145\bibrangedash 151}
+    \field{title}{{On the momentum term in gradient descent learning
+  algorithms}}
+    \field{volume}{12}
+    \field{journaltitle}{Neural Networks}
+    \field{year}{1999}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
+  \entry{kingma2014adam}{article}{}
+    \name{author}{2}{}{%
+      {{hash=KDP}{%
+         family={Kingma},
+         familyi={K\bibinitperiod},
+         given={Diederik\bibnamedelima P.},
+         giveni={D\bibinitperiod\bibinitdelim P\bibinitperiod},
+      }}%
+      {{hash=BJ}{%
+         family={Ba},
+         familyi={B\bibinitperiod},
+         given={Jimmy},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{KDPBJ1}
+    \strng{fullhash}{KDPBJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Adam: A method for stochastic optimization}
+    \field{journaltitle}{arXiv preprint arXiv:1412.6980}
+    \field{year}{2014}
+  \endentry
+
+  \entry{hanin2018neural}{inproceedings}{}
+    \name{author}{1}{}{%
+      {{hash=HB}{%
+         family={Hanin},
+         familyi={H\bibinitperiod},
+         given={Boris},
+         giveni={B\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{HB1}
+    \strng{fullhash}{HB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{Advances in neural information processing systems}
+    \field{pages}{582\bibrangedash 591}
+    \field{title}{Which neural net architectures give rise to exploding and
+  vanishing gradients?}
+    \field{year}{2018}
+  \endentry
+
+  \entry{liu2020bad}{article}{}
+    \name{author}{3}{}{%
+      {{hash=LS}{%
+         family={Liu},
+         familyi={L\bibinitperiod},
+         given={Shengchao},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=PD}{%
+         family={Papailiopoulos},
+         familyi={P\bibinitperiod},
+         given={Dimitris},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=AD}{%
+         family={Achlioptas},
+         familyi={A\bibinitperiod},
+         given={Dimitris},
+         giveni={D\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{LSPDAD1}
+    \strng{fullhash}{LSPDAD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Bad global minima exist and sgd can reach them}
+    \field{volume}{33}
+    \field{journaltitle}{Advances in Neural Information Processing Systems}
+    \field{year}{2020}
+  \endentry
+
+  \entry{carrillo2018analytical}{article}{}
+    \name{author}{4}{}{%
+      {{hash=CJA}{%
+         family={Carrillo},
+         familyi={C\bibinitperiod},
+         given={Jos{\'e}\bibnamedelima A.},
+         giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=CYP}{%
+         family={Choi},
+         familyi={C\bibinitperiod},
+         given={Young-Pil},
+         giveni={Y\bibinithyphendelim P\bibinitperiod},
+      }}%
+      {{hash=TC}{%
+         family={Totzeck},
+         familyi={T\bibinitperiod},
+         given={Claudia},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=TO}{%
+         family={Tse},
+         familyi={T\bibinitperiod},
+         given={Oliver},
+         giveni={O\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {World Scientific}%
+    }
+    \strng{namehash}{CJA+1}
+    \strng{fullhash}{CJACYPTCTO1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{06}
+    \field{pages}{1037\bibrangedash 1066}
+    \field{title}{An analytical framework for consensus-based global
+  optimization method}
+    \field{volume}{28}
+    \field{journaltitle}{Mathematical Models and Methods in Applied Sciences}
+    \field{year}{2018}
+  \endentry
+
+  \entry{totzeck2018numerical}{article}{}
+    \name{author}{4}{}{%
+      {{hash=TC}{%
+         family={Totzeck},
+         familyi={T\bibinitperiod},
+         given={Claudia},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=PR}{%
+         family={Pinnau},
+         familyi={P\bibinitperiod},
+         given={Ren{\'e}},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=BS}{%
+         family={Blauth},
+         familyi={B\bibinitperiod},
+         given={Sebastian},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=SS}{%
+         family={Schotth{\"o}fer},
+         familyi={S\bibinitperiod},
+         given={Steffen},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Wiley Online Library}%
+    }
+    \strng{namehash}{TC+1}
+    \strng{fullhash}{TCPRBSSS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{1}
+    \field{pages}{e201800291}
+    \field{title}{A Numerical Comparison of Consensus-Based Global Optimization
+  to other Particle-based Global Optimization Schemes}
+    \field{volume}{18}
+    \field{journaltitle}{PAMM}
+    \field{year}{2018}
+  \endentry
+
+  \entry{pinnau2017consensus}{article}{}
+    \name{author}{4}{}{%
+      {{hash=PR}{%
+         family={Pinnau},
+         familyi={P\bibinitperiod},
+         given={Ren{\'e}},
+         giveni={R\bibinitperiod},
+      }}%
+      {{hash=TC}{%
+         family={Totzeck},
+         familyi={T\bibinitperiod},
+         given={Claudia},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=TO}{%
+         family={Tse},
+         familyi={T\bibinitperiod},
+         given={Oliver},
+         giveni={O\bibinitperiod},
+      }}%
+      {{hash=MS}{%
+         family={Martin},
+         familyi={M\bibinitperiod},
+         given={Stephan},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {World Scientific}%
+    }
+    \strng{namehash}{PR+1}
+    \strng{fullhash}{PRTCTOMS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{01}
+    \field{pages}{183\bibrangedash 204}
+    \field{title}{A consensus-based model for global optimization and its
+  mean-field limit}
+    \field{volume}{27}
+    \field{journaltitle}{Mathematical Models and Methods in Applied Sciences}
+    \field{year}{2017}
+  \endentry
+
+  \entry{carrillo2019consensus}{article}{}
+    \name{author}{4}{}{%
+      {{hash=CJA}{%
+         family={Carrillo},
+         familyi={C\bibinitperiod},
+         given={Jos{\'e}\bibnamedelima A.},
+         giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=JS}{%
+         family={Jin},
+         familyi={J\bibinitperiod},
+         given={Shi},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=LL}{%
+         family={Li},
+         familyi={L\bibinitperiod},
+         given={Lei},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=ZY}{%
+         family={Zhu},
+         familyi={Z\bibinitperiod},
+         given={Yuhua},
+         giveni={Y\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{CJA+1}
+    \strng{fullhash}{CJAJSLLZY1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{A consensus-based global optimization method for high
+  dimensional machine learning problems}
+    \field{journaltitle}{arXiv preprint arXiv:1909.09249}
+    \field{year}{2019}
+  \endentry
+
+  \entry{ha2019convergence}{article}{}
+    \name{author}{3}{}{%
+      {{hash=HSY}{%
+         family={Ha},
+         familyi={H\bibinitperiod},
+         given={Seung-Yeal},
+         giveni={S\bibinithyphendelim Y\bibinitperiod},
+      }}%
+      {{hash=JS}{%
+         family={Jin},
+         familyi={J\bibinitperiod},
+         given={Shi},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=KD}{%
+         family={Kim},
+         familyi={K\bibinitperiod},
+         given={Doheon},
+         giveni={D\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{HSYJSKD1}
+    \strng{fullhash}{HSYJSKD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Convergence of a first-order consensus-based global
+  optimization algorithm}
+    \field{journaltitle}{arXiv preprint arXiv:1910.08239}
+    \field{year}{2019}
+  \endentry
+
+  \entry{Rahaman2018}{article}{}
+    \name{author}{8}{}{%
+      {{hash=RN}{%
+         family={Rahaman},
+         familyi={R\bibinitperiod},
+         given={Nasim},
+         giveni={N\bibinitperiod},
+      }}%
+      {{hash=AD}{%
+         family={Arpit},
+         familyi={A\bibinitperiod},
+         given={Devansh},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=BA}{%
+         family={Baratin},
+         familyi={B\bibinitperiod},
+         given={Aristide},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=DF}{%
+         family={Draxler},
+         familyi={D\bibinitperiod},
+         given={Felix},
+         giveni={F\bibinitperiod},
+      }}%
+      {{hash=LM}{%
+         family={Lin},
+         familyi={L\bibinitperiod},
+         given={Min},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=HFA}{%
+         family={Hamprecht},
+         familyi={H\bibinitperiod},
+         given={Fred\bibnamedelima A.},
+         giveni={F\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=BY}{%
+         family={Bengio},
+         familyi={B\bibinitperiod},
+         given={Yoshua},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=CA}{%
+         family={Courville},
+         familyi={C\bibinitperiod},
+         given={Aaron},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{RN+1}
+    \strng{fullhash}{RNADBADFLMHFABYCA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{On the Spectral Bias of Deep Neural Networks}
+    \field{journaltitle}{arXiv preprint arXiv:1806.08734}
+    \field{year}{2018}
+  \endentry
+
+  \entry{xu2019frequency}{article}{}
+    \name{author}{5}{}{%
+      {{hash=XZQJ}{%
+         family={Xu},
+         familyi={X\bibinitperiod},
+         given={Zhi-Qin\bibnamedelima John},
+         giveni={Z\bibinithyphendelim Q\bibinitperiod\bibinitdelim
+  J\bibinitperiod},
+      }}%
+      {{hash=ZY}{%
+         family={Zhang},
+         familyi={Z\bibinitperiod},
+         given={Yaoyu},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=LT}{%
+         family={Luo},
+         familyi={L\bibinitperiod},
+         given={Tao},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=XY}{%
+         family={Xiao},
+         familyi={X\bibinitperiod},
+         given={Yanyang},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=MZ}{%
+         family={Ma},
+         familyi={M\bibinitperiod},
+         given={Zheng},
+         giveni={Z\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{XZQJ+1}
+    \strng{fullhash}{XZQJZYLTXYMZ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{Frequency principle: Fourier analysis sheds light on deep
+  neural networks}
+    \field{journaltitle}{arXiv preprint arXiv:1901.06523}
+    \field{year}{2019}
+  \endentry
+
+  \entry{weinan2018deep}{article}{}
+    \name{author}{2}{}{%
+      {{hash=WE}{%
+         family={Weinan},
+         familyi={W\bibinitperiod},
+         given={E},
+         giveni={E},
+      }}%
+      {{hash=YB}{%
+         family={Yu},
+         familyi={Y\bibinitperiod},
+         given={Bing},
+         giveni={B\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer}%
+    }
+    \strng{namehash}{WEYB1}
+    \strng{fullhash}{WEYB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{number}{1}
+    \field{pages}{1\bibrangedash 12}
+    \field{title}{The deep Ritz method: a deep learning-based numerical
+  algorithm for solving variational problems}
+    \field{volume}{6}
+    \field{journaltitle}{Communications in Mathematics and Statistics}
+    \field{year}{2018}
+  \endentry
+\enddatalist
+\endinput

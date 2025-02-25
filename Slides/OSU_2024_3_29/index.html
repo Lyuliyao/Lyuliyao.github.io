@@ -1,0 +1,1373 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Machine Learning-based Coarse-Grained models for molecular systems</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>	
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; /* This will vertically center the content */
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center; /* This will vertically center the text */
+			justify-content: flex-end; /* This will align the text to the right */
+			padding-right: 20px; /* Some spacing between the name and the equation */
+		}
+		div.model .equation {
+			flex: 2;
+		}
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+			.particle {
+				fill: blue;
+				stroke: black;
+				stroke-width: 1;
+			}
+			.bond {
+				stroke: black;
+				stroke-width: 2;
+			}
+			cite {
+				font-size: 0.4em; /* Adjust the font size as needed */
+				display: block; /* Optional: To make the citation appear on a new line */
+				color:#444
+			}
+			.theorem, .proposition {
+				border: 1px solid #000;
+				padding: 10px;
+				margin: 10px 0;
+			}
+			.theorem {
+				background-color: #f0f0f0;
+			}
+			.proposition {
+				background-color: #e0e0e0;
+			}
+			.theorem h4, .proposition h4 {
+				margin: 0;
+				font-size: 1em;
+			}
+			.content {
+				margin-top: 5px;
+				font-size: 0.6em;
+			}
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+			   diff: "\\mathop{}\\!\\mathrm{d}",
+			   MLMN: "\\mathcal{L}_\\mathcal{N}",
+			   bz: "\\mathbf{z}",
+			   bZ: "\\mathbf{Z}",
+			   bp: "\\mathbf{p}",
+			   bq: "\\mathbf{q}",
+			   bP: "\\mathbf{P}",
+			   bQ: "\\mathbf{Q}",
+			   br: "\\mathbf{r}",
+			   bs: "\\mathbf{s}",
+			   bF: "\\mathbf{F}",
+			   intd: "\\mathrm{d}",
+			   mbm:"\\mathbf{m}",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script src="./figure/md.js"></script>
+
+	</head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-CQSV68665C');
+	</script>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<div style="text-align: center;">
+						<h4>
+							Machine Learning-based Coarse-Grained models for molecular systems
+						</h4>
+					</div>
+					<div style="margin-left: auto; text-align: left;">
+						<p>
+							lyuliyao <br>
+							Department of Computational Mathematics, Science & Engineering <br>
+							Michigan State University
+						</p>
+					</div>
+					<aside class="notes">
+						Today, I’m going to explore how we can integrate deep learning technology to enhance the construction of multiscale models.
+					</aside>
+                </section>
+				<section data-auto-animate data-menu-title="Multi-scale modeling:Background">
+					<h4>
+						<div style="display:inline">
+							Background:
+						</div> 
+						<div style="display:inline">
+							Multi-scale modeling
+						</div>
+					</h4>
+					<div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+						<div style="width:500px">
+							<figure style="margin-right: 5%;">
+								<img src="./figure/Dirac.png" style="object-fit: cover;" alt="Eiffel tower">
+							</figure>
+							<cite>
+								Dirac, Paul Adrien Maurice. "Quantum mechanics of many-electron systems."
+							</cite>
+						</div>
+						<div align="left">
+							<div style="margin-bottom: 50px; margin-right: 100px;">
+								<small>
+									The right physical principle for most of what we are interested in is already provided by the principles of quantum mechanics (QM). <br>
+								</small>
+							</div>
+							<div style="margin-left:100px;">
+							<small>
+								The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
+							</small>
+							</div>
+							<div style="margin-left:100px;">
+								<small>
+									The constructionist hypothesis breaks
+									down when confronted with <font color="#C82423">the twin
+									difficulties of scale and complexity.</font>
+								</small>
+							</div>
+							<div style="font-size: 0.6em;" align="center">
+								<br>
+								<font color="#C82423">Scale - High Dimensionality - Curse of Dimensionality </font> <br>
+								<font color="#C82423">Complexity - Empirical Model - Oversimplification</font>
+							</div>
+						</div>
+						<div style="width:500px">
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png"
+									style="width:300px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+							</figure>
+							<cite>
+								Anderson, Philip W. "More Is Different: Broken symmetry and the nature of the hierarchical structure of science."
+							</cite>
+						</div>
+					</div>
+				</section>
+				<!-- <section data-auto-animate>
+					<h4>
+						<div data-id="suptitle" style="display:inline">
+							Multi-scale modeling:
+						</div> 
+						<div style="display:inline">
+							Background 
+						</div>
+					</h4>
+					<div style="display: flex; justify-content: center; align-items: center;">
+
+						<div>
+							<div align="left">
+								<small>
+									The constructionist hypothesis breaks
+									down when confronted with <font color="#C82423">the twin
+									difficulties of scale and complexity.</font> The
+									behavior of large and complex aggregates of elementary particles, it turns
+									out, is not to be understood in terms
+									of a simple extrapolation of the properties of a few particles. Instead, at
+									each level of complexity entirely new
+									properties appear, and the understanding of the new behaviors requires research which I think is as fundamental
+									in its nature as any other.
+								</small>
+							</div>
+
+						</div>
+						<div>
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png"
+									style="width:2000px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+							</figure>
+							<cite>
+								Anderson, Philip W. "More Is Different: Broken symmetry and the nature of the hierarchical structure of science." Science 177.4047 (1972): 393-396.
+							</cite>
+						</div>
+					</div>
+
+					<aside class="notes">
+						However, the ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
+						<br>
+						This intricate challenge remained largely ignored until Anderson underscored, that the constructivist hypothesis falters when faced with the challenges of scale and complexity.
+					</aside>
+				</section> -->
+				<section data-auto-animate>
+					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 1;text-align: left;">
+							<p>
+								Full models: Hamiltonian dynamics \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
+								\[
+								\begin{align}
+								\dot{\bq} &= \bp \\
+								\dot{\bp} &= -\nabla_{\bq} U(\bq)
+								\end{align}
+								\]
+							</p>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 1;text-align: left;">
+							<p>
+								Full models: Hamiltonian dynamics \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
+								\[
+								\begin{align}
+								\dot{\bq} &= \bp \\
+								\dot{\bp} &= -\nabla_{\bq} U(\bq)
+								\end{align}
+								\]
+							</p>
+							<p>
+								Coarse-grained model: dynamics of collective variable (CV) \(\bZ = (\bQ, \bP) \in \mathbb{R}^{2N_{CG}}\) 
+
+							</p>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>Problem Setup: Coarse Grained Molecular Dynamics</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 2;text-align: left;">
+							<p>
+								Full models: Hamiltonian dynamics of phase variable \(\bz = (\bq, \bp) \in \mathbb{R}^{2N_{MD}}\)
+								\[
+								\begin{align}
+								\dot{\bq} &= \bp \\
+								\dot{\bp} &= -\nabla_{\bq} V(\bq)
+								\end{align}
+								\]
+							</p>
+							<p>
+								Coarse-grained model: dynamics of collective variable (CV) \(\bZ = (\bQ, \bP) \in \mathbb{R}^{2N_{CG}}\) 
+							</p>
+							<p>
+								Examples include:
+								<ul>
+									<li>Center of mass in polymeric fluids (extensive system)</li>
+									<li>Important distances or angles in biomolecules (non-extensive system)</li>
+								</ul>
+							</p>
+						</div>
+						<div style="flex: 1;">
+							<div>
+								<button id="updateValues1" style="height:2px;width:1px"></button>
+								<svg id="MD1" width="250" height="250" style="margin-bottom: 0 auto;"></svg>
+								<script>
+									generateAnimation("MD1", "updateValues1", 3, 0.75);
+								</script>
+								<p style="font-size: 0.4em; font-family:'Times New Roman', Times, serif">
+									Extensive system in periodical boudary condition
+								</p>
+							</div>
+							<figure style="text-align: center; margin: 0 auto;">
+								<img style="width: 50%; margin-bottom: 0;" src="./figure/alanine.png">
+							</figure>
+							<p style="font-size: 0.4em; font-family:'Times New Roman', Times, serif">\(\phi\) and \(\psi\) dihedral angles of the alanine peptide</p>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>Main Challenge</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 1;text-align: left;">
+							<p>
+								Following the Zwangzig's projection, the dynamics of \([\bQ,\bP] = [\phi_q(\bq),\phi_p(\bp,\bq)]\) takes
+								\[
+								\begin{aligned}
+								\dot \bQ &= \bP\\
+								\dot{\mathbf{P}} &= \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
+									- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \dot \bQ(s) ds}_{\text{Memory part}} 
+									+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
+								\end{aligned}
+								\]
+							</p>
+							<p>
+								The modeling term \(U\) and \(\mathbf K\) are unknown in general
+							</p>
+							<p>
+								<ul>
+								</ul>
+							</p>
+						</div>
+					</div>
+				</section>
+				
+				<section data-auto-animate>
+					<h4>
+						Free energy constuction
+					</h4>
+					<div style="display: flex; justify-content: space-between; align-items: center;">
+						<div style="flex: 2; ">
+							<ul>
+								<li>\(\bq\): positions of the atoms in a protein</li>
+								<li>\(V(\bq)\): potential of the micro-scale coordinates  \(\br\)</li>
+								<li>\(\bQ = \phi(\bq)\): CVs</li>
+								<li>\(U(\bQ)\): free energy surface (FES)</li>
+							</ul>
+							<div>
+								<p>
+									\[
+									\begin{aligned}
+									&U (\bQ)  =  -\frac{1}{\beta}\ln \rho(\bQ) \\ 
+									&\rho(\bQ) =  \frac{\int e^{(-\beta V(\bq))} \delta(\bs(\bq)-\bQ) \intd \br}{Z}\\
+									\end{aligned}
+									\]
+								</p>
+							</div>
+						</div>
+				
+						<div style="flex: 1;">
+							<figure>
+								<img style="width: 80%" src="./figure/alanine.png" alt="Alanine">
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">
+						<p>Constructing free energy surface is an important problem for many chemical and biology problems. It contains many important information of the complex system. For example, the minimum and the local minima usually represents the stable and metastable state of the system. FES is also important to some kinetic properties such as transition path or energy barrier between two metastable state. Usually, reconstructing FES is based on the Boltzmann relation. It relates the FES with the PDF of finding a particle in a particular state. The accurate construction of FES remains a practical challenge due to the high dimensionality and the prevalence of energy barriers.</p>
+					</aside>
+				</section>
+				<section data-auto-animate>
+					<h4>Main Challenges</h4>
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div align="left">
+								The Prevalence of Energy Barriers <br>
+								<p style="font-size:0.6em">
+								<span style="color: #C82423;"> Explore the phase space by overcoming energy barriers </span>  <br>
+								</p>
+								<p style="font-size:0.5em">
+								<sapn style="color:blue;">Existing Method</sapn>: Umbrella sampling, Histogram reweighting, Metadynamics, Variational enhanced sampling, Temperature-accelerated molecular dynamics
+								and Adiabatic free energy dynamics.<br>
+								</p>
+								The High Dimensionality  
+								<sapn style="color:blue;"> (Open) </sapn>
+								<p style="font-size:0.6em">
+								<span style="color: #C82423"> Exploite the posterior error to adaptively optimize the sampling ponits.</span><br>
+								</p>
+								<p style="font-size:0.5em">
+								<sapn style="color:blue">Recent Attempts</sapn>: Reinforce Dynamics (Uncertainty Indicator+ Multi DNN)
+								</p>
+						</div>
+						<div>
+							<figure>
+								<img style="width:800px;" src="./figure/MetaD.png">
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">
+						<p>The prevalence of energy barriers means the transtion between two metastable states is a rare event.</p>
+						<p>The probability of the trasition happens will decrease exponentially with the height of the energy bar.</p>
+						<p> Several ingenious methods based on importance sampling have been developed, such as umbrella sampling, histogram reweighting,metadynamics, variational enhanced sampling</p>
+						<p> They typically add a bias potential here to increase the probability of transition from one state to the other.</p>
+						<p> The finial reconstruction of the FES is based on the PDF estimation under the bias potential</p>
+						<p> Another type of method is based on increasing the temperature artificially, the increased the temperature of decrease the energy barrier and increase the probability of transtion happens.</p>
+					</aside>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						Main Idea
+					</h4>
+					<div style="display: flex; justify-content: left; align-items: center;">
+					<div data-id="interproduce" align="left">
+						<div>
+							<p>
+							Reformulation the direct construction of \(U(\bQ)\) by seeking NN representation \( A_{\mathcal N}(\bQ)\)
+								\(\min_{\mathcal{N}}\max_f \int_\Gamma \underbrace{\|-\nabla_\bz A_{\mathcal N}(\bQ) - \bF(\bQ)\|^2}_{\MLMN(\bQ): \text{Residual Error} } \quad f(\bQ) \intd\bQ\) 
+								<br>
+									\(
+									\bF(\bQ)
+								\):Force Calculated from full MD
+								<br>
+								\(f(\bQ)\): Sampling Distribution
+							</p>
+						</div>
+						<div>
+							<ul>
+								<li>
+									Minization problem:
+								</li>
+								optimize the NN approximation  \( A_{\mathcal N}(\bQ)\) given sample points <br>
+								<li>
+									<sapn style="color:#C82423;"> 	Maximum problem </sapn>:</li>
+									optimize the sampling distribution \(f(\bQ)\) given the trained FES
+								<li>
+									<sapn style="color:#C82423;"> Iteratively solving Minization and Maximation problems gives the constructed FES.</sapn>
+								</li>
+								</ul>
+						</div>
+						</div>
+						<div style="width:1200px">
+							<figure>
+								<img style="width:1200px;" src="./figure/consensus_flow.png">
+							</figure>
+						</div>
+					</div>
+
+					<aside class="notes">
+						<p> To achieve this goal, we introduce a min-max problem.</p>
+						<p> The min problem is common, give some sampling points in the training set, say they satisfies the distribution q</p>
+						<p> we ask minize the loss funtion defined as a L2 error of the negative gradient of parameterized FES and force sampled from full dynamics.</p>
+						<p> In max problem, give a trained FES, we want to obtain refine our training set or sampling points</p>
+						<p> Intuitively, we want to add more points where error is large, thus we maximize the loss with respect the distribution q</p>
+					 </aside>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						Maximum Problem : exploration
+					</h4>
+					<div>
+						<p>
+						Reformulation the direct construction of \(U(\bQ)\) by seeking NN representation \( A_{\mathcal N}(\bQ)\)
+							\(\min_{\mathcal{N}}\max_f \int_\Gamma \underbrace{\|-\nabla_\bz A_{\mathcal N}(\bQ) - \bF(\bQ)\|^2}_{\MLMN(\bQ): \text{Residual Error} } \quad f(\bQ) \intd\bQ\) 
+						</p>
+					</div>
+						<div align="left">
+							<ul>
+								<li>
+									Original problem:
+								\(\mathrm {arg max}_f \int - \MLMN(\bQ)f(\bQ) \intd \bQ \)  = \(\delta(\bQ-\bQ^*)\)<br>
+								\(\bQ^*\) - max residue point.
+								</li>
+								<li>
+									<sapn style="color:#C82423;">Entropy regularization:</sapn>
+								</li>
+							    \(
+									\mathrm {arg min}_{q} \int (\MLMN^-(\bQ) + \kappa_h^{-1} \ln q(\bQ)) q(\bQ) \intd \bQ 
+									\) <br>
+									\(
+										\MLMN^-(\bQ) = -\MLMN(\bQ)
+										\)<br>
+									Solution: \(f^*(\bQ)=\exp(-\kappa_h \MLMN^-(\bQ))/Z^*\)
+							</ul>
+						</div>
+						<div>
+							<sapn style="color:#C82423;"> How to sampling accoding to \(f^*(\bQ)\)?</sapn>
+						</div>
+					<aside class="notes">
+						<p> The minization problem is relative common, so we focus on the maximum problem first.</p>
+						<p> The solution of the maximum problem is delta function localed at the maximum error points.</p>
+						<p> However, this task can not be easily achievable, it's a high dimensional no convex optimization problem.</p>
+						<p> It's has a strong connection with the difficulty we mentioned before, the high energy bar on the FES</p>
+						<p> So typically we want to add some entropy regularization to give our algorithm some exploration ability</p>
+						<p> Also we add a minius sign to make maximation to minization.</p>
+						<p>The problem is convex for a Probability Density Function (PDF) \( q \), with a unique global minimum.</p> 
+						<p> kappa_h works as a </p>
+					 </aside>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						Maximum Problem : exploitation
+					</h4>
+					<div style="display: flex; justify-content: left; align-items: center;">
+						<div align="left" style="font-size: 0.9em;">
+							<p>
+								Main idea: To approximate \(f^*(\bQ)\) near the max-residual point, exploit the Laplace's principle
+								\[
+								\lim_{k_l\to \infty} -\frac{1}{\kappa_l} \log\left(\int \exp\left(-\kappa_l h(\bQ)\right)\intd \rho ^*(\bQ)\right) = h(\bQ^*)
+								\]
+								Given a collection of sample points \(\{\bQ^i\}_{i=1}^{N_w}\), construct the local quadratic approximation
+								\[
+								\MLMN^-(\bQ)   \approx G(\bQ) = \frac{1}{2} (\bQ-\mbm)^T V^{-1}(\bQ-\mbm) \\
+								f^*(\bQ)\approx  \exp(-\kappa_h G(\bQ))/\tilde{Z}
+								\]
+								The first two moments determined by low temperature approximation
+								\[
+								\mbm \approx 
+								\sum_{i=1}^{N_w} \mb Q^i \hat{p}(\mb Q^i) \quad 
+								V  \approx \kappa_t \sum_{i=1}^{N_w}  (\bQ^i-\mbm_t) (\bQ^i-\mbm_t)^T \hat{p}(\mb Q^i)\\
+								\hat{p} (\mb z) =  \frac{\exp {(-\kappa_l \MLMN^-(\bz^i))}}{\sum_{i=1}^{N_w}\exp {(-\kappa_l \MLMN^-(\bz^i)})}\\
+								\]
+							</p>
+						</div>
+						<div>
+							<figure style="width:200px">
+								<img style="width:200px;"  src="./figure/Laplaces_method.png">
+							</figure>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						The Max problem: consensus sampling
+					</h4>
+					<div align="left">
+						<p>
+						Exploitation and Exploration in McKean stochastic differential equation
+							\[
+							\dot{\bQ}^i_t = - \frac{1}{\gamma}\nabla_\bQ G(\bQ^i_t;\mb m_t ,V_t) + \sqrt{\frac{2}{\kappa_h\gamma}} \mathbf\xi_i(t)
+							\]
+							Unlike Lagevin Equation, it is non-local and \(G\) dependes on the distribution of \(\{\bQ_t^i\}_{i=1}^{N_w}\)
+						</p>
+								<div style="font-size: 0.8em;">Proposition:</div>
+									<p>
+										Suppose \(\mathcal{L}^{-1}\)takes a local approximation in the quadratic form, by choosing
+										the following first two moments with \(\kappa_t=\kappa_l+\kappa_h\) 
+										\[\mbm_t = 
+							\sum_{i=1}^{N_w} \mb Q^i \hat{p}(\mb Q^i) \quad  \text{and} \quad  V_t = \kappa_t \sum_{i=1}^{N_w}  (\bQ^i-\mbm_t) (\bQ^i-\mbm_t)^T \hat{p}(\mb Q^i)\]
+							The distribution of the random walkers approaches \( q_t \to \frac{\exp{(-\kappa_h \mathcal{L}^- (\mathbf{z}))}}{\int \exp {(-\kappa_h \mathcal{L}^- (\mathbf{z}))} \, d\mathbf{z}} \) as \( t \to \infty \).
+						</p>
+					</div>
+					<aside class="notes">
+						  <p>Instead we treat the sampler z as a random walker z^i_t, governed by the McKean stochastic differential equation.</p>
+						<p>
+							The adaptively constructed conservative potential function \( G(\bz_t) \) guides individual particles towards \( \bm_t \), indicative of the region of large residual error. 
+						</p> 
+
+					</aside>
+				</section>
+				
+				<section data-auto-animate>
+					<h4>
+						Numerical Result: a 1D toy example
+					</h4>
+					<div align="left">
+						<p>
+							Reference solution \(U(Q) = Q^2-\cos(2\pi Q)\) 
+						</p>
+					</div>
+					<div>
+						<figure>
+							<img style="width:1200px;" src="./figure/Rastrigin.png">
+						</figure>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>
+					Numerical Result (2D)
+					</h4>
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div>
+								<small>
+								<table>
+									<thead>
+										<tr>
+											<th rowspan="2">Method</th>
+											<th colspan="2">Accuracy</th>
+											<th colspan="2">Time (h)</th>
+										</tr>
+										<tr>
+											<th>\(l_2\) error</th>
+											<th>\(l_\infty\) error</th>
+											<th>Simulation</th>
+											<th>Train</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td rowspan="2">VES</td>
+											<td>5.39</td>
+											<td>21.03</td>
+											<td colspan="3">47.5</td>
+										</tr>
+										<tr></tr>
+										<tr>
+											<td rowspan="2">RiD</td>
+											<td>3.15</td>
+											<td>11.04</td>
+											<td>17.98</td>
+											<td>0.22(GPU)</td>
+										</tr>
+										<tr></tr>
+										<tr>
+											<td rowspan="2">CES</td>
+											<td rowspan="2">1.45</td>
+											<td rowspan="2">6.74</td>
+											<td rowspan="2">0.23 × 10walkers</td>
+											<td>0.18(CPU)</td>
+										</tr>
+										<tr>
+											<td>0.13(GPU)</td>
+										</tr>
+										<tr></tr>
+									</tbody>
+								</table>
+							</small>
+							<figure>
+								<p>
+									<img  style="width:80%" src="./figure/alanine.png">
+								</p>
+							</figure>
+							</div>
+							
+						<div
+							id=ala2
+							class="plotly-graph-div"
+							style="height:400; width:400;">
+						</div>
+						<script type="text/javascript" src="./text/ala2.js">
+						</script>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>Numerical Result (3D)</h4>
+					<div style="display: flex; flex-direction: center; align-items: center;">
+						<div>
+							<small>
+								<table border="1" cellspacing="0" cellpadding="8">
+									<thead>
+										<tr>
+											<th rowspan="2">Method</th>
+											<th colspan="2">Time</th>
+										</tr>
+										<tr>
+											<th>Simulation</th>
+											<th>Train</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>RiD</td>
+											<td>423</td>
+											<td>8 (GPU)</td>
+										</tr>
+										<tr>
+											<td>CES</td>
+											<td>4.81× 20walkers</td>
+											<td>0.84 (GPU)</td>
+										</tr>
+									</tbody>
+								</table>
+							</small>
+						</div>
+						<div style="overflow-y: auto; max-height: 400px;">
+							<div id="chi1_psi_15" class="plotly-graph-div" style="height:500px; width:600px;">
+								<small>\(\psi=1.5\)</small>
+							</div>
+							<div id="chi1_phi_10" class="plotly-graph-div" style="height:500px; width:600px;">
+								<small>\(\phi=1.0\)</small>
+							</div>
+							<div id="chi1_ome_15" class="plotly-graph-div" style="height:500px; width:600px;">
+								<small>\(\omega=1.5\)</small>
+							</div>
+							<script type="text/javascript" src="./text/chi1.js"></script>
+						</div>
+					</div>
+				</section>
+
+				<section data-auto-animate>
+					<h4>Numerical Result (30D)</h4>
+					<div>
+						<div style="overflow-y: auto; max-height: 400px;">
+							<div id="phi1_psi1" class="plotly-graph-div" style="height:400px; width:600px; margin: auto;">
+								<small>\(\phi_1,\psi_1\)</small>
+							</div>
+							<div id="phi2_phi3" class="plotly-graph-div" style="height:400px; width:600px; margin: auto;">
+								<small>\(\phi_2,\phi_3\)</small>
+							</div>
+							<div id="psi2_psi3" class="plotly-graph-div" style="height:400px; width:600px; margin: auto;">
+								<small>\(\psi_2,\psi_3\)</small>
+							</div>
+						</div>
+						<script type="text/javascript" src="./text/ala16.js"></script>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						Conclusion
+					</h4>
+					<div align="left">
+						<p>
+						The difficulty of constructing FES is not only on overcoming energy barrier but also in <font color="#C82423">high dimensionality</font>.
+									We introduce a <font color="#C82423">posterior errors driven </font>sampling process.
+						</p>
+					</div>
+					<div>
+						Further Question
+					</div>
+					<div align="left">
+						<p>
+								Is the FES (conservative part) sufficient to capture the kinetic behavior of CVs?
+								<br>
+								Can the non-conservative part be <font color="#C82423">simplified</font> in the treatment?
+								<br>
+							Oversimplication In Conservative part
+							\(A(\mathbf{\mb r_1,\mb r_2,\cdots})\neq A_1(\mb r_1)A_2(\mb r_2) \cdots\)
+						</p>
+					</div>
+				</section>		
+				
+				<section data-auto-animate>
+					<h4>
+						Main challenges
+					</h4>
+					<div data-id="MZCG" style="text-align:left">
+						<p>
+						Following the Mori-Zwanzig formalism, the dynamics of \(\bZ\) takes
+							\[ 
+							\dot{\mathbf{P}} = \underbrace{-\nabla U(\mathbf{Q})}_{\text{conservative part}} 
+							- \underbrace{\int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \dot \bQ(s) ds}_{\text{Memory part}} 
+							+ \underbrace{\mathbf{R}(t)}_{\text{Random part}} 
+							\]
+						</p>
+					</p>
+					</div>
+
+					<div style="display: flex; flex-direction: center; align-items: center;">
+						<div style="text-align:left;">
+							<p>
+							Invariant distribution \(\rho(\mb Q, \mb P) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 })]\)
+							</p>
+							<p>
+							The Mori-Zwanzig formalism is perfectly <font color="#C82423">general</font>.
+							</p>
+							<p>
+							However, the modeling term \(U\) and \(\mathbf{K}\) are generally unknown.
+							In practice, one has to resort to <font color="#C82423">simple approximations </font>.
+							</p>
+						</div>
+						<div>
+							<figure style="margin-left:10%">
+								<img src="./figure/friction_many2.png" style="width:800px; object-fit: cover;">
+								<figcaption>
+									Our Observation: <font color="#C82423">Manybody effect is important</font>
+								</figcaption>
+							</figure>
+						</div>
+					</div>
+				</section>
+				<section data-auto-animate>
+					<div data-id="MZCG">
+						<p>
+						\[ \dot{\mathbf{P}} = -\nabla U(\mathbf{Q}) - \int_0^t \mathbf{K}(\mathbf{Q}(s), t-s) \mathbf{V}(s) ds   + \mathbf{R}(t) \]
+						</p>
+					</div>
+					<small>
+					<div style="display: flex; flex-direction: center; align-items: center;">
+						<div style="font-size:0.8em;">
+							\[
+							\begin{align}
+							&\text{M-DPD(Markovian-Pairwise)} \\& \dot{\mb P_i}  = \mb F_i^C - \sum_{j} \mb K(Q_{ij})\mb V_j + \mb R(t).\\
+							&\text{NM-GLE(Non Markovian-Isotropic)}\\ & \dot{\mb P} = \mb F^C - \int_0^t \mb K(t-s) \mb V(s) \diff s + \mb R(t).\\
+							&\text{NM-DPD(Non Markovian-Pairwise)}\\ & \dot{\mb P}_i =  \mb F^C_{i} - \sum_j \int_0^t \mb K(Q_{ij},t-s) \mb V_{ij}(s) \diff s +  \sum_j\mb R_{ij}(t).\\
+							&\color{red}{\text{Our Model(Non Markovian-Manybody)}}\\ & \dot{\mb P} =  \mb F^C -  \bm\Xi(\mb Q)\int_0^t {\rm e}^{- \bm\Lambda (t-s)}\bm\Xi(\mb Q)^T \mb V_{ij}(s) \diff s +  \mb R(t),.
+							\end{align}
+							\]
+						</div>
+
+					</div>
+
+				</small>
+				</section>
+				
+
+				<section data-auto-animate>
+					<div>
+						Important Issues
+					</div>
+					<div style="display: flex; flex-direction: center; align-items: center">
+					<ul>
+						The memory kernel \(\mathbf{K}\) (equivalently in our model \(\mathbf{\Xi}\)) has to
+						<li>
+							Respect Physical Symmetries Constraints
+						</li> 
+							Translation: \(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+							Rotation:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+							Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+					</ul>
+					<div style="display: flex; justify-content: space-around;">
+						<div>
+							<svg id="canvas1"></svg>
+							<p style="font-size: 20px;">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+							<div class="matrix">
+							<table style="font-size: 20px;">
+								<tr>
+									<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
+									<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
+									<td>&Xi;<span id="gamma114"><sub>1</sub></span><span id="gamma131"><sub>3</sub></span></td>
+								</tr>
+								<tr>
+									<td>&Xi;<span id="gamma122"><sub>2</sub></span><span id="gamma115"><sub>1</sub></span></td>
+									<td>&Xi;<span id="gamma123"><sub>2</sub></span><span id="gamma125"><sub>2</sub></span></td>
+									<td>&Xi;<span id="gamma124"><sub>2</sub></span><span id="gamma132"><sub>3</sub></span></td>
+								</tr>
+								<tr>
+									<td>&Xi;<span id="gamma133"><sub>3</sub></span><span id="gamma116"><sub>1</sub></span></td>
+									<td>&Xi;<span id="gamma134"><sub>3</sub></span><span id="gamma126"><sub>2</sub></span></td>
+									<td>&Xi;<span id="gamma135"><sub>3</sub></span><span id="gamma136"><sub>3</sub></span></td>
+								</tr>
+								<tr>
+								</tr>
+							</table>
+						</div>
+							<button id="clearButton1">Clear</button>
+						</div>
+						<div>
+						<svg id="canvas2"></svg>
+						<p style="font-size: 20px;">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+						<div class="matrix">
+							<table style="font-size: 20px;">
+								<tr>
+									<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
+									<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
+									<td>&Xi;<span id="gamma214"><sub>1</sub></span><span id="gamma231"><sub>3</sub></span></td>
+								</tr>
+								<tr>
+									<td>&Xi;<span id="gamma222"><sub>2</sub></span><span id="gamma215"><sub>1</sub></span></td>
+									<td>&Xi;<span id="gamma223"><sub>2</sub></span><span id="gamma225"><sub>2</sub></span></td>
+									<td>&Xi;<span id="gamma224"><sub>2</sub></span><span id="gamma232"><sub>3</sub></span></td>
+								</tr>
+								<tr>
+									<td>&Xi;<span id="gamma233"><sub>3</sub></span><span id="gamma216"><sub>1</sub></span></td>
+									<td>&Xi;<span id="gamma234"><sub>3</sub></span><span id="gamma226"><sub>2</sub></span></td>
+									<td>&Xi;<span id="gamma235"><sub>3</sub></span><span id="gamma236"><sub>3</sub></span></td>
+								</tr>
+								<tr>
+								</tr>
+							</table>
+						</div>
+						<button id="clearButton2">Clear</button>
+						</div>
+						<script src="./figure/permutation.js"></script>
+					</div>
+					</div>
+				</section>
+					<section data-auto-animate>
+						<div>
+							Important Issues
+						</div>
+						<div style="display: flex; flex-direction: center; align-items: center">
+						<div>
+							<ul>
+								The memory kernel \(\mathbf{K}\) (equivalently in our model \(\mathbf{\Xi}\)) has to
+								<li>
+									Respect Physical Symmetries Constraints
+								</li> 
+									Translation Symmetry: \(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+									Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+									Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+								<li>
+									<font color="#C82423">Extensive</font>
+									<br>
+									Trained on \(\frac{3 \text{ molecular}}{2 \times 2 \text{ periodic box}}\) applied on \(\frac{12 \text{ molecular}}{4 \times 4 \text{ periodic box}}\) 
+								</li>
+							</ul>
+								<svg id="MD2" width="200" height="200"> </svg>
+								<div>
+								<button id="updateValues2">Update</button>
+									<script>
+										generateAnimation("MD2","updateValues2",3,0.5);
+									</script>
+								</div>
+						</div>
+						<div style="margin-left:auto">
+						<svg id="MD3" width="400" height="400"> </svg>
+							<button id="updateValues3">Update</button>
+							<script>
+								generateAnimation("MD3","updateValues3",12,0.5);
+							</script>
+						</div>
+						</div>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						Symmetry-preserving representation
+					</h4>
+					<div style="display: flex; align-items: center;">
+
+						<!-- SVG and Button Container -->
+						<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+							<figure>
+								<p><img src="./figure/Q.png">
+							</figure>
+							<figure>
+								<p><img src="./figure/hatQ.png">
+							</figure>
+						</div>
+						<div style="flex: 2; display: flex; flex-direction: column; align-items: center; text-align:left">
+								<p>
+								<font color="#C82423">Main Idea:</font><br>
+								seek a set of generalized coordinates to encode the many-body information. <br>
+								\( \hat{ \mathbf Q}^k_i = \mathbf{Q}_i \oplus \sum_{l\in\mathcal{N}_i} f^k(|\mathbf{Q}_{il}|) \mathbf{Q}_{il} \) <br> 
+								\( \hat{ \bQ}_{ij} =  [\hat{\mathbf{Q}}_{ij}^{1},\cdot,\hat{\mathbf{Q}}_{ij}^{K}], \quad \hat{\mathbf{Q}}_{ij}^{k} = \hat{\mathbf{Q}}_i^{k} - \hat{\mathbf{Q}}_j^{k} \)  <br>
+								\(\{f^k\}_{k=1}^K\) encodes the local environment of individual CG particles<br>
+								\(\hat{ \bQ}_{i}^k \) preserves the translational and rotational symmetry
+								and the permutation invariance.<br>
+								</p>
+						</div>
+						</div>
+				</section>
+				<section data-auto-animate>
+					<h4>
+						Symmetry-preserving representation
+					</h4>
+					<div style="display: flex; align-items: center;">
+
+						<!-- SVG and Button Container -->
+						<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+							<figure>
+								<p><img src="./figure/Q.png">
+							</figure>
+							<figure>
+								<p><img src="./figure/hatQ.png">
+							</figure>
+						</div>
+						<div style="flex: 2; display: flex; flex-direction: column; align-items: center; text-align:left">
+								<p>
+									Symmetry preserving form of the memory term \(\mathbf{K}(\bQ,t)\) <br>
+									\(\mathbf{K}(\bQ,t) = \mathbf{\Xi}(\bQ) \exp(-\Lambda t) \mathbf{\Xi}(\bQ) \)<br>
+									\(\mathbf{\Xi}_{ij} = [\mathbf{\Xi}_{ij}^1,\cdots \mathbf{\Xi}_{ij}^n] \quad n\) number of features
+								\(\boldsymbol{\Xi}^m_{ij} = \sum_{k} h_{m,k}(\hat{ \mathbf Q}_{ij}^T \hat{ \mathbf Q}_{ij} ) \hat{ \mathbf Q}_{ij}^k \otimes \hat{ \mathbf Q}_{ij}^k\) <br>
+								\(\boldsymbol{\Xi}^m_{ii} = \sum_{j\neq i} \mathbf{\Xi}^m_{ij} \) <br>
+									\(h\) map the local environment onto the friction matrix \(\boldsymbol{\Xi}^m_{ij}\)
+								</p>
+								<p>
+									<font color="#C82423">Proposition</font>: The above form of \(\mathbf{K}(\bQ,t)\) strictly preserves the translational, rotational and permutational symmetry constraints
+								</p>
+						</div>
+						</div>
+				</section>
+				<section data-auto-animate data-menu-title="RDF" style="text-align:left">
+					<h4>
+						Numerical result
+					</h4>
+					<div>
+						<p>
+							Empirical reduced models for comparison
+						</p>
+						<ul>
+							<li>
+								Generalized Langevin Equation (NM-GLE) \(K_{ij}(Q, t)  = \theta(t)I\)
+							</li>
+							<li>
+								Dissipative Particle Dynamics (M-DPD) \(K_{ij}(Q, t)  = \gamma_1(\bQ_{ij})\bQ_{ij}\bQ^T_{ij} + \gamma_2(\bQ_{ij})(I − \bQ_{ij}\bQ^T_{ij})\)
+							</li>
+							<li>
+								Non-Markovian DPD (NM-DPD) \(K_{ij}(Q, t)≈ [\gamma_1(\bQ_{ij})\bQ_{ij}\bQ^T_{ij} + \gamma_2(\bQ_{ij})(I − \bQ_{ij}\bQ^T_{ij})\theta(t)\)
+							</li>
+						</ul>
+					</div>
+					<div style="display: flex; justify-content: center; align-items: center">
+						<div>
+							<h5>
+								Radial Distribution Function (RDF)
+							</h5>
+							<p>
+									\[ g(r) = \frac{V}{N} \cdot \frac{{dN(r)}}{{4\pi r^2 dr}} \]
+							</p>
+							<p>
+								Remark: All reduced model use the same many-body CG conservative potential \(U\), yielding the same static properties
+							</p>
+						</div>
+						<div
+						id=rdf
+						class="plotly-graph-div"
+						style="height:450; width:450; margin-left:auto">
+						</div>
+						<script type="text/javascript" src="./text/rdf.js">
+						</script>
+				
+					<aside class="notes">
+						First up, we’re diving into some structural properties, like the Radial Distribution Function (RDF). It’s interesting to note that the RDF relies solely on the conservative term, and our application of the many-body conservative term allows us to nail it precisely!
+						</aside>
+				  </section>
+				  <section data-auto-animate data-menu-title="VACF">
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div>
+							<h5>
+								Velocity auto correlation function (VACF)
+							</h5>
+							<p>
+									\[ c(t)=\frac{\lt v_i(t) \cdot v_i(0) \gt }{ \lt v_i(0) \cdot v_i(0) \gt } \]
+							</p>
+							<div style="font-size: 0.5em;" data-id="table">
+								<table border="1">
+									<tr>
+										<th>Model</th>
+										<th>Temporal</th>
+										<th>Spatial</th>
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">M-DPD</td>
+										<td>Markovian</td>
+										<td>Pairwise</td>
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">NM-GLE</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Isotropic</td>
+
+									</tr>
+									<tr>
+										<td style="white-space: nowrap;">NM-DPD</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Pairwise</td>
+									</tr>
+									<tr>
+										<td style="color:red; white-space: nowrap;">NM-MB</td>
+										<td style="white-space: nowrap;">Non-Markovian</td>
+										<td>Manybody</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div
+							id=vacf
+							class="plotly-graph-div"
+							style="height:450; width:450;">
+						</div>
+						<script type="text/javascript" src="./text/vacf.js">
+						</script>
+					</div>
+					<aside class="notes">
+						Next, we’re exploring isotropic dynamic properties, such as the Velocity Auto Correlation Function (VACF), which measures the time correlation of a particle's velocity. Notice how our model, marked as NM-MB (red), and the state-independent GLE (purple) are spot on! This is because the GLE model uses the memory kernel as a free parameter to fit the VACF. As Von Neumann said, with four free parameters, one can draw an elephant! It’s not surprising, but it doesn’t mean GLE can recover the dynamics accurately.
+						</aside>
+					</section>
+					<section data-auto-animate data-menu-title="VCCF">
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div>
+								<h5>
+									Velocity cross correlation function (VCCF)
+								</h5>
+								<p>
+									\[ C^{xx}(t; r_0) = \mathbb{E}[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t) \vert Q_{ij}(0) = r_0] \]
+								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=vccf
+								class="plotly-graph-div"
+								style="height:400; width:400;">
+							</div>
+							<script type="text/javascript" src="./text/vccf.js">
+							</script>
+						</div>
+						<aside class="notes">
+							If we delve deeper into metrics like the Velocity Cross Correlation Function (VCCF), which represents the momentum transfer rate at a fixed distance, we see that GLE falls short, but our model still captures the main contribution. It’s also worth noting that NM-DPD shows decent results, but that’s because it uses VCCF as a fitting target.
+							</aside>
+					</section>
+					<section data-auto-animate data-menu-title="VHF">
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div>
+								<h5>
+									van Hove function (VHF)
+								</h5>
+								<p>
+									\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).		
+								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=vhf
+								class="plotly-graph-div"
+								style="height:400; width:400;">
+							</div>
+							<script type="text/javascript" src="./text/vhf.js">
+							</script>
+						</div>
+						<aside class="notes">
+							Let’s look at another property, the van Hove Function (VHF), which is essentially a time evolution of the RDF. It measures the probability of finding a particle at time t with distance r from the central particle. Here, both NM-DPD and NM-GLE fall short, but our model stands strong!
+							</aside>
+					</section>
+					<section data-auto-animate data-menu-title="Hydromode">
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div>
+								<h5>
+									normalized correlations of the Longitudinal Hydrodynamic Modes
+									<!-- normalized correlations of the longitudinal and transverse hydrodynamic modes -->
+								</h5>
+								<p>
+									\[ 
+									\begin{split}
+									C_L(t) &= \langle \tilde{u}_1(t)\tilde{u}_1(0)\rangle \\
+									\tilde{\mb u} &= 1/M\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
+									\end{split}
+									\]
+								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=long_corr
+								class="plotly-graph-div"
+								style="height:400; width:400;">
+							</div>
+							<script type="text/javascript" src="./text/long_corr.js">
+							</script>
+							<aside class="notes">
+								We can also explore the correlation of wave propagation modes, which represent the coefficients of the linearized NV equation in the spectrum domain. In the longitudinal direction, both NM-DPD and our model perform well, as the conservative term mainly contributes in this direction.
+								</aside>
+					</section>
+					<section data-auto-animate data-menu-title="Hydromode">
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div>
+								<h5>
+									normalized correlations of the Transverse Hydrodynamic Modes
+									<!-- normalized correlations of the longitudinal and transverse hydrodynamic modes -->
+								</h5>
+								<p>
+									\[ 
+									\begin{split}
+									C_L(t) &= \langle \tilde{u}_2(t)\tilde{u}_2(0)\rangle \\
+									\tilde{\mb u} &= 1/M\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
+									\end{split}
+									\]
+								</p>
+								<div style="font-size: 0.5em;" data-id="table">
+									<table border="1">
+										<tr>
+											<th>Model</th>
+											<th>Temporal</th>
+											<th>Spatial</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Isotropic</td>
+	
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Pairwise</td>
+										</tr>
+										<tr>
+											<td style="color:red; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">Non-Markovian</td>
+											<td>Manybody</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+							<div
+								id=trans_corr
+								class="plotly-graph-div"
+								style="height:300; width: 300;">
+							</div>
+							<script type="text/javascript" src="./text/trans_corr.js">
+							</script>
+							<aside class="notes">
+								However, when it comes to the transverse term, our model clearly outshines the others.
+								</aside>
+					</section>
+					<section data-auto-animate>
+						<h4>
+							Conclusion
+						</h4>
+						<div align="left">
+							<p>
+								The difficulty of constructing FES is not only on overcoming energy barrier but also in <font color="#C82423">high dimensionality</font>.
+								We introduce a posterior errors driven <font color="#BB9727"> sampling </font> process.
+								<br>
+								The previous empirical formula for the non-conservative term tended to <span style="color:#C82423">oversimplify the complexity</span> (many-body nature) of the original system. Our <span style="color:#BB9727">model</span> preserves the heterogeneous energy dissipation among the CG particles and accurately predicts the dynamics at the collective scale.
+							</p>
+					</div>
+					</section>
+					<section data-auto-animate>
+						<div style="display: flex; flex-direction: center; align-items: center; font-size: 0.8em">
+						<div>
+							<ul style="color: #BB9727; font-size: 0.8em">
+								<li style="margin-right: 15px;">Variable Selection</li>
+								<li style="margin-right: 15px;">Data Sampling</li>
+								<li style="margin-right: 15px;">Model Construction</li>
+							</ul>
+							<div>
+								<figure>
+									<img src="./figure/res_flow.png" alt="Reverse Poiseuille Flow" style="width: 500px; height: auto;">
+								</figure>
+								
+							</div>
+						</div>
+						<div>
+							<figure>
+								<img src="./figure/Rg.png" style="width:500px; height: auto;">
+							</figure>
+							<div style="font-size: 0.8em">
+								\[R_g^2 = \frac{1}{M} \sum_i m_i (r_i - r_{\text{cm}})^2\]
+							</div>
+							
+						</div>
+						</div>
+						<div style="font-size: 0.8em">
+							Elastic and Viscous behaviour is coupled.
+						</div>
+					</section>
+				    <section data-auto-animate>
+							
+						<div style="display: flex; flex-direction: center; align-items: center; font-size: 0.8em">
+							<div>
+								<div style="height: 500px; width: 500px;">
+									1D Reverse Poiseuille Flow
+									<div id="vx" class="plotly-graph-div">
+									</div>
+									<script type="text/javascript" src="./text/vx.js">
+									</script>
+								</div>
+							</div>
+						<div>
+							<div style="height: 500px; width: 500px;">
+								Vortex Flow
+								<div id="vortex" class="plotly-graph-div">
+								</div>
+								<script type="text/javascript" src="./text/vortex.js">
+								</script>
+							</div>
+						</div>
+						</div>
+					</section>
+				</div>
+		</div>
+		
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+		<script src="node_modules/reveal.js-menu/menu.js"></script>
+		<script>
+			Reveal.initialize({
+			slideNumber: 'c/t',
+			plugins: [ RevealMenu ],
+			titleSelector: '',
+			menu: {
+				titleSelector: 'h1, h2, h3, h4', 
+				hideMissingTitles: true
+			}
+		});
+		</script>
+	</body>
+</html>

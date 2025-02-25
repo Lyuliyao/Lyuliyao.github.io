@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Research</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CQSV68665C');
+</script>
+<body class="is-preload">
+    <div id="wrapper">
+        <div id="main">
+            <div class="inner">
+                <header id="header">
+                    <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
+                </header>
+                <section>
+                    <header class="main">
+                        <section>
+                            <h2>Research Interests</h2>
+                            <ul>
+                                <li> 
+                                    <strong style="font-size: 1.8em;">
+                                        Multiscale Modeling
+                                    </strong>
+                                    <br>
+                                    Coarse Grained Molecular Dynamics, Mori-Zwanzig Formalism, generalized Langevin Equation, Model Reduction
+                                </li>
+                                <li>
+                                    <strong style="font-size: 1.8em;">
+                                        Optimization
+                                    </strong>
+                                    <br>
+                                    Consensus Based Optimization, Consensus Based Sampling, Stochasitc Optimal Control
+                                </li>
+                                <li>
+                                    <strong style="font-size: 1.8em;">
+                                        Scientific Computing
+                                    </strong>
+                                    <br>
+                                    Mixed Redisual Method, Deep Learning Based Discontinuous Galerkin Method, Reproducing Activation Function 
+                                </li>
+                            </ul>
+                        </section>
+                    </header>
+                    <section>
+                        <h3>
+                            Machine Learning and Multiscale Modeling
+                        </h3>
+                        <p>
+                            Developing innovative machine learning methodologies to enhance bottom-up multiscale modeling and accurately predict complex physical phenomena.
+                        </p>
+                        <ul>
+                            <li>
+                                A <strong>non-conservative memory term</strong> is critical for coarse-grained molecular dynamics (CGMD).
+                                <div style="display: flex; align-items: flex-start;">
+                                    <!-- Ordered List -->
+                                    <ol style="flex: 1;">
+                                        <li>
+                                            <strong>Many-body Dissipative Interactions:</strong><br>
+                                            Introduced a machine-learning-based coarse-grained molecular dynamics (CGMD) model leveraging the Mori-Zwanzig formalism to include non-Markovian many-body memory interactions.
+                                        </li>
+                                        <li>
+                                            <strong>Neural Networks Respect Physical Symmetries:</strong><br>
+                                            Design neural networks that respect physical symmetries (e.g., rotational, translational, permutation) to model complex friction matrix accurately.
+                                        </li>
+                                        <li>
+                                            <strong>Accuracy beyond Mean-field Metrics:</strong><br>
+                                            Instead of matching the mean-field metrics such as the velocity autocorrelation function, the present model is constructed based on the Mori-Zwanzig formalism and naturally inherits the heterogeneous information.
+                                        </li>
+                                    </ol>
+                                    
+                                    <!-- Embed the Plotly animation -->
+                                    <iframe src="./html/von_hove.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                                </div>
+                            </li>
+                            <li>
+                                Coarse-Grained Molecular Dynamics Models for <strong>Non-Equilibrium Processes</strong>
+                                <div style="display: flex; align-items: flex-start;">
+                                    <ol style="flex: 1;">
+                                        <li>
+                                            <strong> Generalization Challenge: </strong> <br>
+                                            Applicability to various non-equilibrium processes is generally unwarranted due to the inconsistency in the conditional distribution.
+                                        </li>
+                                        <li>
+                                            <strong> Training CG variables:</strong><br>
+                                            Seeking a set of auxiliary CG variables based on the time-lagged independent component analysis
+                                            to minimize the entropy contribution of the unresolved variables.
+                                        </li>
+                                    </ol>
+                                    <iframe src="./html/vel_evol.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                                    </div>
+                            </li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>
+                            Algorithms of Scientific Machine Learning
+                        </h3>
+                        <ul>
+                            <li>
+                            <strong>Deep Mixed Residual Method (MIM) </strong>  design for solving <strong>high-order</strong> partial differential equations   
+                            <div style="display: flex; align-items: flex-start;">
+                                <ol style="flex: 1;">
+                                    <li>
+                                        <strong> Mixed Residual: </strong> <br>
+                                        Rewrite a high-order PDE into a first-order system,in the same spirit as local discontinuous Galerkin method and mixed finite element method 
+                                    </li>
+                                    <li>
+                                        <strong> Flexibility in Network Design:</strong><br>
+                                        Allows for different configurations, such as using the same or different DNNs for various unknown functions.
+                                    </li>
+                                    <li>
+                                    <strong> Enforce Boundary Condition :</strong><br>
+                                         Design DNNs satisfy boundary and initial conditions automatically in a systematic manner
+                                    </li>
+                                </ol>
+                                <iframe src="./html/biharmonic_2D_all.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
+                            </div>
+                            </li>
+                            <strong> Deep Learning Based Discontinuous Galerkin Method (D2GM)  </strong>   to solve hyperbolic equations with <strong>discontinuous solutions</strong> and
+                            <strong>random uncertainties </strong>
+                            <div style="display: flex; align-items: flex-start;">
+                                <ol style="flex: 1;">
+                                    <li>
+                                        <strong> Discontinuities of the solutions: </strong> <br>
+                                        Using the weak formulation and discontinuous element basis, the D2GM
+                                        is able to approximate discontinuous PDE solutions with high accuracy
+                                    </li>
+                                    <li>
+                                        <strong> High-dimensional Random Space:</strong><br>
+                                        Using the mini-batch sampling with controllable number of samples,
+                                        the D2GM overcomes the curse of dimensionality.
+                                    </li>
+                                </ol>
+                                <div style="text-align: center; flex: 1; margin-left: 20px;">
+                                    <iframe src="./html/Burgers.html" width="600" height="350" style="border:none;" loading="lazy"></iframe>
+                                </div>
+                            </div>
+                            </li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h3>
+                            Gradient-Free Optimization Methods
+                        </h3>
+                        <p>
+                            Exploring novel optimization strategies that bypass traditional gradient calculations to solve complex, multidimensional problems.
+                        </p>
+                    </section>
+
+                </section>
+            </div>
+        </div>
+        <div id="sidebar">
+            <div class="inner">
+                <div id="navbar-placeholder"></div>
+				<script>
+				// 使用fetch API来加载navbar.html内容
+				fetch('./side.html')
+				  .then(response => response.text())
+				  .then(text => document.getElementById('navbar-placeholder').innerHTML = text);
+				</script>
+                <section>
+                    <header class="major">
+                        <h2>Get in touch</h2>
+                    </header>
+                    <ul class="contact">
+                        <li class="icon solid fa-envelope">lyuliyao[at]msu[dot]edu</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>  
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+\begin{thebibliography}{1}
+
+\bibitem{cite1}
+First~Name Last~Name.
+\newblock Title of article.
+\newblock {\em Journal Title}, vol(no):p1--p2, yyyy.
+
+\end{thebibliography}

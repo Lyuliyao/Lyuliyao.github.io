@@ -1,0 +1,78 @@
+This is BibTeX, Version 0.99d (TeX Live 2020)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: /Users/liyaolyu/Documents/GitHub/Lyuliyao.github.io/Slides/.texpadtmp/ADAM_CBO.aux
+The style file: biblatex.bst
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: ADAM_CBO-blx.bib
+Database file #2: ../mybeamer.bib
+Repeated entry---line 1203 of file ../mybeamer.bib
+ : @article{carrillo2018analytical
+ :                                ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1247 of file ../mybeamer.bib
+ : @article{pinnau2017consensus
+ :                             ,
+I'm skipping whatever remains of this entry
+Repeated entry---line 1269 of file ../mybeamer.bib
+ : @article{carrillo2019consensus
+ :                               ,
+I'm skipping whatever remains of this entry
+Biblatex version: 3.13
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 13 entries,
+            6365 wiz_defined-function locations,
+            1266 strings with 11355 characters,
+and the built_in function-call counts, 84795 in all, are:
+= -- 6382
+> -- 1356
+< -- 295
++ -- 2295
+- -- 501
+* -- 5915
+:= -- 9877
+add.period$ -- 0
+call.type$ -- 13
+change.case$ -- 157
+chr.to.int$ -- 43
+cite$ -- 24
+duplicate$ -- 9085
+empty$ -- 7501
+format.name$ -- 903
+if$ -- 17047
+int.to.chr$ -- 0
+int.to.str$ -- 30
+missing$ -- 0
+newline$ -- 447
+num.names$ -- 542
+pop$ -- 4469
+preamble$ -- 1
+purify$ -- 257
+quote$ -- 0
+skip$ -- 2182
+stack$ -- 0
+substring$ -- 11123
+swap$ -- 1797
+text.length$ -- 287
+text.prefix$ -- 1
+top$ -- 1
+type$ -- 430
+warning$ -- 0
+while$ -- 1399
+width$ -- 0
+write$ -- 435
+(There were 3 error messages)

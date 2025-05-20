@@ -181,7 +181,60 @@
 						</ul>
 					</aside>
 				</section>
-								
+				<section data-auto-animate data-menu-title="Multi-scale modeling:Background">
+					<h3>
+						<div style="display:inline">
+							Multi-scale modeling:
+						</div> 
+						<div style="display:inline">
+							Background 
+						</div>
+					</h3>
+					<div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+						<div class="fragment fade-in-then-semi-out"  data-fragment-index="1" style="width:500px">
+							<figure>
+								<p><img src="./figure/Dirac.png"
+									style="width:300px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left;">
+									Dirac, Paul Adrien Maurice.
+									Quantum mechanics of many-electron systems.
+								</div>
+							</figure>
+						</div>
+						<div style="text-align: left;">
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="1"  style="margin-bottom: 50px; margin-right: 100px;">
+									The right physical principle for most of what we are interested in is already provided by the principles of quantum mechanics (QM). <br>
+							</div>
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
+								The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
+							</div>
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
+									The constructionist hypothesis breaks
+									down when confronted with <span style="color:#E65100">the twin
+									difficulties of scale and complexity.</span>
+							</div>
+						</div>
+						<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="width:500px">
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png"
+									style="width:300px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+									Anderson, Philip W.
+									More Is Different: Broken symmetry and the nature of the hierarchical structure of science.
+								</div>
+							</figure>
+						</div>
+					</div>
+					<div class="fragment fade-in-then-semi-out"  data-fragment-index="3" style="text-align: left; margin-left:100px;">
+						<br>
+						<span style="color:#E65100">Scale - High Dimensionality - Curse of Dimensionality </span> <br>
+						<span style="color:#E65100">Complexity - Empirical Model - Oversimplification</span>
+					</div>
+				</section>		
 				<section data-auto-animate>
 					<h3>Mori-Zwanzig Formalism</h3>
 				
@@ -214,13 +267,13 @@
 					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
 						<ul>
 							<li class="fragment fade-in-then-semi-out">
-							The Mori-Zwanzig formalism is <font color="#E65100">general</font>. 
+							The Mori-Zwanzig formalism is <span style="color:#E65100">general</span>. 
 							</li>
 							<li class="fragment fade-in-then-semi-out">
-							In practice, one has to resort to very <font color="#E65100">simple and ad hoc</font>  approximations.
+							In practice, one has to resort to d <span style="color:#E65100">simple and ad hoc</span>  approximations.
 						 	</li>
 							<li class="fragment fade-in-then-semi-out">
-								Oversimplification of Memory Contribution <font color="#E65100">under-explored</font>.
+								Oversimplification of Memory Contribution <span style="color:#E65100">under-explored</span>.
 							</li>
 						</ul>
 					</div>
@@ -1588,10 +1641,25 @@
 												<li class="fragment fade-in" data-fragment-index="8">
 													Non Fourier Law <br>
 													\[
-													\begin{aligned}
-													u_t &=  \left( \nabla\cdot\Gamma[u,v] \nabla \right)\frac{\delta \mathcal{S}[u,v] }{\delta u }\\
-													v_t &= \left( -\alpha[u,v] +\nabla\cdot\Gamma[u,v] \nabla \right)\frac{\delta \mathcal{S}[u,v] }{\delta v }	
-													\end{aligned}
+													\left(
+													\begin{matrix}
+													u_t \\
+													v_t 
+													\end{matrix}
+													\right)
+													= \left[
+													-\left(
+													\begin{matrix}
+													~ & ~ \\
+													~ & \alpha[u,v]
+													\end{matrix}
+													\right)
+													+  \nabla\cdot\Gamma[u,v] \nabla 
+													\right]
+													\begin{matrix}
+													\frac{\delta\mathcal{S}[u,v] }{\delta u } \\
+													\frac{\delta\mathcal{S}[u,v] }{\delta v } 
+													\end{matrix}
 													\]
 												</li>
 											</ul>
@@ -1604,28 +1672,15 @@
 								Outlook: Macroscopic Model
 							</h3>
 							In collaboration with Huan Lei
-							<div style="display: flex; flex-direction: center; align-items: center;">
-								<div>
-									<ul>
-										<li>
-											Non fourier heat conduction
-											<ul>
-												<li>
-													Non Fourier Law <br>
-													\[
-													\begin{aligned}
-													u_t &=  \left( \nabla\cdot\Gamma[u,v] \nabla \right)\frac{\delta \mathcal{S}[u,v] }{\delta u }\\
-													v_t &= \left( -\alpha[u,v] +\nabla\cdot\Gamma[u,v] \nabla \right)\frac{\delta \mathcal{S}[u,v] }{\delta v }	
-													\end{aligned}
-													\]
-												</li>
-											</ul>
-										</li>
-									</ul>
-								</div>
-								<div class="fragment fade-in">
-									<iframe src="./html/heat_conduction.html" width="450" height="360" style="border:none; flex: 1; margin-left: 20px;" class="fragment fade-in"></iframe>
-								</div>
+							<div>
+								<ul>
+									<li>
+										Non fourier heat conduction
+										<div class="fragment fade-in">
+											<iframe src="./html/heat_conduction.html" width="450" height="360" style="border:none; flex: 1; margin-left: 20px;" class="fragment fade-in"></iframe>
+										</div>
+									</li>
+								</ul>
 							</div>
 							<div class="highlight fragment fade-in">
 								<span style="color:#E65100;"><strong>Future Direction:</strong></span><br>

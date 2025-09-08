@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Machine Learning-based Coarse-Grained models for molecular systems</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>	
+		div.highlight {
+			background-color:#FFF9C4;
+			text-align: left;
+			 margin-top: 20px; 
+			 padding: 15px; 
+			 border-radius: 8px; 
+			 box-shadow: 2px 2px 10px #ccc;
+		}
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; /* This will vertically center the content */
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center; /* This will vertically center the text */
+			justify-content: flex-end; /* This will align the text to the right */
+			padding-right: 20px; /* Some spacing between the name and the equation */
+		}
+		div.model .equation {
+			flex: 2;
+		}
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+			.particle {
+				fill: #1976D2;
+				stroke: black;
+				stroke-width: 1;
+			}
+			.bond {
+				stroke: black;
+				stroke-width: 2;
+			}
+			cite {
+				font-size: 0.4em; /* Adjust the font size as needed */
+				display: block; /* Optional: To make the citation appear on a new line */
+				color:#444
+			}
+			.theorem, .proposition {
+				border: 1px solid #000;
+				padding: 10px;
+				margin: 10px 0;
+			}
+			.theorem {
+				background-color: #f0f0f0;
+			}
+			.proposition {
+				background-color: #e0e0e0;
+			}
+			.theorem h4, .proposition h4 {
+				margin: 0;
+				font-size: 1em;
+			}
+			.content {
+				margin-top: 5px;
+				font-size: 1em;
+			}
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Register.StartupHook("TeX color Ready", function() {
+				MathJax.Extension["TeX/color"].colors["myred"] = '#E65100';
+		   });
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+			   diff: "\\mathop{}\\!\\mathrm{d}",
+			   MLMN: "\\mathcal{L}_\\mathcal{N}",
+			   bz: "\\mathbf{z}",
+			   bZ: "\\mathbf{Z}",
+			   bp: "\\mathbf{p}",
+			   bq: "\\mathbf{q}",
+			   bP: "\\mathbf{P}",
+			   bQ: "\\mathbf{Q}",
+			   bV: "\\mathbf{V}",
+			   br: "\\mathbf{r}",
+			   bs: "\\mathbf{s}",
+			   bF: "\\mathbf{F}",
+			   CM: "\\mathcal M_\\beta",
+			   l: "\\left",
+			   r: "\\right",
+			   intd: "\\mathrm{d}",
+			   mbm:"\\mathbf{m}",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="https://cdn.plot.ly/plotly-2.9.0.js"></script>
+		<script src="./figure/md.js"></script>
+		<script src="./figure/title.js"></script>
+
+	</head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-CQSV68665C');
+	</script>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-menu-title="Coarse-Grained Molecular Dynamics" >
+					<div style="text-align: center; margin-bottom: 20px; font-weight: 700;">
+						<h1 id="title-text2" style="margin-top: -100px; font-size: 2.0em; color: #2c3e50;"></h1>
+					</div>
+					<div style="text-align: center; margin-top: 20px;">
+						<svg id="MD1" width="750" height="300" style="border: none;"></svg>
+						<button id="updateValues1" style="padding: 8px 15px; border: none; border-radius: 5px;font-style: serif; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></button>
+						<div>
+							<script>
+								title("MD1", "updateValues1", 30, 0.75);
+							</script>
+						</div>
+					</div>
+					<div style="text-align: center; font-weight: 400; margin-top: -10px;">
+						<p id="author2" style="margin-bottom: 2px; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></p>
+						<p id="department2" style="margin-bottom: 2px; font-size: 1.1em; color: #34495e;"></p>
+						<p id="school2" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
+					</div>
+				
+					<script>
+						function typeText(elementId, text, speed) {
+							let i = 0;
+							function type() {
+								if (i < text.length) {
+									document.getElementById(elementId).innerHTML += text.charAt(i);
+									i++;
+									setTimeout(type, speed);
+								}
+							}
+							type();
+						}
+						document.addEventListener("DOMContentLoaded", function () {
+							typeText("title-text2", "Machine Learning-based Coarse-Grained models for molecular systems", 30);
+							setTimeout(() => typeText("author2", "Liyao Lyu", 30), 2000);
+							setTimeout(() => typeText("department2", "Department of Mathematics", 30), 2500);
+							setTimeout(() => typeText("school2", "University of California, Los Angeles", 30), 3000);
+						});
+					</script>
+				
+					<aside class="notes">
+						<ul>
+						Today, I will discuss Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory.	
+						The central challenge we address is this: How do we bridge high-resolution atomistic simulations to mesoscale phenomena?
+						Atomistic simulations track every atomic detail but computationally impossible for large systems.
+						Coarse-grained (CG) models simplify this by focusing on collective variables, like the center of mass (dashed circles), rather than individual atoms (solid circles).
+						But existing CG models often oversimplify memory effects. Our work introduces a framework that retains these critical many-body, non-Markovian features while preserving computational efficiency. 
+						</ul>
+					</aside>
+				</section>	
+				<section data-auto-animate>
+					<h3>Mori-Zwanzig Formalism</h3>
+					<div style="text-align: left;">
+						<p>In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b>
+						   follow:
+						</p>
+					</div>
+				
+					<div data-id="MZCG">
+						\[
+						\begin{aligned}
+						\dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
+						\dot{\mathbf{P}} &= 
+						\underbrace{-\nabla U(\mathbf{Q})}_{\text{Conservative Force}} 
+						- \underbrace{\int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds}_{\text{Memory Contribution}} 
+						+ \underbrace{\mathbf{R}(t)}_{\text{Random Force}}.
+						\end{aligned}
+						\]
+					</div>
+
+					<div style="display: flex; justify-content: center; margin-top: 10px;">
+						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 300px)); ">
+							<li><b>\( \mathbf{Q} \)</b>: Center of mass</li>	
+							<li><b>\( \mathbf{P} \)</b>: Total momentum</li>	
+							<li><b>\( \mathbf{V} \)</b>: Velocity</li>	
+							<li><b>\( \mathbf{M} \)</b>: Mass matrix</li>
+						</ul>
+					</div>
+					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
+						<ul>
+							<li class="fragment fade-in-then-semi-out">
+							The Mori-Zwanzig formalism is <span style="color:#E65100">general</span>. 
+							</li>
+							<li class="fragment fade-in-then-semi-out">
+							In practice, one has to resort to <span style="color:#E65100">simple and ad hoc</span>  approximations.
+						 	</li>
+							<li class="fragment fade-in-then-semi-out">
+								Oversimplification of Memory Contribution <span style="color:#E65100">under-explored</span>.
+							</li>
+						</ul>
+					</div>
+					<div style="opacity: 0.8; font-size: 1em; text-align: left; position: absolute;">
+						<div>
+							Zwanzig, Robert.
+							Nonequilibrium statistical mechanics. Oxford university press, 2001.
+						</div>
+					</div>
+				
+					<aside class="notes">
+						<ul>
+							Theorically, the dynamics of the coarse-grained variable can be given by the Mori-Zwanzig formalism.
+							Here Q is the center of mass and P its momentum respectively and M is the mass matrix. 
+							The force term is decomposited into three part represents the convervative, memory and ramdom respectively.
+							While the MZ is general, it do not give a closed-form expressions. 
+							The formula of conservative force and the memory kernel as a function of CG variable Q is unknown.
+							Mnay efforts has been focused on refining the conservative force—often using many-body potentials.
+							However, oversimplication of the memory kernel has been overlooked, typically reduced to pairwise or isotropic terms.
+							This oversight is consequential: as our numerical results will demonstrate, the memory kernel’s many-body, state-dependent nature is essential to reproduce dynamic properties like transport and hydrodynamic correlations. 
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Important New Issues</h3>
+					<div style="display: flex; flex-direction: center; align-items: center">
+						
+						<div>
+							<ul class="fragment fade-in" data-fragment-index="1">
+								<li> To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
+
+									<ol>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
+											Translation Invariance:\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+										</li>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
+											Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+										</li>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
+											Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+										</li>
+									</ol>
+								</li>
+								<li class="fragment fade-in" data-fragment-index="5"> Extensive 
+								</li>
+							</ul>
+						</div>
+						<div class="fragment fade-in-then-out" data-fragment-index="4" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+							<div>
+								<svg id="canvas1"></svg>
+								<p style="font-size: 20px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+								<div class="matrix">
+								<table style="font-size: 20px;">
+									<tr>
+										<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma114"><sub>1</sub></span><span id="gamma131"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma122"><sub>2</sub></span><span id="gamma115"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma123"><sub>2</sub></span><span id="gamma125"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma124"><sub>2</sub></span><span id="gamma132"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma133"><sub>3</sub></span><span id="gamma116"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma134"><sub>3</sub></span><span id="gamma126"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma135"><sub>3</sub></span><span id="gamma136"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+									</tr>
+								</table>
+							</div>
+								<button id="clearButton1">Clear</button>
+							</div>
+							<div>
+							<svg id="canvas2"></svg>
+							<p style="font-size: 20px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+							<div class="matrix">
+								<table style="font-size: 20px;">
+									<tr>
+										<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma214"><sub>1</sub></span><span id="gamma231"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma222"><sub>2</sub></span><span id="gamma215"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma223"><sub>2</sub></span><span id="gamma225"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma224"><sub>2</sub></span><span id="gamma232"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma233"><sub>3</sub></span><span id="gamma216"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma234"><sub>3</sub></span><span id="gamma226"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma235"><sub>3</sub></span><span id="gamma236"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+									</tr>
+								</table>
+							</div>
+							<button id="clearButton2">Clear</button>
+							</div>
+							<script src="./figure/permutation.js"></script>
+						</div>
+					</div>
+				    <!-- Key Takeaway -->
+					<div class="highlight fragment fade-in" data-fragment-index="6">
+						<h4 style="color: #E65100; margin-bottom: 5px;">🔑  Why Does This Matter?</h4>
+						<ul style="font-size: 1.0em; color: #2c3e50;">
+							<li>Most traditional models <b>  ignore these symmetries </b>, leading to incorrect dynamics.</li>
+							<li>Our neural network <b> explicitly enforces these constraints</b>, ensuring <b>physically meaningful predictions</b>.</li>
+						</ul>
+					</div>
+					<aside class="notes">
+						<ul>
+						For example, the transition invariant, if we add a vector to each position, which means the all molecular translate a vector b, 
+						the memory kernel should not changed.
+						Also, if we multiply a unity matrix on each position, which means rotate the molecular, the memory kernel should rotate accordingly.
+						and we need to consider the permutation symmetry.
+						we also need extensive,
+						if we learn a model for a small system in perdicaly boundary condition, we want our  model can be directly applied to a larger system with the same density in perdicaly boundary condition.
+					It can enable us to simulate some phenome that not affortable in the atomistic scale	
+					</ul>
+					</aside>
+				</section>
+				</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			Reveal.initialize({
+				slideNumber: 'c/t',
+				width: 1200,
+				height: 800,
+				margin: 0, 
+				padding: 0,
+				menu: {
+					titleSelector: 'h1, h2, h3', 
+					hideMissingTitles: true
+				},
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

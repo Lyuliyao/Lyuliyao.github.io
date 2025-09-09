@@ -189,7 +189,7 @@
 						</p>
 					</div>
 				
-					<div data-id="MZCG">
+					<div data-id="MZCG" data-fragment-index="1">
 						\[
 						\begin{aligned}
 						\dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
@@ -200,74 +200,44 @@
 						\end{aligned}
 						\]
 					</div>
-
-					<div style="display: flex; justify-content: center; margin-top: 10px;">
+					<!-- <div style="display: flex; justify-content: center; margin-top: 10px;">
 						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 300px)); ">
 							<li><b>\( \mathbf{Q} \)</b>: Center of mass</li>	
 							<li><b>\( \mathbf{P} \)</b>: Total momentum</li>	
 							<li><b>\( \mathbf{V} \)</b>: Velocity</li>	
 							<li><b>\( \mathbf{M} \)</b>: Mass matrix</li>
 						</ul>
-					</div>
-					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
+					</div> -->
+					<div style="display: flex; flex-direction: center; align-items: center">
+						<div>
 						<ul>
-							<li class="fragment fade-in-then-semi-out">
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="2" >
 							The Mori-Zwanzig formalism is <span style="color:#E65100">general</span>. 
 							</li>
-							<li class="fragment fade-in-then-semi-out">
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
 							In practice, one has to resort to <span style="color:#E65100">simple and ad hoc</span>  approximations.
 						 	</li>
-							<li class="fragment fade-in-then-semi-out">
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
 								Oversimplification of Memory Contribution <span style="color:#E65100">under-explored</span>.
 							</li>
-						</ul>
-					</div>
-					<div style="opacity: 0.8; font-size: 1em; text-align: left; position: absolute;">
-						<div>
-							Zwanzig, Robert.
-							Nonequilibrium statistical mechanics. Oxford university press, 2001.
-						</div>
-					</div>
-				
-					<aside class="notes">
-						<ul>
-							Theorically, the dynamics of the coarse-grained variable can be given by the Mori-Zwanzig formalism.
-							Here Q is the center of mass and P its momentum respectively and M is the mass matrix. 
-							The force term is decomposited into three part represents the convervative, memory and ramdom respectively.
-							While the MZ is general, it do not give a closed-form expressions. 
-							The formula of conservative force and the memory kernel as a function of CG variable Q is unknown.
-							Mnay efforts has been focused on refining the conservative force—often using many-body potentials.
-							However, oversimplication of the memory kernel has been overlooked, typically reduced to pairwise or isotropic terms.
-							This oversight is consequential: as our numerical results will demonstrate, the memory kernel’s many-body, state-dependent nature is essential to reproduce dynamic properties like transport and hydrodynamic correlations. 
-						</ul>
-					</aside>
-				</section>
-
-				<section data-auto-animate>
-					<h3>Important New Issues</h3>
-					<div style="display: flex; flex-direction: center; align-items: center">
-						
-						<div>
-							<ul class="fragment fade-in" data-fragment-index="1">
-								<li> To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
-
+								<li class="fragment fade-in" data-fragment-index="5"> To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
 									<ol>
-										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="6">
 											Translation Invariance:\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
 										</li>
-										<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="7">
 											Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
 										</li>
-										<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="8">
 											Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
 										</li>
 									</ol>
 								</li>
-								<li class="fragment fade-in" data-fragment-index="5"> Extensive 
+								<li class="fragment fade-in" data-fragment-index="9"> Extensive 
 								</li>
 							</ul>
 						</div>
-						<div class="fragment fade-in-then-out" data-fragment-index="4" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+						<div class="fragment fade-in-then-out" data-fragment-index="8" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
 							<div>
 								<svg id="canvas1"></svg>
 								<p style="font-size: 20px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
@@ -323,25 +293,6 @@
 							<script src="./figure/permutation.js"></script>
 						</div>
 					</div>
-				    <!-- Key Takeaway -->
-					<div class="highlight fragment fade-in" data-fragment-index="6">
-						<h4 style="color: #E65100; margin-bottom: 5px;">🔑  Why Does This Matter?</h4>
-						<ul style="font-size: 1.0em; color: #2c3e50;">
-							<li>Most traditional models <b>  ignore these symmetries </b>, leading to incorrect dynamics.</li>
-							<li>Our neural network <b> explicitly enforces these constraints</b>, ensuring <b>physically meaningful predictions</b>.</li>
-						</ul>
-					</div>
-					<aside class="notes">
-						<ul>
-						For example, the transition invariant, if we add a vector to each position, which means the all molecular translate a vector b, 
-						the memory kernel should not changed.
-						Also, if we multiply a unity matrix on each position, which means rotate the molecular, the memory kernel should rotate accordingly.
-						and we need to consider the permutation symmetry.
-						we also need extensive,
-						if we learn a model for a small system in perdicaly boundary condition, we want our  model can be directly applied to a larger system with the same density in perdicaly boundary condition.
-					It can enable us to simulate some phenome that not affortable in the atomistic scale	
-					</ul>
-					</aside>
 				</section>
 				</div>
 		</div>

@@ -8,6 +8,10 @@
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/serif.css">
 		<style>	
+		.tight-math mjx-container[jax="CHTML"][display="true"],
+		.tight-math .MathJax_Display {
+		margin: 0.2em 0 !important;
+		}
 		div.highlight {
 			background-color:#FFF9C4;
 			text-align: left;
@@ -77,6 +81,7 @@
 				margin-top: 5px;
 				font-size: 1em;
 			}
+			
 		</style>
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -132,13 +137,13 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section data-menu-title="Coarse-Grained Molecular Dynamics" >
-					<div style="text-align: center; margin-bottom: 20px; font-weight: 700;">
-						<h1 id="title-text2" style="margin-top: -100px; font-size: 2.0em; color: #2c3e50;"></h1>
+				<!-- <section data-menu-title="Coarse-Grained Molecular Dynamics" >
+					<div style="text-align: center; font-weight: 700;">
+						<h1 id="title-text2" style="font-size: 1.5em; color: #2c3e50;"></h1>
 					</div>
 					<div style="text-align: center; margin-top: 20px;">
 						<svg id="MD1" width="750" height="300" style="border: none;"></svg>
-						<button id="updateValues1" style="padding: 8px 15px; border: none; border-radius: 5px;font-style: serif; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></button>
+						<button id="updateValues1" style="padding: 8px 15px; border: none; border-radius: 5px;font-style: serif; font-size: 1.0em; font-weight: bold; color: #2c3e50;"></button>
 						<div>
 							<script>
 								title("MD1", "updateValues1", 30, 0.75);
@@ -149,6 +154,7 @@
 						<p id="author2" style="margin-bottom: 2px; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></p>
 						<p id="department2" style="margin-bottom: 2px; font-size: 1.1em; color: #34495e;"></p>
 						<p id="school2" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
+						<p id="Cooperator" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
 					</div>
 				
 					<script>
@@ -168,6 +174,7 @@
 							setTimeout(() => typeText("author2", "Liyao Lyu", 30), 2000);
 							setTimeout(() => typeText("department2", "Department of Mathematics", 30), 2500);
 							setTimeout(() => typeText("school2", "University of California, Los Angeles", 30), 3000);
+							setTimeout(() => typeText("Cooperator", "Joint work with Huan Lei (MSU) ", 30), 3500);
 						});
 					</script>
 				
@@ -180,7 +187,69 @@
 						But existing CG models often oversimplify memory effects. Our work introduces a framework that retains these critical many-body, non-Markovian features while preserving computational efficiency. 
 						</ul>
 					</aside>
+				</section> -->
+				<section data-menu-title="Coarse-Grained Molecular Dynamics"
+						style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%;">
+
+				<!-- 标题 -->
+				<h1 id="title-text2" style="margin-top: 10px; font-size: 1.5em; color: #2c3e50; font-weight: 700;"></h1>
+
+				<!-- 中间的图和按钮 -->
+				<svg id="MD1" width="750" height="300" style="margin-top: 20px; border: none;"></svg>
+				<button id="updateValues1"
+						style="margin-top: 10px; padding: 8px 15px; border: none; border-radius: 5px; font-style: serif; font-size: 1.0em; font-weight: bold; color: #2c3e50;"></button>
+				<div>
+					<script>
+					title("MD1", "updateValues1", 30, 0.75);
+					</script>
+				</div>
+
+				<!-- 作者信息 -->
+				<!-- <p id="author2" style="margin-top: 20px; margin-bottom: 2px; font-size: 1.1em; font-weight: bold; color: #2c3e50;"></p>
+				<p id="department2" style="margin-bottom: 2px; font-size: 1.1em; color: #34495e;"></p>
+				<p id="school2" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
+				<p id="Cooperator" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p> -->
+				<div style="text-align: center; font-size: 1.1em; color: #34495e; margin-top: 10px; line-height: 1.4;">
+				<span id="author2" style="font-size: 1.3em; font-weight: bold; color: #2c3e50;"></span><br>
+				<span id="department2"></span><br>
+				<span id="school2" style="font-weight: bold;"></span><br>
+				<span id="Cooperator" style="font-weight: bold;"></span>
+				</div>
+				<!-- 打字动画 -->
+				<script>
+					function typeText(elementId, text, speed) {
+					let i = 0;
+					function type() {
+						if (i < text.length) {
+						document.getElementById(elementId).innerHTML += text.charAt(i);
+						i++;
+						setTimeout(type, speed);
+						}
+					}
+					type();
+					}
+
+					document.addEventListener("DOMContentLoaded", function () {
+					typeText("title-text2", "Machine Learning-based Coarse-Grained models for molecular systems", 30);
+					setTimeout(() => typeText("author2", "Liyao Lyu", 30), 2000);
+					setTimeout(() => typeText("department2", "Department of Mathematics", 30), 2500);
+					setTimeout(() => typeText("school2", "University of California, Los Angeles", 30), 3000);
+					setTimeout(() => typeText("Cooperator", "Joint work with Huan Lei (MSU) ", 30), 3500);
+					});
+				</script>
+
+				<!-- 演讲备注 -->
+				<aside class="notes">
+					<ul>
+					<li>Today, I will discuss Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory.</li>
+					<li>The central challenge we address is this: How do we bridge high-resolution atomistic simulations to mesoscale phenomena?</li>
+					<li>Atomistic simulations track every atomic detail but computationally impossible for large systems.</li>
+					<li>Coarse-grained (CG) models simplify this by focusing on collective variables, like the center of mass (dashed circles), rather than individual atoms (solid circles).</li>
+					<li>But existing CG models often oversimplify memory effects. Our work introduces a framework that retains these critical many-body, non-Markovian features while preserving computational efficiency.</li>
+					</ul>
+				</aside>
 				</section>
+
 				<section data-auto-animate data-menu-title="Multi-scale modeling:Background">
 					<h3>
 						<div style="display:inline">
@@ -197,7 +266,7 @@
 									style="width:300px; object-fit: cover;"
 									alt="Eiffel tower">
 								</p>
-								<div style="opacity: 0.5; font-size: 0.8em; text-align: left;">
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left;">
 									Dirac, Paul Adrien Maurice.
 									Quantum mechanics of many-electron systems.
 								</div>
@@ -222,7 +291,7 @@
 									style="width:300px; object-fit: cover;"
 									alt="Eiffel tower">
 								</p>
-								<div style="opacity: 0.5; font-size: 0.8em; text-align: left; position: absolute;">
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
 									Anderson, Philip W.
 									More Is Different: Broken symmetry and the nature of the hierarchical structure of science.
 								</div>
@@ -257,7 +326,7 @@
 					</div>
 
 					<div style="display: flex; justify-content: center; margin-top: 10px;">
-						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 300px)); ">
+						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 1000px)); ">
 							<li><b>\( \mathbf{Q} \)</b>: Center of mass</li>	
 							<li><b>\( \mathbf{P} \)</b>: Total momentum</li>	
 							<li><b>\( \mathbf{V} \)</b>: Velocity</li>	
@@ -277,7 +346,7 @@
 							</li>
 						</ul>
 					</div>
-					<div style="opacity: 0.8; font-size: 1em; text-align: left; position: absolute;">
+					<div style="opacity: 0.8; font-size: 0.8em; text-align: left; position: absolute;">
 						<div>
 							Zwanzig, Robert.
 							Nonequilibrium statistical mechanics. Oxford university press, 2001.
@@ -328,28 +397,28 @@
 					</div>
 				 -->
 					<!-- Equations for Different Models -->
-					<div style="justify-content: center; margin-top: 10px; font-size: 1em">
+					<div style="justify-content: center; margin-top: 10px; font-size: 0.8em">
 						<ul style="list-style: none; padding: 0; 
-								   display: grid; grid-template-columns: repeat(2, minmax(200px, 500px)); 
+								   display: grid; grid-template-columns: minmax(150px, 500px) minmax(300px, 600px);; 
 								   gap: 15px; justify-content: center;">
 						
 							<!-- Markovian-Pairwise Model -->
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
-								<b>Markovian-Pairwise (M-DPD)</b>
+								<b>Markovian-Pairwise</b>
 							</li>
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
 								\(
-								\dot{\mathbf{P}}_i = \mathbf{F}_i^C - \sum_{j} \mathbf{K}(Q_{ij}) \mathbf{V}_j + \mathbf{R}(t).
+								\sum_{j} \mathbf{K}(Q_{ij}) \mathbf{V}_j .
 								\)
 							</li>
 				
 							<!-- Non-Markovian Isotropic Model -->
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
-								<b>Non-Markovian Isotropic (NM-GLE)</b>
+								<b>Non-Markovian Isotropic</b>
 							</li>
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
 								\(
-								\dot{\mathbf{P}} = \mathbf{F}^C - \int_0^t \mathbf{K}(t-s) \mathbf{V}(s) \, ds + \mathbf{R}(t).
+								\int_0^t \mathbf{K}(t-s) \mathbf{V}(s).
 								\)
 							</li>
 				
@@ -359,39 +428,33 @@
 							</li>
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="5">
 								\(
-								\dot{\mathbf{P}}_i = \mathbf{F}^C_{i} - \sum_j \int_0^t \mathbf{K}(Q_{ij}, t-s) \mathbf{V}_{ij}(s) \, ds + \sum_j \mathbf{R}_{ij}(t).
+								\sum_j \int_0^t \mathbf{K}(Q_{ij}, t-s) \mathbf{V}_{ij}(s) \, ds.
 								\)
 							</li>
 				
 							<!-- Our Model - Highlighted -->
 							<li class="fragment fade-in" data-fragment-index="6">
-								<b style="color: #E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
+								<b style="color: #E65100;font-size:1.2em">🚀 Non-Markovian Manybody (Our Model)</b>
 							</li>
-							<li class="fragment fade-in" data-fragment-index="6" style="border-left: 5px solid #E65100; padding-left: 10px;">
+							<li class="fragment fade-in" data-fragment-index="6" style="border-left: 5px solid #E65100; padding-left: 10px;font-size: 1.2em;">
 								\(
-								\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
+								\bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds,
 								\)
 							</li>
 						</ul>
-						<div class="fragment fade-in-then-semi-out" data-fragment-index="7" style="text-align: left; font-size: 1em; margin-top: 10px; margin-bottom: 20px;">
+						<div class="fragment fade-in-then-semi-out" data-fragment-index="7" style="text-align: left; font-size: 1.2em; margin-top: 10px; margin-bottom: 20px;">
 							where \( \bm{\Xi}\) is neural network encode the <b style="color: #E65100;">manybody</b> and \( \bm{\Lambda} \) are learnable parameters encode the <b style="color: #E65100;">Non-Markovian</b>.
 						</div>
 					</div>
+			
 				
-					<!-- Key Insights Section -->
-					<div class="highlight fragment fade-in" data-fragment-index="8">
-						<h4 style="color: #E65100; margin-bottom: 5px;">🔑 Key Insights</h4>
-						<ul style="font-size: 1.0em; color: #2c3e50;">
-							<li><b>Existing models</b>  use <b>simplistic isotropic approximations</b>.
-							<li><b>Our Model</b> 🚀 captures  <b>many-body memory</b> effects using neural networks, offering a more <b>accurate</b> description.</li>
-						</ul>
-					</div>
-				
-
-					<div style="opacity: 0.8; font-size: 1em; text-align: left; position: absolute;">
+					<!-- Footer 文献信息：固定在底部，细小不干扰 -->
+					<div style="
+						position:absolute;
+						text-align:left; font-size:0.8em; opacity:0.8;">
 						<div><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>.
-							Construction of coarse-grained molecular dynamics with many-body non-Markovian memory.
-							<em>Physical Review Letter</em>, 2023.
+						Construction of coarse-grained molecular dynamics with many-body non-Markovian memory.
+						<em>Physical Review Letters</em>, 2023.
 						</div>
 					</div>
 
@@ -407,12 +470,15 @@
 
 				<section data-auto-animate>
 					<h3>Important New Issues</h3>
-					<div style="display: flex; flex-direction: center; align-items: center">
-						
-						<div>
-							<ul class="fragment fade-in" data-fragment-index="1">
-								<li> To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
-
+					<div class="two-col-grid">
+					<!-- <div class="two-col" style="display: flex; flex-direction: row; align-items: flex-start; gap:16px;"> -->
+					<!-- <div class="two-col" style="display: flex; flex-direction: center; align-items: center; gap:16px;"> -->
+						<div id="symmetry-text">
+							<ul>
+								<li>
+									<p class="fragment fade" data-fragment-index="1">
+										To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
+									</p>
 									<ol>
 										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
 											Translation Invariance:\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
@@ -425,16 +491,17 @@
 										</li>
 									</ol>
 								</li>
-								<li class="fragment fade-in" data-fragment-index="5"> Extensive 
+								<li class="fragment fade-in-then-semi-out" data-fragment-index="6"> Extensive 
 								</li>
 							</ul>
 						</div>
-						<div class="fragment fade-in-then-out" data-fragment-index="4" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+						<div id="symmetry-demo"
+						class="fragment fade-in-then-out" data-fragment-index="5" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
 							<div>
 								<svg id="canvas1"></svg>
-								<p style="font-size: 20px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+								<p style="font-size: 40px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
 								<div class="matrix">
-								<table style="font-size: 20px;">
+								<table style="font-size: 40px;">
 									<tr>
 										<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
 										<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
@@ -458,9 +525,9 @@
 							</div>
 							<div>
 							<svg id="canvas2"></svg>
-							<p style="font-size: 20px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+							<p style="font-size: 40px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
 							<div class="matrix">
-								<table style="font-size: 20px;">
+								<table style="font-size: 40px;">
 									<tr>
 										<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
 										<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
@@ -485,14 +552,66 @@
 							<script src="./figure/permutation.js"></script>
 						</div>
 					</div>
-				    <!-- Key Takeaway -->
-					<div class="highlight fragment fade-in" data-fragment-index="6">
-						<h4 style="color: #E65100; margin-bottom: 5px;">🔑  Why Does This Matter?</h4>
-						<ul style="font-size: 1.0em; color: #2c3e50;">
-							<li>Most traditional models <b>  ignore these symmetries </b>, leading to incorrect dynamics.</li>
-							<li>Our neural network <b> explicitly enforces these constraints</b>, ensuring <b>physically meaningful predictions</b>.</li>
-						</ul>
-					</div>
+					<style>
+						/* 容器：用 Grid + 变量控制两列比例；禁止溢出 */
+						.two-col-grid {
+							display: grid;
+							grid-template-columns: var(--left, 0.52fr) var(--right, 0.48fr);
+							align-items: start;
+							gap: 16px;
+							overflow: hidden;
+						}
+						/* 避免列内内容因长行把列撑爆 */
+						.two-col-grid > #symmetry-text,
+						.two-col-grid > #symmetry-demo {
+							min-width: 0;
+						}
+
+						/* 平滑动画（对列宽/字体/盒阴影） */
+						.two-col-grid,
+						#symmetry-text, #symmetry-demo,
+						#symmetry-demo svg, #symmetry-demo table {
+							transition: grid-template-columns 420ms ease, font-size 420ms ease, box-shadow 420ms ease, filter 420ms ease, max-width 420ms ease, width 420ms ease;
+						}
+
+						/* 默认尺寸（第5步未显示时） */
+						#symmetry-text { font-size: 1.0em; }
+						#symmetry-demo { font-size: 1.0em; }
+
+						/* 右侧图文在容器内响应式：不使用 transform，占位随列宽变化 */
+						#symmetry-demo svg { width: 100%; height: auto; max-width: 280px; }
+						#symmetry-demo table { width: 100%; max-width: 520px; }
+
+						/* 关键：当第5步 fragment（#symmetry-demo）可见时，动态调整列宽与字体 */
+						section:has(#symmetry-demo.current-fragment) .two-col-grid {
+							--left: 0.34fr;   /* 左列变窄 */
+							--right: 0.66fr;  /* 右列变宽 */
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-text {
+							font-size: 0.92em;  /* 左列文字略小，真实占位变小 */
+							opacity: 0.65;
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo {
+							font-size: 1.10em;  /* 右列文字/MathJax/表格真实变大 */
+							box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+							filter: saturate(1.05);
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo svg {
+							max-width: 360px;   /* 右侧 SVG 允许更大，但仍受列宽限制 */
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo table {
+							max-width: 640px;   /* 表格也更宽 */
+						}
+
+						/* 小屏保守些，避免溢出 */
+						@media (max-width: 1100px) {
+							section:has(#symmetry-demo.current-fragment) .two-col-grid { --left: 0.40fr; --right: 0.60fr; }
+							section:has(#symmetry-demo.current-fragment) #symmetry-demo svg { max-width: 320px; }
+						}
+					</style>
+
+						
+
 					<aside class="notes">
 						<ul>
 						For example, the transition invariant, if we add a vector to each position, which means the all molecular translate a vector b, 
@@ -505,67 +624,140 @@
 					</ul>
 					</aside>
 				</section>
-
-
 				<section data-auto-animate>
-					<h3>
-						Nueral Network Representation
-					</h3>
-					<div style="text-align: left;">
-							<b style="color: #E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
-							\[
-							\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
-							\]
-					</div>
-					<div style="display: flex; align-items: left;">
-						<div>
-							<ul>
-								<li class="fragment fade-in" data-fragment-index="2">
-									Introducing coordinate feature \(\hat{\mathbf Q}^k_i\):
-									\[
-									 \hat{ \mathbf Q}^k_i = \mathbf{Q}_i \oplus \sum_{l\in\mathcal{N}_i} f^k(|\mathbf{Q}_{il}|) \mathbf{Q}_{il} 
-									 \] 
-								</li>
-								<li class="fragment fade-in" data-fragment-index="3">
-									Compute the distance on the feature:
-									\( \hat{\mathbf{Q}}_{ij}^{k} = \hat{\mathbf{Q}}_i^{k} - \hat{\mathbf{Q}}_j^{k} \)
-								</li>
-								<li class="fragment fade-in" data-fragment-index="4">
-									Construct the state dependent part of the memory kernel:
-									\[
-									\boldsymbol{\Xi}^n_{ij} = \sum_{k=1}^K h_{n,k}(\hat{ \mathbf Q}_{ij}^T \hat{ \mathbf Q}_{ij} ) \hat{ \mathbf Q}_{ij}^k \otimes \hat{ \mathbf Q}_{ij}^k\]
+				<h3>Neural Network Representation</h3>
 
-								</li>
-								<li class="fragment fade-in" data-fragment-index="5">
-									\(\bm{\Lambda} =  \bm{S} \bm{S}^T + \bm{A}\)  where \(\bm{S}\) is symmetric <br>  and  \(\bm{A}\) is anti-symmetric.
-								</li>
-								<li class="fragment fade-in" data-fragment-index="6">
-									<div class="highlight">
-										The construction satisfies the <span style="color:#E65100"> symmetry constraint</span> .
-									</div>
-								</li>
-							</ul>
-						</div>
-						<div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-							<figure style="height: 7cm;" class="fragment fade-in" data-fragment-index="2">
-								<img src="./figure/Q.png">
-							</figure>
-							<figure style="height: 7cm;" class="fragment fade-in" data-fragment-index="3">
-								<img src="./figure/hatQ.png">
-							</figure>
-						</div>
-					</div>
-					<aside class="notes">
+				<!-- 顶部方程 -->
+				<div style="text-align:left; margin-bottom: 0.0em;" class="tight-math">
+					<b style="color:#E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
+					\[
+					\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} 
+					\bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
+					\]
+				</div>
+
+				<!-- Grid 布局 -->
+				<div class="nn-grid">
+					<!-- 左栏：文字 -->
+					<div>
 						<ul>
-						To enforce the formorl constraints on the neural network, we first introduce a coordinate feature hat Q, which can be determined from the relative distance Qil for each atoms i.
-						f^k is a neural network and k is the index of feature. For example, if k = 3, for each molecular we have 3 feature coordinate with neighbour environment embedded.
-						Notice that the symmetirc condition is inherted by \hat Qi.
-					athen we campute the distance of the features and nd the state dependent part of memory kernel can be constructed accordinately.
-						We can prove that our construction satisfies the symmetriy condtion we mentioned in the last slides.
-
+							<li class="fragment fade-in;tight-math" data-fragment-index="2">
+							Introducing coordinate feature \(\hat{\mathbf Q}^k_i\):
+							\(
+							\hat{ \mathbf Q}^k_i = \mathbf{Q}_i \oplus \sum_{l\in\mathcal{N}_i} 
+							f^k(|\mathbf{Q}_{il}|)\,\mathbf{Q}_{il} 
+							\) 
+							</li>
+							<li class="fragment fade-in" data-fragment-index="3">
+							Compute the distance on the feature:
+							\( \hat{\mathbf{Q}}_{ij}^{k} = \hat{\mathbf{Q}}_i^{k} - \hat{\mathbf{Q}}_j^{k} \)
+							</li>
+							<li class="fragment fade-in" data-fragment-index="4">
+							Construct the state dependent part of the memory kernel:
+							\(
+							\boldsymbol{\Xi}^n_{ij} = \sum_{k=1}^K h_{n,k}(\hat{ \mathbf Q}_{ij}^T \hat{ \mathbf Q}_{ij}) 
+							\hat{ \mathbf Q}_{ij}^k \otimes \hat{ \mathbf Q}_{ij}^k
+							\)
+							</li>
+							<!-- <li class="fragment fade-in" data-fragment-index="5">
+							\(\bm{\Lambda} =  \bm{S} \bm{S}^T + \bm{A}\),  
+							where \(\bm{S}\) is symmetric and \(\bm{A}\) is anti-symmetric.
+							</li>
+							<li class="fragment fade-in" data-fragment-index="6">
+							<div class="highlight">
+								The construction satisfies the <span style="color:#E65100">symmetry constraint</span>.
+							</div>
+							</li> --> 
 						</ul>
-					</aside>
+					</div>
+					<div id="nn-figs" class="nn-figstack">
+						<figure class="fragment fade-in-then-out" data-fragment-index="2">
+						<img src="./figure/Q.png" class="nn-img">
+						</figure>
+						<figure class="fragment fade-in" data-fragment-index="3">
+						<img src="./figure/hatQ.png" class="nn-img">
+						</figure>
+					</div>
+					<style>
+						/* 两列：左40% 右60% */
+						.nn-grid {
+						display: grid;
+						grid-template-columns: 60% 40%;
+						gap: 20px;
+						align-items: start;
+						min-height: 60vh;
+						}
+						/* 当 slide 有 .focus-left 类时：文字占满，图列宽度归零 */
+						section.focus-left .nn-grid {
+						grid-template-columns: 100% 0%;
+						}
+						section.focus-left #nn-figs {
+						display: none; /* 完全隐藏图区域 */
+						}
+						.nn-grid > div { min-width: 0; }
+						/* 右栏容器：给足高度，居中显示，防溢出 */
+						.nn-figstack {
+						min-height: 60vh;      /* 可调 55–70vh */
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						overflow: hidden;
+						}
+						/* 缺省不显示；当 fragment 处于当前步或可见时显示 */
+						.nn-figstack figure {
+						display: none;
+						margin: 0;
+						max-width: 100%;
+						max-height: 100%;
+						}
+						.nn-figstack figure.visible,
+						.nn-figstack figure.current-fragment {
+						display: flex;          /* 显示当前这张图 */
+						align-items: center;
+						justify-content: center;
+						}
+
+						/* 图像自适应容器 */
+						.nn-img {
+						display: block;
+						max-width: 100%;
+						max-height: 100%;
+						border-radius: 8px;
+						box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+						}
+
+						@media (max-width: 1100px) {
+						.nn-grid { grid-template-columns: 45% 55%; }
+						}
+					</style>
+					<script>
+					(function () {
+					Reveal.on('fragmentshown', e => {
+						if (e.fragment && e.fragment.getAttribute('data-fragment-index') === '3') {
+						// 第4步之后，准备下一步图消失 → 左边扩展
+						const sec = Reveal.getCurrentSlide();
+						sec.classList.add('focus-left');
+						}
+					});
+					Reveal.on('fragmenthidden', e => {
+						if (e.fragment && e.fragment.getAttribute('data-fragment-index') === '3') {
+						// 回退时恢复
+						const sec = Reveal.getCurrentSlide();
+						sec.classList.remove('focus-left');
+						}
+					});
+					})();
+					</script>
+				<aside class="notes">
+					<ul>
+					<li>Introduce \(\hat Q\) features from local neighbor info \(Q_{il}\).</li>
+					<li>These inherit symmetry by construction.</li>
+					<li>Then compute feature distances and build state-dependent kernels.</li>
+					<li>We can prove the symmetry constraints hold.</li>
+					</ul>
+				</aside>
 				</section>
+
 				<section data-auto-animate>
 					<h3>
 						Simulation of the Coarse-Grained Models
@@ -597,9 +789,9 @@
 								\left\langle  \bm \xi(t) \bm \xi(t') \right\rangle = \beta^{-1}(\bm\Lambda + \bm\Lambda^T) \delta(t-t'),
 								\)
 								model  retains the consistent invariant distribution 
-								\[
+								\(
 								\rho_{\rm eq}(\mb Q, \mb P, \bm\xi) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 + \bm \zeta^T \bm\zeta/2})]
-								\]
+								\)
 						</div>
 					</div>
 					<aside class="notes">
@@ -640,31 +832,33 @@
 									</li>
 								</ul>
 							</li>
-							<li class="fragment fade-in" data-fragment-index="3">
+							<!-- <li class="fragment fade-in" data-fragment-index="3">
 								<div class="highlight">
 									The projection operator \(\mathcal{P}_{\bm Z}\) is defined as a conditional expectation, depends on conditional probability distribution.
 								</div>
-							</li>
-							<li class="fragment fade-in" data-fragment-index="4">
+							</li> -->
+							<li class="fragment fade-in" data-fragment-index="3">
 								<div class="highlight">
 									The orthogonal dynamics <span style="color: #E65100;">\({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\) </span>is computationally intractable.
 								</div>
 							</li>
-							<li class="fragment fade-in" data-fragment-index="5">
+							<li class="fragment fade-in" data-fragment-index="4">
 								Approximate <span style="color: #E65100;">\(\mathcal{Q}_{\bm Z} \mathcal{L} \) </span> by restrained dynamics <span style="color: #E65100;"> \(\mathcal{R}_{\bm Z} \mathcal{L} \)</span>:
 								<!-- The dynamics of the restrained system is given by: \(\dot{\mb z} = \mathcal{R}_{\bm Z} \mathcal{L} \mb z  \) -->
-								\[
-								\begin{aligned}
-								\dot{\mb q}_\mu = \mathcal{R}_{\bm Z} \mathcal{L} \mb q_\mu :=  \frac{\mb p_\mu}{m_\mu} -  \frac{\mb P_i}{M_i} \quad
+								<p class="tight-math" style="margin:0.5em; text-align:center;">
+									\(
+								\dot{\mb q}_\mu = \mathcal{R}_{\bm Z} \mathcal{L} \mb q_\mu :=  \frac{\mb p_\mu}{m_\mu} -  \frac{\mb P_i}{M_i} \qquad
 								\dot{\mb p}_\mu = \mathcal{R}_{\bm Z} \mathcal{L} \mb p_\mu :=  \mb f_\mu - \frac{m_\mu}{M_i} F_i
-								\end{aligned}
-								\]
+								\)
+								</p>
 							</li>
-							<li class="fragment fade-in" data-fragment-index="6">
+							<li class="fragment fade-in" data-fragment-index="5">
 								The memory kernel is approximated as:
-								\[
-								\mb K_{\text{MZ}}(\bm {Q} , t) = \left \langle  \delta \mb F(t) \delta \mb F(0)^T\right\rangle,
-								\]
+								<p class="tight-math" style="margin:0.5em; text-align:center;">
+								\(
+									\mb K_{\text{MZ}}(\bm {Q} , t) = \left \langle  \delta \mb F(t) \delta \mb F(0)^T\right\rangle,
+								\)
+								</p>
 								where \(\delta \mb F = \mb F - \mathcal{P}_{\bm Z }(\mb F)\) represents the fluctuation force.
 							</li>
 						</ul>
@@ -685,7 +879,7 @@
 					<div style="display: flex; justify-content: center; align-items: center;" class="fragment fade-in-then-out">
 						<div style="text-align:left">
 								Velocity auto correlation function (VACF)
-							<p>
+							<p style=" font-size:0.8em">
 									\[ c(t)=\frac{\lt V_i(t) \cdot V_i(0) \gt }{ \lt V_i(0) \cdot V_i(0) \gt } \]
 							</p>
 							<div style="text-align:left; font-size:0.8em" data-id="table">
@@ -736,9 +930,9 @@
 							Numerical Result
 						</h3>
 						<div style="display: flex; justify-content: center; align-items: center;">
-							<div style="text-align:left">
+							<div style="text-align:left;">
 									Velocity cross correlation function (VCCF)
-								<p>
+								<p style=" font-size:0.8em">
 									\[ C^{xx}(t; r_0) = \mathbb{E}[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t) \vert Q_{ij}(0) = r_0] \]
 								</p>
 								<div style="font-size: 0.8em;" data-id="table">
@@ -791,7 +985,7 @@
 						<div style="display: flex; justify-content: center; align-items: center;">
 							<div style="text-align:left">
 								van Hove function (VHF)
-								<p>
+								<p style="font-size: 0.8em;">
 									\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).		
 								</p>
 								<div style="font-size: 0.8em;" data-id="table">
@@ -843,8 +1037,8 @@
 						</h3>
 						<div style="display: flex; justify-content: center; align-items: center;">
 							<div style="text-align:left">
-									normalized correlations of the <b>Longitudinal</b> Hydrodynamic Modes
-								<p>
+									normalized correlations of the <br> <b>Longitudinal</b> Hydrodynamic Modes
+								<p style=" font-size:0.8em">
 									\[ 
 									\begin{split}
 									C_L(t) &= \langle \tilde{u}_1(t)\tilde{u}_1(0)\rangle \\
@@ -900,7 +1094,7 @@
 						</h3>
 						<div style="display: flex; justify-content: center; align-items: center;">
 							<div style="text-align:left">
-									normalized correlations of the <b>Transverse</b> Hydrodynamic Modes
+									normalized correlations of the <br> <b>Transverse</b> Hydrodynamic Modes
 								</h5>
 								<p>
 									\[ 
@@ -965,9 +1159,11 @@
 								</li>
 								<li class="fragment fade-in" >
 									For a given configuration \(\bm {Q}\), theoretically:
-									\[
+									<p class="tight-math" style="margin:0.5em; text-align:center;">
+									\(
 									\mb K(\bm {Q}, t) = \mathcal{P}_{\mb Z}[({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\mathcal{Q}_{\bm Z} \mathcal{L}\mb P) (\mathcal{Q}_{\bm Z} \mathcal{L}\mb P)^T],
-									\]
+									\)
+									</p>	
 									where the projection operator:
 									\(
 									\mathcal{P}_{\bm Z} f(\mb z) := \mathbb{E}[f(\mb z) \vert \phi(\mb z) = \bm Z ].
@@ -976,24 +1172,27 @@
 								<li class="fragment fade-in" >
 									<div class="highlight">
 									The Kernel depends on the conditional probability distribution
-									\[
+									\(
 										\rho_{V_{\text{ext}}}(\bz|\bZ) = \frac{1}{Z} \delta(\phi(\bz)-\bZ) \rho_{V_{\text{ext}}}(\bz) 
-									\]
+									\)
 									</div>
 								</li>
 								<li class="fragment fade-in" >
-									The Time dependent projection result in <span style="color:#E65100">\(K(\bQ,t,s)\) </span>
-									\[
+									The Time dependent projection result in <span style="color:#E65100">\(K(\bQ,t,s)\): </span>
+									<p class="tight-math" style="margin:0.5em; text-align:center;">
+									\(
 									\dot{\mathbf{P}}(t) = 
 									-F(\mathbf{Q}) 
-									- \int_0^t {\mathbf{K}(\mathbf{Q}(s), t,s) }\mathbf{V}(s) ds 
+									- \int_0^t \mathbf{K}(\mathbf{Q}(s), t,s)\,\mathbf{V}(s)\,ds 
 									+ \mathbf{R}(t).
-									\]
+									\)
+									</p>
+									
 								</li>
 								
 							</ul>
 						</div>
-						<div style="opacity: 0.8; font-size: 1em; text-align: left; position: absolute;">
+						<div style="opacity: 0.8; font-size: 0.8em; text-align: left; position: absolute;">
 							<div>Hermann Grabert.
 								Projection Operator Techniques in Nonequilibrium Statistical Mechanics.
 								<em> Springer Tracts in Modern Physics</em>, 1982.
@@ -1015,43 +1214,49 @@
 						</h3>
 						<div>
 							<ul>
-								<li>
+								<li >
 									Predicting <strong>
 										non-equilibrium
 									</strong> processe, i.e. evolution under an external force field \(V_{\text{ext}}(\bq)\).
 								</li>
-								<li  >
+								<li >
 									For a given configuration \(\bm {Q}\), theoretically:
-									\[
+									<p class="tight-math" style="margin:0.5em; text-align:center;">
+									\(
 									\mb K(\bm {Q}, t) = \mathcal{P}_{\mb Z}[({\rm e}^{\mathcal{Q}_{\bm Z} \mathcal{L} t}\mathcal{Q}_{\bm Z} \mathcal{L}\mb P) (\mathcal{Q}_{\bm Z} \mathcal{L}\mb P)^T],
-									\]
+									\)
+									</p>	
 									where the projection operator:
 									\(
 									\mathcal{P}_{\bm Z} f(\mb z) := \mathbb{E}[f(\mb z) \vert \phi(\mb z) = \bm Z ].
 									\)
 								</li>
-								<li class="fragment fade-in" >
+								<li >
 									<div class="highlight">
 									<strong>Increase the dimension of Coarse grained variables </strong> to make the marginal distribution closer
-									\[
+									<p class="tight-math" style="margin:0.5em; text-align:center;">
+										\(
 										\rho_{V_{\text{ext}}}(\bz|\bZ) = \frac{1}{Z_{\text{ext}}} \delta(\phi(\bz)-\bZ) \rho_{V_{\text{ext}}}(\bz) \approx
 										\frac{1}{Z_0} \delta(\phi(\bz)-\bZ) \rho_{0}(\bz) = \rho_{0}(\bz|\bZ) 
-									\]
+										\)
+									</p>	
 									</div>
 								</li>
 								<li class="fragment fade-in" >
 									The resultant model can be <strong>generalized</strong> to other external force fields.
-									\[
+									<p class="tight-math" style="margin:0.5em; text-align:center;">
+										\(
 									\dot{\mathbf{P}}(t) = 
 									-F(\mathbf{Q}) 
 									- \int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds 
 									+ \mathbf{R}(t).
-									\]
+										\)
+									</p>	
 								</li>
 								
 							</ul>
 						</div>
-						<div style="opacity: 0.8; font-size: 1em; text-align: left; position: absolute;">
+						<div style="opacity: 0.8; font-size: 0.8em; text-align: left; position: absolute;">
 							<div><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>.
 							On the Generalization Ability of Coarse-Grained Molecular Dynamics Models for Nonequilibrium Processes.
 							<em>Multiscale Modeling & Simulation </em>, 2025.
@@ -1115,11 +1320,12 @@
 											<ul>
 												<li class="fragment fade-in" data-fragment-index="2">
 													Fourier Law
-													\[
+													<p class="tight-math" style="margin:0.5em; text-align:center;">
+														\(
 													u_t = \kappa \Delta u
-													\]
-													<div class="fragment fade-in" data-fragment-index="3">
-														<span style="color:#E65100;"><strong>Limitation:</strong></span>
+														\)
+													</p>
+														<span style="color:#E65100;" class="fragment fade-in" data-fragment-index="3"><strong>Limitation:</strong></span>
 														<ul>
 															<li class="fragment fade-in" data-fragment-index="4">
 																Linear Approximation
@@ -1134,7 +1340,6 @@
 																</div>
 															</li>
 														</ul>
-													</div>
 												</li>
 												<li class="fragment fade-in" data-fragment-index="8">
 													Non Fourier Law <br>
@@ -1195,9 +1400,188 @@
 								</ul>
 							</div>
 						</section>
+						<section data-menu-title="Adam CBO">
+						<div class="cbo-slide">
+							<!-- 标题 -->
+							<h1 id="title-cbo"></h1>
+							<!-- 合作者 -->
+							<p id="Cooperator-cbo"></p>
+						</div>
 
+						<script>
+							function typeText(elementId, text, speed) {
+							let i = 0;
+							function type() {
+								if (i < text.length) {
+								document.getElementById(elementId).innerHTML += text.charAt(i);
+								i++;
+								setTimeout(type, speed);
+								}
+							}
+							type();
+							}
 
-						
+							document.addEventListener("DOMContentLoaded", function () {
+							typeText(
+								"title-cbo",
+								"Consensus-based optimization methods with adaptive momentum estimation and its application in Stochastic Control",
+								30
+							);
+							setTimeout(
+								() =>
+								typeText(
+									"Cooperator-cbo",
+									"Joint work with Shi Jin (SJTU) and Jingrun Chen (USTC)",
+									30
+								),
+								3500
+							);
+							});
+						</script>
+
+						<style>
+							.cbo-slide {
+							display: flex;
+							flex-direction: column;
+							justify-content: center;
+							align-items: center;
+							height: 80vh; /* 占满页面居中 */
+							text-align: center;
+							}
+							#title-cbo {
+							font-size: 2em;
+							color: #2c3e50;
+							font-weight: 700;
+							margin-bottom: 1.5em;
+							}
+							#Cooperator-cbo {
+							font-size: 1.1em;
+							font-weight: bold;
+							color: #34495e;
+							}
+						</style>
+
+						</section>
+
+						<section data-auto-animate>
+							<h3>
+								Stochastic optimal control (SOC)
+							</h3>
+							<div>
+								<br>
+								<ul>
+									<li class="fragment fade-in">
+										Traditional methods: Curse of dimensionality
+									</li>
+									<li class="fragment fade-in">
+										Deep reinforcement learning approaches
+									</li>
+									<li class="fragment fade-in">
+										Model-based methods require explicit transition kernels
+									</li>
+									<li class="fragment fade-in">
+										Model-free methods suffer from high variance in policy
+										gradients
+									</li>
+									<li class="fragment fade-in">
+										Our contribution (ICML, 2025)
+										<ul>
+											<li>
+												Gradient-free, model-free algorithm (M-CBO/Adam-CBO)
+											</li>
+											<li>
+												Theoretical convergence guarantees
+											</li>
+											<li>
+												Scalable to high dimensions
+											</li>	
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Problem Formulation</h3>
+
+						<ul style="font-size:1.05em; line-height:1.4;">
+							<li  class="fragment fade-in">
+							State space: \( \mathcal{S} \subset \mathbb{R}^d \),&nbsp;
+							Action space: \( \mathcal{A} \subset \mathbb{R}^m \).
+							</li>
+							<li  class="fragment fade-in">
+							State process \( x_t \) governed by control \( \alpha_t \).
+							</li>
+							<li class="fragment fade-in;tight-math">
+							Cost functional:
+							\[
+								J[\alpha] \;=\; \mathbb{E}\!\left[\int_{0}^{T} f\!\big(t, x_t, \alpha_t\big)\,dt \;+\; g(x_T)\right].
+							\]
+							</li>
+							<li  class="fragment fade-in">
+							Policy parameterized by a neural network:
+							\( \alpha(t,x;\theta) \).
+							</li>
+							<li class="fragment fade-in;tight-math">
+							Goal:
+							\[
+								\min_{\theta}\; J(\theta), 
+								\qquad \text{where}\;\; J(\theta)=J\!\big[\alpha(\cdot,\cdot;\theta)\big].
+							\]
+							</li>
+						</ul>
+						</section>
+						<section data-auto-animate>
+						<h3>Original CBO Method</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">
+								Highly nonconvex unconstrained optimization problem:
+							\[
+								\Theta^* \;=\; \arg\min_{\Theta \in \mathbb{R}^d}\; \mathcal{J}(\Theta)
+							\]
+							</li>
+							<li class="fragment fade-in">
+								Interacting particles during the dynamic evolution:
+								<ul>
+								<li class="fragment fade-in">tend to their weighted average</li>
+								<li class="fragment fade-in">undergo fluctuation due to random noise</li>
+								</ul>
+							</li>
+							<li class="fragment fade-in">
+								\(N\) particles \( \Theta^i, \; i=1,\cdots,N \)
+								\[
+								d\Theta^i_t
+								= -\lambda\!\left(\Theta^i - \mathcal{M}_\beta(\boldsymbol{\Theta})\right) dt
+								+ \sigma \,\color{red}{\left|\Theta^i - \mathcal{M}_\beta(\boldsymbol{\Theta})\right|}\, dW^i_t
+								\]
+							where
+								weighted average: \(
+								\mathcal{M}_\beta(\boldsymbol{\Theta})
+								= \frac{\sum_{i=1}^N \Theta^i \, e^{-\beta \mathcal{J}(\Theta^i)}}
+									{\sum_{i=1}^N e^{-\beta \mathcal{J}(\Theta^i)}}
+								\)
+							</li>
+							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Some Practical Issues in CBO</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">
+								<span style="color:red;">The initial data need to be well-chosen</span>
+							</li>
+							<li class="fragment fade-in">
+								Difficult to optimize high-dimensional non-convex functions  
+								(e.g. Rastrigin function in dimension \(20\))
+							</li>
+							<li class="fragment fade-in">
+								Difficult to optimize deep neural networks with many parameters
+							</li>
+							</ul>
+						</div>
+						</section>
+
 						<section>
 							<h3>
 								Thank you for Listening!

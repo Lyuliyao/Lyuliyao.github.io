@@ -18,10 +18,10 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 :root {
   --r-background-color: #E8F5E9;
   --r-main-font: Palatino Linotype, Book Antiqua, Palatino, FreeSerif, serif;
-  --r-main-font-size: 25px;
+  --r-main-font-size: 35px;
   --r-main-color: #212121;
-  --r-block-margin: 5px;
-  --r-heading-margin: 0 0 5px 0;
+  --r-block-margin: 20px;
+  --r-heading-margin: 0 0 20px 0;
   --r-heading-font: Palatino Linotype, Book Antiqua, Palatino, FreeSerif, serif;
   --r-heading-color: #383D3D;
   --r-heading-line-height: 1.2;
@@ -30,11 +30,11 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   --r-heading-text-shadow: none;
   --r-heading-font-weight: normal;
   --r-heading1-text-shadow: none;
-  --r-heading1-size: 2.4em;
-  --r-heading2-size: 2.0em;
-  --r-heading3-size: 1.8em;
-  --r-heading4-size: 1.5em;
-  --r-heading5-size: 1.2em;
+  --r-heading1-size: 1.8em;
+  --r-heading2-size: 1.5em;
+  --r-heading3-size: 1.2em;
+  --r-heading4-size: 1.0em;
+  --r-heading5-size: 1.0em;
   --r-code-font: Arial, sans-serif;
   --r-link-color: #51483D;
   --r-link-color-dark: #25211c;

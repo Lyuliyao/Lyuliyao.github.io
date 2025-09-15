@@ -1,9 +1,5 @@
-const svg1 = d3.select("#canvas1")
-.attr("width", 150)
-.attr("height", 150);
-const svg2 = d3.select("#canvas2")
-.attr("width", 150)
-.attr("height", 150);
+const svg1 = d3.select("#canvas1").attr("viewBox", "0 0 150 150").attr("preserveAspectRatio", "xMidYMid meet");
+const svg2 = d3.select("#canvas2").attr("viewBox", "0 0 150 150").attr("preserveAspectRatio", "xMidYMid meet");
 const atoms1 = [
 {cx: 90, cy: 45, color: "rgba(0,47,167)", name: "r1"},
 {cx: 125, cy: 75, color: "rgba(187,151,39)", name: "y1"},

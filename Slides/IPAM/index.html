@@ -8,6 +8,10 @@
 		<link rel="stylesheet" href="dist/reveal.css">
 		<link rel="stylesheet" href="dist/theme/serif.css">
 		<style>	
+		.tight-math mjx-container[jax="CHTML"][display="true"],
+		.tight-math .MathJax_Display {
+		margin: 0.2em 0 !important;
+		}
 		div.highlight {
 			background-color:#FFF9C4;
 			text-align: left;
@@ -77,6 +81,7 @@
 				margin-top: 5px;
 				font-size: 1em;
 			}
+			
 		</style>
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -132,13 +137,13 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section data-menu-title="Coarse-Grained Molecular Dynamics" >
-					<div style="text-align: center; margin-bottom: 20px; font-weight: 700;">
-						<h1 id="title-text2" style="margin-top: -100px; font-size: 2.0em; color: #2c3e50;"></h1>
+				<!-- <section data-menu-title="Coarse-Grained Molecular Dynamics" >
+					<div style="text-align: center; font-weight: 700;">
+						<h1 id="title-text2" style="font-size: 1.5em; color: #2c3e50;"></h1>
 					</div>
 					<div style="text-align: center; margin-top: 20px;">
 						<svg id="MD1" width="750" height="300" style="border: none;"></svg>
-						<button id="updateValues1" style="padding: 8px 15px; border: none; border-radius: 5px;font-style: serif; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></button>
+						<button id="updateValues1" style="padding: 8px 15px; border: none; border-radius: 5px;font-style: serif; font-size: 1.0em; font-weight: bold; color: #2c3e50;"></button>
 						<div>
 							<script>
 								title("MD1", "updateValues1", 30, 0.75);
@@ -149,6 +154,7 @@
 						<p id="author2" style="margin-bottom: 2px; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></p>
 						<p id="department2" style="margin-bottom: 2px; font-size: 1.1em; color: #34495e;"></p>
 						<p id="school2" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
+						<p id="Cooperator" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
 					</div>
 				
 					<script>
@@ -168,6 +174,7 @@
 							setTimeout(() => typeText("author2", "Liyao Lyu", 30), 2000);
 							setTimeout(() => typeText("department2", "Department of Mathematics", 30), 2500);
 							setTimeout(() => typeText("school2", "University of California, Los Angeles", 30), 3000);
+							setTimeout(() => typeText("Cooperator", "Joint work with Huan Lei (MSU) ", 30), 3500);
 						});
 					</script>
 				
@@ -180,16 +187,78 @@
 						But existing CG models often oversimplify memory effects. Our work introduces a framework that retains these critical many-body, non-Markovian features while preserving computational efficiency. 
 						</ul>
 					</aside>
-				</section>	
+				</section> -->
+				<section data-menu-title="Coarse-Grained Molecular Dynamics"
+						style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%;">
+
+				<!-- 标题 -->
+				<h1 id="title-text2" style="margin-top: 10px; font-size: 1.5em; color: #2c3e50; font-weight: 700;"></h1>
+
+				<!-- 中间的图和按钮 -->
+				<svg id="MD1" width="750" height="300" style="margin-top: 20px; border: none;"></svg>
+				<button id="updateValues1"
+						style="margin-top: 10px; padding: 8px 15px; border: none; border-radius: 5px; font-style: serif; font-size: 1.0em; font-weight: bold; color: #2c3e50;"></button>
+				<div>
+					<script>
+					title("MD1", "updateValues1", 30, 0.75);
+					</script>
+				</div>
+
+				<!-- 作者信息 -->
+				<!-- <p id="author2" style="margin-top: 20px; margin-bottom: 2px; font-size: 1.1em; font-weight: bold; color: #2c3e50;"></p>
+				<p id="department2" style="margin-bottom: 2px; font-size: 1.1em; color: #34495e;"></p>
+				<p id="school2" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
+				<p id="Cooperator" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p> -->
+				<div style="text-align: center; font-size: 1.1em; color: #34495e; margin-top: 10px; line-height: 1.4;">
+				<span id="author2" style="font-size: 1.3em; font-weight: bold; color: #2c3e50;"></span><br>
+				<span id="department2"></span><br>
+				<span id="school2" style="font-weight: bold;"></span><br>
+				<span id="Cooperator" style="font-weight: bold;"></span>
+				</div>
+				<!-- 打字动画 -->
+				<script>
+					function typeText(elementId, text, speed) {
+					let i = 0;
+					function type() {
+						if (i < text.length) {
+						document.getElementById(elementId).innerHTML += text.charAt(i);
+						i++;
+						setTimeout(type, speed);
+						}
+					}
+					type();
+					}
+
+					document.addEventListener("DOMContentLoaded", function () {
+					typeText("title-text2", "Machine Learning-based Coarse-Grained models for molecular systems", 30);
+					setTimeout(() => typeText("author2", "Liyao Lyu", 30), 2000);
+					setTimeout(() => typeText("department2", "Department of Mathematics", 30), 2500);
+					setTimeout(() => typeText("school2", "University of California, Los Angeles", 30), 3000);
+					setTimeout(() => typeText("Cooperator", "Joint work with Huan Lei (MSU) ", 30), 3500);
+					});
+				</script>
+
+				<!-- 演讲备注 -->
+				<aside class="notes">
+					<ul>
+					<li>Today, I will discuss Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory.</li>
+					<li>The central challenge we address is this: How do we bridge high-resolution atomistic simulations to mesoscale phenomena?</li>
+					<li>Atomistic simulations track every atomic detail but computationally impossible for large systems.</li>
+					<li>Coarse-grained (CG) models simplify this by focusing on collective variables, like the center of mass (dashed circles), rather than individual atoms (solid circles).</li>
+					<li>But existing CG models often oversimplify memory effects. Our work introduces a framework that retains these critical many-body, non-Markovian features while preserving computational efficiency.</li>
+					</ul>
+				</aside>
+				</section>
 				<section data-auto-animate>
 					<h3>Mori-Zwanzig Formalism</h3>
+				
 					<div style="text-align: left;">
 						<p>In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b>
 						   follow:
 						</p>
 					</div>
 				
-					<div data-id="MZCG" data-fragment-index="1">
+					<div data-id="MZCG">
 						\[
 						\begin{aligned}
 						\dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
@@ -200,49 +269,83 @@
 						\end{aligned}
 						\]
 					</div>
-					<!-- <div style="display: flex; justify-content: center; margin-top: 10px;">
-						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 300px)); ">
+
+					<div style="display: flex; justify-content: center; margin-top: 10px;">
+						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 1000px)); ">
 							<li><b>\( \mathbf{Q} \)</b>: Center of mass</li>	
 							<li><b>\( \mathbf{P} \)</b>: Total momentum</li>	
 							<li><b>\( \mathbf{V} \)</b>: Velocity</li>	
 							<li><b>\( \mathbf{M} \)</b>: Mass matrix</li>
 						</ul>
-					</div> -->
-					<div style="display: flex; flex-direction: center; align-items: center">
-						<div>
+					</div>
+					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
 						<ul>
-							<li class="fragment fade-in-then-semi-out" data-fragment-index="2" >
+							<li class="fragment fade-in-then-semi-out">
 							The Mori-Zwanzig formalism is <span style="color:#E65100">general</span>. 
 							</li>
-							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
+							<li class="fragment fade-in-then-semi-out">
 							In practice, one has to resort to <span style="color:#E65100">simple and ad hoc</span>  approximations.
 						 	</li>
-							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
+							<li class="fragment fade-in-then-semi-out">
 								Oversimplification of Memory Contribution <span style="color:#E65100">under-explored</span>.
 							</li>
-								<li class="fragment fade-in" data-fragment-index="5"> To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
+						</ul>
+					</div>
+					<div style="opacity: 0.8; font-size: 0.8em; text-align: left; position: absolute;">
+						<div>
+							Zwanzig, Robert.
+							Nonequilibrium statistical mechanics. Oxford university press, 2001.
+						</div>
+					</div>
+				
+					<aside class="notes">
+						<ul>
+							Theorically, the dynamics of the coarse-grained variable can be given by the Mori-Zwanzig formalism.
+							Here Q is the center of mass and P its momentum respectively and M is the mass matrix. 
+							The force term is decomposited into three part represents the convervative, memory and ramdom respectively.
+							While the MZ is general, it do not give a closed-form expressions. 
+							The formula of conservative force and the memory kernel as a function of CG variable Q is unknown.
+							Mnay efforts has been focused on refining the conservative force—often using many-body potentials.
+							However, oversimplication of the memory kernel has been overlooked, typically reduced to pairwise or isotropic terms.
+							This oversight is consequential: as our numerical results will demonstrate, the memory kernel’s many-body, state-dependent nature is essential to reproduce dynamic properties like transport and hydrodynamic correlations. 
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Important New Issues</h3>
+					<div class="two-col-grid">
+					<!-- <div class="two-col" style="display: flex; flex-direction: row; align-items: flex-start; gap:16px;"> -->
+					<!-- <div class="two-col" style="display: flex; flex-direction: center; align-items: center; gap:16px;"> -->
+						<div id="symmetry-text">
+							<ul>
+								<li>
+									<p class="fragment fade" data-fragment-index="1">
+										To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
+									</p>
 									<ol>
-										<li class="fragment fade-in-then-semi-out" data-fragment-index="6">
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
 											Translation Invariance:\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
 										</li>
-										<li class="fragment fade-in-then-semi-out" data-fragment-index="7">
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
 											Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
 										</li>
-										<li class="fragment fade-in-then-semi-out" data-fragment-index="8">
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
 											Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
 										</li>
 									</ol>
 								</li>
-								<li class="fragment fade-in" data-fragment-index="9"> Extensive 
+								<li class="fragment fade-in-then-semi-out" data-fragment-index="6"> Extensive 
 								</li>
 							</ul>
 						</div>
-						<div class="fragment fade-in-then-out" data-fragment-index="8" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+						<div id="symmetry-demo"
+						class="fragment fade-in-then-out" data-fragment-index="5" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
 							<div>
 								<svg id="canvas1"></svg>
-								<p style="font-size: 20px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+								<p style="font-size: 40px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
 								<div class="matrix">
-								<table style="font-size: 20px;">
+								<table style="font-size: 40px;">
 									<tr>
 										<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
 										<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
@@ -266,9 +369,9 @@
 							</div>
 							<div>
 							<svg id="canvas2"></svg>
-							<p style="font-size: 20px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+							<p style="font-size: 40px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
 							<div class="matrix">
-								<table style="font-size: 20px;">
+								<table style="font-size: 40px;">
 									<tr>
 										<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
 										<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
@@ -293,6 +396,77 @@
 							<script src="./figure/permutation.js"></script>
 						</div>
 					</div>
+					<style>
+						/* 容器：用 Grid + 变量控制两列比例；禁止溢出 */
+						.two-col-grid {
+							display: grid;
+							grid-template-columns: var(--left, 0.52fr) var(--right, 0.48fr);
+							align-items: start;
+							gap: 16px;
+							overflow: hidden;
+						}
+						/* 避免列内内容因长行把列撑爆 */
+						.two-col-grid > #symmetry-text,
+						.two-col-grid > #symmetry-demo {
+							min-width: 0;
+						}
+
+						/* 平滑动画（对列宽/字体/盒阴影） */
+						.two-col-grid,
+						#symmetry-text, #symmetry-demo,
+						#symmetry-demo svg, #symmetry-demo table {
+							transition: grid-template-columns 420ms ease, font-size 420ms ease, box-shadow 420ms ease, filter 420ms ease, max-width 420ms ease, width 420ms ease;
+						}
+
+						/* 默认尺寸（第5步未显示时） */
+						#symmetry-text { font-size: 1.0em; }
+						#symmetry-demo { font-size: 1.0em; }
+
+						/* 右侧图文在容器内响应式：不使用 transform，占位随列宽变化 */
+						#symmetry-demo svg { width: 100%; height: auto; max-width: 280px; }
+						#symmetry-demo table { width: 100%; max-width: 520px; }
+
+						/* 关键：当第5步 fragment（#symmetry-demo）可见时，动态调整列宽与字体 */
+						section:has(#symmetry-demo.current-fragment) .two-col-grid {
+							--left: 0.34fr;   /* 左列变窄 */
+							--right: 0.66fr;  /* 右列变宽 */
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-text {
+							font-size: 0.92em;  /* 左列文字略小，真实占位变小 */
+							opacity: 0.65;
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo {
+							font-size: 1.10em;  /* 右列文字/MathJax/表格真实变大 */
+							box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+							filter: saturate(1.05);
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo svg {
+							max-width: 360px;   /* 右侧 SVG 允许更大，但仍受列宽限制 */
+						}
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo table {
+							max-width: 640px;   /* 表格也更宽 */
+						}
+
+						/* 小屏保守些，避免溢出 */
+						@media (max-width: 1100px) {
+							section:has(#symmetry-demo.current-fragment) .two-col-grid { --left: 0.40fr; --right: 0.60fr; }
+							section:has(#symmetry-demo.current-fragment) #symmetry-demo svg { max-width: 320px; }
+						}
+					</style>
+
+						
+
+					<aside class="notes">
+						<ul>
+						For example, the transition invariant, if we add a vector to each position, which means the all molecular translate a vector b, 
+						the memory kernel should not changed.
+						Also, if we multiply a unity matrix on each position, which means rotate the molecular, the memory kernel should rotate accordingly.
+						and we need to consider the permutation symmetry.
+						we also need extensive,
+						if we learn a model for a small system in perdicaly boundary condition, we want our  model can be directly applied to a larger system with the same density in perdicaly boundary condition.
+					It can enable us to simulate some phenome that not affortable in the atomistic scale	
+					</ul>
+					</aside>
 				</section>
 				</div>
 		</div>

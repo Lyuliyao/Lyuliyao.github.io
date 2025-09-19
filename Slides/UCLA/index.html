@@ -1,3 +1,9 @@
+<!--
+title:Construction of Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory
+abstract:
+We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) model that faithfully retains the many-body nature of the inter-molecular dissipative interactions. Unlike the common empirical CG models, the present model is constructed based on the Mori-Zwanzig formalism and naturally inherits the heterogeneous statedependent memory term rather than matching the meanfield metrics such as the velocity auto-correlation function. Numerical results show that preserving the many-body nature of the memory term is crucial for predicting the collective transport and diffusion processes, where empirical forms generally show limitations.
+-->
+
 <!doctype html>
 <html lang="en">
 	<head>
@@ -670,7 +676,7 @@
 							</li> --> 
 						</ul>
 					</div>
-					<div id="nn-figs" class="nn-figstack">
+					<div id="nn-figs" class="nn-figstack" style="text-align: center;">
 						<figure class="fragment fade-in-then-out" data-fragment-index="2">
 						<img src="./figure/Q.png" class="nn-img">
 						</figure>
@@ -764,9 +770,11 @@
 					</h3>
 					<div style="text-align: left;">
 						<b style="color: #E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
-						\[
-						\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
-						\]
+						<p class="tight-math" style="margin-top: 0.5em; text-align: center;">
+							\(
+							\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
+							\)
+						</p>
 					</div>
 					<div  style="text-align: left;">
 						<ul>
@@ -1579,6 +1587,358 @@
 								Difficult to optimize deep neural networks with many parameters
 							</li>
 							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>First-order Momentum</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">
+								The same system without the random term but with inertia effect  
+								<span style="font-size:0.8em;">[Chen et al., 2022]</span>
+								\[
+								\gamma \ddot{\Theta}^i_t + \dot{\Theta}^i_t 
+								= -\lambda \left(\Theta_t^i- \mathcal{M}_\beta(\boldsymbol{\Theta})\right), 
+								\quad i=1,\cdots,N
+								\]
+							</li>
+
+							<li class="fragment fade-in">
+								An equivalent first-order system:
+								\[
+								\dot \Theta_t^i = \tfrac{1}{\lambda}\Omega_t^i, 
+								\quad
+								\gamma \dot \Omega_t^i + \Omega_t^i 
+								= -\left(\Theta_t^i - \mathcal{M}_\beta(\boldsymbol{\Theta})\right)
+								\]
+							</li>
+
+							<li class="fragment fade-in">
+								Reformulation and add the stochastic term:
+								\[
+								\begin{aligned}
+								d \Theta^i_t &= \lambda \Omega^i_{t-1}\,dt 
+								+ \sigma(t)\, dW^i_{\theta,t}, \\
+								d \Omega^i_t &= -\gamma \Omega^i_{t-1}\,dt 
+								- m\!\left(\Theta_t^i - \mathcal{M}_\beta(\boldsymbol{\Theta})\right)\!dt 
+								+ \sqrt{m}\,\sigma(t)\, dW^i_{\omega,t}
+								\end{aligned}
+								\]
+							</li>
+							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Momentum Consensus-Based Optimization (M-CBO)</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">
+								Initialize population of \(N\) particles and momentum \((\boldsymbol{\Theta},\boldsymbol{\Omega})\).
+							</li>
+
+							<li class="fragment fade-in">
+								Consensus point:
+								\[
+								\mathcal{M}_{\beta}(\boldsymbol{\Theta})
+								= \frac{\sum_{i=1}^N \Theta^i \, w_\beta(\Theta^i)}
+									{\sum_{j=1}^N w_\beta(\Theta^j)}, 
+								\quad
+								w_\beta(\Theta) = e^{-\beta \mathcal{J}(\Theta)}
+								\]
+							</li>
+
+							<li class="fragment fade-in">
+								Dynamics:
+								\[
+								\begin{aligned}
+								d\Theta^i_t &= \Omega^i_t\,dt 
+								- \gamma_1\!\left(\Theta^i_t - \mathcal{M}_\beta(\boldsymbol{\Theta})\right)dt
+								+ \sigma(t)\,dW^i_{\theta,t}, \\
+								d\Omega^i_t &= -m\!\left(\Theta^i_t - \mathcal{M}_\beta(\boldsymbol{\Theta})\right)dt 
+								- \gamma_2\Omega^i_t\,dt 
+								+ \sqrt{m}\,\sigma(t)\,dW^i_{\omega,t}
+								\end{aligned}
+								\]
+							</li>
+							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Adaptive Momentum CBO (Adam-CBO)</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">
+								Replace constant \(m\) with adaptive term:
+								\[
+								(V_\beta[\boldsymbol{\Theta}] + \epsilon I)^{-1}
+								\]
+								where
+								\[
+								V_\beta[\boldsymbol{\Theta}]
+								= \frac{\sum_{i=1}^N 
+								(\Theta^i - \mathcal{M}_\beta[\boldsymbol{\Theta}])^2 w_\beta(\Theta^i)}
+								{\sum_{j=1}^N w_\beta(\Theta^j)}
+								\]
+							</li>
+
+							<li class="fragment fade-in">
+								Similar to Adam optimizer → better convergence.
+							</li>
+
+							<li class="fragment fade-in">
+								Algorithm details:
+								<ul>
+								<li class="fragment fade-in">Batch updates of agents</li>
+								<li class="fragment fade-in">Adaptive exploration strength</li>
+								</ul>
+							</li>
+							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Theoretical Guarantees</h3>
+						<div class="cbo-left">
+							<p class="fragment fade-in"><b>Theorem (Convergence)</b></p>
+							<ul>
+							<li class="fragment fade-in">
+								Under assumptions on cost \(\mathcal{J}\) and parameters:
+								<ul>
+								<li class="fragment fade-in">M-CBO converges to optimal policy.</li>
+								<li class="fragment fade-in">
+									Exponential decay of energy functional:
+									\[
+									E[\rho_t] \leq E[\rho_0]\,e^{-(1-\tau)\lambda t},
+									\quad
+									E[\rho] = \tfrac{1}{2}\!\int \|\theta-\tilde{\theta}\|^2 + m^{-1}\|\omega\|^2\,d\rho
+									\]
+								</li>
+								</ul>
+							</li>
+							<li class="fragment fade-in">
+								Key properties:
+								<ul>
+								<li class="fragment fade-in">Well-posedness of M-CBO dynamics</li>
+								<li class="fragment fade-in">Mean-field limit analysis</li>
+								</ul>
+							</li>
+							</ul>
+						</div>
+						</section>
+
+						<section data-auto-animate>
+						<h3>Assumptions on Cost Function \(\mathcal{J}\)</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">
+								There exists \(\tilde\theta\) such that  
+								\(\mathcal{J}(\tilde\theta) = \inf_\theta \mathcal{J}(\theta) =: \underline{J}\).  
+								Also bounded: \(\sup \mathcal{J} \leq \overline{J}\).
+							</li>
+							<li class="fragment fade-in">
+								Locally Lipschitz continuous:  
+								\(\|\mathcal J[\theta_1]-\mathcal J[\theta_2]\| 
+								\leq L_J (\|\theta_1\|+\|\theta_2\|)\|\theta_1-\theta_2\|\).
+							</li>
+							<li class="fragment fade-in">
+								Growth condition:  
+								\(\mathcal J(\theta) - \underline{J} \leq c_{\mathcal J}(1+\|\theta\|^2)\).
+							</li>
+							<li class="fragment fade-in">
+								There exist \(\delta_J,R_0,\eta,\mu >0\) such that  
+								\[
+								\|\theta - \tilde\theta\| \leq 
+								\tfrac{(\mathcal{J}(\theta) -\underline{ J})^\mu}{\eta}
+								\quad \text{for all } \theta \in B_{R_0}(\tilde\theta),
+								\]
+								and outside the ball,  
+								\(\mathcal J(\theta) - \underline{ J } > \delta_J\).
+							</li>
+							<li class="fragment fade-in">
+								Noise strength \(\sigma(t)\) bounded:  
+								\(\underline{\sigma} \leq \sigma(t) \leq \overline{\sigma}\).
+							</li>
+							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Rastrigin Function</h3>
+						<div class="cbo-left">
+							<div class="fragment fade-in" data-fragment-index="1">
+							\[
+							f(x) = \frac{1}{d}\sum_{i=1}^d \Big[(x_i - B)^2 - 10\cos\big(2\pi(x_i - B)\big) + 10\Big] + C
+							\]
+							with \(B = \arg\min f(x)\) and \(C = \min f(x)\).
+							</div>
+							<div style="text-align:center;">
+							<figure class="fragment fade-in" data-fragment-index="2" style="margin-top:0.8em;">
+							<img src="figure/R_function.png" alt="Rastrigin 2D" style="max-width:60%; ">
+							<figcaption style="margin-top:.3em;">\(d=2\) and \(B=C=0\)</figcaption>
+							</figure>
+							</div>
+							
+						</div>
+
+						<style>
+							.cbo-left { text-align:left; }
+							mjx-container[jax="CHTML"][display="true"] { margin: .45em 0 !important; }
+						</style>
+						</section>
+						<section data-auto-animate>
+						<h3>Comparison with Different Random Processes</h3>
+						<div class="cbo-left">
+							<p class="fragment fade-in" data-fragment-index="1"><b>CBO</b></p>
+							<div class="fragment fade-in" data-fragment-index="2" style="overflow-x:auto;">
+							<table class="tbl">
+								<thead>
+								<tr>
+									<th>d</th><th>N</th><th>M</th><th>\(\mathcal{N}(0,1)\)</th><th>\(\mathcal{U}(-1,1)\)</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr><td>2</td><td>50</td><td>40</td><td>100%</td><td>100%</td></tr>
+								<tr><td>10</td><td>50</td><td>40</td><td>100%</td><td>100%</td></tr>
+								<tr><td>20</td><td>50</td><td>40</td><td>98%</td><td>22%</td></tr>
+								<tr><td>20</td><td>50</td><td>20</td><td>66%</td><td>2%</td></tr>
+								<tr><td>30</td><td>50</td><td>40</td><td>26%</td><td>0%</td></tr>
+								<tr><td>30</td><td>500</td><td>5</td><td>0%</td><td>0%</td></tr>
+								</tbody>
+							</table>
+							</div>
+
+							<p class="fragment fade-in" data-fragment-index="3" style="margin-top:1em;"><b>Adam-CBO</b></p>
+							<div class="fragment fade-in" data-fragment-index="4" style="overflow-x:auto;">
+							<table class="tbl">
+								<thead>
+								<tr>
+									<th>d</th><th>N</th><th>M</th><th>\(\mathcal{N}(0,1)\)</th><th>\(\mathcal{U}(-1,1)\)</th>
+								</tr>
+								</thead>
+								<tbody>
+								<tr><td>30</td><td>500</td><td>5</td><td>99%</td><td>100%</td></tr>
+								<tr><td>100</td><td>5000</td><td>5</td><td>100%</td><td>100%</td></tr>
+								<tr><td>1000</td><td>8000</td><td>50</td><td>92%</td><td>20%</td></tr>
+								</tbody>
+							</table>
+							</div>
+						</div>
+
+						<style>
+							.tbl { border-collapse:collapse; font-size:.95em; }
+							.tbl th, .tbl td { border:1px solid #bbb; padding:.35em .6em; text-align:center; }
+							.tbl thead th { background:#f2f2f2; }
+						</style>
+						</section>
+						<section data-auto-animate>
+						<h3>Linear-Quadratic-Gaussian Control</h3>
+						<div class="cbo-left">
+							<figure class="fragment fade-in">
+							<img src="figure/value_function_case2.png" alt="LQG value" style="max-width:80%;">
+							</figure>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Ginzburg–Landau Model</h3>
+						<div class="gl-grid">
+							<div>
+							<div class="fragment fade-in" data-fragment-index="1">
+								\[
+								U[\varphi] = \frac{\lambda}{2}\!\int_0^1 |\nabla_z \varphi(z)|^2\,dz
+								+ \frac{\mu}{4}\!\int_0^1 |1-\varphi(z)^2|^2\,dz
+								\]
+							</div>
+							<ul>
+								<li class="fragment fade-in" data-fragment-index="2">
+								Dynamics:
+								\[
+								d\mathbf{x}_t = \mathbf{b}(\mathbf{x}_t,\alpha_t)\,dt + \sqrt{2}\,d\mathbf{W}_t,
+								\quad b(\mathbf{x},a) = -\nabla_\mathbf{x} U(\mathbf{x}) + 2\alpha\,\boldsymbol{\omega}
+								\]
+								</li>
+								<li class="fragment fade-in" data-fragment-index="3">
+								Trained control matches theoretical optimal:
+								\[
+								\alpha(t,\mathbf{x};\theta)\approx -\boldsymbol{\omega}\cdot\nabla_{\mathbf{x}}u(t,\mathbf{x})
+								\]
+								</li>
+							</ul>
+							</div>
+
+							<div class="fragment fade-in" data-fragment-index="4">
+							<figure>
+								<img src="Figure/consistence_4D.png"  alt="D=4"  style="max-width:46%;">
+								<img src="Figure/consistence_8D.png"  alt="D=8"  style="max-width:46%;">
+							</figure>
+							<figure style="margin-top:.5em;">
+								<img src="Figure/consistence_16D.png" alt="D=16" style="max-width:46%;">
+								<img src="Figure/consistence_32D.png" alt="D=32" style="max-width:46%;">
+							</figure>
+							</div>
+						</div>
+
+						<style>
+							.gl-grid { display:grid; grid-template-columns: 48% 52%; gap: 18px; align-items:start; text-align:left; }
+							.gl-grid img { vertical-align:middle; }
+						</style>
+						</section>
+						<section data-auto-animate>
+						<h3>Path Planning</h3>
+						<div class="cbo-left">
+							<figure class="fragment fade-in">
+							<img src="Figure/path.png" alt="Multi-agent paths" style="max-width:100%;">
+							<figcaption style="margin-top:.3em;">
+								Learned trajectories for multi-agent navigation from initial configurations to targets while avoiding obstacles (2, 4, and 50 agents).
+							</figcaption>
+							</figure>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Reinforcement Learning</h3>
+						<div class="cbo-left">
+							<figure class="fragment fade-in">
+							<img src="Figure/rl_value.png" alt="RL value comparison" style="max-width:90%;">
+							<figcaption style="margin-top:.3em;">
+								Value function convergence on Pendulum-v1 (left) and CartPole-v1 (right).
+							</figcaption>
+							</figure>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Advantages of Adam-CBO</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">Accuracy</li>
+							<li class="fragment fade-in">Scalability</li>
+							<li class="fragment fade-in">Handles non-convex cases</li>
+							</ul>
+						</div>
+						</section>
+						<section data-auto-animate>
+						<h3>Summary</h3>
+						<div class="cbo-left">
+							<ul>
+							<li class="fragment fade-in">Gradient-free, model-free method for high-dimensional SOC.</li>
+							<li class="fragment fade-in">Key advantages:
+								<ul>
+								<li class="fragment fade-in">No policy gradient estimation</li>
+								<li class="fragment fade-in">No state/action space discretization</li>
+								<li class="fragment fade-in">Theoretical convergence guarantees</li>
+								</ul>
+							</li>
+							<li class="fragment fade-in">Demonstrated effectiveness on:
+								<ul>
+								<li class="fragment fade-in">LQG problems (1D–16D)</li>
+								<li class="fragment fade-in">Ginzburg–Landau model (up to 32D)</li>
+								<li class="fragment fade-in">Systemic risk mean-field control</li>
+								</ul>
+							</li>
+							<li class="fragment fade-in">
+								Code: <a href="https://github.com/Lyuliyao/Adam_CBO_Control">github.com/Lyuliyao/Adam_CBO_Control</a>
+							</li>
+							</ul>
+
+							<div class="fragment fade-in" style="margin-top:1.2em;">
+							<h2 style="margin:0;">Thank you for your attention!</h2>
+							</div>
 						</div>
 						</section>
 

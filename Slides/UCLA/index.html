@@ -1292,13 +1292,18 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</div>
 					</section>
 					<section>
-							<h3>
-								Numerical Result:Vortex flow
-							</h3>
-							<div>
-								<iframe src="./html/vel_evol.html" width="600" height="500" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
-							</div>
-						</section>
+					<h3>Numerical Result: Vortex flow</h3>
+					 <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+						<iframe
+						id="velFrame"
+						src="./html/vel_evol.html"
+						loading="lazy"
+						style="width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0;"
+						allowfullscreen
+						referrerpolicy="no-referrer"
+						></iframe>
+					</div>
+					</section>
 						<section>
 							<h3>
 								Summary
@@ -1540,19 +1545,19 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</section>
 						<section data-auto-animate>
 						<h3>Original CBO Method</h3>
-						<div class="cbo-left">
+						<div  >
 							<ul>
 							<li class="fragment fade-in">
 								Highly nonconvex unconstrained optimization problem:
 							\[
-								\Theta^* \;=\; \arg\min_{\Theta \in \mathbb{R}^d}\; \mathcal{J}(\Theta)
+								\theta^* \;=\; \arg\min_{\theta \in \mathbb{R}^d}\; \mathcal{J}(\theta)
 							\]
 							</li>
 							<li class="fragment fade-in">
 								Interacting particles during the dynamic evolution:
 								<ul>
-								<li class="fragment fade-in">tend to their weighted average</li>
-								<li class="fragment fade-in">undergo fluctuation due to random noise</li>
+								<li>tend to their weighted average</li>
+								<li>undergo fluctuation due to random noise</li>
 								</ul>
 							</li>
 							<li class="fragment fade-in">
@@ -1569,33 +1574,30 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 									{\sum_{i=1}^N e^{-\beta \mathcal{J}(\Theta^i)}}
 								\)
 							</li>
-							</ul>
-						</div>
-						</section>
-						<section data-auto-animate>
-						<h3>Some Practical Issues in CBO</h3>
-						<div class="cbo-left">
-							<ul>
-							<li class="fragment fade-in">
-								<span style="color:red;">The initial data need to be well-chosen</span>
-							</li>
 							<li class="fragment fade-in">
 								Difficult to optimize high-dimensional non-convex functions  
 								(e.g. Rastrigin function in dimension \(20\))
 							</li>
+							</ul>
+						</div>
+						</section>
+						<!-- <section data-auto-animate>
+						<h3>Some Practical Issues in CBO</h3>
+						<div  >
+							<ul>
+							
 							<li class="fragment fade-in">
 								Difficult to optimize deep neural networks with many parameters
 							</li>
 							</ul>
 						</div>
-						</section>
+						</section> -->
 						<section data-auto-animate>
 						<h3>First-order Momentum</h3>
-						<div class="cbo-left">
+						<div  >
 							<ul>
 							<li class="fragment fade-in">
 								The same system without the random term but with inertia effect  
-								<span style="font-size:0.8em;">[Chen et al., 2022]</span>
 								\[
 								\gamma \ddot{\Theta}^i_t + \dot{\Theta}^i_t 
 								= -\lambda \left(\Theta_t^i- \mathcal{M}_\beta(\boldsymbol{\Theta})\right), 
@@ -1627,10 +1629,18 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							</li>
 							</ul>
 						</div>
+						<div style="
+							position:absolute;
+							text-align:left; font-size:0.8em; opacity:0.8;">
+							<div>Jingrun Chen, Shi Jin, <b>Liyao Lyu</b>.
+							A Consensus-Based Global Optimization Method with Adaptive Momentum Estimation.
+							<em>Communications in Computational Physics</em>, 2022.
+							</div>
+						</div>
 						</section>
-						<section data-auto-animate>
+						<!-- <section data-auto-animate>
 						<h3>Momentum Consensus-Based Optimization (M-CBO)</h3>
-						<div class="cbo-left">
+						<div  >
 							<ul>
 							<li class="fragment fade-in">
 								Initialize population of \(N\) particles and momentum \((\boldsymbol{\Theta},\boldsymbol{\Omega})\).
@@ -1662,10 +1672,11 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							</li>
 							</ul>
 						</div>
-						</section>
+
+						</section> -->
 						<section data-auto-animate>
 						<h3>Adaptive Momentum CBO (Adam-CBO)</h3>
-						<div class="cbo-left">
+						<div  >
 							<ul>
 							<li class="fragment fade-in">
 								Replace constant \(m\) with adaptive term:
@@ -1684,50 +1695,75 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							<li class="fragment fade-in">
 								Similar to Adam optimizer → better convergence.
 							</li>
-
+<!-- 
 							<li class="fragment fade-in">
 								Algorithm details:
 								<ul>
 								<li class="fragment fade-in">Batch updates of agents</li>
 								<li class="fragment fade-in">Adaptive exploration strength</li>
 								</ul>
-							</li>
+							</li> -->
 							</ul>
 						</div>
 						</section>
 						<section data-auto-animate>
 						<h3>Theoretical Guarantees</h3>
-						<div class="cbo-left">
-							<p class="fragment fade-in"><b>Theorem (Convergence)</b></p>
+						<div  >
 							<ul>
-							<li class="fragment fade-in">
-								Under assumptions on cost \(\mathcal{J}\) and parameters:
-								<ul>
-								<li class="fragment fade-in">M-CBO converges to optimal policy.</li>
 								<li class="fragment fade-in">
-									Exponential decay of energy functional:
-									\[
-									E[\rho_t] \leq E[\rho_0]\,e^{-(1-\tau)\lambda t},
-									\quad
-									E[\rho] = \tfrac{1}{2}\!\int \|\theta-\tilde{\theta}\|^2 + m^{-1}\|\omega\|^2\,d\rho
-									\]
+									Under assumptions on cost \(\mathcal{J}\) with parameters:
+									<ul>
+									<li>M-CBO converges to optimal policy.</li>
+									<li>
+										Exponential decay of energy functional:
+										\[
+										E[\rho_t] \leq E[\rho_0]\,e^{-(1-\tau)\lambda t},
+										\quad
+										E[\rho] = \tfrac{1}{2}\!\int \|\theta-\tilde{\theta}\|^2 + m^{-1}\|\omega\|^2\,d\rho
+										\]
+									</li>
+									</ul>
 								</li>
-								</ul>
-							</li>
-							<li class="fragment fade-in">
-								Key properties:
-								<ul>
-								<li class="fragment fade-in">Well-posedness of M-CBO dynamics</li>
-								<li class="fragment fade-in">Mean-field limit analysis</li>
-								</ul>
-							</li>
+								<li class="fragment fade-in">
+									Assumptions on cost function \(\mathcal{J}\):
+									<ul style="font-size:0.8em;">
+										<li>
+											There exists \(\tilde\theta\) such that  
+											\(\mathcal{J}(\tilde\theta) = \inf_\theta \mathcal{J}(\theta) =: \underline{J}\).  
+											Also bounded: \(\sup \mathcal{J} \leq \overline{J}\).
+										</li>
+										<li>
+											Locally Lipschitz continuous:
+											\(\|\mathcal J[\theta_1]-\mathcal J[\theta_2]\| 
+											\leq L_J (\|\theta_1\|+\|\theta_2\|)\|\theta_1-\theta_2\|\).
+										</li>
+										<li>
+											Growth condition:  
+											\(\mathcal J(\theta) - \underline{J} \leq c_{\mathcal J}(1+\|\theta\|^2)\).
+										</li>
+										<li>
+											There exist \(\delta_J,R_0,\eta,\mu >0\) such that  
+											\[
+											\|\theta - \tilde\theta\| \leq 
+											\tfrac{(\mathcal{J}(\theta) -\underline{ J})^\mu}{\eta}
+											\quad \text{for all } \theta \in B_{R_0}(\tilde\theta),
+											\]
+											and outside the ball,  
+											\(\mathcal J(\theta) - \underline{ J } > \delta_J\).
+										</li>
+										<li >
+											Noise strength \(\sigma(t)\) bounded:  
+											\(\underline{\sigma} \leq \sigma(t) \leq \overline{\sigma}\).
+										</li>
+									</ul>
+								</li>
 							</ul>
 						</div>
 						</section>
 
-						<section data-auto-animate>
+						<!-- <section data-auto-animate>
 						<h3>Assumptions on Cost Function \(\mathcal{J}\)</h3>
-						<div class="cbo-left">
+						<div>
 							<ul>
 							<li class="fragment fade-in">
 								There exists \(\tilde\theta\) such that  
@@ -1759,10 +1795,10 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							</li>
 							</ul>
 						</div>
-						</section>
+						</section> -->
 						<section data-auto-animate>
 						<h3>Rastrigin Function</h3>
-						<div class="cbo-left">
+						<div  >
 							<div class="fragment fade-in" data-fragment-index="1">
 							\[
 							f(x) = \frac{1}{d}\sum_{i=1}^d \Big[(x_i - B)^2 - 10\cos\big(2\pi(x_i - B)\big) + 10\Big] + C
@@ -1778,62 +1814,102 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							
 						</div>
 
-						<style>
-							.cbo-left { text-align:left; }
-							mjx-container[jax="CHTML"][display="true"] { margin: .45em 0 !important; }
-						</style>
 						</section>
 						<section data-auto-animate>
 						<h3>Comparison with Different Random Processes</h3>
-						<div class="cbo-left">
-							<p class="fragment fade-in" data-fragment-index="1"><b>CBO</b></p>
-							<div class="fragment fade-in" data-fragment-index="2" style="overflow-x:auto;">
-							<table class="tbl">
+
+						<div style="display:flex; justify-content:center; gap:2em; flex-wrap:wrap;">
+
+							<!-- CBO Table -->
+							<div class="fragment fade-in" data-fragment-index="1" style="flex:1 1 350px; max-width:420px;">
+							<div style="font-weight:bold; text-align:center; margin-bottom:0.3em;">CBO</div>
+							<div style="overflow-x:auto;">
+								<table class="tbl smalltbl">
 								<thead>
-								<tr>
+									<tr>
 									<th>d</th><th>N</th><th>M</th><th>\(\mathcal{N}(0,1)\)</th><th>\(\mathcal{U}(-1,1)\)</th>
-								</tr>
+									</tr>
 								</thead>
 								<tbody>
-								<tr><td>2</td><td>50</td><td>40</td><td>100%</td><td>100%</td></tr>
-								<tr><td>10</td><td>50</td><td>40</td><td>100%</td><td>100%</td></tr>
-								<tr><td>20</td><td>50</td><td>40</td><td>98%</td><td>22%</td></tr>
-								<tr><td>20</td><td>50</td><td>20</td><td>66%</td><td>2%</td></tr>
-								<tr><td>30</td><td>50</td><td>40</td><td>26%</td><td>0%</td></tr>
-								<tr><td>30</td><td>500</td><td>5</td><td>0%</td><td>0%</td></tr>
+									<tr><td>2</td><td>50</td><td>40</td><td>100%</td><td>100%</td></tr>
+									<tr><td>10</td><td>50</td><td>40</td><td>100%</td><td>100%</td></tr>
+									<tr><td>20</td><td>50</td><td>40</td><td>98%</td><td>22%</td></tr>
+									<tr><td>20</td><td>50</td><td>20</td><td>66%</td><td>2%</td></tr>
+									<tr><td>30</td><td>50</td><td>40</td><td>26%</td><td>0%</td></tr>
+									<tr><td>30</td><td>500</td><td>5</td><td>0%</td><td>0%</td></tr>
 								</tbody>
-							</table>
+								</table>
+							</div>
 							</div>
 
-							<p class="fragment fade-in" data-fragment-index="3" style="margin-top:1em;"><b>Adam-CBO</b></p>
-							<div class="fragment fade-in" data-fragment-index="4" style="overflow-x:auto;">
-							<table class="tbl">
+							<!-- Adam-CBO Table -->
+							<div class="fragment fade-in" data-fragment-index="3" style="flex:1 1 350px; max-width:500px;">
+							<div style="font-weight:bold; text-align:center; margin-bottom:0.3em;">Adam-CBO</div>
+							<div style="overflow-x:auto;">
+								<table class="tbl smalltbl">
 								<thead>
-								<tr>
+									<tr>
 									<th>d</th><th>N</th><th>M</th><th>\(\mathcal{N}(0,1)\)</th><th>\(\mathcal{U}(-1,1)\)</th>
-								</tr>
+									</tr>
 								</thead>
 								<tbody>
-								<tr><td>30</td><td>500</td><td>5</td><td>99%</td><td>100%</td></tr>
-								<tr><td>100</td><td>5000</td><td>5</td><td>100%</td><td>100%</td></tr>
-								<tr><td>1000</td><td>8000</td><td>50</td><td>92%</td><td>20%</td></tr>
+									<tr><td>30</td><td>500</td><td>5</td><td>99%</td><td>100%</td></tr>
+									<tr><td>100</td><td>5000</td><td>5</td><td>100%</td><td>100%</td></tr>
+									<tr><td>1000</td><td>8000</td><td>50</td><td>92%</td><td>20%</td></tr>
 								</tbody>
-							</table>
+								</table>
 							</div>
+							</div>
+
 						</div>
 
 						<style>
-							.tbl { border-collapse:collapse; font-size:.95em; }
-							.tbl th, .tbl td { border:1px solid #bbb; padding:.35em .6em; text-align:center; }
+							.tbl { border-collapse: collapse; border: 1px solid #bbb;   /* 给 table 加一个整体外框 */}
+							.tbl th, .tbl td { border:1px solid #bbb; padding:.25em .5em; text-align:center; }
 							.tbl thead th { background:#f2f2f2; }
+							.smalltbl { font-size: 0.8em; } /* smaller text for slides */
 						</style>
 						</section>
+
+
 						<section data-auto-animate>
 						<h3>Linear-Quadratic-Gaussian Control</h3>
-						<div class="cbo-left">
-							<figure class="fragment fade-in">
-							<img src="figure/value_function_case2.png" alt="LQG value" style="max-width:80%;">
-							</figure>
+						<div style="display: flex; justify-content: center; align-items: center;">
+							<div style="text-align:left">
+							<ul>
+								<li class="fragment fade-in" data-fragment-index="2">
+								Dynamics:
+								\[
+								d\mathbf{x}_t = 2\boldsymbol{\alpha}\,dt + \sqrt{2}\,d\mathbf{W}_t,
+								\]
+								</li>
+								<li class="fragment fade-in" data-fragment-index="3">
+								cost functional:
+								\[
+								J({\boldsymbol{\alpha}_t}) = \mathbb{E}\l [\int^ T_ 0 \|\boldsymbol{\alpha}_t\|^2 dt + g(X_T )\r  ]
+								\]
+								</li>
+								<li>
+									Exact solution of the value function:
+									\[
+									\begin{aligned}
+									u(t, \mathbf x) =&  \inf_{\boldsymbol{\alpha}}  \mathbb{E}\l [\int_t^T \|\boldsymbol{\alpha}_t\|^2\intd t + g(\mathbf x_T)\l |\mathbf x_t= \mathbf x \r  .\r  ] \\
+									= & -\ln \l (   \mathbb{E} \l [ \exp \l (  - g \l (  \mathbf x + \sqrt{2} \mathbf W_{T-t} \r )  \r )  \r  ] \r ).
+									\end{aligned}
+									\]
+								</li>
+							</ul>
+							</div>
+
+							<div style="text-align:left" class="fragment fade-in" data-fragment-index="4">
+							<div
+								id=control_lqd
+								class="plotly-graph-div"
+								style="height:450; width:450;">
+							</div>
+							<script type="text/javascript" src="./text/control_lqg.js">
+							</script>
+							</div>
 						</div>
 						</section>
 						<section data-auto-animate>
@@ -1853,6 +1929,13 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 								d\mathbf{x}_t = \mathbf{b}(\mathbf{x}_t,\alpha_t)\,dt + \sqrt{2}\,d\mathbf{W}_t,
 								\quad b(\mathbf{x},a) = -\nabla_\mathbf{x} U(\mathbf{x}) + 2\alpha\,\boldsymbol{\omega}
 								\]
+								</li>
+								<li>
+									The cost functional is defined 
+									\begin{equation*}
+										J[\alpha] = \mathbb{E}\l [\int_0^T \frac{1}{d}\|\mathbf{x}_t\|^2 + \|\alpha\| \intd t +  \frac{10}{d}\|\mathbf{x}_T\|^2
+									\r  ].
+									\end{equation*}
 								</li>
 								<li class="fragment fade-in" data-fragment-index="3">
 								Trained control matches theoretical optimal:
@@ -1882,7 +1965,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</section>
 						<section data-auto-animate>
 						<h3>Path Planning</h3>
-						<div class="cbo-left">
+						<div  >
 							<figure class="fragment fade-in">
 							<img src="Figure/path.png" alt="Multi-agent paths" style="max-width:100%;">
 							<figcaption style="margin-top:.3em;">
@@ -1893,7 +1976,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</section>
 						<section data-auto-animate>
 						<h3>Reinforcement Learning</h3>
-						<div class="cbo-left">
+						<div   style="text-align:center;">
 							<figure class="fragment fade-in">
 							<img src="Figure/rl_value.png" alt="RL value comparison" style="max-width:90%;">
 							<figcaption style="margin-top:.3em;">
@@ -1902,43 +1985,30 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							</figure>
 						</div>
 						</section>
-						<section data-auto-animate>
-						<h3>Advantages of Adam-CBO</h3>
-						<div class="cbo-left">
-							<ul>
-							<li class="fragment fade-in">Accuracy</li>
-							<li class="fragment fade-in">Scalability</li>
-							<li class="fragment fade-in">Handles non-convex cases</li>
-							</ul>
-						</div>
-						</section>
+					
 						<section data-auto-animate>
 						<h3>Summary</h3>
-						<div class="cbo-left">
+						<div  >
 							<ul>
 							<li class="fragment fade-in">Gradient-free, model-free method for high-dimensional SOC.</li>
 							<li class="fragment fade-in">Key advantages:
 								<ul>
-								<li class="fragment fade-in">No policy gradient estimation</li>
-								<li class="fragment fade-in">No state/action space discretization</li>
-								<li class="fragment fade-in">Theoretical convergence guarantees</li>
+								<li>No policy gradient estimation</li>
+								<li>No state/action space discretization</li>
+								<li>Theoretical convergence guarantees</li>
 								</ul>
 							</li>
 							<li class="fragment fade-in">Demonstrated effectiveness on:
 								<ul>
-								<li class="fragment fade-in">LQG problems (1D–16D)</li>
-								<li class="fragment fade-in">Ginzburg–Landau model (up to 32D)</li>
-								<li class="fragment fade-in">Systemic risk mean-field control</li>
+								<li>LQG problems (1D–16D)</li>
+								<li>Ginzburg–Landau model (up to 32D)</li>
+								<li >Systemic risk mean-field control</li>
 								</ul>
 							</li>
 							<li class="fragment fade-in">
 								Code: <a href="https://github.com/Lyuliyao/Adam_CBO_Control">github.com/Lyuliyao/Adam_CBO_Control</a>
 							</li>
 							</ul>
-
-							<div class="fragment fade-in" style="margin-top:1.2em;">
-							<h2 style="margin:0;">Thank you for your attention!</h2>
-							</div>
 						</div>
 						</section>
 

@@ -34,12 +34,12 @@
                     <div class="fragment fade-in-then-semi-out">
                         <p><b>James Chen</b></p>
                         <p>Email: jamesdc1[at].ucla.edu</p>
-                        <p>Student Hour: See BruinLearn module</p>
+                        <p>Student Hour: See  <a href="https://bruinlearn.ucla.edu/" class="logo">BruinLearn</a> module</p>
                     </div>
                     <div class="fragment fade-in-then-semi-out">
                         <p><b>Jack Moffatt</b></p>
                         <p>Email: jackmoffatt[at].ucla.edu</p>
-                        <p>Student Hour: See BruinLearn module</p>
+                        <p>Student Hour: See  <a href="https://bruinlearn.ucla.edu/" class="logo">BruinLearn</a> module</p>
                     </div>
                     <div class="fragment fade-in-then-semi-out">
                         <p><b>Discussion Section</b></p>
@@ -49,20 +49,20 @@
                 <section data-auto-animate data-auto-animate-unmatched="fade">
                     <h2>Course Description</h2>
                     <ul>
-                        <li class="fragment fade-in-then-semi-out">No prior programming experience assumed.</li>
-                        <li class="fragment fade-in-then-semi-out">Basic principles of programming, using C++.</li>
-                        <li class="fragment fade-in-then-semi-out">Algorithmic, procedural problem solving.</li>
-                        <li class="fragment fade-in-then-semi-out">Program design and development.</li>
-                        <li class="fragment fade-in-then-semi-out">Basic data types, control structures and functions.</li>
-                        <li class="fragment fade-in-then-semi-out">Functional arrays and pointers.</li>
-                        <li class="fragment fade-in-then-semi-out">Introduction to classes for programmer-defined data types.</li>
+                        <li>No prior programming experience assumed.</li>
+                        <li>Basic principles of programming, using C++.</li>
+                        <li>Algorithmic, procedural problem solving.</li>
+                        <li>Program design and development.</li>
+                        <li>Basic data types, control structures and functions.</li>
+                        <li>Functional arrays and pointers.</li>
+                        <li>Introduction to classes for programmer-defined data types.</li>
                     </ul>
                 </section>
                 <section>
                     <h2>Course Website</h2>
                     <ul>
                         <li class="fragment fade-in-then-semi-out">All course materials will be posted on <a href="https://bruinlearn.ucla.edu/" class="logo">BruinLearn</a>.</li>
-                        <li class="fragment fade-in-then-semi-out">Lecture slides will be posted before each lecture.</li>
+                        <li class="fragment fade-in-then-semi-out">Lecture slides or code snippets will be posted before each lecture.</li>
                         <li class="fragment fade-in-then-semi-out">Homework assignments will be posted on BruinLearn but you will submit them on <a href="https://www.gradescope.com/" class="logo">Gradscope</a>.</li>
                         <li class="fragment fade-in-then-semi-out">Announcements will be posted on BruinLearn.</li>
                     </ul>
@@ -83,8 +83,7 @@
                         <li class="fragment fade-in-then-semi-out">There will be between six and eight homework assignments.</li>
                         <li class="fragment fade-in-then-semi-out">They will not always be due on the same day of the week, but they will always be due at 10pm.</li>
                         <li class="fragment fade-in-then-semi-out">Your lowest two homework scores will be dropped.</li>
-                        <li class="fragment fade-in-then-semi-out">Late submissions will not be accepted.</li>
-                        <li class="fragment fade-in-then-semi-out">Resubmissions after the deadline will not be accepted.</li>
+                        <li class="fragment fade-in-then-semi-out">Late submissions will not be accepted. Resubmissions after the deadline will not be accepted.</li>
                         <li class="fragment fade-in-then-semi-out">Misnaming a file will lead to zero credit.</li>
                         <li class="fragment fade-in-then-semi-out">All homework will be graded using an autograding system. You will receive immediate feedback and your final score once you submit. You may resubmit your homework an unlimited number of times before the deadline without penalty.</li>
                         <li class="fragment fade-in-then-semi-out">Recommendation: Do not wait until the last minute to submit, in order to leave yourself time to correct mistakes and avoid technical issues.</li>
@@ -189,7 +188,78 @@
                 </section>
                 <section data-auto-animate data-auto-animate-unmatched="fade">
                     <h2>Questions?</h2>
-                    <p class="fragment fade-in-then-semi-out">Feel free to ask me or the TAs after class, during office hours, or by email!</p>
+                    <p>Feel free to ask me or the TAs after class, during office hours, or by email!</p>
+                </section>
+                <section data-auto-animate data-auto-animate-unmatched="fade">
+                    <h2> Doing "nothing"</h2>
+                    <pre class="fragment fade-in"> <code data-trim contenteditable class="language-cpp">
+                        int main() {
+                            return 0;
+                        }    
+                    </code>
+                    </pre>
+                    <div class="fragment fade-in" style="font-size:0.8em;">
+                        <ul>
+                            <li>Every C++ program must have exactly one main function.
+                            </li>
+                            <li> 
+                                Execution begins with main.
+                            </li>
+                            <li>
+                                Semicolons (;) mark the end of statements.
+                            </li>
+                            <li>
+                                Returning 0 means: “Program finished successfully.”
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+                <section data-auto-animate data-auto-animate-unmatched="fade">
+                    <h2>Hello World!</h2>
+                    <pre> <code data-trim contenteditable class="language-cpp">
+                        #include &lt;iostream&gt;
+                        int main() {
+                            std::cout &lt;&lt; "Hello, World!\n";
+                            return 0;
+                        }    
+                    </code>
+                    </pre>
+                    <div class="fragment fade-in" style="font-size:0.8em;">
+                        <ul>
+                            <li>
+                                #include &lt;iostream&gt; is a header file library that lets us work with input and output objects, such as "std::cout".
+                            </li>
+                            <li>
+                                std::cout is the standard output stream object in C++.
+                            </li>
+                            <li>
+                                The &lt;&lt; operator is used to send data to the output stream.
+                            </li>
+                            <li>
+                                "Hello, World!\n" is a string literal that will be printed to the console, followed by a newline character (\n).
+                            </li>
+                        </ul>
+                </section>
+                <section>
+                    <h3> Hello World! Again </h3>
+                    <pre> <code data-trim contenteditable class="language-cpp">
+                        #include &lt;iostream&gt;
+                        using namespace std;
+                        int main() {
+                            cout &lt;&lt; "Hello, World!" &lt;&lt; endl;
+                            return 0;
+                        }    
+                    </code>
+                    </pre>
+                    <div class="fragment fade-in" style="font-size:0.8em;">
+                        <ul>
+                            <li>
+                                using namespace std; allows us to use names from the standard library without the "std::" prefix.
+                            </li>
+                            <li>
+                                endl is an output manipulator that inserts a newline character and flushes the output buffer.
+                            </li>
+                        </ul>
                 </section>
 			</div>
 		</div>

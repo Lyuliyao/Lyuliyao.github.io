@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Section 5</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+                    <h2>Section 5: Variables and Data Types</h2>
+                </section>
+                <section>
+                    <h2> types </h2>
+                    <ul>
+                        In C++ everything has a type. Basic types include:
+                        <li><b>int</b>: store integers, without decimals, such as 123 or -123</li>
+                        <li><b>double</b>: store floating-point numbers with decimals, such as 3.14 or -0.001</li>
+                        <li><b>char</b>: store single characters, such as 'a' or 'Z'</li>
+                        <li><b>bool</b>: store boolean values, either true or false</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> variables 
+                    </h2>
+                    <ul>
+                        A variable is a named location in memory that stores a value of a specific type. You must declare a variable before using it, specifying its type and name. For example:
+                        <pre>
+                            <code data-trim contenteditable class="language-cpp">
+int age; // declares an integer variable named age
+double pi; // declares a double variable named pi
+char grade; // declares a char variable named grade
+bool isStudent; // declares a bool variable named isStudent
+                            </code>
+                        </pre>
+                    </ul>   
+                </section>
+                <section>
+                    <h2>
+                        Declaring and defining variables(building errors)
+                    </h2>
+                    <ul>
+                        <li>
+                            Declaration and defining variables: Specifies the type and name of the variable. It tells the compiler to allocate memory for the variable.
+                        </li>
+                    </ul>
+                    <pre class="fragment fade-in">
+                        <code data-trim contenteditable data-line-numbers="5,7,9" class="language-cpp">
+                        #include &lt;iostream&gt;
+                        using namespace std;
+
+                        int main() {
+                            int i;
+
+                            i = 1;
+
+                            cout &lt;&lt; i &lt;&lt; endl;
+
+                            return 0;
+                        }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Common Errors (building errors)</h2>
+                        Using a variable before it is declared
+                        <pre class="fragment fade-in">
+                            <code data-trim contenteditable data-line-numbers="5,7,9" class="language-cpp">
+                                #include &lt;iostream&gt;
+                                using namespace std;
+
+                                int main() {
+                                    // int i;
+
+                                    i = 1;
+
+                                    cout &lt;&lt; i &lt;&lt; endl;
+
+                                    return 0;
+                                }
+                            </code>
+                        </pre>
+                </section>
+                <section>
+                    <h2> Common Errors (building errors)</h2>
+                    <ul>
+                        <li>Declaring a variable multiple times with the same name in the same scope</li>
+                    </ul>
+                    <pre class="fragment fade-in">
+                        <code data-trim data-noescape contenteditable data-line-numbers="5,7,9" class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main() {
+                                int i;
+                                
+                                int i;
+
+                                cout &lt;&lt; i &lt;&lt; endl;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> The assignment operator</h2>
+                    <ul>
+                        <li>The assignment operator (=) is used to assign a value to a variable.</li>
+                    </ul>
+                    <pre class="fragment fade-in">
+                        <code data-trim contenteditable data-line-numbers="5,7,8,10,11,13,14" class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main() {
+                                int i , j, k;
+
+                                i = 1; j = 2; k = 3;
+                                cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; " " &lt;&lt; k &lt;&lt; endl;
+
+                                i = j;
+                                cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; " " &lt;&lt; k &lt;&lt; endl;
+
+                                i =  j + k;
+                                cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; " " &lt;&lt; k &lt;&lt; endl;
+
+                                return 0;
+                            }
+                        </code>
+                </section>
+                <section>
+                    <h2> Initializing variables</h2>
+                    <ul>
+                        <li>Initializing a variable means assigning it an initial value at the time of declaration.</li>
+                        <li> Common errors (undefined behavior): using a variable before it is initialized.</li>
+                    </ul>
+                    <pre class="fragment fade-in">
+                        <code data-trim contenteditable data-line-numbers="5,7,9" class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main() {
+                                int i; // declaration without initialization
+
+                                cout &lt;&lt; i &lt;&lt; endl; // using uninitialized variable (undefined behavior)
+
+                                i = 5; // initialization
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Best Practices for Variable Declaration and Initialization</h2>
+                    <ul>
+                        <li>Always initialize variables when declaring them to avoid undefined behavior.</li>
+                    </ul>
+                    <pre class="fragment fade-in">
+                        <code data-trim contenteditable data-line-numbers="5,7,9" class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main() {
+                                int i = 0; // declaration with initialization
+
+                                cout &lt;&lt; i &lt;&lt; endl; // safe to use initialized variable
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section data-auto-animate>
+                    <h2> Naming rules and conventions</h2>
+                    <ul>
+                        <li>
+                            Variable names must start with a letter (a-z, A-Z) or an underscore (_), followed by letters, digits (0-9), or underscores.
+                        </li>
+                    </ul>
+                <pre class="fragment fade-in">
+                    <code data-trim contenteditable data-line-numbers="5-9" class="language-cpp">
+                        #include &lt;iostream&gt;
+                        using namespace std;
+
+                        int main() {
+                            int _i = 0; 
+                            int i_ = 1;
+                            int i1 = 2;
+                            int 1i = 3; 
+                            cout &lt;&lt; _i &lt;&lt; endl; 
+                            return 0;
+                        }
+                    </code>
+                </pre>
+                </section>
+                <section>
+                    <h2> Naming rules and conventions</h2>
+                    <ul>
+                        <li>
+                            Variable names must start with a letter (a-z, A-Z) or an underscore (_), followed by letters, digits (0-9), or underscores.
+                        </li>
+                        <li>
+                            Variable names are case-sensitive (e.g., myVar and myvar are different variables).
+                        </li>
+                        <li>
+                            common convections:
+                            <ul>
+                                <li>
+                                    ALL_CAPS for constants
+                                </li>
+                                <li>
+                                    <span style="font-size:0.6em;">
+                                        words_which_May_or_may_not_start_with_a_Capital_separated_by_underscores
+                                    </span> for variables and functions.
+                                </li>
+                                <li>
+                                    UpperCamelCase
+                                </li>
+                                <li>
+                                    lowerCamelCase
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Lecture 3: Int</h2>
+                </section>
+                <section>
+                    <h2> +, -, * , +=, -= , *=</h2>
+                    <pre> 
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int i = 3, j = 2;
+
+                                cout &lt;&lt; "i + j is " &lt;&lt; i + j &lt;&lt; endl ;
+                                cout &lt;&lt; "i - j is " &lt;&lt; i - j &lt;&lt; endl ;
+                                cout &lt;&lt; "i * j is " &lt;&lt; i * j &lt;&lt; endl ;
+
+                                cout &lt;&lt; endl ;
+
+                                cout &lt;&lt; "i" &lt;&lt; "|" &lt;&lt; "j" &lt;&lt; endl ;
+                                cout &lt;&lt; i &lt;&lt; "|" &lt;&lt; j &lt;&lt; endl ;
+
+                                i = j;
+
+                                cout &lt;&lt; i &lt;&lt; "|" &lt;&lt; j &lt;&lt; endl ;
+
+                                i = i + 3;
+                                j += 3;
+
+                                cout &lt;&lt; i &lt;&lt; "|" &lt;&lt; j &lt;&lt; endl ;
+                                
+                                i = i - 3;
+                                j -= 3;
+
+                                cout &lt;&lt; i &lt;&lt; "|" &lt;&lt; j &lt;&lt; endl ;
+
+                                i = i * 3;
+                                j *= 3;
+
+                                cout &lt;&lt; i &lt;&lt; "|" &lt;&lt; j &lt;&lt; endl ;
+
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>
+                        ++ and --
+                    </h2>
+                    <pre> 
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int i, ppi, ipp;
+
+                                i=0 ; ++i;
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; endl ;
+
+                                i=0 ; ppi = ++i;
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; ", ppi is " &lt;&lt; ppi &lt;&lt; endl ;
+
+                                i=0 ; ipp = i++;
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; ", ipp is " &lt;&lt; ipp &lt;&lt; endl ;
+
+                                
+                                return 0;
+                            }
+                        </code>
+                </section>
+                <section>
+                    <h2> Common Error (undefined behavior)</h2>
+                    Using ++ or -- more than once in the same expression.
+                    <pre> 
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int i, ppi, ipp;
+
+                                i=0 ; ppi = ++i + ++i;
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; ", ppi is " &lt;&lt; ppi &lt;&lt; endl ;
+
+                                i=0 ; ipp = i++ + i++;
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; ", ipp is " &lt;&lt; ipp &lt;&lt; endl ;
+
+                                
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                        <h2> Integer Division</h2>
+                        <pre> 
+                            <code data-trim data-line-numbers contenteditable class="language-cpp">
+                                #include &lt;iostream&gt;
+                                using namespace std;
+
+                                int main () {
+                                    int i, j;
+
+                                    i = 28;
+                                    j = 10;
+
+                                    cout &lt;&lt; "i / j is " &lt;&lt; i / j &lt;&lt; endl ;
+                                    cout &lt;&lt; "i % j is " &lt;&lt; i % j &lt;&lt; endl ;
+
+                                    i = -28;
+                                    j = 10;
+                                    cout &lt;&lt; "i / j is " &lt;&lt; i / j &lt;&lt; endl ;
+                                    cout &lt;&lt; "i % j is " &lt;&lt; i % j &lt;&lt; endl ;
+
+
+                                    return 0;
+                                }
+                            </code>
+                        </pre>
+                </section>
+                <section>
+                    <h2> What is int?</h2>
+                    <ul>
+                        <li> int has a fixed size (usually 4 bytes)</li>
+                        <li> int can represent integers in a fixed range (usually -2,147,483,648 to 2,147,483,647)</li>
+                        <li> If you try to store a number outside this range in an int variable, you will get integer overflow or underflow, which leads to <b>undefined behavior.</b></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> const </h2>
+                    <ul>
+                        <li> Use const to declare variables whose values should not change.</li>
+                        <li> Example: const int DAYS_IN_A_WEEK = 7;</li>
+                    </ul>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                const int HOURS_IN_A_DAY = 24;
+                                const int MINUTES_IN_AN_HOUR = 60;
+
+                                const int MINUTES_IN_A_DAY = HOURS_IN_A_DAY * MINUTES_IN_AN_HOUR;
+                                cout &lt;&lt; "There are " &lt;&lt; MINUTES_IN_A_DAY &lt;&lt; " minutes in a day." &lt;&lt; endl;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Common Error (building error)</h2>
+                    Attempting to modify a const variable.
+                    <pre>
+                        <code data-trim data-noescape contenteditable data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                const int HOURS_IN_A_DAY = 24;
+                                HOURS_IN_A_DAY = 25; // Error: cannot modify a const variable
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Common Error (building error)</h2>
+                    the const type variable must be initialized when it is declared.
+                    <pre>
+                        <code data-trim data-noescape contenteditable data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                const int HOURS_IN_A_DAY; // Error: const variable must be initialized
+                                HOURS_IN_A_DAY = 24;
+
+                                return 0;
+                            }
+                        </code>
+                </section>
+                <section>
+                    <h2> std::cin </h2>
+                    <ul>
+                        <li> std::cin is used to take input from the user.</li>
+                    </ul>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int age;
+                                cout &lt;&lt; "Enter your age: ";
+                                cin &gt;&gt; age;
+                                cout &lt;&lt; "Your age is " &lt;&lt; age &lt;&lt; endl;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> multiple inputs</h2>
+                    <ul>
+                        <li> You can take multiple inputs using std::cin.</li>
+                    </ul>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int i1 , i2;
+                                cout &lt;&lt; "Enter two integers separated by a space: ";
+                                cin &gt;&gt; i1 &gt;&gt; i2;
+                                cout &lt;&lt; "You entered: " &lt;&lt; i1 &lt;&lt; " and " &lt;&lt; i2 &lt;&lt; endl;
+                                cout &lt;&lt; "Their sum is " &lt;&lt; i1 + i2 &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> bool </h2>
+                    <ul>
+                        <li> bool is a data type that can hold one of two values: true or false.</li>
+                    </ul>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                bool isStudent;
+                                isStudent = true;
+                                isStudent = false;
+
+                                cout &lt;&lt; "Is student: " &lt;&lt; isStudent &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> == </h2>
+                    <ul>
+                        <li> The == operator is used to compare two values.</li>
+                    </ul>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int a = 5;
+                                int b = 10;
+                                bool result;
+                                result = (a == b);
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                cout &lt;&lt; a &lt;&lt; " == " &lt;&lt; b &lt;&lt; ": " &lt;&lt; result &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Exercises </h2>
+                    write a code that ask the user to input two integers, then output whether they are equal.
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int a, b;
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                cout &lt;&lt; "Enter two integers: ";
+                                // your code here: to read a and b from user input
+                                // your code here: to compare a and b, and store the result in a bool variable named result
+                                // your code here: to print whether a and b are equal or not
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Exercises </h2>
+                    write a code that ask the user to input two integers, then output whether they are equal.
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int a, b;
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                cout &lt;&lt; "Enter two integers: ";
+                                cin &gt;&gt; a &gt;&gt; b;
+                                bool result = (a == b);
+                                cout &lt;&lt; a &lt;&lt; " == " &lt;&lt; b &lt;&lt; ": " &lt;&lt; result &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Exercises</h2>
+                    write a code that ask the user to input an integer, then output whether it is even.
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int n;
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                cout &lt;&lt; "Enter an integer: ";
+                                // your code here: to read n from user input
+                                // your code here: to determine whether n is even, and store the result in a bool variable named isEven
+                                // your code here: to print whether n is even or not
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2>Exercises</h2>
+                    write a code that ask the user to input an integer, then output whether it is even.
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int n;
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                cout &lt;&lt; "Enter an integer: ";
+                                cin &gt;&gt; n;
+                                bool isEven = (n % 2 == 0);
+                                cout &lt;&lt; n &lt;&lt; " is even: " &lt;&lt; isEven &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> double </h2>
+                    <ul>
+                        <li> double is a data type that can hold floating-point numbers (numbers with decimals).</li>
+                        <li> "double" means double precision floating point.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> +, - , * , / , += , -= , *= , /= </h2>
+                    <pre> 
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                double x = 3.0, y = 2.0;
+
+                                cout &lt;&lt; "x + y is " &lt;&lt; x + y &lt;&lt; endl ;
+                                cout &lt;&lt; "x - y is " &lt;&lt; x - y &lt;&lt; endl ;
+                                cout &lt;&lt; "x * y is " &lt;&lt; x * y &lt;&lt; endl ;
+                                cout &lt;&lt; "x / y is " &lt;&lt; x / y &lt;&lt; endl ;
+
+                                cout &lt;&lt; endl ;
+
+                                cout &lt;&lt; "x" &lt;&lt; "|" &lt;&lt; "y" &lt;&lt; endl ;
+                                cout &lt;&lt; x &lt;&lt; "|" &lt;&lt; y &lt;&lt; endl ;
+
+                                x = y;
+
+                                cout &lt;&lt; x &lt;&lt; "|" &lt;&lt; y &lt;&lt; endl ;
+
+                                x = x + 3.0;
+                                y += 3.0;
+
+                                cout &lt;&lt; x &lt;&lt; "|" &lt;&lt; y &lt;&lt; endl ;
+
+                                x = x - 3.0;
+                                y -= 3.0;
+
+                                cout &lt;&lt; x &lt;&lt; "|" &lt;&lt; y &lt;&lt; endl ;
+
+                                x = x * 3.0;
+                                y *= 3.0;
+
+                                cout &lt;&lt; x &lt;&lt; "|" &lt;&lt; y &lt;&lt; endl ;
+
+                                x = x / 3.0;
+                                y /= 3.0;
+
+                                cout &lt;&lt; x &lt;&lt; "|" &lt;&lt; y &lt;&lt; endl ;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Common Errors</h2>
+                    double-division by zero gives undefined behavior.
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                double x = 3.0, y = 0.0;
+
+                                cout &lt;&lt; "x / y is " &lt;&lt; x / y &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Type Casting </h2>
+                    <ul>
+                        <li> Type casting is the process of converting a value from one data type to another.</li>
+                        <li> You can use static_cast to perform type casting in C++.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> Type Casting </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int i = 3;
+                                double x;
+
+                                x = static_cast&lt;double&gt;(i);
+                                cout &lt;&lt; "x is " &lt;&lt; x &lt;&lt; endl ;
+
+                                i = static_cast&lt;int&gt;(x + 0.99);
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Mixed division </h2>
+                    <ul>
+                        <li> When you divide an int by a double, the int is automatically converted to a double before the division.</li>
+                        <li> When you divide a double by an int, the int will also be automatically converted to a double before the division.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> Mixed division </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int a = 5;
+                                double b = 2.0;
+
+                                cout &lt;&lt; "a / b is " &lt;&lt; a / b &lt;&lt; endl ;
+                                cout &lt;&lt; "b / a is " &lt;&lt; b / a &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Mixed division </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                int i1 = 5 , i2 = 2;
+                                cout &lt;&lt; i1 / i2 &lt;&lt; endl ;
+                                cout &lt;&lt; static_cast&lt;double&gt;(i1) / i2 &lt;&lt; endl ;
+                                cout &lt;&lt; i1 / static_cast&lt;double&gt;(i2) &lt;&lt; endl ;
+                                cout &lt;&lt; static_cast&lt;double&gt;(i1) 
+                                / static_cast&lt;double&gt;(i2) &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> cmath </h2>
+                    <ul>
+                        <li> cmath is a header file that contains mathematical functions.</li>
+                        <li> Some common functions in cmath are:</li>
+                        <ul>
+                            <li> sqrt(x): returns the square root of x</li>
+                            <li> pow(x, y): returns x raised to the power of y</li>
+                            <li> abs(x): returns the absolute value of x</li>
+                            <li> ceil(x): returns the smallest integer greater than or equal to x</li>
+                            <li> floor(x): returns the largest integer less than or equal to x</li>
+                            <li> round(x): returns the nearest integer to x</li>
+                        </ul>
+                    </ul>
+                </section>
+                <section>
+                    <h2> cmath </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            #include &lt;cmath&gt;
+                            using namespace std;
+
+                            int main () {
+                                double x = 3.5;
+
+                                cout &lt;&lt; "sqrt(x) is " &lt;&lt; sqrt(x) &lt;&lt; endl ;
+                                cout &lt;&lt; "pow(x, 2) is " &lt;&lt; pow(x, 2) &lt;&lt; endl ;
+                                cout &lt;&lt; "abs(-x) is " &lt;&lt; abs(-x) &lt;&lt; endl ;
+                                cout &lt;&lt; "ceil(x) is " &lt;&lt; ceil(x) &lt;&lt; endl ;
+                                cout &lt;&lt; "floor(x) is " &lt;&lt; floor(x) &lt;&lt; endl ;
+                                cout &lt;&lt; "round(x) is " &lt;&lt; round(x) &lt;&lt; endl ;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> what is a double ? </h2>
+
+                </section>
+                <section>
+                    <h2> precision of double </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            #include &lt;iomanip&gt;
+                            using namespace std;
+
+                            int main () {
+                                double x = 1.0 / 3.0;
+
+                                cout &lt;&lt; x &lt;&lt; endl ;
+                                cout &lt;&lt; setprecision(2) &lt;&lt; x &lt;&lt; endl ;
+                                cout &lt;&lt; setprecision(5) &lt;&lt; x &lt;&lt; endl ;
+                                cout &lt;&lt; setprecision(10) &lt;&lt; x &lt;&lt; endl ;
+                                cout &lt;&lt; setprecision(20) &lt;&lt; x &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Example</h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                double i = 4.0, j = 3.0;
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                double k = i / j - 1.0 - 1.0 / 3.0;
+                                cout &lt;&lt; "k is " &lt;&lt; k &lt;&lt; endl;
+                                cout &lt;&lt; "k == 0.0: " &lt;&lt; (k == 0.0) &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> unsigned int </h2>
+                    <ul>
+                        <li> unsigned int is a data type that can hold only non-negative integers (0 and positive integers).</li>
+                        <li> The range of unsigned int is usually from 0 to 4,294,967,295 (2^32 - 1).</li>
+                        <li> If you try to store a negative number in an unsigned int variable, you will get integer underflow, which leads to <b>undefined behavior.</b></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> unsigned int </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                unsigned int u = 0;
+
+                                cout &lt;&lt; "u is " &lt;&lt; u &lt;&lt; endl ;
+
+                                u = u - 1; // underflow
+
+                                cout &lt;&lt; "u is " &lt;&lt; u &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> static_cast </h2>
+                        <ul>
+                            <li><code>static_cast&lt;unsigned int&gt;(x)</code> converts <code>x</code> to an <code>unsigned int</code>.</li>
+                            <ul>
+                            <li>If <code>x</code> is non-negative, the value stays the same.</li>
+                            <li>If <code>x</code> is negative, C++ adds <code>2<sup>32</sup></code> (on a 32-bit system) and the result becomes a large positive number.</li>
+                            </ul>
+                        </ul>
+                </section>
+                <section>
+                    <h2> static_cast </h2>
+                    <ul>    
+                    <li><code>static_cast&lt;int&gt;(x)</code> converts <code>x</code> to an <code>int</code>.</li>
+                    <ul>
+                    <li>If <code>x</code> is within the range of <code>int</code>, the value stays the same.</li>
+                    <li>If <code>x</code> is larger than the maximum <code>int</code>, C++ subtracts <code>2<sup>32</sup></code> (on a 32-bit system), and the result is a negative number.</li>
+                    </ul>
+                </ul>
+                </section>
+                <section>
+                    <h2> Example </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int i = -1;
+                                unsigned int u = static_cast&lt;unsigned int&gt;(i);
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; endl;
+                                cout &lt;&lt; "u is " &lt;&lt; u &lt;&lt; endl;
+
+                                unsigned int u2 = 4294967295; // 2^32 - 1
+                                int i2 = static_cast&lt;int&gt;(u2);
+                                cout &lt;&lt; "u2 is " &lt;&lt; u2 &lt;&lt; endl;
+                                cout &lt;&lt; "i2 is " &lt;&lt; i2 &lt;&lt; endl;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> std::size_t </h2>
+                    <ul>
+                        <li><code>std::size_t</code> is an unsigned integer type.</li>
+                        <li>It is used to represent the size of objects in bytes.</li>
+                        <li> It is commonly used for array indexing and loop counters.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> char </h2>
+                    <ul>
+                        <li> char is a data type that can hold a single character.</li>
+                        <li> char is usually 1 byte (8 bits) in size.</li>
+                        <li> char can represent characters using ASCII or Unicode encoding.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> char </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                char c = 'A';
+                                int  i = 65;
+
+                                cout &lt;&lt; "c is " &lt;&lt; c &lt;&lt; endl ;
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt&lt; endl ;
+
+                                cout &lt;&lt; "static_cast&lt;int&gt;(c) is " &lt;&lt; static_cast&lt;int&gt;(c) &lt;&lt; endl ;
+                                cout &lt;&lt; "static_cast&lt;char&gt;(i) is " &lt;&lt; static_cast&lt;char&gt;(i) &lt;&lt; endl;
+                                
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                    <ul class="fragment fade-in" style="font-size: 0.8em;">
+                        <li> The <code> static_cast&lt;int&gt;(c)</code> converts the character 'A' to its ASCII integer value 65.</li>
+                        <li> The <code> static_cast&lt;char&gt;(i)</code> converts the integer 65 back to the character 'A'.</li>
+                    </ul>
+                </section>
+                </section>
+                <section>
+                    <h2> char </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+
+                            int main () {
+                                char c = 'A';
+
+                                cout &lt;&lt; "c is " &lt;&lt; c &lt;&lt; endl ;
+                                cout &lt;&lt; "c + 1 is " &lt;&lt; c + 1 &lt;&lt; endl ;
+                                cout &lt;&lt; "c + 2 is " &lt;&lt; c + 2 &lt;&lt; endl ;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                    <ul class="fragment fade-in" style="font-size: 0.8em;">
+                        <li> When you add an integer to a char, the char is automatically converted to its ASCII integer value before the addition.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> static_cast&lt;T&gt; and implicit casting</h2>
+                    <ul class="fragment fade-in" style="font-size: 0.8em;">
+                        <li> <code> static_cast&lt;T&gt;(expr)</code> is used to explicitly convert <code>expr</code> to type <code>T</code>.</li>
+                        <li> Implicit casting is done automatically by the compiler when it is safe to do so.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> static_cast&lt;bool&gt; </h2>
+                    <ul>
+                        <li> <code> static_cast&lt;bool&gt;(x)</code> converts <code>x</code> to a <code>bool</code>.</li>
+                        <ul>
+                            <li>If <code>x</code> is zero (0 for int, 0.0 for double, '\0' for char), the result is <code>false</code>.</li>
+                            <li>If <code>x</code> is non-zero (any other value), the result is <code>true</code>.</li>
+                        </ul>
+                </section>
+                <section>
+                    <h2> static_cast&lt;bool&gt; </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int i1 = 0, i2 = 5;
+                                double d1 = 0.0, d2 = -3.14;
+                                char c1 = '\0', c2 = 'A';
+
+                                cout &lt;&lt; boolalpha; // print bool as true/false
+                                cout &lt;&lt; "static_cast&lt;bool&gt;(i1) is " &lt;&lt; static_cast&lt;bool&gt;(i1) &lt;&lt; endl;
+                                cout &lt;&lt; "static_cast&lt;bool&gt;(i2) is " &lt;&lt; static_cast&lt;bool&gt;(i2) &lt;&lt; endl;
+                                cout &lt;&lt; "static_cast&lt;bool&gt;(d1) is " &lt;&lt; static_cast&lt;bool&gt;(d1) &lt;&lt; endl;
+                                cout &lt;&lt; "static_cast&lt;bool&gt;(d2) is " &lt;&lt; static_cast&lt;bool&gt;(d2) &lt;&lt; endl;
+                                cout &lt;&lt; "static_cast&lt;bool&gt;(c1) is " &lt;&lt; static_cast&lt;bool&gt;(c1) &lt;&lt; endl;
+                                cout &lt;&lt; "static_cast&lt;bool&gt;(c2) is " &lt;&lt; static_cast&lt;bool&gt;(c2) &lt;&lt; endl;
+
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> implicit casting </h2>
+                    <pre>
+                        <code data-trim data-line-numbers contenteditable class="language-cpp">
+                            #include &lt;iostream&gt;
+                            using namespace std;
+                            int main() {
+                                int i = 5.2;
+                                unsigned int u = -1;
+                                int cp = 'A';
+                                char ch = 65;
+
+                                cout &lt;&lt; "i is " &lt;&lt; i &lt;&lt; endl;
+                                cout &lt;&lt; "u is " &lt;&lt; u &lt;&lt; endl;
+                                cout &lt;&lt; "cp is " &lt;&lt; cp &lt&lt; endl;
+                                cout &lt;&lt; "ch is " &lt;&lt; ch &lt;&lt; endl;
+                                return 0;
+                            }
+                        </code>
+                    </pre>
+
+                </section>
+			</div>
+		</div>
+
+		<script src="../reveal.js/dist/reveal.js"></script>
+		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
+		<script>
+			Reveal.initialize({
+				center: true,
+				hash: true,
+				plugins: [ RevealHighlight ]
+			});
+		</script>
+
+	</body>
+</html>

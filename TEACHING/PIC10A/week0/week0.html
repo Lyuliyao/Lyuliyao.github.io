@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>reveal.js - Auto Animate</title>
+		<title>lecture 1</title>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -87,6 +87,11 @@
                         <li class="fragment fade-in-then-semi-out">Misnaming a file will lead to zero credit.</li>
                         <li class="fragment fade-in-then-semi-out">All homework will be graded using an autograding system. You will receive immediate feedback and your final score once you submit. You may resubmit your homework an unlimited number of times before the deadline without penalty.</li>
                         <li class="fragment fade-in-then-semi-out">Recommendation: Do not wait until the last minute to submit, in order to leave yourself time to correct mistakes and avoid technical issues.</li>
+                    </ul>
+                </section>
+                <section>
+                    <ul>
+                        The official compiler for PIC 10A is the one used by Gradescope (g++ -std=c++14). If you use a Windows computer, install Microsoft Visual Studio Community 2022. If you use a Mac, install XCode. In either case, always check that your work is compiled correctly on Gradescope by submitting your work and reading the comments produced by the autograder. If your code runs on XCode or Visual Studio but not on Gradescope, then you will score 0 points.
                     </ul>
                 </section>
                 <section data-auto-animate data-auto-animate-unmatched="fade">
@@ -192,7 +197,7 @@
                 </section>
                 <section data-auto-animate data-auto-animate-unmatched="fade">
                     <h2> Doing "nothing"</h2>
-                    <pre class="fragment fade-in"> <code data-trim contenteditable class="language-cpp">
+                    <pre class="fragment fade-in"> <code data-line-numbers data-trim contenteditable class="language-cpp">
                         int main() {
                             return 0;
                         }    
@@ -200,23 +205,23 @@
                     </pre>
                     <div class="fragment fade-in" style="font-size:0.8em;">
                         <ul>
-                            <li>Every C++ program must have exactly one main function.
+                            <li>Every C++ program must have exactly one <code>main</code> function.
                             </li>
                             <li> 
-                                Execution begins with main.
+                                Execution begins with <code>main</code>.
                             </li>
                             <li>
-                                Semicolons (;) mark the end of statements.
+                                Semicolons (<code>;</code>)  mark the end of statements.
                             </li>
                             <li>
-                                Returning 0 means: “Program finished successfully.”
+                                <code>return 0</code>  means: “Program finished successfully.”
                             </li>
                         </ul>
                     </div>
                 </section>
                 <section data-auto-animate data-auto-animate-unmatched="fade">
                     <h2>Hello World!</h2>
-                    <pre> <code data-trim contenteditable class="language-cpp">
+                    <pre> <code data-trim data-line-numbers contenteditable class="language-cpp">
                         #include &lt;iostream&gt;
                         int main() {
                             std::cout &lt;&lt; "Hello, World!\n";
@@ -227,22 +232,22 @@
                     <div class="fragment fade-in" style="font-size:0.8em;">
                         <ul>
                             <li>
-                                #include &lt;iostream&gt; is a header file library that lets us work with input and output objects, such as "std::cout".
+                                <code>#include &lt;iostream&gt;</code> is a header file library that lets us work with input and output objects, such as "std::cout".
                             </li>
                             <li>
-                                std::cout is the standard output stream object in C++.
+                                <code>std::cout</code> is the standard output stream object in C++.
                             </li>
                             <li>
-                                The &lt;&lt; operator is used to send data to the output stream.
+                                The <code>&lt;&lt;</code> operator is used to send data to the output stream.
                             </li>
                             <li>
-                                "Hello, World!\n" is a string literal that will be printed to the console, followed by a newline character (\n).
+                                <code>"Hello, World!\n"</code> is a string literal that will be printed to the console, followed by a newline character (<code>\n</code>).
                             </li>
                         </ul>
                 </section>
                 <section>
                     <h3> Hello World! Again </h3>
-                    <pre> <code data-trim contenteditable class="language-cpp">
+                    <pre> <code data-trim data-line-numbers contenteditable class="language-cpp">
                         #include &lt;iostream&gt;
                         using namespace std;
                         int main() {
@@ -254,17 +259,51 @@
                     <div class="fragment fade-in" style="font-size:0.8em;">
                         <ul>
                             <li>
-                                using namespace std; allows us to use names from the standard library without the "std::" prefix.
+                                <code>using namespace std;</code> allows us to use names from the standard library without the <code>std::</code> prefix.
                             </li>
                             <li>
-                                endl is an output manipulator that inserts a newline character and flushes the output buffer.
+                                <code>endl</code> is an output manipulator that inserts a newline character and flushes the output buffer.
                             </li>
                         </ul>
+                </section>
+                <section>
+                    <h2> Backslash Escape Sequences</h2>
+                    <ul>
+                        <li>\n - Newline</li>
+                        <li>\t - Tab</li>
+                        <li>\\ - Backslash</li>
+                        <li>\" - Double Quote</li>
+                    </ul>
+                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Hello, \nWorld!\n";
+    cout &lt;&lt; "This is a tab:\tSee?\n";
+    cout &lt;&lt; "She said, \"Hello!\"\n";
+    cout &lt;&lt; "This is a backslash: \\\n";
+    return 0;
+}
+                    </code></pre>
+                </section>
+                <section>
+                    <h2> Exercise </h2>
+                    What will the following code print?
+                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
+                        #include &lt;iostream&gt;
+                        using namespace std;
+                        int main() {
+                            cout &lt;&lt; "Hello, \\nWorld!\\n";
+                            return 0;
+                            cout &lt;&lt; "Hello, World!\n";
+                        }
+                    </code></pre>
                 </section>
 			</div>
 		</div>
 		<script src="../reveal.js/dist/reveal.js"></script>
 		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
+        
 		<script>
 			Reveal.initialize({
 				center: true,

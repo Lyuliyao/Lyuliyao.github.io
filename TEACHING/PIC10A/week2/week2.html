@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Section 5</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<div class="slides">
+				<section>
+                    <h2>Section 6: Strings</h2>
+                </section>
+                <section>
+                    <h2> Constucting <code> std::string </code> </h2>
+                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
+                #include &lt;string&gt;
+                #include &lt;iostream&gt;
+                #include &lt;vector&gt;
+                using namespace std;
+
+                int main() {
+                    string s1 = "Hello world";
+                    string s2("hello");
+                    string s3(8, 'a');
+                    string s0;
+
+                    cout &lt;&lt; s1 &lt;&lt; endl;  
+                    cout &lt;&lt; s2 &lt;&lt; endl; 
+                    cout &lt;&lt; s3 &lt;&lt; endl; 
+                    cout &lt;&lt; s0 &lt;&lt; endl; 
+                    return 0;
+                }</code></pre>
+                </section>
+                <section>
+                    <h2> Remark</h2>
+                    <ul>
+                        <li> <code> std::string </code> is a class in the C++ standard library </li>
+                        <li> <code> s </code> is an instance of <code> std::string </code> , but <b>not</b> a variable of type <code> std::string </code>  </li>
+                        <li> A class is a souped-up data type, with <b>member functions</b> (built-in functions) </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> member functions </h2>
+                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
+                #include &lt;string&gt;
+                #include &lt;iostream&gt;
+                using namespace std;
+                int main() {
+                    string s = "Hello world";
+                    cout &lt;&lt; s.size() &lt;&lt; endl;  //
+                    cout &lt;&lt; s.length() &lt;&lt; endl; // same as size()
+                    cout &lt;&lt; s.empty() &lt;&lt; endl;  //
+                    cout &lt;&lt; s.at(0) &lt;&lt; endl;    // character at index 0
+                    cout &lt;&lt; s.substr(0, 5) &lt;&lt; endl; // substring from index 0, length 5
+                    return 0;
+                }
+                    </code>
+                    </pre>
+                </section>
+                <section>
+                    <h2> Indexing </h2>
+                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
+                #include &lt;string&gt;
+                #include &lt;iostream&gt;
+                using namespace std;
+                int main() {
+                    string s = "Hello world";
+                    
+                    cout &lt;&lt; s[0] &lt;&lt; endl; // character at index 0
+                    cout &lt;&lt; s[1] &lt;&lt; endl; // character at index 1
+                    cout &lt;&lt; s[10] &lt;&lt; endl; // character at index 10
+                }
+                </code>
+                </pre>
+                </section>
+			</div>
+		</div>
+
+		<script src="../reveal.js/dist/reveal.js"></script>
+		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
+		<script>
+			Reveal.initialize({
+				center: true,
+				hash: true,
+				plugins: [ RevealHighlight ]
+			});
+		</script>
+
+	</body>
+</html>

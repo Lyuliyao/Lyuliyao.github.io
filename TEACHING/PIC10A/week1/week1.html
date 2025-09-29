@@ -18,6 +18,75 @@
 		<div class="reveal">
 
 			<div class="slides">
+                <section>
+                    <h2> Welcome to Week 1</h2>
+                </section>
+                <section>
+                    <h2> Updated Information </h2>
+                    <ul>
+                        <li>
+                            The original Office Hours <br>
+                            (By the end of this week (Week 1)):<br>
+                            1PM - 2PM on Mondays and Wednesdays.
+                        </li>
+                        <li>
+                            The new Office Hours <br>
+                            (Starting from next week (Week 2)):<br>
+                            9 AM - 10AM on Mondays.<br>
+                            10AM - 11AM on Wednesdays.<br>
+                            1PM - 2PM on Fridays.
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> Waiting List Strategy</h2>
+                    <ul>
+                        <li>
+                            If you are on the waiting list, all the students in the waiting list will enrolled in the class by the end of Week 2.
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> Learning Tips</h2>
+                    <ul>
+                        <li class="fragment fade-in">
+                            Understand the Fundamentals: Understand the concepts, do not just memorize the code. 
+                            <br>
+                            <b>(in exam, you need to distinuish different errors)</b>
+                        </li>
+                        <li class="fragment fade-in">
+                            Practice Regularly: Consistent practice is key to mastering programming. 
+                            <br>
+                            <b>(Reading and Writing code)</b>
+                        </li>
+                        <li class="fragment fade-in">
+                            Specific for exam: Always try to write code by hand first, as you will need to do so in the exam.
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2> What we learn last week </h2>
+                    <ul>
+                        <li class="fragment fade-in">
+                            function <code> main </code> 
+                        </li>
+                        <li class="fragment fade-in">
+                            <code> #include &lt;iostream&gt; </code>
+                        </li>
+                        <li class="fragment fade-in">
+                            <code> std::cout </code> and <code> std::endl </code>
+                        </li>
+                        <li class="fragment fade-in">
+                            comments <code> // </code> and <code> /* ... */ </code>
+                        </li>
+                        <li class="fragment fade-in">
+                            namespace <code> std:: </code> and <code> using namespace std; </code>
+                        </li>
+                        <li class="fragment fade-in">
+                            escape characters <code> \n </code>, <code> \t </code> and <code> \\ </code> and so on. 
+                        </li>
+                    </ul>
+                </section>
 				<section>
                     <h2>Section 5: Variables and Data Types</h2>
                 </section>
@@ -26,7 +95,8 @@
                     <ul>
                         In C++ everything has a type. Basic types include:
                         <li><b>int</b>: store integers, without decimals, such as 123 or -123</li>
-                        <li><b>double</b>: store floating-point numbers with decimals, such as 3.14 or -0.001</li>
+                        <li><b>double</b>: store double-precision floating-point numbers, such as 3.14 or -0.001</li>
+                        <li><b>float</b>: store single-precision floating-point numbers, such as 3.14 or -0.001</li>
                         <li><b>char</b>: store single characters, such as 'a' or 'Z'</li>
                         <li><b>bool</b>: store boolean values, either true or false</li>
                     </ul>
@@ -48,7 +118,7 @@ bool isStudent; // declares a bool variable named isStudent
                 </section>
                 <section>
                     <h2>
-                        Declaring and defining variables(building errors)
+                        Declaring and defining variables
                     </h2>
                     <ul>
                         <li>
@@ -144,7 +214,7 @@ bool isStudent; // declares a bool variable named isStudent
                     <h2> Initializing variables</h2>
                     <ul>
                         <li>Initializing a variable means assigning it an initial value at the time of declaration.</li>
-                        <li> Common errors (undefined behavior): using a variable before it is initialized.</li>
+                        <li> Common errors <b>(undefined behavior)</b>: using a variable before it is initialized.</li>
                     </ul>
                     <pre class="fragment fade-in">
                         <code data-trim contenteditable data-line-numbers="5,7,9" class="language-cpp">
@@ -157,26 +227,6 @@ bool isStudent; // declares a bool variable named isStudent
                                 cout &lt;&lt; i &lt;&lt; endl; // using uninitialized variable (undefined behavior)
 
                                 i = 5; // initialization
-
-                                return 0;
-                            }
-                        </code>
-                    </pre>
-                </section>
-                <section>
-                    <h2> Best Practices for Variable Declaration and Initialization</h2>
-                    <ul>
-                        <li>Always initialize variables when declaring them to avoid undefined behavior.</li>
-                    </ul>
-                    <pre class="fragment fade-in">
-                        <code data-trim contenteditable data-line-numbers="5,7,9" class="language-cpp">
-                            #include &lt;iostream&gt;
-                            using namespace std;
-
-                            int main() {
-                                int i = 0; // declaration with initialization
-
-                                cout &lt;&lt; i &lt;&lt; endl; // safe to use initialized variable
 
                                 return 0;
                             }
@@ -235,9 +285,6 @@ bool isStudent; // declares a bool variable named isStudent
                             </ul>
                         </li>
                     </ul>
-                </section>
-                <section>
-                    <h2>Lecture 3: Int</h2>
                 </section>
                 <section>
                     <h2> +, -, * , +=, -= , *=</h2>

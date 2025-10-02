@@ -156,296 +156,295 @@ hr {
   border: 0;
 }
 
-/* Sections */
-section { margin: 1rem 0 0; }
-header.main > :last-child{ margin: 0 0 1rem; }
-
-/* ============ Sidebar ============ */
-#sidebar{
-  background: var(--panel);
-  position: relative;
-}
-#sidebar > .inner{
-  position: sticky;   /* sticks as you scroll */
-  top: 1.5rem;
-  padding: 1.5rem;
-  border-radius: var(--radius);
-}
-#sidebar h2{
-  font-size: clamp(18px, 1vw + 14px, 22px);
-  margin-bottom: 0.75rem;
-}
-#sidebar .contact{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-#sidebar .contact li{
-  position: relative;
-  padding-left: 2.2em;
-  margin: 1rem 0 0;
-  border-top: 1px solid rgba(210,215,217,0.75);
-  padding-top: 1rem;
-}
-#sidebar .contact li:first-child{
-  border-top: 0;
-  padding-top: 0;
-  margin-top: 0;
-}
-#sidebar .contact li:before{
-  content: "\f0e0"; /* envelope */
-  font-family: "Font Awesome 5 Free";
-  font-weight: 900;
-  position: absolute;
-  left: 0;
-  top: 0.15em;
-  color: var(--accent);
-}
-
-/* ============ Media helpers (images & embeds) ============ */
-.image{ display:block; border:0; border-radius: var(--radius); overflow: hidden; margin: 0 0 1.25em; }
-.image img{ width:100%; height:auto; display:block; }
-
-.image.left, .image.right{ float:none; max-width:100%; padding:0; } /* kill floats from old theme */
-
-/* A handy grid for text + media side-by-side; use by adding class="media-row" to a wrapper if you need it */
-.media-row{
-  display:grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 1rem;
-  align-items: start;
-}
-@media (max-width: 900px){
-  .media-row{ grid-template-columns: 1fr; }
-}
-
-/* ============ Tables ============ */
-.table-wrapper{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
-table{
-  width:100%;
-  border-collapse: collapse;
-  margin: 1rem 0 2rem;
-  font-size: 0.95em;
-}
-thead th{
-  text-align:left;
-  border-bottom: 2px solid rgba(210,215,217,0.9);
-  padding: .6em .5em;
-}
-tbody td{
-  border-top: 1px solid rgba(210,215,217,0.5);
-  padding: .6em .5em;
-}
-tbody tr:nth-child(odd){ background: rgba(230,235,237,0.35); }
-
-/* ============ Buttons ============ */
-.button, button, input[type="submit"], input[type="button"], input[type="reset"]{
-  appearance:none;
-  display:inline-block;
-  border:2px solid var(--accent);
-  color: var(--accent);
-  background: transparent;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  font-family: "Roboto Slab", Georgia, serif;
-  font-weight: 700;
-  font-size: 0.9em;
-  padding: 0.9em 1.4em;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background .2s ease, color .2s ease;
-  text-decoration:none;
-}
-.button:hover, button:hover, input[type="submit"]:hover, input[type="button"]:hover, input[type="reset"]:hover{
-  background: rgba(0,0,0,0.06);
-}
-
-/* ============ Forms (light) ============ */
-label{ display:block; font-weight:600; margin: 0 0 .4rem; }
-input[type="text"], input[type="email"], input[type="tel"], input[type="search"], input[type="url"], select, textarea{
-  width:100%;
-  border:1px solid rgba(210,215,217,0.9);
-  border-radius: 10px;
-  padding: .7em 1em;
-  font: inherit;
-  color: inherit;
-  background:#fff;
-  outline:none;
-}
-input:focus, select:focus, textarea:focus{ box-shadow: 0 0 0 2px var(--accent); }
-
-/* ============ Banner (optional area you used) ============ */
-#banner{
-  display:flex;
-  gap: 2rem;
-  padding: 2rem 0;
-}
-#banner .content{ flex:1; }
-#banner .image{ flex: 0 0 min(400px, 35%); margin:0; }
-#banner .image img{ width:100%; height:100%; object-fit:cover; object-position:center; }
-
-/* Portrait stacking */
-@media (max-width: 900px){
-  #wrapper{ grid-template-columns: 1fr; }
-  #sidebar{ order: 2; }
-  #main{ order: 1; }
-  #header{ padding-top: 1.25rem; }
-  #banner{ flex-direction: column-reverse; }
-  #banner .image{ flex: unset; height: auto; }
-}
-
-/* Tiny phones */
-@media (max-width: 360px){
-  :root{ --fs-base: 16px; }
-}
-/* --- Put sidebar on the left (desktop) --- */
+/* ============ Layout ============ */
+/* Wrap sidebar + main. We keep your IDs so no HTML changes needed. */
 #wrapper{
-  display: grid;
-  grid-template-columns: 26rem 1fr; /* sidebar | main */
-  gap: 2rem;
-}
-
-#sidebar{ grid-column: 1; }
-#main{ grid-column: 2; }
-
-/* Mobile: stack with main first (optional) */
-@media (max-width: 900px){
-  #wrapper{
-    grid-template-columns: 1fr;
-  }
-  #main{ grid-column: 1; }
-  #sidebar{ grid-column: 1; }
-}
-/* Sidebar first on mobile */
-@media (max-width: 900px){
-  #wrapper{ grid-template-columns: 1fr; }
-  #sidebar{ grid-column: 1; }
-  #main{ grid-column: 1; }
-}
-/* --- OFF-CANVAS SIDEBAR (overlay, doesn't shift content) --- */
-
-/* Make sure main content uses full width. Sidebar is removed from flow. */
-#wrapper { display: block; }
-
-/* Sidebar hidden off the left by default */
-#sidebar{
-  position: fixed;
-  inset: 0 auto 0 0;          /* top:0; right:auto; bottom:0; left:0; */
-  width: 26rem;
-  max-width: 90vw;            /* keep it nice on phones */
-  background-color: #d1dad8;
-  transform: translateX(-100%);
-  transition: transform 0.35s ease;
-  z-index: 10000;
-  box-shadow: 0 0 0 rgba(0,0,0,0); /* no shadow when hidden */
-  pointer-events: none;        /* ignore clicks when hidden */
-}
-
-/* inner keeps the scrolling behavior you had */
-#sidebar > .inner{
-  height: 100%;
-  overflow-y: auto;
-  padding: 1.5rem;
-}
-
-/* When open, slide in and accept pointer events */
-#sidebar.open{
-  transform: translateX(0);
-  pointer-events: auto;
-  box-shadow: 0 0 40px rgba(0,0,0,0.25);
-}
-
-/* Optional: dim the page when sidebar is open */
-.body-backdrop{
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  z-index: 9990;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .25s ease;
-}
-.body-backdrop.visible{
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* ===== 恢复 Editorial 的布局行为（桌面占位，移动端抽屉） ===== */
-
-/* 让 sidebar 显示在左侧（DOM 在右，但用 row-reverse 视觉在左）*/
-#wrapper{
-  display: flex;
-  flex-direction: row-reverse;
   min-height: 100vh;
-}
-
-/* 主内容正常占满剩余空间 */
-#main{
-  flex: 1 1 auto;
-  width: auto;
-}
-
-/* --- Sidebar 左侧 + 网格布局（桌面） --- */
-#wrapper{
   display: grid;
-  grid-template-columns: 26rem 1fr; /* sidebar | main */
+  grid-template-columns: 1fr 26rem; /* main | sidebar */
   gap: 2rem;
 }
-#sidebar{ grid-column: 1; }
-#main{ grid-column: 2; }
-
-/* --- 小屏：默认隐藏侧栏，用按钮唤出 --- */
-.menu-btn{
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 10001;
-  background: none;      /* 去掉背景 */
-  border: none;          /* 去掉边框 */
-  font-size: 28px;       /* 字体稍大 */
-  line-height: 1;
-  color: #000;           /* 颜色自己调整 */
-  cursor: pointer;
-  display: none;         /* 默认隐藏，小屏显示 */
-}
-
-@media (max-width: 1280px){
-  .menu-btn{ display: block; }
-}
 
 
-@media (max-width: 1280px){
-  /* 按钮出现 */
-  .menu-btn{ display: block; }
-
-  /* 单列布局 */
-  #wrapper{ grid-template-columns: 1fr; }
-
-  /* 侧栏改为抽屉 */
-  #sidebar{
-    position: fixed;
+/* Sidebar */
+#search form {
+  text-decoration: none;
+  position: relative; }
+  #search form:before {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+    text-transform: none !important;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900; }
+  #search form:before {
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    transform: scaleX(-1);
+    color: #7f888f;
+    content: '\f002';
+    cursor: default;
+    display: block;
+    font-size: 1.5em;
+    height: 2em;
+    line-height: 2em;
+    opacity: 0.325;
+    position: absolute;
+    right: 0;
+    text-align: center;
     top: 0;
-    left: 0;
-    width: 26rem;
-    max-width: 85vw;
-    height: 100vh;
-    overflow: auto;
-    background: #d1dad8;
-    box-shadow: 0 0 40px rgba(0,0,0,.15);
-    transform: translateX(-100%);
-    transition: transform .3s ease;
-    z-index: 10000;
-  }
-  /* 打开态 */
-  body.sidebar-open #sidebar{
-    transform: translateX(0);
-  }
+    width: 2em; }
+  #search form input[type="text"] {
+    padding-right: 2.75em; }
 
-  /* 打开时防止主区被挡操作（可选） */
-  body.sidebar-open #main{
-    pointer-events: none;
-  }
-}
+    
 
-/* 兼容：如果旧的 .toggle 按钮存在，一律隐藏，避免重复 */
-#sidebar .toggle{ display: none !important; }
+/* Sidebar */
+#search form {
+  text-decoration: none;
+  position: relative; }
+  #search form:before {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+    text-transform: none !important;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900; }
+  #search form:before {
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    transform: scaleX(-1);
+    color: #7f888f;
+    content: '\f002';
+    cursor: default;
+    display: block;
+    font-size: 1.5em;
+    height: 2em;
+    line-height: 2em;
+    opacity: 0.325;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    width: 2em; }
+  #search form input[type="text"] {
+    padding-right: 2.75em; }
+
+#sidebar {
+  -moz-flex-grow: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-grow: 0;
+  flex-grow: 0;
+  -moz-flex-shrink: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  flex-shrink: 0;
+  -moz-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
+  -webkit-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
+  -ms-transition: margin-left 0.5s ease, box-shadow 0.5s ease;
+  transition: margin-left 0.5s ease, box-shadow 0.5s ease;
+  background-color: #d1dad8;
+  font-size: 0.9em;
+  position: relative;
+  width: 26em; }
+  #sidebar h2 {
+    font-size: 1.38889em; }
+  #sidebar > .inner {
+    padding: 2.22222em 2.22222em 2.44444em 2.22222em ;
+    position: relative;
+    width: 26em; }
+    #sidebar > .inner > * {
+      border-bottom: solid 2px rgba(210, 215, 217, 0.75);
+      margin: 0 0 3.5em 0;
+      padding: 0 0 3.5em 0; }
+      #sidebar > .inner > * > :last-child {
+        margin-bottom: 0; }
+      #sidebar > .inner > *:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+        padding-bottom: 0; }
+    #sidebar > .inner > .alt {
+      background-color: #eff1f2;
+      border-bottom: 0;
+      margin: -2.22222em 0 4.44444em -2.22222em;
+      padding: 2.22222em;
+      width: calc(100% + 4.44444em); }
+  #sidebar .toggle {
+    text-decoration: none;
+    -moz-transition: left 0.5s ease;
+    -webkit-transition: left 0.5s ease;
+    -ms-transition: left 0.5s ease;
+    transition: left 0.5s ease;
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    border: 0;
+    display: block;
+    height: 7.5em;
+    left: 26em;
+    line-height: 7.5em;
+    outline: 0;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    text-indent: -15em;
+    white-space: nowrap;
+    top: 0;
+    width: 6em;
+    z-index: 10000; }
+    #sidebar .toggle:before {
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      line-height: 1;
+      text-transform: none !important;
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900; }
+    #sidebar .toggle:before {
+      content: '\f0c9';
+      font-size: 2rem;
+      height: inherit;
+      left: 0;
+      line-height: inherit;
+      position: absolute;
+      text-indent: 0;
+      top: 0;
+      width: inherit; }
+  #sidebar.inactive {
+    margin-left: -26em; }
+  @media screen and (max-width: 1680px) {
+    #sidebar {
+      width: 24em; }
+      #sidebar > .inner {
+        padding: 1.66667em 1.66667em 1.33333em 1.66667em ;
+        width: 24em; }
+        #sidebar > .inner > .alt {
+          margin: -1.66667em 0 3.33333em -1.66667em;
+          padding: 1.66667em;
+          width: calc(100% + 3.33333em); }
+      #sidebar .toggle {
+        height: 6.25em;
+        left: 24em;
+        line-height: 6.25em;
+        text-indent: 5em;
+        width: 5em; }
+        #sidebar .toggle:before {
+          font-size: 1.5rem; }
+      #sidebar.inactive {
+        margin-left: -24em; } }
+  @media screen and (max-width: 1280px) {
+    #sidebar {
+      box-shadow: 0 0 5em 0 rgba(0, 0, 0, 0.175);
+      height: 100%;
+      left: 0;
+      position: fixed;
+      top: 0;
+      z-index: 10000; }
+      #sidebar.inactive {
+        box-shadow: none; }
+      #sidebar > .inner {
+        -webkit-overflow-scrolling: touch;
+        height: 100%;
+        left: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        position: absolute;
+        top: 0; }
+        #sidebar > .inner:after {
+          content: '';
+          display: block;
+          height: 4em;
+          width: 100%; }
+      #sidebar .toggle {
+        text-indent: 6em;
+        width: 6em; }
+        #sidebar .toggle:before {
+          font-size: 1.5rem;
+          margin-left: -0.4375em; }
+      body.is-preload #sidebar {
+        display: none; } }
+  @media screen and (max-width: 736px) {
+    #sidebar .toggle {
+      text-indent: 7.25em;
+      width: 7.25em; }
+      #sidebar .toggle:before {
+        color: #7f888f;
+        margin-left: -0.0625em;
+        margin-top: -0.25em;
+        font-size: 1.1rem;
+        z-index: 1; }
+      #sidebar .toggle:after {
+        background: rgba(222, 225, 226, 0.75);
+        border-radius: 0.375em;
+        content: '';
+        height: 3.5em;
+        left: 1em;
+        position: absolute;
+        top: 1em;
+        width: 5em; } }
+
+/* Header */
+#header {
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  border-bottom: solid 5px #000000;
+  padding: 6em 0 1em 0;
+  position: relative; }
+  #header > * {
+    -moz-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    margin-bottom: 0; }
+  #header .logo {
+    border-bottom: 0;
+    color: inherit;
+    font-family: "Roboto Slab", serif;
+    font-size: 1.125em; }
+  #header .icons {
+    text-align: right; }
+  @media screen and (max-width: 1680px) {
+    #header {
+      padding-top: 5em; } }
+  @media screen and (max-width: 736px) {
+    #header {
+      padding-top: 6.5em; }
+      #header .logo {
+        font-size: 1.25em;
+        margin: 0; }
+      #header .icons {
+        height: 5em;
+        line-height: 5em;
+        position: absolute;banner
+        right: -0.5em;
+        top: 0; } }
+/* Table */
+.table-wrapper {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto; }
+/* Wrapper */
+#wrapper {
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: -ms-flex;
+  display: flex;
+  -moz-flex-direction: row-reverse;
+  -webkit-flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+  min-height: 100vh; }
+
+

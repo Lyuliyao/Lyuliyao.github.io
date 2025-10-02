@@ -1,1 +1,0 @@
-pandoc mybib.tex  -o output.html --bibliography mybib.bib

@@ -1,190 +1,182 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Research</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="stylesheet" href="assets/css/main.css" />
+    <title>Lyu Liyao's Home page</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="stylesheet" href="assets/css/main.css"/>
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  
+  <!-- Self‑contained CSS so the layout is stable even without external files -->
+  <style>
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
 
-  gtag('config', 'G-CQSV68665C');
-</script>
-<body class="is-preload">
-    <div id="wrapper">
-        <div id="main">
-            <div class="inner">
-                <header id="header">
-                    <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
-                </header>
-                <section>
-                    <header class="main">
-                        <section>
-                            <h2>Research Interests</h2>
-                            <ul>
-                                <li> 
-                                    <strong style="font-size: 1.8em;">
-                                        Multiscale Modeling
-                                    </strong>
-                                    <br>
-                                    Coarse Grained Molecular Dynamics, Mori-Zwanzig Formalism, generalized Langevin Equation, Model Reduction
-                                </li>
-                                <li>
-                                    <strong style="font-size: 1.8em;">
-                                        Optimization
-                                    </strong>
-                                    <br>
-                                    Consensus Based Optimization, Consensus Based Sampling, Stochasitc Optimal Control
-                                </li>
-                                <li>
-                                    <strong style="font-size: 1.8em;">
-                                        Scientific Computing
-                                    </strong>
-                                    <br>
-                                    Mixed Redisual Method, Deep Learning Based Discontinuous Galerkin Method, Reproducing Activation Function 
-                                </li>
-                            </ul>
-                        </section>
-                    </header>
-                    <section>
-                        <h3>
-                            Machine Learning and Multiscale Modeling
-                        </h3>
-                        <p>
-                            Developing innovative machine learning methodologies to enhance bottom-up multiscale modeling and accurately predict complex physical phenomena.
-                        </p>
-                        <ul>
-                            <li>
-                                A <strong>non-conservative memory term</strong> is critical for coarse-grained molecular dynamics (CGMD).
-                                <div style="display: flex; align-items: flex-start;">
-                                    <!-- Ordered List -->
-                                    <ol style="flex: 1;">
-                                        <li>
-                                            <strong>Many-body Dissipative Interactions:</strong><br>
-                                            Introduced a machine-learning-based coarse-grained molecular dynamics (CGMD) model leveraging the Mori-Zwanzig formalism to include non-Markovian many-body memory interactions.
-                                        </li>
-                                        <li>
-                                            <strong>Neural Networks Respect Physical Symmetries:</strong><br>
-                                            Design neural networks that respect physical symmetries (e.g., rotational, translational, permutation) to model complex friction matrix accurately.
-                                        </li>
-                                        <li>
-                                            <strong>Accuracy beyond Mean-field Metrics:</strong><br>
-                                            Instead of matching the mean-field metrics such as the velocity autocorrelation function, the present model is constructed based on the Mori-Zwanzig formalism and naturally inherits the heterogeneous information.
-                                        </li>
-                                    </ol>
-                                    
-                                    <!-- Embed the Plotly animation -->
-                                    <iframe src="./html/von_hove.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
-                                </div>
-                            </li>
-                            <li>
-                                Coarse-Grained Molecular Dynamics Models for <strong>Non-Equilibrium Processes</strong>
-                                <div style="display: flex; align-items: flex-start;">
-                                    <ol style="flex: 1;">
-                                        <li>
-                                            <strong> Generalization Challenge: </strong> <br>
-                                            Applicability to various non-equilibrium processes is generally unwarranted due to the inconsistency in the conditional distribution.
-                                        </li>
-                                        <li>
-                                            <strong> Training CG variables:</strong><br>
-                                            Seeking a set of auxiliary CG variables based on the time-lagged independent component analysis
-                                            to minimize the entropy contribution of the unresolved variables.
-                                        </li>
-                                    </ol>
-                                    <iframe src="./html/vel_evol.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
-                                    </div>
-                            </li>
-                        </ul>
-                    </section>
-                    <section>
-                        <h3>
-                            Algorithms of Scientific Machine Learning
-                        </h3>
-                        <ul>
-                            <li>
-                            <strong>Deep Mixed Residual Method (MIM) </strong>  design for solving <strong>high-order</strong> partial differential equations   
-                            <div style="display: flex; align-items: flex-start;">
-                                <ol style="flex: 1;">
-                                    <li>
-                                        <strong> Mixed Residual: </strong> <br>
-                                        Rewrite a high-order PDE into a first-order system,in the same spirit as local discontinuous Galerkin method and mixed finite element method 
-                                    </li>
-                                    <li>
-                                        <strong> Flexibility in Network Design:</strong><br>
-                                        Allows for different configurations, such as using the same or different DNNs for various unknown functions.
-                                    </li>
-                                    <li>
-                                    <strong> Enforce Boundary Condition :</strong><br>
-                                         Design DNNs satisfy boundary and initial conditions automatically in a systematic manner
-                                    </li>
-                                </ol>
-                                <iframe src="./html/biharmonic_2D_all.html" width="600" height="350" style="border:none; flex: 1; margin-left: 20px;" loading="lazy"></iframe>
-                            </div>
-                            </li>
-                            <strong> Deep Learning Based Discontinuous Galerkin Method (D2GM)  </strong>   to solve hyperbolic equations with <strong>discontinuous solutions</strong> and
-                            <strong>random uncertainties </strong>
-                            <div style="display: flex; align-items: flex-start;">
-                                <ol style="flex: 1;">
-                                    <li>
-                                        <strong> Discontinuities of the solutions: </strong> <br>
-                                        Using the weak formulation and discontinuous element basis, the D2GM
-                                        is able to approximate discontinuous PDE solutions with high accuracy
-                                    </li>
-                                    <li>
-                                        <strong> High-dimensional Random Space:</strong><br>
-                                        Using the mini-batch sampling with controllable number of samples,
-                                        the D2GM overcomes the curse of dimensionality.
-                                    </li>
-                                </ol>
-                                <div style="text-align: center; flex: 1; margin-left: 20px;">
-                                    <iframe src="./html/Burgers.html" width="600" height="350" style="border:none;" loading="lazy"></iframe>
-                                </div>
-                            </div>
-                            </li>
-                        </ul>
-                    </section>
-                    
-                    <section>
-                        <h3>
-                            Gradient-Free Optimization Methods
-                        </h3>
-                        <p>
-                            Exploring novel optimization strategies that bypass traditional gradient calculations to solve complex, multidimensional problems.
-                        </p>
-                    </section>
+    /* Page shell */
+    .wrap{max-width:var(--maxw); margin:auto; padding:24px}
+    header.site{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0 20px}
+    .brand{font-weight:800; letter-spacing:.3px; font-size:1.1rem}
 
-                </section>
-            </div>
+    /* Section titles */
+    .section-title{font-size:1.8rem; margin:4px 0 14px}
+    .subtle{color:var(--muted)}
+
+    /* Card grid */
+    .grid{display:grid; gap:18px}
+    @media (min-width: 820px){
+      .grid{grid-template-columns:1fr 1fr}
+    }
+
+    /* Research interest list as neat cards */
+    .pill-list{display:grid; gap:14px}
+    .pill{background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+    .pill strong{display:block; font-size:1.35rem; margin-bottom:6px}
+    .bullets{margin:6px 0 0; color:var(--muted)}
+
+    /* Feature rows with text + media */
+    .feature{display:flex; gap:18px; align-items:flex-start; background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+    .feature + .feature{margin-top:16px}
+    .feature .txt{flex:1; min-width:250px}
+    .feature .txt ol{margin:6px 0 0 18px}
+
+    /* Responsive embeds with stable aspect ratio */
+    .embed{position:relative; isolation:isolate; width:100%; max-width:680px; aspect-ratio:16/9; border-radius:12px; overflow:hidden; flex:1; min-width:280px; box-shadow:0 8px 30px rgba(0,0,0,.35)}
+    .embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+    .embed::after{content:''; position:absolute; inset:0; box-shadow:inset 0 0 0 1px #ffffff10; border-radius:inherit; pointer-events:none}
+
+    /* Section blocks */
+    section.block{margin:20px 0}
+    .card{background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+
+    /* Lists inside cards */
+    ol{padding-left:20px}
+
+    /* Contact footer */
+    footer{margin:40px 0 10px; color:var(--muted); font-size:.95rem}
+
+    /* Small helper badges */
+    .badge{display:inline-block; padding:.28rem .6rem; background:#6ea8fe22; color:#000000; border:1px solid #6ea8fe55; border-radius:999px; font-size:.78rem; margin-left:8px}
+
+    /* Focus rings for accessibility */
+    :focus-visible{outline: 3px solid var(--ring); outline-offset:2px; border-radius:10px}
+  </style>
+<body>
+  <div class="wrap">
+    <header id="header">
+        <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
+        <nav aria-label="Skip links">
+        <a href="#interests" class="badge">Interests</a>
+        <a href="#mlmm" class="badge">ML × Multiscale</a>
+        <a href="#sci-ml" class="badge">Scientific ML</a>
+        <a href="#gfree" class="badge">Gradient‑Free</a>
+      </nav>
+    </header>
+
+    <!-- Research Interests -->
+    <section id="interests" class="block">
+      <h2 class="section-title">Research Interests</h2>
+      <div class="pill-list grid">
+        <div class="pill">
+          <strong>Multiscale Modeling</strong>
+          <div class="bullets">Coarse‑Grained Molecular Dynamics, Mori–Zwanzig, Generalized Langevin Equation, Model Reduction</div>
         </div>
-        <div id="sidebar">
-            <div class="inner">
-                <div id="navbar-placeholder"></div>
-				<script>
-				// 使用fetch API来加载navbar.html内容
-				fetch('./side.html')
-				  .then(response => response.text())
-				  .then(text => document.getElementById('navbar-placeholder').innerHTML = text);
-				</script>
-                <section>
-                    <header class="major">
-                        <h2>Get in touch</h2>
-                    </header>
-                    <ul class="contact">
-                        <li class="icon solid fa-envelope">lyuliyao[at]msu[dot]edu</li>
-                    </ul>
-                </section>
-            </div>
+        <div class="pill">
+          <strong>Optimization</strong>
+          <div class="bullets">Consensus‑Based Optimization & Sampling, Stochastic Optimal Control</div>
         </div>
-    </div>  
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/browser.min.js"></script>
-    <script src="assets/js/breakpoints.min.js"></script>
-    <script src="assets/js/util.js"></script>
-    <script src="assets/js/main.js"></script>
+        <div class="pill">
+          <strong>Scientific Computing</strong>
+          <div class="bullets">Mixed Residual Methods, Deep‑Learning‑aided Discontinuous Galerkin, Reproducing Activation Functions</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ML & Multiscale -->
+    <section id="mlmm" class="block">
+      <h2 class="section-title">Machine Learning and Multiscale Modeling</h2>
+      <p class="subtle">Developing learning methodologies that enhance bottom‑up multiscale modeling and accurately predict complex physical phenomena.</p>
+
+      <article class="feature">
+        <div class="txt">
+          <h3 style="margin:0 0 6px">Non‑conservative Memory Terms for CGMD</h3>
+          <ol>
+            <li><strong>Many‑body dissipative interactions.</strong> ML‑based coarse‑grained MD using Mori–Zwanzig to include non‑Markovian many‑body memory.</li>
+            <li><strong>Symmetry‑aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
+            <li><strong>Beyond mean‑field metrics.</strong> Built on Mori–Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
+          </ol>
+        </div>
+        <div class="embed" aria-label="Von Hove animation">
+          <iframe src="./html/von_hove.html" loading="lazy" title="Von Hove function animation" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="txt">
+          <h3 style="margin:0 0 6px">Coarse‑Grained Models for <em>Non‑Equilibrium</em> Processes</h3>
+          <ol>
+            <li><strong>Generalization challenge.</strong> Non‑equilibrium applicability is limited by inconsistent conditional distributions.</li>
+            <li><strong>Training CG variables.</strong> Time‑lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
+          </ol>
+        </div>
+        <div class="embed" aria-label="Velocity evolution animation">
+          <iframe id="velFrame" src="./html/vel_evol.html" loading="lazy" title="Velocity evolution" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </article>
+    </section>
+
+    <!-- Scientific ML Algorithms -->
+    <section id="sci-ml" class="block">
+      <h2 class="section-title">Algorithms of Scientific Machine Learning</h2>
+
+      <article class="feature">
+        <div class="txt">
+          <h3 style="margin:0 0 6px">Deep Mixed Residual Method (MIM) for <em>high‑order</em> PDEs</h3>
+          <ol>
+            <li><strong>Mixed residual.</strong> Rewrite a high‑order PDE as a first‑order system (akin to LDG and mixed FEM).</li>
+            <li><strong>Flexible networks.</strong> Share or separate DNNs for different unknowns as needed.</li>
+            <li><strong>Built‑in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
+          </ol>
+        </div>
+        <div class="embed" aria-label="Biharmonic visualization">
+          <iframe src="./html/biharmonic_2D_all.html" loading="lazy" title="Biharmonic 2D" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </article>
+
+      <article class="feature">
+        <div class="txt">
+          <h3 style="margin:0 0 6px">Deep Learning‑based Discontinuous Galerkin (D2GM)</h3>
+          <ol>
+            <li><strong>Handles discontinuities.</strong> Weak formulation with discontinuous bases approximates shocks accurately.</li>
+            <li><strong>High‑dimensional uncertainty.</strong> Mini‑batch sampling controls sample count and mitigates curse of dimensionality.</li>
+          </ol>
+        </div>
+        <div class="embed" aria-label="Burgers visualization">
+          <iframe src="./html/Burgers.html" loading="lazy" title="Burgers equation" referrerpolicy="no-referrer"></iframe>
+        </div>
+      </article>
+    </section>
+
+    <!-- Gradient‑Free -->
+    <section id="gfree" class="block">
+      <h2 class="section-title">Gradient‑Free Optimization Methods</h2>
+      <div class="card">
+        Exploring optimization strategies that bypass gradient calculations for complex, multi‑modal problems
+        (e.g., consensus‑based optimization/sampling, finite‑horizon stochastic control).
+      </div>
+    </section>
+
+    <footer>
+      <div>📬 Contact: <a href="mailto:lyuliyao@msu.edu">lyuliyao@msu.edu</a></div>
+    </footer>
+  </div>
+
+  <!-- Optional: Google Analytics (kept async; safe to remove) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-CQSV68665C');
+  </script>
 </body>
 </html>

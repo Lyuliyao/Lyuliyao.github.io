@@ -17,6 +17,7 @@
 </script>
 <body class="is-preload">
 <div id="wrapper">
+    <button id="sidebarToggle" class="menu-btn">Menu</button>
     <div id="main">
         <div class="inner">
             <header id="header">
@@ -27,11 +28,11 @@
                     <header>
                         <h1>Lyu Liyao<br/>吕力遥</h1>
                     </header>
-                    <h3> Hedrick Assistant Adjunct Professor </h3>
+                    <h4> Hedrick Assistant Adjunct Professor </h4>
                     <p>UCLA Department of Mathematics</p>
-                    <h3>Doctor of Philosophy</h3>
+                    <h4>Doctor of Philosophy</h4>
                     <p>Department of Computational Mathematics, Science & Engineering<br/>Michigan State University</p>
-                    <h3>Bachelor of Science</h3>
+                    <h4>Bachelor of Science</h4>
                     <p>Department of Mathematics and Applied Mathematics<br/>School of Mathematical Sciences<br/>CW Chu College
                         Soochow University</p>
                 </div>
@@ -75,6 +76,7 @@
         </div>
     </div>
     <div id="sidebar">
+        <a href="#sidebar" class="toggle" aria-label="Toggle menu"></a>
         <div class="inner">
             <div id="navbar-placeholder"></div>
 				<script>
@@ -104,5 +106,26 @@
 <script src="assets/js/breakpoints.min.js"></script>
 <script src="assets/js/util.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  (function(){
+    var btn = document.getElementById('sidebarToggle');
+    if(btn){
+      btn.addEventListener('click', function(){
+        document.body.classList.toggle('sidebar-open');
+      });
+    }
+    // 点击侧栏外区域也可以关闭（可选）
+    document.addEventListener('click', function(e){
+      if(document.body.classList.contains('sidebar-open')){
+        var sidebar = document.getElementById('sidebar');
+        var btn = document.getElementById('sidebarToggle');
+        if(!sidebar.contains(e.target) && e.target !== btn){
+          document.body.classList.remove('sidebar-open');
+        }
+      }
+    });
+  })();
+</script>
+
 </body>
 </html>

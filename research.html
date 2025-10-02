@@ -62,116 +62,140 @@
     /* Focus rings for accessibility */
     :focus-visible{outline: 3px solid var(--ring); outline-offset:2px; border-radius:10px}
   </style>
-<body>
-  <div class="wrap">
-    <header id="header">
-        <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
-        <nav aria-label="Skip links">
-        <a href="#interests" class="badge">Interests</a>
-        <a href="#mlmm" class="badge">ML × Multiscale</a>
-        <a href="#sci-ml" class="badge">Scientific ML</a>
-        <a href="#gfree" class="badge">Gradient‑Free</a>
-      </nav>
-    </header>
+<body class="is-preload">
+<div id="wrapper">
+    <div id="main">
+        <div class="inner">
+        <header id="header">
+            <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
+            <nav aria-label="Skip links">
+            <a href="#interests" class="badge">Interests</a>
+            <a href="#mlmm" class="badge">ML × Multiscale</a>
+            <a href="#sci-ml" class="badge">Scientific ML</a>
+            <a href="#gfree" class="badge">Gradient‑Free</a>
+        </nav>
+        </header>
 
-    <!-- Research Interests -->
-    <section id="interests" class="block">
-      <h2 class="section-title">Research Interests</h2>
-      <div class="pill-list grid">
-        <div class="pill">
-          <strong>Multiscale Modeling</strong>
-          <div class="bullets">Coarse‑Grained Molecular Dynamics, Mori–Zwanzig, Generalized Langevin Equation, Model Reduction</div>
+        <!-- Research Interests -->
+        <section id="interests" class="block">
+        <h2 class="section-title">Research Interests</h2>
+        <div class="pill-list grid">
+            <div class="pill">
+            <strong>Multiscale Modeling</strong>
+            <div class="bullets">Coarse‑Grained Molecular Dynamics, Mori–Zwanzig, Generalized Langevin Equation, Model Reduction</div>
+            </div>
+            <div class="pill">
+            <strong>Optimization</strong>
+            <div class="bullets">Consensus‑Based Optimization & Sampling, Stochastic Optimal Control</div>
+            </div>
+            <div class="pill">
+            <strong>Scientific Computing</strong>
+            <div class="bullets">Mixed Residual Methods, Deep‑Learning‑aided Discontinuous Galerkin, Reproducing Activation Functions</div>
+            </div>
         </div>
-        <div class="pill">
-          <strong>Optimization</strong>
-          <div class="bullets">Consensus‑Based Optimization & Sampling, Stochastic Optimal Control</div>
-        </div>
-        <div class="pill">
-          <strong>Scientific Computing</strong>
-          <div class="bullets">Mixed Residual Methods, Deep‑Learning‑aided Discontinuous Galerkin, Reproducing Activation Functions</div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <!-- ML & Multiscale -->
-    <section id="mlmm" class="block">
-      <h2 class="section-title">Machine Learning and Multiscale Modeling</h2>
-      <p class="subtle">Developing learning methodologies that enhance bottom‑up multiscale modeling and accurately predict complex physical phenomena.</p>
+        <!-- ML & Multiscale -->
+        <section id="mlmm" class="block">
+        <h2 class="section-title">Machine Learning and Multiscale Modeling</h2>
+        <p class="subtle">Developing learning methodologies that enhance bottom‑up multiscale modeling and accurately predict complex physical phenomena.</p>
 
-      <article class="feature">
-        <div class="txt">
-          <h3 style="margin:0 0 6px">Non‑conservative Memory Terms for CGMD</h3>
-          <ol>
-            <li><strong>Many‑body dissipative interactions.</strong> ML‑based coarse‑grained MD using Mori–Zwanzig to include non‑Markovian many‑body memory.</li>
-            <li><strong>Symmetry‑aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
-            <li><strong>Beyond mean‑field metrics.</strong> Built on Mori–Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
-          </ol>
-        </div>
-        <div class="embed" aria-label="Von Hove animation">
-          <iframe src="./html/von_hove.html" loading="lazy" title="Von Hove function animation" referrerpolicy="no-referrer"></iframe>
-        </div>
-      </article>
+        <article class="feature">
+            <div class="txt">
+            <h3 style="margin:0 0 6px">Non‑conservative Memory Terms for CGMD</h3>
+            <ol>
+                <li><strong>Many‑body dissipative interactions.</strong> ML‑based coarse‑grained MD using Mori–Zwanzig to include non‑Markovian many‑body memory.</li>
+                <li><strong>Symmetry‑aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
+                <li><strong>Beyond mean‑field metrics.</strong> Built on Mori–Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
+            </ol>
+            </div>
+            <div class="embed" aria-label="Von Hove animation">
+            <iframe src="./html/von_hove.html" loading="lazy" title="Von Hove function animation" referrerpolicy="no-referrer"></iframe>
+            </div>
+        </article>
 
-      <article class="feature">
-        <div class="txt">
-          <h3 style="margin:0 0 6px">Coarse‑Grained Models for <em>Non‑Equilibrium</em> Processes</h3>
-          <ol>
-            <li><strong>Generalization challenge.</strong> Non‑equilibrium applicability is limited by inconsistent conditional distributions.</li>
-            <li><strong>Training CG variables.</strong> Time‑lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
-          </ol>
-        </div>
-        <div class="embed" aria-label="Velocity evolution animation">
-          <iframe id="velFrame" src="./html/vel_evol.html" loading="lazy" title="Velocity evolution" referrerpolicy="no-referrer"></iframe>
-        </div>
-      </article>
-    </section>
+        <article class="feature">
+            <div class="txt">
+            <h3 style="margin:0 0 6px">Coarse‑Grained Models for <em>Non‑Equilibrium</em> Processes</h3>
+            <ol>
+                <li><strong>Generalization challenge.</strong> Non‑equilibrium applicability is limited by inconsistent conditional distributions.</li>
+                <li><strong>Training CG variables.</strong> Time‑lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
+            </ol>
+            </div>
+            <div class="embed" aria-label="Velocity evolution animation">
+            <iframe id="velFrame" src="./html/vel_evol.html" loading="lazy" title="Velocity evolution" referrerpolicy="no-referrer"></iframe>
+            </div>
+        </article>
+        </section>
 
-    <!-- Scientific ML Algorithms -->
-    <section id="sci-ml" class="block">
-      <h2 class="section-title">Algorithms of Scientific Machine Learning</h2>
+        <!-- Scientific ML Algorithms -->
+        <section id="sci-ml" class="block">
+        <h2 class="section-title">Algorithms of Scientific Machine Learning</h2>
 
-      <article class="feature">
-        <div class="txt">
-          <h3 style="margin:0 0 6px">Deep Mixed Residual Method (MIM) for <em>high‑order</em> PDEs</h3>
-          <ol>
-            <li><strong>Mixed residual.</strong> Rewrite a high‑order PDE as a first‑order system (akin to LDG and mixed FEM).</li>
-            <li><strong>Flexible networks.</strong> Share or separate DNNs for different unknowns as needed.</li>
-            <li><strong>Built‑in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
-          </ol>
-        </div>
-        <div class="embed" aria-label="Biharmonic visualization">
-          <iframe src="./html/biharmonic_2D_all.html" loading="lazy" title="Biharmonic 2D" referrerpolicy="no-referrer"></iframe>
-        </div>
-      </article>
+        <article class="feature">
+            <div class="txt">
+            <h3 style="margin:0 0 6px">Deep Mixed Residual Method (MIM) for <em>high‑order</em> PDEs</h3>
+            <ol>
+                <li><strong>Mixed residual.</strong> Rewrite a high‑order PDE as a first‑order system (akin to LDG and mixed FEM).</li>
+                <li><strong>Flexible networks.</strong> Share or separate DNNs for different unknowns as needed.</li>
+                <li><strong>Built‑in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
+            </ol>
+            </div>
+            <div class="embed" aria-label="Biharmonic visualization">
+            <iframe src="./html/biharmonic_2D_all.html" loading="lazy" title="Biharmonic 2D" referrerpolicy="no-referrer"></iframe>
+            </div>
+        </article>
 
-      <article class="feature">
-        <div class="txt">
-          <h3 style="margin:0 0 6px">Deep Learning‑based Discontinuous Galerkin (D2GM)</h3>
-          <ol>
-            <li><strong>Handles discontinuities.</strong> Weak formulation with discontinuous bases approximates shocks accurately.</li>
-            <li><strong>High‑dimensional uncertainty.</strong> Mini‑batch sampling controls sample count and mitigates curse of dimensionality.</li>
-          </ol>
-        </div>
-        <div class="embed" aria-label="Burgers visualization">
-          <iframe src="./html/Burgers.html" loading="lazy" title="Burgers equation" referrerpolicy="no-referrer"></iframe>
-        </div>
-      </article>
-    </section>
+        <article class="feature">
+            <div class="txt">
+            <h3 style="margin:0 0 6px">Deep Learning‑based Discontinuous Galerkin (D2GM)</h3>
+            <ol>
+                <li><strong>Handles discontinuities.</strong> Weak formulation with discontinuous bases approximates shocks accurately.</li>
+                <li><strong>High‑dimensional uncertainty.</strong> Mini‑batch sampling controls sample count and mitigates curse of dimensionality.</li>
+            </ol>
+            </div>
+            <div class="embed" aria-label="Burgers visualization">
+            <iframe src="./html/Burgers.html" loading="lazy" title="Burgers equation" referrerpolicy="no-referrer"></iframe>
+            </div>
+        </article>
+        </section>
 
-    <!-- Gradient‑Free -->
-    <section id="gfree" class="block">
-      <h2 class="section-title">Gradient‑Free Optimization Methods</h2>
-      <div class="card">
-        Exploring optimization strategies that bypass gradient calculations for complex, multi‑modal problems
-        (e.g., consensus‑based optimization/sampling, finite‑horizon stochastic control).
-      </div>
-    </section>
+        <!-- Gradient‑Free -->
+        <section id="gfree" class="block">
+        <h2 class="section-title">Gradient‑Free Optimization Methods</h2>
+        <div class="card">
+            Exploring optimization strategies that bypass gradient calculations for complex, multi‑modal problems
+            (e.g., consensus‑based optimization/sampling, finite‑horizon stochastic control).
+        </div>
+        </section>
+    </div>
+    </div>
 
-    <footer>
-      <div>📬 Contact: <a href="mailto:lyuliyao@msu.edu">lyuliyao@msu.edu</a></div>
-    </footer>
+  <div id="sidebar">
+        <a href="#sidebar" class="toggle" aria-label="Toggle menu"></a>
+        <div class="inner">
+            <div id="navbar-placeholder"></div>
+				<script>
+				// 使用fetch API来加载navbar.html内容
+				fetch('./side.html')
+				  .then(response => response.text())
+				  .then(text => document.getElementById('navbar-placeholder').innerHTML = text);
+				</script>
+            <section>
+                <header class="major">
+                    <h2>Get in touch</h2>
+                </header>
+                <ul class="contact">
+                    <li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
+                </ul>
+            </section>
+            <section>
+                <!-- <script type='text/javascript' id='clustrmaps' src='https://cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=200&t=n&d=_AA7dgHFiVjPeJPFLuFhng51maxsc8teAAyiZtzYv64'></script> -->
+                <script type='text/javascript' id='clustrmaps' src='https://cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=300&t=n&d=duxLmcJoT7KAin74LxhdJ6oojgllMZfUsG5PEKaxrcA'></script>
+            </section>
+        </div>
   </div>
-
+</div>
   <!-- Optional: Google Analytics (kept async; safe to remove) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
   <script>

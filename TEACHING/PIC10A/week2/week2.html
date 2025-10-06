@@ -1,101 +1,365 @@
 <!doctype html>
 <html lang="en">
 
-	<head>
-		<meta charset="utf-8">
+<head>
+  <meta charset="utf-8">
+  <title>Section 6 & 7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>Section 5</title>
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+</head>
 
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<body>
+  <div class="reveal">
+    <div class="slides">
 
-		<link rel="stylesheet" href="../reveal.js/dist/reveal.css">
-		<link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
-		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
-	</head>
+      <!-- ============ SECTION 6 ============ -->
+      <section>
+        <h2>Section 6: Strings (<code>std::string</code>)</h2>
+        <p>Goal: create strings, use common member functions, and understand indexing rules & pitfalls.</p>
+      </section>
 
-	<body>
+      <section>
+        <h2>Constructing <code>std::string</code></h2>
+        <pre><code data-trim data-line-numbers class="language-cpp">
+// Strings live in the standard library
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
 
-		<div class="reveal">
+int main() {
+  string s1 = "Hello world";      // copy from string literal
+  string s2("Another string");    // direct-initialize
+  string s3(8, '!');              // "!!!!!!!!"
+  string s0;                      // default-constructed: empty
 
-			<div class="slides">
-				<section>
-                    <h2>Section 6: Strings</h2>
-                </section>
-                <section>
-                    <h2> Constucting <code> std::string </code> </h2>
-                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
-                #include &lt;string&gt;
-                #include &lt;iostream&gt;
-                #include &lt;vector&gt;
-                using namespace std;
+  cout &lt;&lt; s1 &lt;&lt; "\n" &lt;&lt; s2 &lt;&lt; "\n" &lt;&lt; s3
+       &lt;&lt; "\n" &lt;&lt; s0 &lt;&lt; endl;
+}
+        </code></pre>
+        <ul>
+          <li><code>s0</code> is empty but safely usable (default-constructed).</li>
+          <li>Remember to <code>#include &lt;string&gt;</code>.</li>
+        </ul>
+      </section>
 
-                int main() {
-                    string s1 = "Hello world";
-                    string s2("hello");
-                    string s3(8, 'a');
-                    string s0;
+      <section>
+        <h2>Member functions (first pass)</h2>
+        <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
 
-                    cout &lt;&lt; s1 &lt;&lt; endl;  
-                    cout &lt;&lt; s2 &lt;&lt; endl; 
-                    cout &lt;&lt; s3 &lt;&lt; endl; 
-                    cout &lt;&lt; s0 &lt;&lt; endl; 
-                    return 0;
-                }</code></pre>
-                </section>
-                <section>
-                    <h2> Remark</h2>
-                    <ul>
-                        <li> <code> std::string </code> is a class in the C++ standard library </li>
-                        <li> <code> s </code> is an instance of <code> std::string </code> , but <b>not</b> a variable of type <code> std::string </code>  </li>
-                        <li> A class is a souped-up data type, with <b>member functions</b> (built-in functions) </li>
-                    </ul>
-                </section>
-                <section>
-                    <h2> member functions </h2>
-                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
-                #include &lt;string&gt;
-                #include &lt;iostream&gt;
-                using namespace std;
-                int main() {
-                    string s = "Hello world";
-                    cout &lt;&lt; s.size() &lt;&lt; endl;  //
-                    cout &lt;&lt; s.length() &lt;&lt; endl; // same as size()
-                    cout &lt;&lt; s.empty() &lt;&lt; endl;  //
-                    cout &lt;&lt; s.at(0) &lt;&lt; endl;    // character at index 0
-                    cout &lt;&lt; s.substr(0, 5) &lt;&lt; endl; // substring from index 0, length 5
-                    return 0;
-                }
-                    </code>
-                    </pre>
-                </section>
-                <section>
-                    <h2> Indexing </h2>
-                    <pre><code data-trim data-line-numbers contenteditable class="language-cpp">
-                #include &lt;string&gt;
-                #include &lt;iostream&gt;
-                using namespace std;
-                int main() {
-                    string s = "Hello world";
-                    
-                    cout &lt;&lt; s[0] &lt;&lt; endl; // character at index 0
-                    cout &lt;&lt; s[1] &lt;&lt; endl; // character at index 1
-                    cout &lt;&lt; s[10] &lt;&lt; endl; // character at index 10
-                }
-                </code>
-                </pre>
-                </section>
-			</div>
-		</div>
+int main() {
+  string s = "Hello world";
+  cout &lt;&lt; s.size()   &lt;&lt; "\n";  // number of chars
+  cout &lt;&lt; s.length() &lt;&lt; "\n";  // same as size()
+  cout &lt;&lt; s.empty()  &lt;&lt; "\n";  // true if length==0
+  cout &lt;&lt; s.at(0)    &lt;&lt; "\n";  // bounds-checked access
+  cout &lt;&lt; s.substr(0, 5) &lt;&lt; "\n"; // "Hello"
+}
+        </code></pre>
+        <p><small>Pattern: <code>&lt;instance&gt;.&lt;member&gt;(args)</code></small></p>
+      </section>
 
-		<script src="../reveal.js/dist/reveal.js"></script>
-		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
-		<script>
-			Reveal.initialize({
-				center: true,
-				hash: true,
-				plugins: [ RevealHighlight ]
-			});
-		</script>
+      <section>
+        <h2>Indexing with <code>[]</code> and <code>at()</code></h2>
+        <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
 
-	</body>
+int main() {
+  string alphabet = "abcdefghijklmnopqrstuvwxyz";
+  cout &lt;&lt; alphabet[0]     // 'a'
+       &lt;&lt; alphabet[1]     // 'b'
+       &lt;&lt; alphabet[2]     // 'c'
+       &lt;&lt; alphabet[3];    // 'd'
+
+  // last character: use length()-1 (0-based indexing)
+  cout &lt;&lt; alphabet[alphabet.length() - 1] &lt;&lt; endl;
+}
+        </code></pre>
+        <p class="fragment">Indexing is 0-based → last index is <code>length() - 1</code>.</p>
+      </section>
+
+      <section>
+        <h2>Mutating characters</h2>
+        <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+  string s = "abcdefghijklmnopqrstuvwxyz";
+
+  char fifth = s[5];      // 'f'
+  s[8]  = 'I';            // change 'i' -&gt; 'I'
+  s[12] += 'A' - 'a';     // make 'm' uppercase via offset
+  s.at(16) = 'Q';         // bounds-checked change
+  s.at(20) += 'A' - 'a';  // 'u' -&gt; 'U'
+
+  cout &lt;&lt; fifth &lt;&lt; ' ' &lt;&lt; s &lt;&lt; endl;
+}
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>Out-of-bounds rules (important!)</h2>
+        <ul>
+          <li><code>s[pos]</code> with <code>pos &gt;= s.length()</code> → <b>undefined behavior</b>.</li>
+          <li><code>s.at(pos)</code> with <code>pos &gt;= s.length()</code> → <b>runtime error</b> (throws / terminates).</li>
+          <li>Writing <code>s[s.length()] = ch</code> on a non-const <code>s</code> and non-<code>'\0'</code> <code>ch</code> → <b>undefined behavior</b>.</li>
+        </ul>
+        <pre><code data-trim data-line-numbers class="language-cpp">
+// Danger zone demo — don't run in production!
+string s = "0123";
+// s[28];        // undefined behavior
+// s.at(28);     // runtime error
+        </code></pre>
+        <p><small>Prefer <code>at()</code> while learning; switch to <code>[]</code> when you are sure indices are valid.</small></p>
+      </section>
+    <section>
+  <h2><code>size()</code>/<code>length()</code> return type</h2>
+  <ul>
+    <li>Return <code>std::size_t</code>, an <b>unsigned</b> integer type.</li>
+    <li>Large enough to index any element of the string.</li>
+  </ul>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstddef&gt;    // for std::size_t
+using namespace std;
+
+int main() {
+  string s = "hello";
+  std::size_t       n1 = s.length(); 
+  std::size_t       n2 = s.size();
+  size_t            i1 = 0;
+
+  cout &lt;&lt; n1 &lt;&lt; ' ' &lt;&lt; n2 &lt;&lt; ' ' &lt;&lt; i1 &lt;&lt; endl;
+  cout &lt;&lt; s[i1++] &lt;&lt; ' ';
+  cout &lt;&lt; s[i1++] &lt;&lt; "\t ";
+  cout &lt;&lt; s[i1++] &lt;&lt; endl;
+
+}
+  </code></pre>
+</section>
+
+
+<section>
+  <h2><code>find</code> (also <code>size_t</code>)</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+  string s = "bananas";
+  size_t pos = s.find("ana");   
+  std::cout &lt;&lt; pos &lt;&lt; '\n'; // 1
+}
+  </code></pre>
+</section>
+
+
+
+      <!-- ============ SECTION 7 ============ -->
+
+      <section>
+        <h2>Section 7: The Input Buffer</h2>
+        <p>Understand how <code>std::cin</code> consumes characters and how to combine <code>&gt;&gt;</code>, <code>getline</code>, and helpers safely.</p>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre> <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+    string first_name, last_name;
+    cout &lt;&lt; "First name? ";
+    cin &gt;&gt; first_name;          // reads up to whitespace
+    cout &lt;&lt; "Last name? ";
+    cin &gt;&gt; last_name;           // reads up to whitespace
+    cout &lt;&lt; "Hello, " &lt;&lt; first_name &lt;&lt; " " &lt;&lt; last_name &lt;&lt; "!\n";
+}
+        </code>
+        </pre>
+        <p> Types <code>Liyao</code>, press <code>Enter</code>, types <code>Lyu</code>, press <code>Enter</code>.</p>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre> <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+    string first_name, last_name;
+    cout &lt;&lt; "First name and last name? ";
+    cin &gt;&gt; first_name &gt;&gt; last_name;  // reads up to whitespace
+    cout &lt;&lt; "Hello, " &lt;&lt; first_name &lt;&lt; " " &lt;&lt; last_name &lt;&lt; "!\n";
+}
+        </code>
+        </pre>
+        <p> Types <code>Liyao Lyu</code>, press <code>Enter</code>.</p>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre> <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+    string full_name;
+    cout &lt;&lt; "Full name? ";
+    getline(cin, full_name);          // reads entire line
+    cout &lt;&lt; "Hello, " &lt;&lt; full_name &lt;&lt; "!\n";
+}
+        </code>
+        </pre>
+        <p> Types <code>Liyao UCLA CA ... Lyu</code>, press <code>Enter</code>.</p>
+      </section>
+      <section>
+        <h2> Failed Example </h2>
+        <pre> <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Favorite number? ";
+    int favorite_number; cin &gt;&gt; favorite_number; 
+    cout &lt;&lt; "Full name? ";
+    string full_name; getline(cin, full_name);  
+    cout &lt;&lt; "Hello, " &lt;&lt; full_name &lt;&lt; "! Your favorite number is " &lt;&lt; favorite_number &lt;&lt; ".\n";
+}
+
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Fixed Example (fixed)</h2>
+        <pre> <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Favorite number? ";
+    int favorite_number; cin &gt;&gt; favorite_number; 
+    cin.ignore();          // discard rest of line
+    cout &lt;&lt; "Full name? ";
+    string full_name; getline(cin, full_name);  
+    cout &lt;&lt; "Hello, " &lt;&lt; full_name &lt;&lt; "! Your favorite number is " &lt;&lt; favorite_number &lt;&lt; ".\n";
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Input Buffer</h2>
+        <ul>
+            <li> Programs start with an empty input buffer.</li>
+            <li> After users have entered input and pressed <code>Enter</code>, a program can make use of the typed charcters via the input buffer</li>
+            <li> A program may or may not use all of the characters in the input buffer by the time it finishes executing.</li>
+        </ul>
+      </section>
+      <section>
+        <h2>Example</h2>
+        <pre> <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Favorite number? ";
+    int favorite_number; cin &gt;&gt; favorite_number; 
+    cout &lt;&lt; "Your favorite number is " &lt;&lt; favorite_number &lt;&lt; ".\n";
+    return 0;
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Definition</h2>
+        <div style="text-align: left;">
+        <!-- Suppose that a variable called variable has been declared and defined.<br>÷ -->
+        Here are the instructions that <code>cin &gt;&gt; variable;</code> performs:
+        <ol style="list-style-type: 1; font-size: 0.8em;">
+            <li> If there are no characters in the input buffer, the program waits for the user to enter a value.</li>
+            <li> Remove leading whitespace characters from the input buffer. (different from textbook,explain latter)</li>
+            <li> Repeat until a non-whitespace character is found.</li>
+            <li> <b>Starting at the beginning of the input buffer, interpret as many characters as possible as the desired type</b> (e.g., int, double, string).</li>
+        </ol>
+        </div>
+      </section>
+      <section>
+        <h2> Example</h2>
+        <ul>
+        When <code>variable</code> is  type <code style="color:red">int</code>, and the input buffer contains <code style="color:red">"90024UCLA\n"</code>:<br>
+        The characters <span style="color:red">"90024"</span> are extracted and converted to the integer value <span style="color:red">90024</span>. The remaining characters <span style="color:red">"UCLA\n"</span> are left in the input buffer.
+        </ul>
+      </section>
+      <section>
+        <h2> Example</h2>
+        <ul>
+        When <code>variable</code> is  type <code style="color:red">int</code>, and the input buffer contains <code style="color:red">"900.24UCLA\n"</code>:<br>
+        The characters <span style="color:red">"900"</span> are extracted and converted to the integer value <span style="color:red">900</span>. The remaining characters <span style="color:red">".24UCLA\n"</span> are left in the input buffer.
+        </ul>
+      </section>
+            <section>
+        <h2> Example</h2>
+        <ul>
+        When <code>variable</code> is  type <code style="color:red">double</code>, and the input buffer contains <code style="color:red">"900.24UCLA\n"</code>:<br>
+        The characters <span style="color:red"></span>"900.24"</span> are extracted and converted to the double value <span style="color:red">900.24</span>. The remaining characters <span style="color:red">"UCLA\n"</span> are left in the input buffer.
+        </ul>
+      </section>
+      <section>
+        <h2> Example</h2>
+        <ul>
+        When <code>variable</code> is  type <code style="color:red">char</code>, and the input buffer contains <code style="color:red">"900.24UCLA\n"</code>:<br>
+        The characters <span style="color:red">"9"</span> are extracted and stored in the char variable. The remaining characters <span style="color:red">"00.24UCLA\n"</span> are left in the input buffer.
+        </ul>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <ul>
+        When <code>variable</code> is  type <code style="color:red">string</code>, and the input buffer contains <code style="color:red">"900.24U CLA\n"</code>:<br>
+        The characters <span style="color:red">"900.24U"</span> are extracted and stored in the string variable. The remaining characters <span style="color:red">" CLA\n"</span> are left in the input buffer.
+        </ul>
+      </section>
+      <section>
+        <h2> Definition</h2>
+        <div style="text-align: left;">
+            Suppose that <code> string </code> called <code> str </code> has been constucted.<br>
+            Here are the instructions that <code> getline(cin, str); </code> performs:
+        <ol style="list-style-type: 1; font-size: 0.8em;">
+            <li> If there are no characters in the input buffer, the program allow  the user to enter a value.</li>
+            <li> Extract characters from the input buffer before <code>\n</code> (newline character) and store them in <code> str </code>. When the input buffer only contains '\n', the empty string is stored in <code> str </code>.</li>
+            <li> Remove the <code>\n</code> from the input buffer, but do not store it in <code> str </code>.</li>
+        </ol>
+        </div>
+      </section>
+      <section>
+        <h2> Definition </h2>
+        <div style="text-align: left;">
+            Here are the instructions that <code> cin.ignore(); </code> performs:
+        <ol style="list-style-type: 1; font-size: 0.8em;">
+            <li> If there are no characters in the input buffer, the program allow the user to enter a value.</li>
+            <li> Remove the first character from the input buffer.</li>
+        </ol>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+</body>
 </html>

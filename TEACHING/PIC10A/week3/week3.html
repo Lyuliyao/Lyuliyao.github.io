@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Section 8</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <h2>Section 8: Control Flow</h2>
+      </section>
+      <section>
+        <h2> If: Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Give me a int and I will  ";
+    cout &lt;&lt; "tell you if it is even or odd: ";
+    int x;
+    cin &gt;&gt; x;
+    if (x % 2 == 0) {
+        cout &lt;&lt; x &lt;&lt; " is even." &lt;&lt; endl;
+    }
+    if (x % 2 != 0) {
+        cout &lt;&lt; x &lt;&lt; " is odd." &lt;&lt; endl;
+    }
+    return 0;
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> If-Else: Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Give me a int and I will  ";
+    cout &lt;&lt; "tell you if it is even or odd: ";
+    int x;
+    cin &gt;&gt; x;
+    if (x % 2 == 0) {
+        cout &lt;&lt; x &lt;&lt; " is even." &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; x &lt;&lt; " is odd." &lt;&lt; endl;
+    }
+    return 0;
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> If-Else If-Else: Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Give me a int and I will  ";
+    cout &lt;&lt; "tell you if it is positive, negative, or zero: ";
+    int x;
+    cin &gt;&gt; x;
+    if (x &gt; 0) {
+        cout &lt;&lt; x &lt;&lt; " is positive." &lt;&lt; endl;
+    } else {
+        if (x &lt; 0) {
+            cout &lt;&lt; x &lt;&lt; " is negative." &lt;&lt; endl;
+        } else {
+            cout &lt;&lt; x &lt;&lt; " is zero." &lt;&lt; endl;
+        }
+    }
+    return 0;
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> If-Else If-Else: Example (better) </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Give me a int and I will  ";
+    cout &lt;&lt; "tell you if it is positive, negative, or zero: ";
+    int x;
+    cin &gt;&gt; x;
+    if (x &gt; 0) {
+        cout &lt;&lt; x &lt;&lt; " is positive." &lt;&lt; endl;
+    } else if (x &lt; 0) {
+        cout &lt;&lt; x &lt;&lt; " is negative." &lt
+        &lt; endl;
+    } else {
+        cout &lt;&lt; x &lt;&lt; " is zero." &lt;&lt; endl;
+    }
+    return 0;
+}
+        </code>
+      </section>
+      <section>
+        <h2> Definition: if </h2>
+        <div style="text-align: left;">
+          <p>
+            The <code>if</code> statement is used to specify a block of code that will be executed if a specified condition is true.
+          </p>
+          <p>
+            Syntax:
+          </p>
+          <pre><code>if (condition) {
+    // code to be executed if condition is true
+}</code></pre>
+          <p>
+            The <code>condition</code> is a boolean expression that evaluates to either true or false.
+          </p>
+      </section>
+      <section>
+        <h2> Definition: if-else </h2>
+        <div style="text-align: left;">
+          <p>
+            The <code>if-else</code> statement is used to specify a block of code that will be executed if a specified condition is true, and another block of code that will be executed if the condition is false.
+          </p>
+          <p>
+            Syntax:
+          </p>
+          <pre><code>if (condition) {
+    // code to be executed if condition is true
+} else {
+    // code to be executed if condition is false
+}</code></pre>
+          <p>
+            The <code>condition</code> is a boolean expression that evaluates to either true or false.
+          </p>
+      </section>
+      <section>
+        <h2> Definition: if-else if-else </h2>
+        <div style="text-align: left;">
+          <p>
+            The <code>if-else if-else</code> statement is used to specify multiple conditions to be checked in sequence.
+          </p>
+          <p>
+            Syntax:
+          </p>
+          <pre><code>if (condition1) {
+    // code to be executed if condition1 is true
+} else if (condition2) {
+    // code to be executed if condition2 is true but condition1 is false
+} else {
+    // code to be executed if both condition1 and condition2 are false
+}</code></pre>
+          <p>
+            The <code>condition1</code> and <code>condition2</code> are boolean expressions that evaluate to either true or false.
+          </p>
+      </section>
+      <section>
+        <h2> LA Driver Turning Right ON Light Example</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    char response;
+    bool things_to_hit, no_right_turn_on_red, green_light;
+    cout &lt;&lt; "Are there things to hit? (Y/N): ";
+    cin &gt;&gt; response;
+    things_to_hit = (response == 'Y');
+    cout &lt;&lt; "Is there a no right turn on red sign? (Y/N): ";
+    cin &gt;&gt; response;
+    no_right_turn_on_red = (response == 'Y');
+    cout &lt;&lt; "Is the light green? (Y/N): ";
+    cin &gt;&gt; response;
+    green_light = (response == 'Y');
+    if (things_to_hit) {
+        cout &lt;&lt; "STAY STOPED!" &lt;&lt; endl;
+    } else if (green_light) {
+        cout &lt;&lt; "GO!" &lt;&lt; endl;
+    } else if (no_right_turn_on_red) {
+        cout &lt;&lt; "STAY STOPED!" &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; "TURN RIGHT ON RED!" &lt;&lt; endl;
+    }
+    
+
+    return 0;
+}
+        </code></pre>
+      </section>
+      <section>
+        <h2> Gregorian calendar example</h2>
+        <div style="text-align: left;">
+          <p>
+            A year is a leap year if it is divisible by 4, except for years that are both divisible by 100 and not divisible by 400.
+          </p>
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int year;
+    cout &lt;&lt; "Enter a year: ";
+    cin &gt;&gt; year;
+    if (year % 4 == 0) {
+        cout &lt;&lt; year &lt;&lt; " is divisible by 4." &lt;&lt; endl;
+        if (year % 100 == 0) {
+            cout &lt;&lt; year &lt;&lt; " is divisible by 100." &lt;&lt; endl;
+            if (year % 400 == 0) {
+                cout &lt;&lt; year &lt;&lt; " is divisible by 400." &lt;&lt; endl;
+                cout &lt;&lt; year &lt;&lt; " is a leap year." &lt;&lt; endl;
+            } else {
+                cout &lt;&lt; year &lt;&lt; " is not divisible by 400." &lt;&lt; endl;
+                cout &lt;&lt; year &lt;&lt; " is not a leap year." &lt;&lt; endl;
+            }
+        } else {
+            cout &lt;&lt; year &lt;&lt; " is not divisible by 100." &lt;&lt; endl;
+            cout &lt;&lt; year &lt;&lt; " is a leap year." &lt;&lt; endl;
+        }
+    } else {
+        cout &lt;&lt; year &lt;&lt; " is not divisible by 4." &lt;&lt; endl;
+        cout &lt;&lt; year &lt;&lt; " is not a leap year." &lt;&lt; endl;
+    }
+    return 0;
+}
+            </code>
+          </pre>
+        </div>
+      </section>
+      <section>
+        <h2> operators for <code>bool</code></h2>
+        <div style="text-align: left;">
+          <p>
+            The operators <code>!</code>, <code>&amp;&amp;</code>, and <code>||</code> can be used with <code>bool</code> values.
+          </p>
+          <ul style="text-align: left; font-size: 0.8em;">
+            <li><code>!</code> is the NOT operator. It negates a boolean value. For example, if <code>a</code> is true, then <code>!a</code> is false.</li>
+            <li><code>&amp;&amp;</code> is the AND operator. It returns true if both operands are true. For example, if <code>a</code> and <code>b</code> are both true, then <code>a &amp;&amp; b</code> is true. If either <code>a</code> or <code>b</code> is false, then <code>a &amp;&amp; b</code> is false.</li>
+            <li><code>||</code> is the OR operator. It returns true if at least one of the operands is true. For example, if either <code>a</code> or <code>b</code> is true, then <code>a || b</code> is true. If both <code>a</code> and <code>b</code> are false, then <code>a || b</code> is false.</li>
+          </ul>
+      </section>
+      <section>
+        <h2> Example: Better Gregorian Calendar</h2>
+        <div style="text-align: left;">
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int year;
+    cout &lt;&lt; "Enter a year: ";
+    cin &gt;&gt; year;
+
+    if ((year % 4 == 0  &amp;&amp; year % 100 != 0 ) || year % 400 == 0) {
+        cout &lt;&lt; year &lt;&lt; " is a leap year." &lt;&lt; endl;
+    } else {
+        cout &lt;&lt; year &lt;&lt; " is not a leap year." &lt;&lt; endl;
+    }
+    return 0;
+}
+            </code>
+          </pre>
+        </div>
+      </section>
+      <section>
+        <h2> Example for string</h2>
+        <div style="text-align: left;">
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+    string name;
+    cout &lt;&lt; "Enter your name: ";
+    cin &gt;&gt; name;
+    if (name.find("a")) {
+        cout &lt;&lt; "Your name contains the letter 'a'." &lt;&lt; endl;
+    } 
+    if (name.find("b")) {
+        cout &lt;&lt; "Your name contains the letter 'b'." &lt;&lt; endl;  
+    }
+    if (name.find("c")) {
+        cout &lt;&lt; "Your name contains the letter 'c'." &lt;&lt; endl;  
+    }
+    std::cout &lt;&lt; "Your name has a length of " &lt;&lt; name.length() &lt;&lt; " characters." &lt;&lt; endl;
+    return 0;
+}
+            </code>
+          </pre>
+        </div>
+      </section>
+      <section>
+        <h2> Scope </h2>
+        The following code will produce a building error:
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    if (true) {
+        int x = 5;
+    }
+    cout &lt;&lt; x &lt;&lt; endl; // error: 'x' was not declared in this scope
+    return 0;
+}
+          </code>
+        </pre>
+        <p>
+          The variable <code>x</code> is declared inside the <code>if</code> block, so it is only accessible within that block. Trying to access it outside the block results in a compilation error.
+        </p>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int j;
+    cout &lt;&lt; "Enter an integer: ";
+    cin &gt;&gt; j;
+    if (j &gt; 0) {
+        int x = 3*j;
+        j += x;
+    }
+    cout &lt;&lt; j &lt;&lt; endl; // OK
+    // cout &lt;&lt; x &lt;&lt; endl; // error: 'x' was not declared in this scope
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int j = 0;
+    {
+        int j = 5; // this j is different from the one outside the block
+        cout &lt;&lt; j &lt;&lt; endl; // prints 5
+    }
+    cout &lt;&lt; j &lt;&lt; endl; // prints 0
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+   cout &lt;&lt; "Enter class score: ";
+    int score;
+    cin &gt;&gt; score;
+    char grade;
+    if (score &gt;= 90) { char grade = 'A'; }
+    else if (score &gt;= 80) { grade = 'B'; }
+    else if (score &gt;= 70) { grade = 'C'; }
+    else if (score &gt;= 60) { grade = 'D'; }
+    else { grade = 'F'; }
+    cout &lt;&lt; "Your grade is " &lt;&lt; grade &lt;&lt; endl; // error: 'grade' was not declared in this scope
+    return 0;
+}
+  </code>        
+</pre>
+        
+      </section>
+      <section>
+        <h2> While </h2>
+        A <code>while</code> loop is used to repeatedly execute a block of code as long as a specified condition is true.
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int i = 0;
+
+    const int N = 5;
+    while (i &lt; N) {
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+        cout &lt;&lt; "N = " &lt;&lt; N &lt;&lt; endl;
+        ++i;
+    }
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int i = 0;
+
+    const int N = 5;
+    while (true) {
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+        cout &lt;&lt; "N = " &lt;&lt; N &lt;&lt; endl;
+        ++i;
+        if (i == N) {
+            break;
+        }
+    }
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Definition</h2>
+      <div>
+        <ul style="text-align: left; font-size: 0.8em;">
+          <li>A <code>while</code> loop repeatedly executes a block of code as long as a specified condition is true.</li>
+          <li>Syntax:
+            <pre><code>while (condition) {
+    // code to be executed as long as condition is true
+}</code></pre>
+          </li>
+          <li>The <code>condition</code> is a boolean expression that evaluates to either true or false.</li>
+          <li>The code block inside the <code>while</code> loop will be executed repeatedly as long as the <code>condition</code> is true.</li>
+          <li>If the <code>condition</code> is false at the beginning, the code block will not be executed at all.</li>
+          <li>If the loop needed to be terminated early, the <code>break</code> statement can be used.</li>
+        </ul>
+      </div>
+      </section>
+      <section>
+        <h2> Infinite loop</h2>
+        <div style="text-align: left;">
+        <p>An infinite loop occurs when the condition of a <code>while</code> loop always evaluates to true, causing the loop to run indefinitely.</p>
+        <p>Example of an infinite loop:</p>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int i = 0;
+    while (true) {
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+        ++i;
+    }
+    return 0;
+}
+          </code>
+        </pre>
+        </div>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp"> 
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+
+    while (true) {
+        cout &lt;&lt; "Continue (y/n)? ";
+        char response = cin.get();cin.ignore();
+        if (response == 'n') {
+            break;
+        }
+    }
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Enter a list of ints with a single space ";
+    cout &lt;&lt; "between each adjacent pair and a newline at the end." &lt;&lt; endl;
+    int sum = 0;
+
+    while (true) {
+        int x;
+        cin &gt;&gt; x;
+        char next = cin.get();
+        if (next == '\n') {
+            break;
+        }
+        sum += x;
+    }
+    cout &lt;&lt; "Sum = " &lt;&lt; sum &lt;&lt; endl;
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+        <code data-trim data-line-numbers class="language-cpp">
+        </code>
+      </pre>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+</body>
+</html>

@@ -380,6 +380,21 @@ int main() {
         
       </section>
       <section>
+        <h2> Definition</h2>
+      <div>
+        <ul style="text-align: left; font-size: 0.8em;">
+          <li>A <code>while</code> loop repeatedly executes a block of code as long as a specified condition is true.</li>
+          <li>Syntax:
+            <pre><code>while (condition) {
+    // code to be executed as long as condition is true
+}</code></pre>
+          </li>
+          <li>The <code>condition</code> is a boolean expression that evaluates to either true or false.</li>
+          <li>The code block inside the <code>while</code> loop will be executed repeatedly as long as the <code>condition</code> is true.</li>
+        </ul>
+      </div>
+      </section>
+      <section>
         <h2> While </h2>
         A <code>while</code> loop is used to repeatedly execute a block of code as long as a specified condition is true.
         <pre>
@@ -402,6 +417,7 @@ int main() {
       </section>
       <section>
         <h2> Example </h2>
+        <li>If the loop needed to be terminated early, the <code>break</code> statement can be used.</li>
         <pre>
           <code data-trim data-line-numbers class="language-cpp">
 #include &lt;iostream&gt;
@@ -409,12 +425,10 @@ using namespace std;
 int main() {
     int i = 0;
 
-    const int N = 5;
-    while (true) {
+    while (i &lt 10) {
         cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
-        cout &lt;&lt; "N = " &lt;&lt; N &lt;&lt; endl;
         ++i;
-        if (i == N) {
+        if (i == 5) {
             break;
         }
     }
@@ -424,21 +438,26 @@ int main() {
         </pre>
       </section>
       <section>
-        <h2> Definition</h2>
-      <div>
-        <ul style="text-align: left; font-size: 0.8em;">
-          <li>A <code>while</code> loop repeatedly executes a block of code as long as a specified condition is true.</li>
-          <li>Syntax:
-            <pre><code>while (condition) {
-    // code to be executed as long as condition is true
-}</code></pre>
-          </li>
-          <li>The <code>condition</code> is a boolean expression that evaluates to either true or false.</li>
-          <li>The code block inside the <code>while</code> loop will be executed repeatedly as long as the <code>condition</code> is true.</li>
-          <li>If the <code>condition</code> is false at the beginning, the code block will not be executed at all.</li>
-          <li>If the loop needed to be terminated early, the <code>break</code> statement can be used.</li>
-        </ul>
-      </div>
+        <h2> Example </h2>
+        <p> <code> continue </code> statement skips the current iteration and moves to the next one.</p>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int i = 0;
+
+    while (i &lt 10) {
+        ++i;
+        if (i == 5) {
+            continue;
+        }
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+    }
+    return 0;
+}
+          </code>
+        </pre>
       </section>
       <section>
         <h2> Infinite loop</h2>
@@ -451,7 +470,8 @@ int main() {
 using namespace std;
 int main() {
     int i = 0;
-    while (true) {
+    while (i &lt; 10) {
+      int i = 0; 
         cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
         ++i;
     }
@@ -482,26 +502,90 @@ int main() {
         </pre>
       </section>
       <section>
+        <h2> Do While </h2>
+        <div style="text-align: left;">
+        <p>A <code>do while</code> loop is similar to a <code>while</code> loop, but it guarantees that the code block will be executed at least once.</p>
+        <p>Syntax:</p>
+        <pre><code>do {
+    // code to be executed
+} while (condition);
+</code></pre>
+  </div>  
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+        <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int i = 0;
+    do {
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+        ++i;
+    } while (i &lt; 5);
+    return 0;
+  }
+        </code>
+      </pre>
+      </section>
+      <section>
         <h2> Example </h2>
         <pre>
           <code data-trim data-line-numbers class="language-cpp">
 #include &lt;iostream&gt;
 using namespace std;
 int main() {
-    cout &lt;&lt; "Enter a list of ints with a single space ";
-    cout &lt;&lt; "between each adjacent pair and a newline at the end." &lt;&lt; endl;
-    int sum = 0;
-
-    while (true) {
-        int x;
-        cin &gt;&gt; x;
-        char next = cin.get();
-        if (next == '\n') {
-            break;
-        }
-        sum += x;
+    int i = 10;
+    do {
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+        ++i;
+    } while (i &lt; 5);
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        while loop to reverse some numbers:
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int number;
+    cin >> number;
+    int reversed_number = 0;
+    while (number != 0) {
+        int digit = number % 10;
+        reversed_number = reversed_number * 10 + digit;
+        number /= 10;
     }
-    cout &lt;&lt; "Sum = " &lt;&lt; sum &lt;&lt; endl;
+    cout &lt;&lt; reversed_number &lt;&lt; endl;
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> For loop</h2>
+        <p>A <code>for</code> loop is used when you know the number of iterations in advance.</p>
+        <p>Syntax:</p>
+        <pre><code>for (initialization; condition; expression) {
+    // code to be executed
+}
+</code></pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    for (int i = 0; i &lt; 10; ++i)
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
     return 0;
 }
           </code>
@@ -510,9 +594,109 @@ int main() {
       <section>
         <h2> Example </h2>
         <pre>
-        <code data-trim data-line-numbers class="language-cpp">
-        </code>
-      </pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+  int i = 0;
+  for (; i &lt; 10; ) {
+      cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+      i = i + 2;
+  }
+  return 0;
+}  
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int sum = 0;
+    int i = 1;
+    for (; ; ) {
+        sum += i;
+        if (i == 100) {
+            break;
+        }
+        ++i;
+    }
+    cout &lt;&lt; "The sum is " &lt;&lt; sum &lt;&lt; endl;
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    for (int i = 0; i &lt; 10; ++i) {
+      int i = 0; // building error: redefinition of 'i'
+      cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+    }
+    return 0;
+  } 
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Nested Loops</h2>
+        <p>A nested loop is a loop that is contained within another loop.</p>
+      </section>
+      <section>
+        <h2>Example: print "*" triangle</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int lines;
+    cin &gt;&gt; lines;
+    int width = 2 * lines - 1;
+    for (int row = 0; row &lt; lines; ++row) {
+        for (int col = 0; col &lt; width; ++col) {
+            if (row == lines - 1) {
+                cout &lt;&lt; "*";
+            } else if (col == lines - row - 1 || col == lines + row - 1) {
+                cout &lt;&lt; "*";
+            } else {
+                cout &lt;&lt; " ";
+            }
+        }
+        cout &lt;&lt; endl;
+    }
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> foreach Loop</h2>
+        <div style="text-align: left;">
+          <p>A <code>foreach</code> loop is used to iterate over the elements of a collection, such as an array or a vector.</p>
+          <p>Syntax:</p>
+          <pre><code>for (type variable : collection) {
+    // code to be executed for each element in the collection
+} </code></pre>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    string s="hello";
+    for (char c : s) {
+        s[i] += 'A'-'a';
+        cout &lt;&lt; c &lt;&lt; endl;
+    }
+    return 0;
+}
       </section>
     </div>
   </div>

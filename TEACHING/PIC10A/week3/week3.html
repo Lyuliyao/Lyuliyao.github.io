@@ -678,6 +678,197 @@ int main() {
         </pre>
       </section>
       <section>
+        <h2> Example: multiplication table</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;iomanip&gt;
+using namespace std;
+int main() {
+    const int N = 10;
+    for (int i = 1; i &lt;= N; ++i)
+    {
+        for (int j = 1; j &lt;= N; ++j) {
+            cout &lt;&lt; i * j  &lt;&lt; "\t";
+        }
+        cout &lt;&lt; endl;
+    }
+    return 0;
+}
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example: compute binomial coefficient</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int n, k;
+    cout &lt;&lt; "Enter n and k: ";
+    cin &gt;&gt; n &gt;&gt; k;
+    int result = 1;
+    for (int i = 1; i &lt;= k; ++i){
+      result = result * (n - i + 1) / i;
+    }
+    cout &lt;&lt; "C(" &lt;&lt; n &lt;&lt; ", " &lt;&lt; k &lt;&lt; ") = " &lt;&lt; result &lt;&lt; endl;
+    return 0;
+} 
+          </code>
+        </pre>
+      </section>
+
+<section>
+  <h2> Example: int → binary</h2>
+  <pre>
+    <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int n;
+    cout &lt;&lt; "Enter an int: ";
+    cin >> n;
+    
+    string binary(32,'0');
+
+    if ( n &lt; 0 ){ 
+        cout &lt;&lt; " n is negative " &lt;&lt; endl;
+        binary.at(31) = '1';
+        n += pow(2,31);
+    }    
+    int index = 0;
+    while (n!=0){
+        if (n%2==0){
+            binary.at(index) = '0';
+        }
+        else {
+            binary.at(index) = '1';
+        }
+        n /=2;
+        index ++;
+    }
+    
+    for (int i =0 ; i &lt; binary.length(); i++){
+        cout &lt;&lt; binary[i];
+        if (i%8==7){
+            cout &lt;&lt; " ";
+        }
+    }
+    cout &lt;&lt; endl;
+}
+    </code>
+  </pre>
+</section>
+<section>
+  <h2> goto </h2>
+  <p>The <code>goto</code> statement is used to transfer control to a labeled statement within the same function.</p>
+  <p>Syntax:</p>
+  <pre><code>goto label;
+// code to be executed
+label:
+// code to be executed after the label
+</code></pre>
+  <p>The <code>label</code> is an identifier followed by a colon (:) that marks the location to which control will be transferred.</p>
+</section>
+<section>
+  <h2> Example </h2>
+  <pre>
+    <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    try_Again:
+    cout &lt;&lt; "Enter a positive number: ";
+    int number;
+    cin &gt;&gt; number;
+    if (number &lt;= 0) {
+        cout &lt;&lt; "Invalid input. Please try again." &lt;&lt; endl;
+        goto try_Again;
+    }
+    cout &lt;&lt; "You entered: " &lt;&lt; number &lt;&lt; endl;
+    return 0;
+}
+    </code>
+  </pre>
+</section>
+<section>
+  <h2> Example </h2>
+  <pre>
+    <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    for (int i = 0; i &lt; 10; ++i)
+    {
+        if (i == 5) {
+            goto skip;
+        }
+        cout &lt;&lt; "i = " &lt;&lt; i &lt;&lt; endl;
+        skip:
+        ;
+    }
+    return 0;
+}
+    </code>
+  </pre>  
+</section>
+<section>
+  <h2> switch</h2>
+  <p>The <code>switch</code> statement is used to select one of many code blocks to be executed based on the value of a variable or expression.</p>
+  <p>Syntax:</p>
+  <pre><code>switch (expression) {
+    case value1:
+        // code to be executed if expression equals value1
+        break;
+    case value2:
+        // code to be executed if expression equals value2
+        break;
+    ...
+    default:
+        // code to be executed if expression does not match any case
+}</code></pre>
+  <p>The <code>expression</code> is evaluated once, and its value is compared with the values of each <code>case</code>. If a match is found, the corresponding code block is executed. The <code>break</code> statement is used to exit the <code>switch</code> statement. If no match is found, the code block under <code>default</code> is executed (if provided).</p>
+</section>
+<section>
+  <h2> Example </h2>
+  <pre>
+    <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    cout &lt;&lt; "Enter a day of the week (1-7):
+    int day;
+    cin &gt;&gt; day;
+    switch (day) {
+        case 1:
+            cout &lt;&lt; "Monday" &lt;&lt; endl;
+            break;
+        case 2:
+            cout &lt;&lt; "Tuesday" &lt;&lt; endl;
+            break;
+        case 3:
+            cout &lt;&lt; "Wednesday" &lt;&lt; endl;
+            break;
+        case 4:
+            cout &lt;&lt; "Thursday" &lt;&lt; endl;
+            break;
+        case 5:
+            cout &lt;&lt; "Friday" &lt;&lt; endl;
+            break;
+        case 6:
+            cout &lt;&lt; "Saturday" &lt;&lt; endl;
+            break;
+        case 7:
+            cout &lt;&lt; "Sunday" &lt;&lt; endl;
+            break;  
+    }
+    return 0;
+}
+    </code>
+  </pre>  
+</section>
+      <section>
         <h2> foreach Loop</h2>
         <div style="text-align: left;">
           <p>A <code>foreach</code> loop is used to iterate over the elements of a collection, such as an array or a vector.</p>

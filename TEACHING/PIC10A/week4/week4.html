@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Section 9</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <h2>Section 9: Functions</h2>
+      </section>
+      <section>
+        <h2> Create a function </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int myFunction() {
+  cout &lt;&lt; "I just got executed!";
+  return 0;
+}
+
+int main() {
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  return 0;
+}
+
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Call a Function </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void myFunction() {
+  cout &lt;&lt; "I just got executed!" &lt;&lt; endl;
+}
+
+int main() {
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  return 0;
+}
+
+        </code>
+        </pre>
+      </section>
+    <section>
+        <h2> Declaration and Definition of functions</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void myFunction(); // function declaration
+
+
+int main() {
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  myFunction(); // call the function
+  cout &lt;&lt; endl;
+  return 0;
+}
+
+void myFunction() { // function definition
+    cout &lt;&lt; "I just got executed!" &lt;&lt; endl;
+}
+
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Common Errors</h2>
+        <ul>
+            <li> It is a <b> build error </b> to call a function before its declaration.</li>
+            <li> It is a <b> build error (linking error) </b> to call a function when it is not defined.</li>
+        </ul>
+      </section>
+      <section>
+        <h2> Function Parameters </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void myFunction(string fname) {
+    cout &lt;&lt; fname &lt;&lt;  endl;
+}
+int main() {
+    myFunction("Liam");
+    myFunction("Jenny");
+    myFunction("Anja");
+    return 0;
+}   
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Function Parameters Example 2 </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void myFunction(string fname, int age);
+int main() {
+    myFunction("Liam", 5);
+    myFunction("Jenny", 8);
+    myFunction("Anja", 31);
+    return 0;
+}
+void myFunction(string fname, int age) {
+    cout &lt;&lt; fname &lt;&lt; " is " &lt;&lt; age &lt;&lt; " years old." &lt;&lt; endl;
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Default Parameters</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void myFunction(string fname = "John", int age = 18);
+int main() {
+    myFunction("Liam", 5);
+    myFunction("Jenny");
+    myFunction();
+    return 0;
+}
+void myFunction(string fname, int age) {
+    cout &lt;&lt; fname &lt;&lt; " is " &lt;&lt; age &lt;&lt; " years old." &lt;&lt; endl;
+}
+
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Return Values</h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int myMax(int x, int y) {
+    if (x &lt; y)
+        x = y;
+    return x;
+}
+int main() {
+    int x = 1;
+    int y = 5;
+    int z = myMax(x, y);
+    cout &lt;&lt; "The maximum value between " &lt;&lt; x &lt;&lt; " and " &lt;&lt; y &lt;&lt; " is " &lt;&lt; z &lt;&lt; endl;
+    return 0;
+}
+        </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int my_max(int i, int j);
+void print(double d);
+
+int main() {
+    int a,b,c,i,j,k;
+
+    a=0; b=1;
+    c = my_max(a,b);
+    cout &lt;&lt;  c &lt;&lt; endl;
+
+    a = 3; b = 2;
+    c = my_max(a,b);
+    cout &lt;&lt;  c &lt;&lt; endl;
+
+    i = 5; j = 4;
+    k = my_max(i,j);
+    cout &lt;&lt;  k &lt;&lt; endl;
+    
+    print(1.01);
+    return 0;
+}
+
+int my_max(int i, int j) {
+    cout &lt;&lt; "my max has been called. ";
+
+    if (i &lt; j){
+            return i;
+    }
+    return j;
+}
+
+void print(double d) {
+    cout &lt;&lt; " print... ";
+    double tmp =d; cout &lt;&lt; tmp &lt;&lt; endl;
+    //return;
+}
+        </code>
+        </pre>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+</body>
+</html>

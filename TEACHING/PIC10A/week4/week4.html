@@ -217,8 +217,82 @@ void print(double d) {
         </code>
         </pre>
       </section>
+      <section>
+        <h2> Build Error</h2>
+        Because function scope is more stricter than the scope introduced by curly braces, 
+        it is a build error for a function body to use a variable which is not a parameter and which has not been declared inside the function body.
+    </section>
+    <section>
+        <h2> Example </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void f();
+int main() {
+    int x = 10;
+    return 0;
+}
+void f() {
+    x = 1;
+}
+    </section>
+    <section>
+        <h2> Undefined Behavior</h2>
+        Suppose <code>f</code> is a function with a non-void return type and that <code> v </code> is a variable of that return type.
+        If the function body of <code> f </code> does not return a value, then the statement <code> v = f(); </code> causes undefined behavior.
+    </section>
+    <section>
+        <h2> Function Comments </h2>
+        <pre>
+          <code data-trim data-line-numbers class="language-cpp">
+            #include &lt;iostream&gt;
+            using namespace std;
+            /**
+            This function calculates the maximum of two integers.
+            @param x An integer value.
+            @param y Another integer value.
+            @return The maximum of x and y.
+            */
+            int myMax(int x, int y) {
+                if (x &lt; y)
+                    x = y;
+                return x;
+            }
+        </code>
+        </pre>
+        </section>
+        <section>
+            <h2>Pure functions and procedures</h2>
+            <ul>
+                <li> Functions which return a value but do not have side effects are called pure functions.</li>
+                <li> Procedures which do not return a value but may have side effects are called procedures.</li>
+            </ul>
+        </section>
+        <section>
+            <h2> Example </h2>
+            <pre>
+              <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int add(int a, int b) { // pure function
+    return a + b;
+}
+void printSum(int a, int b) { // procedure
+    cout &lt;&lt; "The sum is: " &lt;&lt; (a + b) &lt;&lt; endl;
+}
+int main() {
+    int x = 3, y = 4;
+    int sum = add(x, y); // calling pure function
+    cout &lt;&lt; "Sum from function: " &lt;&lt; sum
+    &lt;&lt; endl;
+    printSum(x, y); // calling procedure
+    return 0;
+}
+        </section>
     </div>
   </div>
+
 
   <script src="../reveal.js/dist/reveal.js"></script>
   <script src="../reveal.js/plugin/highlight/highlight.js"></script>

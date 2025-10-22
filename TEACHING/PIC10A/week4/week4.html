@@ -245,6 +245,29 @@ void f() {
         If the function body of <code> f </code> does not return a value, then the statement <code> v = f(); </code> causes undefined behavior.
     </section>
     <section>
+      <h2> Example </h2>
+      <pre>
+        <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int myMax(int x, int y) {
+    if (x &lt; y)
+        return x;
+    if (x &gt; y)
+        return y;
+}
+int main() {
+    int a = 3, b = 4;
+    int c = myMax(a, b); // undefined behavior
+    cout &lt;&lt; "The maximum value between " &lt;&lt; a &lt;&lt; " and " &lt;&lt; b &lt;&lt; " is " &lt;&lt; c &lt;&lt; endl;
+    return 0;
+}
+        </code>
+      </pre>
+      <p> GCC_WARN_ABOUT_RETURN_TYPE = No </p>
+      <p> Produce -> Scheme -> choose Scheme </p>
+    </section>
+    <section>
         <h2> Function Comments </h2>
         <pre>
           <code data-trim data-line-numbers class="language-cpp">
@@ -295,7 +318,98 @@ int main() {
             </pre>
         </section>
         <section>
-            
+          <h2> Example </h2>
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+bool isLeapYear(int year) {
+    if ( (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0) )
+        return true;
+    else
+        return false;
+}
+int main() {
+    int year;
+    cout &lt;&lt; "Enter a year: ";
+    cin &gt;&gt; year;
+    if (isLeapYear(year))
+        cout &lt;&lt; year &lt;&lt; " is a leap year." &lt;&lt; endl;
+    else
+        cout &lt;&lt; year &lt;&lt; " is not a leap year." &lt;&lt; endl;
+    return 0;
+}
+            </code>
+          </pre>
+        </section>
+        <section>
+          <h2> Example </h2>
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int mySum(){
+  int sum;
+  while (cin.peek() != '\n'){
+    int value;
+    cin &gt;&gt; value;
+    sum += value;
+  }
+  return sum;
+}
+int main() {
+  cout &lt;&lt; "Enter numbers to sum, end with Enter: ";
+  int total = mySum();
+  cout &lt;&lt; "The total sum is: " &lt;&lt; total &lt;&lt; endl;
+  return 0;
+}
+            </code>
+          </pre>
+        </section>
+        <section>
+            <h2> Recursion </h2>
+            <pre>
+              <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int factorial(int n) {
+    if (n &lt;= 1)
+        return 1;
+    else
+        return n * factorial(n - 1); // recursive call
+}
+int main() {
+    int num = 5;
+    cout &lt;&lt; "Factorial of " &lt;&lt; num &lt;&lt; " is " &lt;&lt; factorial(num) &lt;&lt;
+    endl;
+    return 0;
+} 
+              </code>
+            </pre>        
+        </section>
+        <section>
+          <h2> Fibonacci sequence </h2>
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int fibonacci(int n) {
+    if (n &lt;= 0)
+        return 0;
+    else if (n == 1)
+        return 1;
+    else
+        return fibonacci(n - 1) + fibonacci(n - 2);
+      }
+int main() {
+    int terms = 10;
+    for (int i = 0; i &lt; terms; i++) {
+        cout &lt;&lt; "Fibonacci(" &lt;&lt; i &lt;&lt; ") = " &lt;&lt; fibonacci(i) &lt;&lt; endl;
+    }
+    return 0;
+} 
+            </code>
+          </pre>
         </section>
     </div>
   </div>

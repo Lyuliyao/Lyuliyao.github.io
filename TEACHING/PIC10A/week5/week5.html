@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Section 10</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <h2>Section 10: Reference</h2>
+        <p>In this section, we will cover the concept of references in programming.</p>
+        </section>
+        <section>
+            <h2> Review of scopes </h2>
+            <div>
+                scope is the context in which a variable is defined.
+                <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int a = -10;
+    int b = -9;
+    int c = 4;
+
+    if (a &lt; c) {
+        double a = b / c;
+        c *= a;
+        cout &lt;&lt; "Inner a: " &lt;&lt; a &lt; endl; 
+        cout &lt;&lt; "Inner c: " &lt;&lt; c &lt; endl;
+    }
+    cout &lt;&lt; "Outer a: " &lt;&lt; a &lt; endl; 
+    cout &lt;&lt; "Outer c: " &lt;&lt; c &lt; endl;
+    return 0;
+}
+            </code></pre>
+            </div>
+        </section>
+        <section>
+            <h2> Comparison of the scope of functions </h2>
+            <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+void foo(int a, int b, int c) {
+    double a = b / c; //build error: redefinition of 'a'// delete the declaration to fix
+    c *= a;
+    cout &lt;&lt; "Inner a: " &lt;&lt; a &lt;&lt; endl; 
+    cout &lt;&lt; "Inner c: " &lt;&lt; c &lt;&lt; endl;
+}
+
+int main() {
+    int a = -10;
+    int b = -9;
+    int c = 4;
+
+    if (a &lt; c) {
+        foo(a, b, c);
+    }
+    cout &lt;&lt; "Outer a: " &lt;&lt; a &lt;&lt; endl; 
+    cout &lt;&lt; "Outer c: " &lt;&lt; c &lt;&lt; endl;
+    return 0;
+}
+            </code></pre>
+        </section>
+        <section>
+            <h2> Swap values</h2>
+            <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void swap(int a, int b) {
+    int temp = a;
+    a = b;
+    b = temp;
+    cout &lt;&lt; "Inside swap - a: " &lt;&lt; a &lt;&lt; ", b: " &lt;&lt; b &lt;&lt; endl;
+}
+int main() {
+    int x = 5;
+    int y = 10;
+    cout &lt;&lt; "Before swap - x: " &lt;&lt; x &lt;&lt; ", y: " &lt;&lt; y &lt;&lt; endl;
+    swap(x, y);
+    cout &lt;&lt; "After swap - x: " &lt;&lt; x &lt;&lt; ", y: " &lt;&lt; y &lt;&lt; endl;
+    return 0;
+}
+            </code></pre>
+        </section>
+        <section>
+          <h2> Introduction to References</h2>
+          <p>References provide an alias for another variable, allowing you to modify the original variable without using pointers.</p>
+          <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int x = 5;
+    int& ref = x; // ref is a reference to x
+    return 0;
+}
+            </code></pre>
+        </section>
+        <section>
+          <h2> Definition</h2>
+          <div>
+            <ul>
+              <li  class="fragment fade-in-then-semi-out"> A <code> reference </code> does not store its own data.</li>
+              <li class="fragment fade-in-then-semi-out"> Instead, it refers to an already <b>existing</b> variable</li>
+              <li class="fragment fade-in-then-semi-out"> A useful picture for the code above is as follows</li>
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div>
+           <ul>
+            <li class="fragment fade-in-then-semi-out"> A reference can only ever refer to one storage location.</li>
+           <li class="fragment fade-in-then-semi-out"> Once a reference is initialized to a variable, it cannot be changed to refer to a second location.</li>
+           <li class="fragment fade-in-then-semi-out"> Said another way, if you draw the reference as an arrow pointing to the variable it refers to, you cannot change the arrow to point to a different variable.</li>
+          </ul>
+          </div>
+          </section>
+          <section>
+            <div>
+              <ul>
+                <li class="fragment fade-in-then-semi-out"> The reference never changes sounds similar to a constant.</li>
+                <li class="fragment fade-in-then-semi-out"> <b> Build Error </b> Defining a reference without initializing it. </li>
+                <li class="fragment fade-in-then-semi-out"> The reference refers to a variable rather than the value it holds.</li>
+                <li class="fragment fade-in-then-semi-out"> However, the value being referred to can change.</li>
+              </ul>
+            </div>
+          </section>
+          </section>
+            
+    </div>
+  </div>
+
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+</body>
+</html>

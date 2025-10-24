@@ -411,6 +411,29 @@ int main() {
             </code>
           </pre>
         </section>
+        <section>
+          <h2> function overloading</h2>
+          Function overloading is a feature in C++ where multiple functions can have the same name but differ in the type or number of their parameters.
+          <pre>
+            <code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int add(int a, int b) {
+    return a + b;
+}
+double add(double a, double b) {
+    return a + b;
+}
+int main() {
+    int intSum = add(3, 4); // calls int version
+    double doubleSum = add(3.5, 4.5); // calls double version
+    cout &lt;&lt; "Integer sum: " &lt;&lt; intSum &lt;&lt; endl;
+    cout &lt;&lt; "Double sum: " &lt;&lt; doubleSum &lt;&lt; endl;
+    return 0;
+}
+            </code>
+          </pre>
+        </section>
     </div>
   </div>
 

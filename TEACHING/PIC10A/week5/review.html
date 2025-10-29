@@ -15,13 +15,64 @@
   <div class="reveal">
     <div class="slides">
       <section>
-        <h2>Section 10: Reference</h2>
-        <p>In this section, we will cover the concept of references in programming.</p>
+        <h2>Section 10: Review of functions and references</h2>
+        </section>
+        <section> 
+            <h2> Review of functions </h2> 
+            <div style="text-align: left;" >
+                A function is a block of code that performs a specific task.
+                It can take inputs (parameters), process them, and return an output (return value).
+                <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+void greet(string name) {
+    cout &lt;&lt; "Hello, " &lt;&lt; name &lt;&lt; "!" &lt;&lt; endl;
+}
+int add (int a, int b);
+int add (int, int);
+
+int main() {
+    greet("Alice");
+    int sum = add(5, 10);
+    cout &lt;&lt; "Sum: " &lt;&lt; sum &lt;&lt; endl;
+    return 0;
+}
+
+int add (int a, int b)
+{
+    int sum = a + b;
+    return sum;
+}
+</code></pre>
+
+            </div>
+               
+
         </section>
         <section>
-            <h2> Review of scopes </h2>
+            <h2> Common Error </h2>
             <div>
-                scope is the context in which a variable is defined.
+                <ul>
+                    <li class="fragment fade-in-then-semi-out"> <b>Build Error:</b> It is a build error to call a function before its devlaration. </li>
+                    <li class="fragment fade-in-then-semi-out"> <b>Build Error:</b> It is a build error to call a function without define it. </li>
+                    <li class="fragment fade-in-then-semi-out"> <b>Legal!!!</b> It is legal to declare a function multiple times. </li>
+                    <li class="fragment fade-in-then-semi-out"> <b>Build Error:</b> It is a build error to define a non-inline function multiple times. </li>
+                </ul>
+            </div>
+            </section>
+            <section>
+            <h2> Common Error </h2>
+            <div>
+                <ul>
+                    <li class="fragment fade-in-then-semi-out"> <b>Undefined Behavior:</b> Suppose <code>f</code> is a function with a non-void return type and that <code> v </code> is a variable of that return type.
+                     If the function body of <code> f </code> does not return a value, then the statement <code> v = f(); </code> causes undefined behavior. </li>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <h2> Variable Scope </h2>
+            <div>
+                Scope is the context in which a variable is defined.
                 <pre><code data-trim data-line-numbers class="language-cpp">
 #include &lt;iostream&gt;
 using namespace std;
@@ -75,7 +126,7 @@ int main() {
             <pre><code data-trim data-line-numbers class="language-cpp">
 #include &lt;iostream&gt;
 using namespace std;
-void swap(int a, int b) {
+void bad_swap(int a, int b) {
     int temp = a;
     a = b;
     b = temp;
@@ -85,7 +136,7 @@ int main() {
     int x = 5;
     int y = 10;
     cout &lt;&lt; "Before swap - x: " &lt;&lt; x &lt;&lt; ", y: " &lt;&lt; y &lt;&lt; endl;
-    swap(x, y);
+    bad_swap(x, y);
     cout &lt;&lt; "After swap - x: " &lt;&lt; x &lt;&lt; ", y: " &lt;&lt; y &lt;&lt; endl;
     return 0;
 }
@@ -111,7 +162,7 @@ int main() {
             <ul>
               <li  class="fragment fade-in-then-semi-out"> A <code> reference </code> does not store its own data.</li>
               <li class="fragment fade-in-then-semi-out"> Instead, it refers to an already <b>existing</b> variable</li>
-              <li class="fragment fade-in-then-semi-out"> A useful picture for the code above is as follows</li>
+              <li class="fragment fade-in-then-semi-out"> A useful picture for the code above is drawn in blackboard</li>
             </ul>
           </div>
         </section>
@@ -194,12 +245,115 @@ const variable. Attempting to do this will result in a build error.<br>
 (cannot bind non-const reference to a const variable)
                 </li>
               </ul>
-          
           </section>
-    </div>
-  </div>
+          <section>
+            <h2> Examples </h2>
+            <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
 
+    int i  = 0 ;
+    const int ci = 1 ;
 
+    c1 = 2 ; // Build Error: cannot modify a const variable
+    int& r1 = i ; // OK: r1 is a reference to non-const int
+    int &r2 = ci ; // Build Error: cannot bind non-const reference to const variable
+
+    const int& rc1 = ci; // OK: rc1 is a reference to const
+    const int& rc2 = i; // OK: rc2 is a reference to const
+
+    rc1 = 3 ; // Build Error: cannot modify a const reference
+    rc2 = 4 ; // Build Error: cannot modify a const reference
+
+    cout &lt;&lt;  i &lt;&lt; r1 &lt;&lt; rc2 &lt;&lt; endl;
+
+    i=5;
+    cout &lt;&lt;  i &lt;&lt; r1 &lt;&lt; rc2 &lt;&lt; endl;
+
+    r1 = 6 ;
+    cout &lt;&lt;  i &lt;&lt; r1 &lt;&lt; rc2 &lt;&lt; endl;
+
+    return 0;
+
+}
+            </code></pre>
+          </section>
+          <section>
+            <h2> Examples </h2>
+            <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int f(int& a, int b, int& c) {
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+
+    a  +=  1 + c;
+    b  *=  2;
+
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    return a;
+}
+int main() {
+    int a   =20; 
+    int b   =30;
+    int c   =40;
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    f(a, b, c);
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+          </section>
+          <section>
+            <h2> Examples </h2>
+            <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int f(int& a, int b, int& c) {
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+
+    a  +=  1 + c;
+    b  *=  2;
+
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    return a;
+}
+int main() {
+    int a   =20; 
+    int b   =30;
+    int c   =40;
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    f(c, b, a);
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+          </section>
+          <section>
+           <h2> Examples </h2>
+            <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+int f(int& a, int b, int& c) {
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+
+    a  +=  1 + c;
+    b  *=  2;
+
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    return a;
+}
+int main() {
+    int a   =20; 
+    int b   =30;
+    int c   =40;
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    f(b, b, b);
+    cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b &lt;&lt; ' ' &lt;&lt; c &lt;&lt; endl;
+    return 0;
+}
+        </code></pre>
+          </section>
   <script src="../reveal.js/dist/reveal.js"></script>
   <script src="../reveal.js/plugin/highlight/highlight.js"></script>
   <script>

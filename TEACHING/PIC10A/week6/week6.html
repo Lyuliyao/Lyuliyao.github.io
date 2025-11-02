@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Section 11</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <h2>Section 11: vector</h2>
+        <p>In this section, we will cover the concept of vectors in programming.</p>
+      </section>
+<section>
+<h3>Note: <code>std::vector&lt;T&gt;</code> is a class template; each <code>T</code> yields a distinct type.
+</h3>
+<pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+using namespace std;
+
+int main() {
+  vector&lt;int&gt; vector_of_ints;
+  vector&lt;double&gt; vector_of_doubles;
+  vector&lt;string&gt; vector_of_strings;
+  vector&lt;vector&lt;int&gt;&gt; vector_of_vector_of_ints;
+}
+</code></pre>
+</section>
+
+<section>
+<h3>push_back, pop_back(), operator[], and at()</h3>
+<pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+  vector&lt;int&gt; v;
+  v.push_back(9);
+  v.push_back(8);
+  v.push_back(7);
+  cout &lt;&lt; "v contains " &lt;&lt; v.size() &lt;&lt; " elements\n";
+  cout &lt;&lt; "v[0]=" &lt;&lt; v[0] &lt;&lt; " v[1]=" &lt;&lt; v[1] &lt;&lt; " v[2]=" &lt;&lt; v[2] &lt;&lt; "\n\n";
+  return 0;
+}
+</code></pre>
+</section>
+
+<section>
+  <h3> Runtime Error and Undefined Behavior</h3>
+  <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+  vector&lt;int&gt; v;
+  v.push_back(1);
+  v.push_back(2);
+  v.push_back(3);
+  cout &lt;&lt; v[10] &lt;&lt; "\n";  // Undefined behavior
+  cout &lt;&lt; v.at(10) &lt;&lt; "\n"; // Runtime error: throws out_of_range exception
+
+  v.pop_back();
+  v.pop_back();
+  v.pop_back();
+  cout &lt;&lt; "After pop_back() again, v contains " &lt;&lt; v.size() &lt;&lt; " elements\n";
+  v.pop_back(); //undefined behavior
+  cout &lt;&lt; "After pop_back() again, v contains " &lt;&lt; v.size() &lt;&lt; " elements\n";
+  return 0;
+}
+</code></pre>
+</section>
+
+<section>
+<h3>Printing Elements</h3>
+<pre><code data-trim data-line-numbers  class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+using namespace std;
+int main() {
+  vector&lt;string&gt; v;
+  v.push_back("apple");
+  v.push_back("banana");
+  v.push_back("cherry");
+
+  cout &lt;&lt; "They are ";
+  for (size_t i = 0, N = v.size(); i &lt; N; ++i) {
+    cout &lt;&lt; v[i] &lt;&lt; ' ';
+  }
+  cout &lt;&lt; "\n\n";
+return 0;
+}
+</code></pre>
+</section>
+
+<section>
+  <h2> size and capacity</h2>
+  <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+int main() {
+  vector&lt;int&gt; v;
+  cout &lt;&lt; "Initially: size=" &lt;&lt; v.size() &lt;&lt; " capacity=" &lt;&lt; v.capacity() &lt;&lt; "\n";
+  for (int i = 1; i &lt;= 10; ++i) {
+    v.push_back(i);
+    cout &lt;&lt; "After pushing " &lt;&lt; i &lt;&lt; ": size=" &lt;&lt; v.size() &lt;&lt; " capacity=" &lt;&lt; v.capacity() &lt;&lt; "\n";
+  }
+  return 0;
+}
+</code></pre>
+</section>
+
+<section>
+  <h2> size and capacity</h2>
+  <div>
+    <ul>
+      <li><strong>Size</strong>: The number of elements currently stored in the vector. You can get the size using the <code>size()</code> member function.</li>
+      <li><strong>Capacity</strong>: The amount of memory allocated for the vector, which may be larger than the current size. You can get the capacity using the <code>capacity()</code> member function.</li>
+    </ul>
+  </div>
+</section>
+<section>
+  <h3> Why size and capacity?</h3>
+  <div>
+    <ul>
+      <li>When you add elements to a vector using <code>push_back()</code>, if the current size exceeds the capacity, the vector will automatically allocate more memory to accommodate the new elements. This process is called reallocation.</li>
+      <li>Reallocation can be costly in terms of performance because it involves allocating new memory, copying existing elements to the new memory location, and then deallocating the old memory.</li>
+    </ul>
+</section>
+<section>
+  <h3> Example</h3>
+  <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;time.h&gt;
+using namespace std;
+void myvector_foo(int N){
+    vector&lt;int&gt; v;
+    for (int i = 0; i &lt; N; ++i) {
+        v.push_back(i%100);
+    }
+}
+void myvector_bar(int N){
+    vector&lt;int&gt; v(N); //pre-allocate memory
+    for (int i = 0; i &lt; N; ++i) {
+        v[i] = i%100;
+    }
+}
+int main() {  
+    int N;
+    cin &gt;&gt; N;
+    clock_t start, end;
+
+    start = clock();
+    myvector_foo(N);
+    end = clock();
+    cout &lt;&lt; "Time taken by myvector_foo: " &lt;&lt; static_cast&lt; double &gt;(end - start) / CLOCKS_PER_SEC &lt;&lt; " seconds\n";
+
+    start = clock();
+    myvector_bar(N);
+    end = clock();
+    cout &lt;&lt; "Time taken by myvector_bar: " &lt;&lt; static_cast&lt; double &gt;(end - start) / CLOCKS_PER_SEC &lt;&lt; " seconds\n";
+    return 0;
+}
+</code></pre>
+</section>
+<section>
+  <h3> resize a vector</h3>
+  <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+void printVector(vector&lt;int&gt; vec) {
+    for (size_t i = 0; i &lt; vec.size(); ++i) {
+        cout &lt;&lt; vec[i] &lt;&lt; ' ';
+    }
+    cout &lt;&lt; "\n";
+}
+
+int main() {
+    vector&lt;int&gt; v;
+    v.push_back(1);
+    v.push_back(2);
+    v.push_back(3);
+    printVector(v);
+    cout &lt;&lt; "Initially: size=" &lt;&lt; v.size() &lt;&lt; " capacity=" &lt;&lt; v.capacity() &lt;&lt; "\n";
+    v.resize(5);
+    printVector(v);
+    cout &lt;&lt; "After resize(5): size=" &lt;&lt; v.size() &lt;&lt; " capacity=" &lt;&lt; v.capacity() &lt;&lt; "\n";
+    v.resize(10,1);
+    printVector(v);
+    cout &lt;&lt; "After resize(10): size=" &lt;&lt; v.size() &lt;&lt; " capacity=" &lt;&lt; v.capacity() &lt;&lt; "\n";
+    v.resize(3);
+    printVector(v);
+    cout &lt;&lt; "After resize(3): size=" &lt;&lt; v.size() &lt;&lt; " capacity=" &lt;&lt; v.capacity() &lt;&lt; "\n";
+    return 0;
+}
+</code></pre>
+</section>
+<section>
+  <h3> function that add two vectors </h3>
+  <pre><code data-trim data-line-numbers class="language-cpp">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;time.h&gt;
+using namespace std;
+
+vector&lt;int&gt; addVectors_foo(const vector&lt;int&gt; &amp;v1, const vector&lt;int&gt; &amp;v2) {
+    size_t size = min(v1.size(), v2.size());
+    vector&lt;int&gt; result(size);
+    for (size_t i = 0; i &lt; size; ++i) {
+        result[i] = v1[i] + v2[i];
+    }
+    return result;
+}
+void addVectors_bar(const vector&lt;int&gt; &amp;v1, const vector&lt;int&gt; &amp;v2, vector&lt;int&gt; &amp;result) {
+    size_t size = min(v1.size(), v2.size());
+    for (size_t i = 0; i &lt; size; ++i) {
+        result[i] = v1[i] + v2[i];
+    }
+}
+
+int main() {
+    int N;
+    cin &gt;&gt; N;
+    vector&lt;int&gt; vec1(N, 1);
+    vector&lt;int&gt; vec2(N, 2);
+    vector&lt;int&gt; sum(N);
+    clock_t start, end;
+
+    start = clock();
+    sum = addVectors_foo(vec1, vec2);
+    end = clock();
+    cout &lt;&lt; "Time taken by addVectors_foo: " &lt;&lt; static_cast&lt; double &gt;(end - start) / CLOCKS_PER_SEC &lt;&lt; " seconds\n";
+
+    start = clock();
+    addVectors_bar(vec1, vec2, sum);
+    end = clock();
+    cout &lt;&lt; "Time taken by addVectors_bar: " &lt;&lt; static_cast&lt; double &gt;(end - start) / CLOCKS_PER_SEC &lt;&lt; " seconds\n";
+    return 0;
+}
+</code></pre>
+</section>
+    </div>
+  </div>  
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+</body>
+</html>

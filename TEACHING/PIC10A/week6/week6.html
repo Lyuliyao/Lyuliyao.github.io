@@ -217,7 +217,7 @@ int main() {
 #include &lt;time.h&gt;
 using namespace std;
 
-vector&lt;int&gt; addVectors_foo(const vector&lt;int&gt; &amp;v1, const vector&lt;int&gt; &amp;v2) {
+vector&lt;int&gt; addVectors_foo(vector&lt;int&gt; v1, vector&lt;int&gt; v2) {
     size_t size = min(v1.size(), v2.size());
     vector&lt;int&gt; result(size);
     for (size_t i = 0; i &lt; size; ++i) {

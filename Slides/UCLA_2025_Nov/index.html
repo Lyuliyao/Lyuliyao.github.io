@@ -1175,7 +1175,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							<div class="small">Methods: DeepMD<sup>[5]</sup>, AIGLE, …</div>
 						</div>
 						</li>
-						<li><strong>Mesoscale: McKean–Vlasov SDEs <span class="ucla-accent">(This work)</span></strong>
+						<li><strong>Mesoscale: McKean–Vlasov SDEs <span class="ucla-accent">(This work) cooperate with Hayden Schaeffer and Tracy Yu</span></strong>
 						<div>
 							\[
 							\mathrm d \mathbf{X}_i(t) = F_\theta(\mathbf{X}_i(t), \mu_t)\,\mathrm d t + \sigma\, \mathrm d W^i_t,\quad i=1,\dots,N,
@@ -1408,7 +1408,8 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<ul>
 							<li>Consider the following ADR equations:
 								\[
-								\partial_t u(\mathbf x,t) + \nabla \cdot (a(u(\mathbf x,t)) u(\mathbf x,t)) = D\,\Delta u(\mathbf x,t) + R(u(\mathbf x,t)),
+								\partial_t u(\mathbf x,t) + \nabla \cdot (a(u(\mathbf x,t)) u(\mathbf x,t)) 
+								\\= D\,\Delta u(\mathbf x,t) + R(u(\mathbf x,t)),
 								\]
 							</li>
 							<li> The Keller-Segel model describes the chemotactic movement of cells:
@@ -1446,6 +1447,38 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</div>
 				</section>
 				<section>
+				<section>		
+				<div style="text-align: left;font-size: 0.8em;">
+			    In the weak form, for every test function \(f \in C^2(\mathbb T^d)\),
+				\[
+				\begin{aligned}
+				\langle f, \mu^N(t)\rangle
+				&= \langle f, \mu^N(0)\rangle
+				- \int_0^t
+				\!\!\langle\nabla f,\,a(P_K\mu^N)\mu^N\rangle\,\mathrm d\tau
+				+ \int_0^t
+				\!\!\langle\Delta f,\,D\,\mu^N\rangle\,\mathrm d\tau \\
+				&\quad + \int_0^t \!\langle f, r(\mathcal P_K \mu^N)\mu^N\rangle\,\mathrm d\tau 
+				+ \frac{1}{N}\int_0^t\sum_{i\in\mathcal I(N,\tau)}
+				\sqrt{2D}\,\nabla f(\mathbf X_{i,K}^N(\tau))\!\cdot\! \mathrm d \mathbf W^N_i(\tau)\\
+				&\quad + \frac{1}{N}\int_0^t\!\sum_{i\in\mathcal I(N,\tau) r(\mathcal P_K \mu^N(\mathbf X_{i,K})) > 0}
+				f(\mathbf X_{i,K}^N(\tau))\, \mathrm d \mathcal R^{N,\text{birth}}_i(\tau)\\
+				&\quad - \frac{1}{N}\int_0^t\!\sum_{i\in\mathcal I(N,\tau) r(\mathcal P_K \mu^N(\mathbf X_{i,K})) < 0} f(\mathbf X_{i,K}^N(\tau))\, \mathrm d \mathcal R^{N,\text{death}}_i(\tau).
+				\end{aligned}
+				\]
+				Here, for \(\sigma \in \mathbb R^+\), the associated jump processes are
+				\[
+				\begin{aligned}
+				\mathcal R^{N,\text{birth}}_{i}(\sigma)
+				&= Q^{N,\text{birth}}_i\!\left(\int_{0}^{\sigma} \mathbf 1_{S(N,\tau)}(i)\, r(\mathcal P_K \mu^N)\,\mathrm d\tau\right),\\[0.3em]
+				\mathcal R^{N,\text{death}}_{i}(\sigma)
+				&= Q^{N,\text{death}}_i\!\left(\int_{0}^{\sigma} -\mathbf 1_{S(N,\tau)}(i)\, r(\mathcal P_K \mu^N)\,\mathrm d\tau\right),
+				\end{aligned}
+				\]
+				where \(Q^{N,\text{birth}}_i\) and \(Q^{N,\text{death}}_i\) are independent standard Poisson processes.
+				</div>
+				
+				</section>
 				<section>
 				<h2>Error Estimate</h2>
 				<div style="text-align: left;">
@@ -1513,25 +1546,19 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</section>
 				</section>
 				<section>
-				<h2> Numerical Validation </h2>
-				<div style="text-align: left;">
-					<ul>
-					<li>Validated on nonlinear systems:
-						<ul>
-						<li><b>Allen–Cahn</b>: captures phase separation and interface motion.</li>
-						<li><b>Keller–Segel</b>: reproduces aggregation and blow-up dynamics.</li>
-						</ul>
-					</li>
-					<li>
-						The method shows <b>O(1/N)</b> Monte-Carlo variance and <b>1/√N</b> convergence in practice.
-					</li>
-					<li>
-						Mesh-free, nonnegativity-preserving, and robust near singularities or blow-up.
-					</li>
-					</ul>
+				<h2> Numerical result (allen cahn) </h2>
+				<div style="text-align: center;">
+					<figure>
+						<img src="./figure/case_allen_cahn.png" alt="Error plot" style="width:60%;">
+					</figure>
 				</div>
 				</section>
-				
+				<section>
+				<h2> Numerical result (KS)</h2>
+					<figure>
+						<img src="./figure/case2_u.png" alt="Error plot" style="width:60%;">
+					</figure>
+				</section>
 				</div>
 		</div>
 

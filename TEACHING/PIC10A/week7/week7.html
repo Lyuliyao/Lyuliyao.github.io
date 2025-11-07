@@ -119,8 +119,246 @@
         <li class="fragment">Compiler enforces the rule — safer code!</li>
       </ul>
     </section>
+    <section>
+    <h2> function overloads </h2>
+    </section>
+<section>
+  <h2> Build Error</h2>
+  <div>
+    <ul>
+      <li>
+        Declaring two functions with the same name and the same parameter types with different return types
+      </li>
+    </ul>
+    <pre><code class="language-cpp" data-trim data-line-numbers>
+        #include &lt;iostream&gt;
+        using namespace std;
+
+        int f(){
+          return 0;
+        };
+        double f(){
+          return 0.0;
+        }
+
+        int main() {
+          return 0;
+        }
+        </code></pre>
+        </div>
+</section>
+<section>
+  <h2> Example </h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      int f(bool t, char c){
+        return 0;
+      }
+      double f(bool f, char s){
+        return 0.0;
+      }
+      int main() {
+        return 0;
+      }
+      </code></pre>
+</section>
+<section>
+  <h2>Function Overloading</h2>
+  <ul>
+    <li> It is legal to define multiple functions with the same name if they have different parameter types or numbers of parameters.</li>
+  </ul>
+    <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      int f(int x){
+        return x;
+      }
+      double f(double y){
+        return y;
+      }
+      int main() {
+        cout &lt;&lt; f(5) &lt;&lt; endl;    // Calls f(int)
+        cout &lt;&lt; f(3.14) &lt;&lt; endl; // Calls f(double)
+        return 0;
+      }
+      </code></pre>
+</section>
+<section>
+  <h2>Example</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      void print(vector&lt;int&gt;& v){
+        for(size_t i = 0; i &lt; v.size(); ++i){
+          cout &lt;&lt; v[i] &lt;&lt; " ";
+        }
+        cout &lt;&lt; endl;
+      }
+      void print(vector&lt;double&gt;& v){
+        for(size_t i = 0; i &lt; v.size(); ++i){
+          cout &lt;&lt; v[i] &lt;&lt; " ";
+        }
+        cout &lt;&lt; endl;
+      }
+      void print(vector&lt;char&gt;& v){
+        for(size_t i = 0; i &lt; v.size(); ++i){
+          cout &lt;&lt; v[i] &lt;&lt; " ";
+        }
+        cout &lt;&lt; endl;
+      }
+      int main() {
+        vector&lt;int&gt; vi{1, 2, 3};
+        vector&lt;double&gt; vd{3.14, 2.71};
+        vector&lt;char&gt; vc{'a', 'b', 'c'};
+        print(vi);
+        print(vd);
+        print(vc);
+        return 0;
+      }
+      </code></pre>
+</section>
+<section>
+  <h2> Example</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      void f(int a, int b, double c){
+        cout &lt;&lt; "Three ints: " &lt;&lt; a &lt;&lt; ", " &lt;&lt; b &lt;&lt; ", " &lt;&lt; c &lt;&lt; endl;
+      }
+      void f(int a, double b, double c){
+        cout &lt;&lt; "One int, two doubles: " &lt;&lt; a &lt;&lt; ", " &lt;&lt; b &lt;&lt; ", " &lt;&lt; c &lt;&lt; endl;
+      }
+      int main() {
+        f(1, 2, 3.3);       // Calls f(int, int, double)
+        f(1, 2.2, 3.3);   // Calls f(int, double, double)
+        f(1, 2, 3);         // Calls f(int, int, double) with implicit conversion
+        f(1.1, 2.2, 3.3);   // Calls f(int, double, double) with implicit conversion
+        return 0;
+      }
+      </code></pre>
+</section>
+<section>
+  <h2> Example </h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      void f(int a, double b){
+        cout &lt;&lt; "int, double: " &lt;&lt; a &lt;&lt; ", " &lt;&lt; b &lt;&lt; endl;
+      }
+      void f(double a, int b){
+        cout &lt;&lt; "double, int: " &lt;&lt; a &lt;&lt; ", " &lt;&lt; b &lt;&lt; endl;
+      }
+      int main() {
+        f(1, 2.2);   // Calls f(int, double)
+        f(1.1, 2);   // Calls f(double, int)
+        return 0;
+      }
+      </code></pre>
+</section>
+<section>
+  <h2> Build Error </h2>
+  <ul>
+    <li>
+     When there is not a “best” viable candidate function, a function call gives a build error.
+    </li>
+    <li>
+      To regard one function overload as a “better” match than another function overload, it must be equal or “better” in every argument/parameter position and strictly “better” in at least one argument/parameter position.
+      </li>
+      <li>
+      If we are to regard one function overload as a “better” match than another function overload, it cannot be “worse” in any argument/parameter position. 
+
+      </li>
+  </ul>
+</section>
+<section>
+  <h2> Example </h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      void f(int a, int b, int c){
+        cout &lt;&lt; "Three ints: " &lt;&lt; a &lt;&lt; ", " &lt;&lt; b &lt;&lt; ", " &lt;&lt; c &lt;&lt; endl;
+      }
+      void f(double a, double b, double c){
+        cout &lt;&lt; "Three doubles: " &lt;&lt; a &lt;&lt; ", " &lt;&lt; b &lt;&lt; ", " &lt;&lt; c &lt;&lt; endl;
+      }
+      int main() {
+        f(1, 2.2, 3);   // Error: ambiguous call
+        return 0;
+      }
+      </code></pre>
+</section>
+<section>
+  <h2> Example</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+
+      void f( vector&lt;int&gt;& v){
+        cout &lt;&lt; "Vector of ints" &lt;&lt; endl;
+      }
+      void f(const vector&lt;int&gt;& v){
+        cout &lt;&lt; "Const vector of ints" &lt;&lt; endl;
+      }
+      int main() {
+        vector&lt;int&gt; vi{1, 2, 3};
+        const vector&lt;int&gt; cvi{4, 5, 6};
+        f(vi);
+        f(cvi);
+        return 0;
+      }
+      </code></pre>
+</section>
+
+<section>
+  <h2> Example</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+      void f() { cout &lt;&lt; '1' &lt;&lt; endl ; }
+      void f( char c) { cout &lt;&lt; '2' &lt;&lt; c &lt;&lt; endl ; }
+      void f( bool b, char c) { cout &lt;&lt; '3' &lt;&lt; b &lt;&lt; endl ; }
+      int main () {
+        f('c', false );
+        return 0;
+      }
+      </code></pre>
+</section>
+  <section>
+  <h2> Example</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+      void f( int i) { cout &lt;&lt; '1' &lt;&lt; i &lt;&lt; endl ; }
+      void f( char c) { cout &lt;&lt; '2' &lt;&lt; c &lt;&lt; endl ; }
+      int main () {
+        f(0.0);
+        return 0;
+      }
+      </code></pre>
+  </section>
+  <section>
+  <h2> Example</h2>
+  <pre><code class="language-cpp" data-trim data-line-numbers>
+      #include &lt;iostream&gt;
+      using namespace std;
+      void f( int i) { cout &lt;&lt; '1' &lt;&lt; i &lt;&lt; endl ; }
+      void f( double c) { cout &lt;&lt; '2' &lt;&lt; c &lt;&lt; endl ; }
+      int main () {
+        f('X');
+        return 0;
+      }
+      </code></pre>
+  </section>
+  
     </div>
-  </div>  
+    </div>
 
   <script src="../reveal.js/dist/reveal.js"></script>
   <script src="../reveal.js/plugin/highlight/highlight.js"></script>

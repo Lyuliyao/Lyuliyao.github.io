@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Machine Learning-based Coarse-Grained models for molecular systems</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>	
+		.tight-math mjx-container[jax="CHTML"][display="true"],
+		.tight-math .MathJax_Display {
+		margin: 0.2em 0 !important;
+		}
+		div.highlight {
+			background-color:#FFF9C4;
+			text-align: left;
+			 margin-top: 20px; 
+			 padding: 15px; 
+			 border-radius: 8px; 
+			 box-shadow: 2px 2px 10px #ccc;
+		}
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center; /* This will vertically center the content */
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center; /* This will vertically center the text */
+			justify-content: flex-end; /* This will align the text to the right */
+			padding-right: 20px; /* Some spacing between the name and the equation */
+		}
+		div.model .equation {
+			flex: 2;
+		}
+			figcaption {
+			  color: black;
+			  font-style: italic;
+			  padding: 2px;
+			  font-size:large;
+			  text-align: center;
+			}
+			.particle {
+				fill: #1976D2;
+				stroke: black;
+				stroke-width: 1;
+			}
+			.bond {
+				stroke: black;
+				stroke-width: 2;
+			}
+			cite {
+				font-size: 0.4em; /* Adjust the font size as needed */
+				display: block; /* Optional: To make the citation appear on a new line */
+				color:#444
+			}
+			.theorem, .proposition {
+				border: 1px solid #000;
+				padding: 10px;
+				margin: 10px 0;
+			}
+			.theorem {
+				background-color: #f0f0f0;
+			}
+			.proposition {
+				background-color: #e0e0e0;
+			}
+			.theorem h4, .proposition h4 {
+				margin: 0;
+				font-size: 1em;
+			}
+			.content {
+				margin-top: 5px;
+				font-size: 1em;
+			}
+			#self-introduction table {
+				margin: 0 auto;
+				border-collapse: collapse;
+				border: none;
+			}
+			#self-introduction td {
+				border: none;
+				padding: 6px 12px;
+				text-align: left;
+				vertical-align: top;
+				line-height: 1.2;
+			}
+			#self-introduction tr td:first-child {
+				min-width: 250px;
+				font-weight: 600;
+                white-space: nowrap;
+			}
+			#self-introduction tr td:last-child {
+				min-width: 450px;
+				white-space: nowrap;
+			}
+			</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Register.StartupHook("TeX color Ready", function() {
+				MathJax.Extension["TeX/color"].colors["myred"] = '#E65100';
+		   });
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+			   diff: "\\mathop{}\\!\\mathrm{d}",
+			   MLMN: "\\mathcal{L}_\\mathcal{N}",
+			   bz: "\\mathbf{z}",
+			   bZ: "\\mathbf{Z}",
+			   bp: "\\mathbf{p}",
+			   bq: "\\mathbf{q}",
+			   bP: "\\mathbf{P}",
+			   bQ: "\\mathbf{Q}",
+			   bV: "\\mathbf{V}",
+			   br: "\\mathbf{r}",
+			   bs: "\\mathbf{s}",
+			   bF: "\\mathbf{F}",
+			   CM: "\\mathcal M_\\beta",
+			   l: "\\left",
+			   r: "\\right",
+			   intd: "\\mathrm{d}",
+			   mbm:"\\mathbf{m}",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="https://cdn.plot.ly/plotly-2.9.0.js"></script>
+		<script src="./figure/md.js"></script>
+		<script src="./figure/title.js"></script>
+
+	</head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'G-CQSV68665C');
+	</script>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section  data-menu-title="Postdoctoral Flash Talk">
+                <h2> Postdoctoral Flash Talk</h2>
+                    <div id="self-introduction" style="text-align: left;">
+                        <table>
+                            <tr>
+                                <td><strong>Name:</strong></td>
+                                <td>Liyao Lyu</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ph.D.:</strong></td>
+                                <td>Michigan State University</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ph.D. Advisor:</strong></td>
+                                <td>Huan Lei</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Postdoctoral Advisors:</strong></td>
+                                <td>Hayden Schaeffer <br> Andrea Bertozzi</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Research Interests:</strong></td>
+                                <td>
+                                    Multiscale modeling <br>
+                                    simulation of complex molecular systems<br>
+                                    Machine learning for scientific computing
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <section class="align-top" data-auto-animate data-menu-title="Multi-scale modeling:Background">
+					<h3>
+						<div style="display:inline">
+							Multi-scale modeling:
+						</div> 
+						<div style="display:inline">
+							Background 
+						</div>
+					</h3>
+					<div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+						<div class="fragment fade-in-then-semi-out"  data-fragment-index="1" style="width:500px">
+							<figure>
+								<p><img src="./figure/Dirac.png"
+									style="width:300px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left;">
+									Dirac, Paul Adrien Maurice.
+									Quantum mechanics of many-electron systems.
+								</div>
+							</figure>
+						</div>
+						<div style="text-align: left;">
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="1"  style="margin-bottom: 50px; margin-right: 100px;">
+									The right physical principle for most of what we are interested in is already provided by the principles of quantum mechanics (QM). <br>
+							</div>
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
+								The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
+							</div>
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
+									The constructionist hypothesis breaks
+									down when confronted with <span style="color:#E65100">the twin
+									difficulties of scale and complexity.</span>
+							</div>
+						</div>
+						<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="width:500px">
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png"
+									style="width:300px; object-fit: cover;"
+									alt="Eiffel tower">
+								</p>
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+									Anderson, Philip W.
+									More Is Different: Broken symmetry and the nature of the hierarchical structure of science.
+								</div>
+							</figure>
+						</div>
+					</div>
+				</section>
+                <section class="align-top" data-auto-animate data-menu-title="Mori-Zwanzig formalism">
+                    <h3> From atomistic to coarse-grained dynamics</h3>
+                    <div style="text-align: left;">
+                        <ul>
+                            <li>
+                                <b>Atomistic model:</b> Hamiltonian dynamics in the canonical form with \(H(\mathbf z) \) and \(\mathbf z = (\mathbf q, \mathbf p) \in \mathbb R^{2N_{MD}}\):
+                                \[
+                                \begin{aligned}
+                                \dot{\mathbf z } &= \mathbf{J} \nabla H(\mathbf z), \quad H(\mathbf z) = \frac{1}{2} \mathbf p^T \mathbf{m}^{-1} \mathbf p + V(\mathbf q), 
+                                \end{aligned}
+                                \]
+                            </li>
+                            <li>
+                                <b>Coarse-grained (CG) model:</b> Reduce the degrees of freedom by mapping \(\mathbf z\) to CG variables \(\mathbf Z = (\mathbf Q, \mathbf P)\in \mathbb R^{2N_{CG}}\).
+                                By the <b>Mori-Zwanzig formalism</b>, the dynamics can be described as:
+                               <div data-id="MZCG">
+                                    \[
+                                    \begin{aligned}
+                                    \dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
+                                    \dot{\mathbf{P}} &= 
+                                    \underbrace{-\nabla U(\mathbf{Q})}_{\text{Conservative Force}} 
+                                    - \underbrace{\int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds}_{\text{Memory Contribution}} 
+                                    + \underbrace{\mathbf{R}(t)}_{\text{Random Force}}.
+                                    \end{aligned}
+                                    \]
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+                <section class="align-top">
+					<h3>
+						Simulation of the Coarse-Grained Models
+					</h3>
+					<div style="text-align: left;">
+						<b style="color: #E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
+						<p class="tight-math" style="margin-top: 0.5em; text-align: center;">
+							\(
+							\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
+							\)
+						</p>
+					</div>
+					<div  style="text-align: left;">
+						<ul>
+							<li>
+								Written as an equivalent Markovian system with auxiliary variables \(\bm \zeta\):
+								\[
+								\begin{aligned}
+								\dot{\mb Q} &= \mb M^{-1}\mb P \\
+								\dot{\mb P} &= -\nabla U(\mb Q) + \bm \Xi(\mb Q)\bm\zeta \\
+								\dot{\bm\zeta} &= - \bm \Xi(\mb Q)^T \mb V - \bm\Lambda \bm\zeta + \bm \xi(t). 
+								\end{aligned}
+								\]
+							</li>
+                            <li>
+                                The model  retains the consistent invariant distribution 
+								\[
+								\rho_{\rm eq}(\mb Q, \mb P, \bm\xi) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 + \bm \zeta^T \bm\zeta/2})]
+								\]
+                            </li>
+                            <li>
+                                The friction matrix \(\bm \Xi(\mb Q)\) do not appear in the invariant distribution, but importantly affect the dynamics 
+                                \(\rho(\mb Q, \mb P , t | \mb Q_0, \mb P_0, 0)\)
+                            </li>
+						</ul>
+					</div>
+                </section>
+                <section class="align-top" data-auto-animate>
+                    <h2> Polymer melt (Nonnewtonian behavior)</h2>
+                    <div style="text-align: center">
+                        normalized correlations of the <br> <b>Transverse</b> Hydrodynamic Modes
+                        <div
+								id=trans_corr
+								class="plotly-graph-div"
+								style="display: block;margin: 15px auto;width: 300px;height: 300px;">
+							</div>
+                        <script type="text/javascript" src="./text/trans_corr.js">
+                        </script>
+                    </div>
+                </section>
+                <section class="align-top" data-auto-animate>
+                    <h2> Conformational dynamics</h2>
+					<div class="molecule-figure">
+						<figure>
+							<img src="./figure/alanine.png"
+								style="object-fit: cover;"
+								alt="Alanine Dipeptide">
+							<figcaption>Alanine dipeptide molecule</figcaption>
+						</figure>
+					</div>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <div style="margin-right: 20px;">
+                                <figure>
+                                    <img src="./figure/fes.png"
+                                        style="width:400px; object-fit: cover;"
+                                        alt="FES from MD">
+                                    <figcaption>Free Energy Surface</figcaption>
+                                </figure>
+                            </div>
+                            <div style="margin-right: 20px;">
+                                <figure>
+                                    <img src="./figure/2D-transition_new.png"
+                                        style="width:400px; object-fit: cover;"
+                                        alt="2D Transition">
+                                    <figcaption>2D Transition</figcaption>
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </section>  
+                <section class="align-top" data-auto-animate>
+                    <h2>Ecological system</h2>
+                    <div style="text-align: center">
+                        cooperated with Hayden Schaeffer and Tracy Yu
+					<div class="video-wrapper">
+                        <video muted autoplay controls style="width: 60%;">
+                        <source src="./figure/bird_flocking.mp4" type="video/mp4">
+                        </video>
+					</div>
+				</section>
+                <section class="align-top" data-auto-animate>
+                    <h2> Measure Valued Neural Network </h2>
+                     <ul>
+                        <li> 
+                            Instead of interested in the interactions between individuals.
+                        </li>
+                        <li> 
+                            We focus on the interactions between an individual and the distribution of the population.
+                        </li>
+                        <li>
+                            Mckean type SDE:
+                            \[
+                            \intd \mathbf X_t = F(\mathbf X_t, \mu_t) \intd t + G(\mathbf X_t, \mu_t) \intd \mathbf W_t.
+                            \]
+                        </li>
+                        <li>
+                            New neural network architecture with measure valued inputs.
+                            \[
+                            F(\mathbf x, \mu) \approx \varphi_\theta\left(\mathbf x, \int \psi_\theta(\mathbf y) \intd \mu(\mathbf y)\right).
+                            \]
+                        </li>
+                        <li>
+                            Universial approximation theorem and convergence analysis for the new architecture.
+                        </li>
+                     </ul>
+                </section>
+                <section>
+					<h2> Numerical result </h2>
+					<video muted autoplay controls style="width: 80%;">
+						<source src="./figure/prey_predator_case_3_snapshot_2_animation.mp4" type="video/mp4">
+					</video>
+				</section>
+                <section>
+                    <h2> Nonconservative System</h2>
+                    <ul>
+                        <li> ODE or SDE description of the nonconservative system</li>
+                        <li> For example:  </li>
+                        <li> phase separation - allen cahn equation
+                            \[
+                            \partial_t u = \Delta u + u - u^3.
+                            \]
+                        </li>
+                        <li> chemotactic - Keller-Segel model
+                            \[
+                            \partial_t u = \Delta u - \chi \nabla \cdot (u \nabla v), \quad \partial_t v = D \Delta v + \alpha u - \beta v.
+                            \]
+                        </li>
+                        <li>
+                            Approximate the solution \(u\) by the empirical measure of particles:
+                            \[
+                            t \to \mu^N(t) = \frac{1}{N} \sum_{i \in \mathcal I(N,t)} \delta_{\mathbf X_i^N(t)}.
+                            \]
+                        </li>
+                    </section>
+                    <section>
+                        <ul>
+                        <li>
+                            <b>Advection and diffusion step:</b> Each particle follows an SDE:
+                            \(
+                            dX_t = b(X_t)\,dt + \sigma\,dW_t
+                            \)
+                        </li>
+                        <li>
+                            <b>Reaction step:</b> The reaction term \( r(u)u \) is handled by a stochastic birth–death process:
+                            <ul>
+                                <li>For \( r(x)\!>\!0 \): particles <b>branch</b> with rate \( e^{r(x)\tau}-1 \).</li>
+                                <li>For \( r(x)\!<\!0 \): particles <b>die</b> with survival probability \( e^{r(x)\tau} \).</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Under the <b>Global Lipschitz</b> and <b>Boundedness</b> condition of the coefficients, we can prove the convergence of measure-valued process \( \mu^N \) to the solution of the target PDE with respect to <b> \( H^{-s} \) norm for \( s > d/2 + 1 \)</b>.
+                        </li>
+                        </ul>
+				</section>
+				<section>
+				<h2> Numerical result (allen cahn) </h2>
+				<div style="text-align: center;">
+					<figure>
+						<img src="./figure/case_allen_cahn.png" alt="Error plot" style="width:60%;">
+					</figure>
+				</div>
+				</section>
+				<section>
+				<h2> Numerical result (KS)</h2>
+					<figure>
+						<img src="./figure/case2_u.png" alt="Error plot" style="width:60%;">
+					</figure>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			Reveal.initialize({
+				slideNumber: 'c/t',
+				width: 1200,
+				height: 800,
+				margin: 0, 
+				padding: 0,
+				center: true,
+				menu: {
+					titleSelector: 'h1, h2, h3', 
+					hideMissingTitles: true
+				},
+				hash: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

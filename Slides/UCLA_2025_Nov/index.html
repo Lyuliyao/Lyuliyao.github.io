@@ -143,61 +143,9 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<!-- <section data-menu-title="Coarse-Grained Molecular Dynamics" >
-					<div style="text-align: center; font-weight: 700;">
-						<h1 id="title-text2" style="font-size: 1.5em; color: #2c3e50;"></h1>
-					</div>
-					<div style="text-align: center; margin-top: 20px;">
-						<svg id="MD1" width="750" height="300" style="border: none;"></svg>
-						<button id="updateValues1" style="padding: 8px 15px; border: none; border-radius: 5px;font-style: serif; font-size: 1.0em; font-weight: bold; color: #2c3e50;"></button>
-						<div>
-							<script>
-								title("MD1", "updateValues1", 30, 0.75);
-							</script>
-						</div>
-					</div>
-					<div style="text-align: center; font-weight: 400; margin-top: -10px;">
-						<p id="author2" style="margin-bottom: 2px; font-size: 1.3em; font-weight: bold; color: #2c3e50;"></p>
-						<p id="department2" style="margin-bottom: 2px; font-size: 1.1em; color: #34495e;"></p>
-						<p id="school2" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
-						<p id="Cooperator" style="margin-bottom: 0; font-size: 1.1em; font-weight: bold; color: #34495e;"></p>
-					</div>
-				
-					<script>
-						function typeText(elementId, text, speed) {
-							let i = 0;
-							function type() {
-								if (i < text.length) {
-									document.getElementById(elementId).innerHTML += text.charAt(i);
-									i++;
-									setTimeout(type, speed);
-								}
-							}
-							type();
-						}
-						document.addEventListener("DOMContentLoaded", function () {
-							typeText("title-text2", "Machine Learning-based Coarse-Grained models for molecular systems", 30);
-							setTimeout(() => typeText("author2", "Liyao Lyu", 30), 2000);
-							setTimeout(() => typeText("department2", "Department of Mathematics", 30), 2500);
-							setTimeout(() => typeText("school2", "University of California, Los Angeles", 30), 3000);
-							setTimeout(() => typeText("Cooperator", "Joint work with Huan Lei (MSU) ", 30), 3500);
-						});
-					</script>
-				
-					<aside class="notes">
-						<ul>
-						Today, I will discuss Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory.	
-						The central challenge we address is this: How do we bridge high-resolution atomistic simulations to mesoscale phenomena?
-						Atomistic simulations track every atomic detail but computationally impossible for large systems.
-						Coarse-grained (CG) models simplify this by focusing on collective variables, like the center of mass (dashed circles), rather than individual atoms (solid circles).
-						But existing CG models often oversimplify memory effects. Our work introduces a framework that retains these critical many-body, non-Markovian features while preserving computational efficiency. 
-						</ul>
-					</aside>
-				</section> -->
-				<section>
 				<section data-menu-title="Coarse-Grained Molecular Dynamics"
 						style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%;">
-
+				
 				<!-- 标题 -->
 				<h1 id="title-text2" style="margin-top: 10px; font-size: 1.5em; color: #2c3e50; font-weight: 700;"></h1>
 
@@ -310,7 +258,6 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<span style="color:#E65100">Complexity - Empirical Model - Oversimplification</span>
 					</div>
 				</section>	
-				</section>
 
 				<section data-auto-animate>
 				<section data-auto-animate>

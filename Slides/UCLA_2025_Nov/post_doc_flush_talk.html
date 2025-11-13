@@ -102,6 +102,21 @@
 				min-width: 450px;
 				white-space: nowrap;
 			}
+			#trans_corr {
+				display: block;
+				margin: 15px auto;
+				width: 320px;
+				height: 320px;
+			}
+			.molecule-figure {
+				position: absolute;
+				top: 30px;
+				right: 40px;
+				text-align: center;
+			}
+			.molecule-figure img {
+				width: 220px;
+			}
 			</style>
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css">
@@ -166,18 +181,6 @@
                                 <td>Liyao Lyu</td>
                             </tr>
                             <tr>
-                                <td><strong>Ph.D.:</strong></td>
-                                <td>Michigan State University</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Ph.D. Advisor:</strong></td>
-                                <td>Huan Lei</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Postdoctoral Advisors:</strong></td>
-                                <td>Hayden Schaeffer <br> Andrea Bertozzi</td>
-                            </tr>
-                            <tr>
                                 <td><strong>Research Interests:</strong></td>
                                 <td>
                                     Multiscale modeling <br>
@@ -217,11 +220,6 @@
 							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
 								The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
 							</div>
-							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
-									The constructionist hypothesis breaks
-									down when confronted with <span style="color:#E65100">the twin
-									difficulties of scale and complexity.</span>
-							</div>
 						</div>
 						<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="width:500px">
 							<figure>
@@ -237,52 +235,16 @@
 						</div>
 					</div>
 				</section>
-                <section class="align-top" data-auto-animate data-menu-title="Mori-Zwanzig formalism">
-                    <h3> From atomistic to coarse-grained dynamics</h3>
-                    <div style="text-align: left;">
-                        <ul>
-                            <li>
-                                <b>Atomistic model:</b> Hamiltonian dynamics in the canonical form with \(H(\mathbf z) \) and \(\mathbf z = (\mathbf q, \mathbf p) \in \mathbb R^{2N_{MD}}\):
-                                \[
-                                \begin{aligned}
-                                \dot{\mathbf z } &= \mathbf{J} \nabla H(\mathbf z), \quad H(\mathbf z) = \frac{1}{2} \mathbf p^T \mathbf{m}^{-1} \mathbf p + V(\mathbf q), 
-                                \end{aligned}
-                                \]
-                            </li>
-                            <li>
-                                <b>Coarse-grained (CG) model:</b> Reduce the degrees of freedom by mapping \(\mathbf z\) to CG variables \(\mathbf Z = (\mathbf Q, \mathbf P)\in \mathbb R^{2N_{CG}}\).
-                                By the <b>Mori-Zwanzig formalism</b>, the dynamics can be described as:
-                               <div data-id="MZCG">
-                                    \[
-                                    \begin{aligned}
-                                    \dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
-                                    \dot{\mathbf{P}} &= 
-                                    \underbrace{-\nabla U(\mathbf{Q})}_{\text{Conservative Force}} 
-                                    - \underbrace{\int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds}_{\text{Memory Contribution}} 
-                                    + \underbrace{\mathbf{R}(t)}_{\text{Random Force}}.
-                                    \end{aligned}
-                                    \]
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </section>
                 <section class="align-top">
 					<h3>
-						Simulation of the Coarse-Grained Models
+						Nonlinear Energy Dissipation \(\bm \Xi(\mb Q)\)
 					</h3>
 					<div style="text-align: left;">
-						<b style="color: #E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
-						<p class="tight-math" style="margin-top: 0.5em; text-align: center;">
-							\(
-							\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
-							\)
-						</p>
+						<b style="color: #E65100;">Non-Markovian Manybody (Our Model)</b>
 					</div>
 					<div  style="text-align: left;">
 						<ul>
 							<li>
-								Written as an equivalent Markovian system with auxiliary variables \(\bm \zeta\):
 								\[
 								\begin{aligned}
 								\dot{\mb Q} &= \mb M^{-1}\mb P \\
@@ -292,41 +254,73 @@
 								\]
 							</li>
                             <li>
-                                The model  retains the consistent invariant distribution 
+                                with the consistent invariant distribution 
 								\[
 								\rho_{\rm eq}(\mb Q, \mb P, \bm\xi) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 + \bm \zeta^T \bm\zeta/2})]
 								\]
+                            </li>
+                            <li>
+                                Why we need care about \(\bm \Xi(\mb Q)\)?
                             </li>
                             <li>
                                 The friction matrix \(\bm \Xi(\mb Q)\) do not appear in the invariant distribution, but importantly affect the dynamics 
                                 \(\rho(\mb Q, \mb P , t | \mb Q_0, \mb P_0, 0)\)
                             </li>
 						</ul>
+                        <div style="
+                            position:absolute;
+                            text-align:left; font-size:0.8em; opacity:0.8;">
+                            <div><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>.
+                            Construction of coarse-grained molecular dynamics with many-body non-Markovian memory.
+                            <em>Physical Review Letters</em>, 2023.
+                            </div>
+                        </div>
 					</div>
                 </section>
                 <section class="align-top" data-auto-animate>
                     <h2> Polymer melt (Nonnewtonian behavior)</h2>
-                    <div style="text-align: center">
-                        normalized correlations of the <br> <b>Transverse</b> Hydrodynamic Modes
-                        <div
-								id=trans_corr
-								class="plotly-graph-div"
-								style="display: block;margin: 15px auto;width: 300px;height: 300px;">
-							</div>
-                        <script type="text/javascript" src="./text/trans_corr.js">
-                        </script>
+                    <div>
+                        <div style="text-align: center">
+                            <p> normalized correlations of the <b>Transverse</b> Hydrodynamic Modes</p>
+                            <div style="text-align: center;">
+                                <div style="display: flex; justify-content: center; align-items: center;">
+                                    <div
+                                        id="trans_corr"
+                                        class="plotly-graph-div"
+                                        style="width: 350px; height: 450px;">
+                                    </div>
+                                    <div>
+                                        <ul style="text-align: left; margin-left: 20px;">
+                                            <li> 486 star-shaped polymers </li>
+                                            <li> melt density: 0.68 </li>
+                                            <li> temperature: 1.0 </li>
+                                            <li> blue line (reference)</li>
+                                            <li> red line (our model)</li>
+                                            <li> other tree line (previous model)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <script type="text/javascript" src="./text/trans_corr.js">
+                            </script>
+                        </div>
+                        <div style="
+                            text-align:left; font-size:0.8em; opacity:0.8;">
+                                <b>Liyao Lyu</b>, Huan Lei<sup>*</sup>.
+                                "On the Generalization Ability of Coarse-Grained Molecular Dynamics Models for Nonequilibrium Processes." Multiscale Modeling & Simulation 23.2 (2025): 816-837.
+                        </div>
                     </div>
                 </section>
                 <section class="align-top" data-auto-animate>
                     <h2> Conformational dynamics</h2>
-					<div class="molecule-figure">
-						<figure>
-							<img src="./figure/alanine.png"
-								style="object-fit: cover;"
-								alt="Alanine Dipeptide">
-							<figcaption>Alanine dipeptide molecule</figcaption>
-						</figure>
-					</div>
+                        <div class="molecule-figure">
+                            <figure>
+                                <img src="./figure/alanine.png"
+                                    style="object-fit: cover;"
+                                    alt="Alanine Dipeptide">
+                                <figcaption>Alanine dipeptide molecule</figcaption>
+                            </figure>
+                        </div>
                     <div style="text-align: center; margin-top: 40px;">
                         <div style="display: flex; justify-content: center; align-items: center;">
                             <div style="margin-right: 20px;">
@@ -342,14 +336,26 @@
                                     <img src="./figure/2D-transition_new.png"
                                         style="width:400px; object-fit: cover;"
                                         alt="2D Transition">
-                                    <figcaption>2D Transition</figcaption>
+                                    <figcaption>Distribution of Transition Time between different state</figcaption>
                                 </figure>
+                            </div>
+                            <div>
+                                <ul style="font-size:0.8em">
+                                    <li> Blue line (reference)</li>
+                                    <li> Orange line (our model)</li>
+                                    <li> Green line (previous model)</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
+                    <div style="
+                            text-align:left; font-size:0.8em; opacity:0.8;">
+                                She, Zhiyuan, <b>Liyao Lyu</b>, Bryan Ronain Smith, and Huan Lei<sup>*</sup>. 
+                                "A unified framework for data-driven construction of stochastic reduced models with state-dependent memory." arXiv preprint arXiv:2509.07264 (2025).
+                        </div>
                 </section>  
                 <section class="align-top" data-auto-animate>
-                    <h2>Ecological system</h2>
+                    <h2>Current Work: Ecological system</h2>
                     <div style="text-align: center">
                         cooperated with Hayden Schaeffer and Tracy Yu
 					<div class="video-wrapper">
@@ -362,7 +368,7 @@
                     <h2> Measure Valued Neural Network </h2>
                      <ul>
                         <li> 
-                            Instead of interested in the interactions between individuals.
+                            Instead of interested in the interactions between individuals like previous work.
                         </li>
                         <li> 
                             We focus on the interactions between an individual and the distribution of the population.
@@ -380,7 +386,7 @@
                             \]
                         </li>
                         <li>
-                            Universial approximation theorem and convergence analysis for the new architecture.
+                            Universial approximation theorem and scaling law for the new architecture.
                         </li>
                      </ul>
                 </section>
@@ -389,9 +395,12 @@
 					<video muted autoplay controls style="width: 80%;">
 						<source src="./figure/prey_predator_case_3_snapshot_2_animation.mp4" type="video/mp4">
 					</video>
+                    <div>
+                        The predator do not eat prey in this model.
+                    </div>
 				</section>
                 <section>
-                    <h2> Nonconservative System</h2>
+                    <h2> Current Work:  No mass conservation System</h2>
                     <ul>
                         <li> ODE or SDE description of the nonconservative system</li>
                         <li> For example:  </li>
@@ -431,6 +440,11 @@
                             Under the <b>Global Lipschitz</b> and <b>Boundedness</b> condition of the coefficients, we can prove the convergence of measure-valued process \( \mu^N \) to the solution of the target PDE with respect to <b> \( H^{-s} \) norm for \( s > d/2 + 1 \)</b>.
                         </li>
                         </ul>
+                        <div style="
+                            text-align:left; font-size:0.8em; opacity:0.8;">
+                                <b>Liyao Lyu</b>, Huan Lei<sup>*</sup>.
+                            "A stochastic branching particle method for solving non-conservative reaction-diffusion equations." arXiv preprint arXiv:2510.27615 (2025).
+                        </div>
 				</section>
 				<section>
 				<h2> Numerical result (allen cahn) </h2>

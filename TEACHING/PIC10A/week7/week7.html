@@ -9,6 +9,28 @@
   <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
   <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
   <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <style>
+    pre.copy-code-block {
+      position: relative;
+    }
+    .copy-code-button {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .copy-code-button:hover,
+    .copy-code-button:focus {
+      background: #333;
+      color: #fff;
+    }
+  </style>
 </head>
 
 <body>
@@ -18,18 +40,26 @@
       <h2> Classes</h2>
       </section>
       <section>
+      <h2> Structs</h2>
+      <ul>
+        <li> A structs (Structures) are a way to group related variables together.</li>
+        <li> Unlike vectors, structs can contain different data types.</li>
+
+      </ul>
+      </section>
+      <section>
       <h2> Declaring and defining structs, member variables</h2>
       <pre>
         <code class="language-cpp" data-trim data-line-numbers>
           struct Rectangle;// declare struct named Rectangle
-
+          struct Rectangle { //define struct named Rectangle (empty body now)
+          };
           int main() {
               Rectangle r; //construct instance of Rectangle
               Rectangle another_r; //construct instance of Rectangle
               return 0;
           }
-          struct Rectangle { //define struct named Rectangle (empty body now)
-          };
+          
         </code>
       </pre>
       </section>  
@@ -111,15 +141,12 @@
                 Rectangle r;
                 r.len1 = 5;
                 r.len2 = 10;
-
                 double a = area(r); // a gets 50
                 std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
-
                 Square s;
                 s.len = 4;
                 double a2 = area(s); // a2 gets 16
                 std::cout &lt;&lt; "Area of square: " &lt;&lt; a2 &lt;&lt; std::endl;
-
                 Circle c;
                 c.radius = 2.5;
                 double a3 = area(c); // a3 gets 19.6349375
@@ -138,7 +165,6 @@
             struct Rectangle {
                 double len1;
                 double len2;
-
                 double area() const { // member function area
                     return len1 * len2;
                 }
@@ -163,11 +189,9 @@
             struct Rectangle {
                 double len1;
                 double len2;
-
                 double area() const {
                     return len1 * len2;
                 }
-
                 double perimeter() const {
                     return 2 * (len1 + len2);
                 }
@@ -194,12 +218,10 @@
             struct Rectangle {
                 double len1;
                 double len2;
-
                 void set_dimensions(double l1, double l2) {
                     len1 = l1;
                     len2 = l2;
                 }
-
                 double area() const {
                     return len1 * len2;
                 }
@@ -207,7 +229,6 @@
             int main() {
                 Rectangle r;
                 r.set_dimensions(5, 10); // set dimensions using member function
-
                 double a = r.area();
                 std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
                 return 0;
@@ -222,10 +243,8 @@
             #include &lt;iostream&gt;
             struct C{
               int i;
-              
               double f(int j){
                 int sum = i+j;
-
                 i*=10;
                 return sum/2.0;
               }
@@ -257,6 +276,15 @@
         </pre>
       </section>
       <section>
+        <h2> Struct Constructors Overview</h2>
+        <ul>
+          <li> A constructor is a special member function that is called when an instance of the struct is created.</li>
+          <li> It has the same name as the struct and does not have a return type.</li>
+          <li> Constructors can take parameters to initialize member variables.</li>
+          <li> If no constructor is defined, the compiler provides a default constructor.</li>
+        </ul>
+      </section>
+      <section>
         <h2> Struct Constructors</h2>
         <pre>
           <code class="language-cpp" data-trim data-line-numbers>
@@ -264,7 +292,6 @@
             struct Rectangle {
                 double len1;
                 double len2;
-
                 // Constructor
                 Rectangle(double l1, double l2): len1(l1), len2(l2) {}
 
@@ -291,14 +318,12 @@
             struct Rectangle {
                 double len1;
                 double len2;
-
                 // Constructor with function body
                 Rectangle(double l1, double l2): len1(l1), len2(l2) {
                   if (len1 &lt;= 0 || len2 &lt;= 0) {
                     cout &lt;&lt; "Warning: Lengths must be positive!" &lt;&lt; std::endl;
                   }
                 }
-
                 double area() const {
                     return len1 * len2;
                 }
@@ -325,6 +350,191 @@
           <li>
             When an instance of a struct is marked as const, it promises not to modify any member variables of the struct.
           </li>
+          </ul>
+      </section>
+      <section>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            struct Rectangle {
+                double len1;
+                double len2;
+                double area() { 
+                    return len1 * len2;
+                }
+                void set_dimensions(double l1, double l2) {
+                    len1 = l1;
+                    len2 = l2;
+                }
+                Rectangle(double l1, double l2): len1(l1), len2(l2) {}
+            };
+            int main() {
+                const Rectangle r(5, 10);
+                r.set_dimensions(15, 20); 
+                return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            struct C{
+              int& i;
+              const int& ci;
+              C(int& _i, const int& _ci): i(_i), ci(_ci) {}
+            };
+            int main() {
+              int x = 5;
+              const int y = 10;
+              C c(x, y);
+              c.i = 20; // OK
+              c.ci = 30; // Error: cannot modify const reference
+              const C cc(x, y);
+              cc.i = 40; 
+              cc.ci = 50; // Error: cannot modify const reference
+              return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Const instance and Marking member functions const </h2>
+        <ul>
+          <li>
+            When an instance of a struct is marked as const, it promises not to modify any member variables of the struct.
+          </li>
+          <li> Suppose that f is a member function of a struct C.
+            <ul>
+              <li> if f is not marked const, then the implicit parameter has type C&</li>
+              <li> if f is marked const, then the implicit parameter has type const C&</li>
+            </ul>
+          </li>
+          </ul>
+      </section>
+      <section>
+        <div>
+          <ul>
+            (A member function should be marked const if it does not modify any member variables of the struct.)
+          <li>
+            It is a build error for a const instance of a stuct to call a member function that is not marked const.
+          </li>
+          </ul>
+          </div>
+      </section>
+      <section>
+        <div>
+          <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+              #include &lt;iostream&gt;
+              struct Rectangle {
+                  double len1;
+                  double len2;
+                  double area() const { 
+                      return len1 * len2;
+                  }
+                  void area2() { 
+                      return len1 * len2;
+                  }
+                  Rectangle(double l1, double l2): len1(l1), len2(l2) {}
+              };
+              int main() {
+                  const Rectangle r(5, 10);
+                  double a = r.area(); // OK
+                  r.area2(15, 20); // Error: cannot call non-const member function on const instance
+                  return 0;
+              }
+            </code>
+          </pre>
+        </div>
+      </section>
+      <section>
+        <ul>
+          If a member function is marked const, it is a build error to assign to any member variable inside that function.
+        </ul>
+      </section>
+      <section>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            struct Rectangle {
+                double len1;
+                double len2;
+                void set_dimensions(double l1, double l2) const { 
+                    len1 = l1;
+                    len2 = l2;
+                }
+                Rectangle(double l1, double l2): len1(l1), len2(l2) {}
+            };
+            int main() {
+                Rectangle r(5, 10);
+                r.set_dimensions(15, 20); // Error: cannot assign to member variables in const member function
+                return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <div>
+          <ul>
+            <li>
+              if a member function is marked const, within the function body it is a build error to call a member function that is not marked const.
+            </li>
+          </ul>
+          <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+              #include &lt;iostream&gt;
+              struct Rectangle {
+                  double len1;
+                  double len2;
+                  double get_len1() const {
+                      return len1;
+                  }
+                  double get_len2() const {
+                      return len2;
+                  }
+                  double area() const { 
+                      return get_len1() * get_len2();
+                  }
+                  Rectangle(double l1, double l2): len1(l1), len2(l2) {}
+              };
+              int main() {
+                  const Rectangle r(5, 10);
+                  double a = r.area(); // OK
+                  return 0;
+              }
+              </code>
+          </pre>
+        </div>
+      </section>
+      <section>
+        <h2> Examples </h2>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            struct C{
+              int var;
+              void f() { ++var; cout &lt;&lt; "no const: " &lt;&lt; var &lt;&lt;  std::endl; }
+              void g() const { cout &lt;&lt; "const: " &lt;&lt; var &lt;&lt;  std::endl; }
+              void h() const {
+                var = 4;
+                f();
+                g();
+              }
+            };
+            int main() {
+              C c;
+              c.var = 5;
+              c.f(); 
+              c.g(); 
+              const C cc = c;
+              cc.f(); 
+              cc.g();
+              return 0;
+            }
+          </code>
+        </pre>
       </section>
     </div>
     </div>
@@ -336,6 +546,77 @@
       center: true,
       hash: true,
       plugins: [ RevealHighlight ]
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyToClipboard = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            successful ? resolve() : reject();
+          } catch (err) {
+            document.body.removeChild(textarea);
+            reject(err);
+          }
+        });
+      };
+
+      const getCleanCode = (codeBlock) => {
+        // 用 innerText 而不是 textContent
+        const normalized = codeBlock.innerText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').map((line) => line.replace(/\s+$/, ''));
+        const cleaned = [];
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const isEmpty = line.trim() === '';
+          if (isEmpty) {
+            const prevHasText = i > 0 && lines[i - 1].trim() !== '';
+            const nextHasText = i < lines.length - 1 && lines[i + 1].trim() !== '';
+            if (prevHasText && nextHasText) {
+              continue;
+            }
+          }
+          cleaned.push(line);
+        }
+        return cleaned.join('\n').trim();
+      };
+
+      document.querySelectorAll('pre > code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        pre.classList.add('copy-code-block');
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code-button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.textContent = 'Copy';
+
+        button.addEventListener('click', async () => {
+          const text = getCleanCode(codeBlock);
+          try {
+            await copyToClipboard(text);
+            button.textContent = 'Copied!';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          } catch (err) {
+            button.textContent = 'Retry';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          }
+        });
+
+        pre.appendChild(button);
+      });
     });
   </script>
 </body>

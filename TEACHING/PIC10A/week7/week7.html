@@ -507,35 +507,7 @@
           </pre>
         </div>
       </section>
-      <section>
-        <h2> Examples </h2>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            #include &lt;iostream&gt;
-            using namespace std;
-            struct C{
-              int var;
-              void f() { ++var; cout &lt;&lt; "no const: " &lt;&lt; var &lt;&lt;  std::endl; }
-              void g() const { cout &lt;&lt; "const: " &lt;&lt; var &lt;&lt;  std::endl; }
-              void h() const {
-                var = 4;
-                f();
-                g();
-              }
-            };
-            int main() {
-              C c;
-              c.var = 5;
-              c.f(); 
-              c.g(); 
-              const C cc = c;
-              cc.f(); 
-              cc.g();
-              return 0;
-            }
-          </code>
-        </pre>
-      </section>
+      
     </div>
     </div>
 

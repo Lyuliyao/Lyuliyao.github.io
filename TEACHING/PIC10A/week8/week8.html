@@ -9,6 +9,28 @@
   <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
   <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
   <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <style>
+    pre.copy-code-block {
+      position: relative;
+    }
+    .copy-code-button {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .copy-code-button:hover,
+    .copy-code-button:focus {
+      background: #333;
+      color: #fff;
+    }
+  </style>
 </head>
 
 <body>
@@ -18,301 +40,272 @@
       <h2> Classes</h2>
       </section>
       <section>
-      <h2> Declaring and defining structs, member variables</h2>
+      <h2> Review of Structs </h2>
+      <ul>
+        <li> A structs (Structures) are a way to group related variables together.</li>
+        <li> Unlike vectors, structs can contain different data types.</li>
+      </ul>
+      </section>
+      <section>
+      <h2> Example of Structs </h2>
       <pre>
         <code class="language-cpp" data-trim data-line-numbers>
-          struct Rectangle;// declare struct named Rectangle
-
-          int main() {
-              Rectangle r; //construct instance of Rectangle
-              Rectangle another_r; //construct instance of Rectangle
-              return 0;
-          }
-          struct Rectangle { //define struct named Rectangle (empty body now)
+          #include &lt;iostream&gt;
+          using namespace std;
+          struct C {
+            int var;
           };
+          int main() {
+            C c;
+            c.var = 5;
+            cout &lt;&lt; c.var &lt;&lt; std::endl;
+            return 0;
+          }
         </code>
       </pre>
-      </section>  
-      <section>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            struct Rectangle {
-                double len1;  // member variable length 1
-                double len2; // member variable length 2
-            };
-            int main() {
-                Rectangle r; //construct instance of Rectangle
-                r.len1 = 5; //set member variable length 1 of r to 5
-                r.len2 = 10; //set member variable length 2 of r to 10
-
-                Rectangle another_r; //construct instance of Rectangle
-                another_r.len1 = 3; //set member variable length 1 of another_r to 3
-                another_r.len2 = 6; //set member variable length 2 of another_r to 6
-                return 0;
-            }
-          </code>
-        </pre>
       </section>
       <section>
-        <h2> Accessing member variables</h2>
+        <h2> member functions </h2>
         <pre>
           <code class="language-cpp" data-trim data-line-numbers>
             #include &lt;iostream&gt;
-            struct Rectangle {
-                double len1;
-                double len2;
-            };
-            struct Square {
-                double len;
-            };
-            struct Circle {
-                double radius;
-            };
-            int main() {
-                Rectangle r;
-                r.len1 = 5;
-                r.len2 = 10;
-
-                Square s;
-                s.len = 4;
-
-                Circle c;
-                c.radius = 2.5;
-                return 0;
-            }
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2> Functions that take structs as parameters</h2>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            #include &lt;iostream&gt;
-            struct Rectangle {
-                double len1;
-                double len2;
-            };
-            struct Square {
-                double len;
-            };
-            struct Circle {
-                double radius;
-            };
-            double area(Rectangle r) {
-                return r.len1 * r.len2;
-            }
-            double area(Square s) {
-                return s.len * s.len;
-            }
-            double area(Circle c) {
-                return 3.14159 * c.radius * c.radius;
-            }
-            int main() {
-                Rectangle r;
-                r.len1 = 5;
-                r.len2 = 10;
-
-                double a = area(r); // a gets 50
-                std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
-
-                Square s;
-                s.len = 4;
-                double a2 = area(s); // a2 gets 16
-                std::cout &lt;&lt; "Area of square: " &lt;&lt; a2 &lt;&lt; std::endl;
-
-                Circle c;
-                c.radius = 2.5;
-                double a3 = area(c); // a3 gets 19.6349375
-                std::cout &lt;&lt; "Area of circle: " &lt;&lt; a3 &lt;&lt; std::endl;
-                return 0;
-            }
-
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2> member functions</h2>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            #include &lt;iostream&gt;
-            struct Rectangle {
-                double len1;
-                double len2;
-
-                double area() const { // member function area
-                    return len1 * len2;
-                }
-            };
-            int main() {
-                Rectangle r;
-                r.len1 = 5;
-                r.len2 = 10;
-
-                double a = r.area(); // call member function area
-                std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
-                return 0;
-            }
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2> multiple member functions</h2>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            #include &lt;iostream&gt;
-            struct Rectangle {
-                double len1;
-                double len2;
-
-                double area() const {
-                    return len1 * len2;
-                }
-
-                double perimeter() const {
-                    return 2 * (len1 + len2);
-                }
-            };
-            int main() {
-                Rectangle r;
-                r.len1 = 5;
-                r.len2 = 10;
-
-                double a = r.area();
-                double p = r.perimeter();
-                std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
-                std::cout &lt;&lt; "Perimeter of rectangle: " &lt;&lt; p &lt;&lt; std::endl;
-                return 0;
-            }
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2>member functions with input</h2>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            #include &lt;iostream&gt;
-            struct Rectangle {
-                double len1;
-                double len2;
-
-                void set_dimensions(double l1, double l2) {
-                    len1 = l1;
-                    len2 = l2;
-                }
-
-                double area() const {
-                    return len1 * len2;
-                }
-            };
-            int main() {
-                Rectangle r;
-                r.set_dimensions(5, 10); // set dimensions using member function
-
-                double a = r.area();
-                std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
-                return 0;
-            }
-          </code>
-        </pre>
-      </section>
-      <section>
-        <h2> More Examples</h2>
-        <pre>
-          <code class="language-cpp" data-trim data-line-numbers>
-            #include &lt;iostream&gt;
+            using namespace std;
             struct C{
-              int i;
-              
-              double f(int j){
-                int sum = i+j;
-
-                i*=10;
-                return sum/2.0;
-              }
+              int var;
+              void f() { ++var; cout &lt;&lt; var &lt;&lt;  std::endl; }
             };
             int main() {
               C c;
-              c.i = 5;
-              double d = c.f(15); // result is 10.0, c.i becomes 50
-              std::cout &lt;&lt; c.i &lt;&lt; d &lt;&lt; std::endl;
+              c.var = 5;
+              c.f(); 
               return 0;
             }
           </code>
         </pre>
       </section>
       <section>
-        <h2> Constructors (Review of vector)</h2>
+        <h2> const member functions </h2>
         <pre>
           <code class="language-cpp" data-trim data-line-numbers>
             #include &lt;iostream&gt;
-            #include &lt;vector&gt;
             using namespace std;
+            struct C{
+              int var;
+              void f() { ++var; cout &lt;&lt; var &lt;&lt;  std::endl; }
+              void g() const { cout &lt;&lt; var &lt;&lt;  std::endl; }
+            };
             int main() {
-                vector&lt;double&gt; v1;
-                vector&lt;double&gt; v2(5); // vector of size 5, default initialized to 0.0
-                vector&lt;double&gt; v3(3, 2.5); // vector of size 3, initialized to 2.5
-                return 0;
+              C c;
+              c.var = 5;
+              c.f(); 
+              return 0;
             }
           </code>
         </pre>
       </section>
       <section>
-        <h2> Struct Constructors</h2>
+        <h2> const objects </h2>
+        <ul>
+          <li> A const object is an object that cannot be modified after it is created.</li>
+        </ul>
         <pre>
           <code class="language-cpp" data-trim data-line-numbers>
             #include &lt;iostream&gt;
-            struct Rectangle {
-                double len1;
-                double len2;
-
-                // Constructor
-                Rectangle(double l1, double l2): len1(l1), len2(l2) {}
-
-                double area() const {
-                    return len1 * len2;
-                }
+            using namespace std;
+            struct C{
+              int var;
+              void f() { ++var; cout &lt;&lt; var &lt;&lt;  std::endl; }
+              void g() const { cout &lt;&lt; var &lt;&lt;  std::endl; }
             };
             int main() {
-                Rectangle r(5, 10); // create Rectangle with len1=5, len2=10
-
-                double a = r.area();
-                std::cout &lt;&lt; "Area of rectangle: " &lt;&lt; a &lt;&lt; std::endl;
-                return 0;
+              C c;
+              c.var = 5;
+              c.f(); 
+              const C cc = c;
+              cc.g();
+              return 0;
             }
           </code>
         </pre>
       </section>
       <section>
-        <h2> Struct Constructors with function body</h2>
+        <h2> Summary of making member functions and instances const </h2>
+        <ul>
+          <li> The member variable of const instance cannot be modified after it is created.</li>
+          <li> The member variable of instance cannot be modified in a const member function.</li>
+        </ul>
+      
+      </section>
+      <section>
+        <h2> Examples </h2>
         <pre>
           <code class="language-cpp" data-trim data-line-numbers>
             #include &lt;iostream&gt;
             using namespace std;
-            struct Rectangle {
-                double len1;
-                double len2;
-
-                // Constructor with function body
-                Rectangle(double l1, double l2): len1(l1), len2(l2) {
-                  if (len1 &lt;= 0 || len2 &lt;= 0) {
-                    cout &lt;&lt; "Warning: Lengths must be positive!" &lt;&lt; std::endl;
-                  }
-                }
-
-                double area() const {
-                    return len1 * len2;
-                }
+            struct C{
+              int var;
+              void f() { ++var; cout &lt;&lt; "no const: " &lt;&lt; var &lt;&lt;  std::endl; }
+              void g() const { cout &lt;&lt; "const: " &lt;&lt; var &lt;&lt;  std::endl; }
+              void h() const;
             };
             int main() {
-                Rectangle r(5, 10); // create Rectangle with len1=5, len2=10
-                Rectangle r2(-3, 4); // Warning: Lengths must be positive!
-                return 0;
+              C c;
+              c.var = 5;
+              c.f(); 
+              c.g(); 
+              const C cc = c;
+              cc.f(); 
+              cc.g();
+              return 0;
+            }
+            void C::h() const {
+              f();
+              g();
+              cout &lt;&lt; "defined outside the struct" &lt;&lt; std::endl;
             }
           </code>
+        </pre>
+      </section>
+      <section>
+        <h2> One more Example </h2>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            #include &lt;cmath&gt;
+            using namespace std;
+            
+            struct Point {
+              double x;
+              double y;
+
+              Point(double x_val, double y_val) : x(x_val), y(y_val) { }
+              double distance(const Point& other) const {
+                double dx = x - other.x;
+                double dy = y - other.y;
+                return sqrt(dx * dx + dy * dy);
+              }
+            };
+
+            int main() {
+              Point p1(3.0, 4.0);
+              Point p2(0.0, 0.0);
+              cout &lt;&lt; "Distance: " &lt;&lt; p1.distance(p2) &lt;&lt; std::endl;
+              return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> More on constructors</h2>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            struct Point{
+              double x;
+              double y;
+              Point() : x(0), y(0) { }
+              Point(double x_val, double y_val) : x(x_val), y(y_val) { }
+            };
+            struct Triangle{
+              Point p1;
+              Point p2;
+              Point p3;
+              Triangle(double x1, double y1,
+                       double x2, double y2,
+                       double x3, double y3)
+                : p1(x1, y1), p2(x2, y2), p3(x3, y3) { }
+            };
+            int main() {
+              Triangle t(1,2,3,4,5,6); 
+              return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> compute perimeter</h2>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            #include &lt;cmath&gt;
+            using namespace std;
+            struct Point{
+              double x;
+              double y;
+              Point() : x(0), y(0) { }
+              Point(double x_val, double y_val) : x(x_val), y(y_val) { }
+              double distance(const Point& other) const {
+                double dx = x - other.x;
+                double dy = y - other.y;
+                return sqrt(dx * dx + dy * dy);
+              }
+            };
+            struct Triangle{
+              Point p1;
+              Point p2;
+              Point p3;
+              Triangle(double x1, double y1,
+                       double x2, double y2,
+                       double x3, double y3)
+                : p1(x1, y1), p2(x2, y2), p3(x3, y3) { }
+              double perimeter() const {
+                return p1.distance(p2) + p2.distance(p3) + p3.distance(p1);
+              }
+            };
+            int main() {
+              Triangle t(0,0,0,3,4,0); 
+              cout &lt;&lt; "Perimeter: " &lt;&lt; t.perimeter() &lt;&lt; std::endl;
+              return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> A constructor <code> C::C(const C&)</code> is a copy constructor: copy all thing from exist one</h2>
+<pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            #include &lt;cmath&gt;
+            using namespace std;
+            struct Point{
+              double x;
+              double y;
+              Point() : x(0), y(0) { }
+              Point(double x_val, double y_val) : x(x_val), y(y_val) { }
+              double distance(const Point& other) const {
+                double dx = x - other.x;
+                double dy = y - other.y;
+                return sqrt(dx * dx + dy * dy);
+              }
+            };
+            struct Triangle{
+              Point p1;
+              Point p2;
+              Point p3;
+              Triangle(double x1, double y1,
+                       double x2, double y2,
+                       double x3, double y3)
+                : p1(x1, y1), p2(x2, y2), p3(x3, y3) { }
+              Triangle(const Point& a, const Point& b, const Point& c)
+                : p1(a), p2(b), p3(c) { }
+              double perimeter() const {
+                return p1.distance(p2) + p2.distance(p3) + p3.distance(p1);
+              }
+            };
+            int main() {
+              Point p1(0,0);
+              Point p2(0,3);
+              Point p3(4,0);
+              Triangle t(p1, p2, p3);
+              cout &lt;&lt; "Perimeter: " &lt;&lt; t.perimeter() &lt;&lt; std::endl;
+              return 0;
+            }
+          </code>
+        </pre>
       </section>
     </div>
     </div>
-
   <script src="../reveal.js/dist/reveal.js"></script>
   <script src="../reveal.js/plugin/highlight/highlight.js"></script>
   <script>
@@ -320,6 +313,77 @@
       center: true,
       hash: true,
       plugins: [ RevealHighlight ]
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyToClipboard = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            successful ? resolve() : reject();
+          } catch (err) {
+            document.body.removeChild(textarea);
+            reject(err);
+          }
+        });
+      };
+
+      const getCleanCode = (codeBlock) => {
+        // 用 innerText 而不是 textContent
+        const normalized = codeBlock.innerText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').map((line) => line.replace(/\s+$/, ''));
+        const cleaned = [];
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const isEmpty = line.trim() === '';
+          if (isEmpty) {
+            const prevHasText = i > 0 && lines[i - 1].trim() !== '';
+            const nextHasText = i < lines.length - 1 && lines[i + 1].trim() !== '';
+            if (prevHasText && nextHasText) {
+              continue;
+            }
+          }
+          cleaned.push(line);
+        }
+        return cleaned.join('\n').trim();
+      };
+
+      document.querySelectorAll('pre > code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        pre.classList.add('copy-code-block');
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code-button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.textContent = 'Copy';
+
+        button.addEventListener('click', async () => {
+          const text = getCleanCode(codeBlock);
+          try {
+            await copyToClipboard(text);
+            button.textContent = 'Copied!';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          } catch (err) {
+            button.textContent = 'Retry';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          }
+        });
+
+        pre.appendChild(button);
+      });
     });
   </script>
 </body>

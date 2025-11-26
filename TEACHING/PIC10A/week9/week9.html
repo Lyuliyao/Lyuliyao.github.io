@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Section 12</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <style>
+    pre.copy-code-block {
+      position: relative;
+    }
+    .copy-code-button {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .copy-code-button:hover,
+    .copy-code-button:focus {
+      background: #333;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+      <h2> Classes</h2>
+      </section>
+      <section>
+      <h2> Default argument </h2>
+    </section>
+    <section>
+        <h2> Example </h2>
+        
+    </section>
+    </div>
+    </div>
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyToClipboard = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            successful ? resolve() : reject();
+          } catch (err) {
+            document.body.removeChild(textarea);
+            reject(err);
+          }
+        });
+      };
+
+      const getCleanCode = (codeBlock) => {
+        // 用 innerText 而不是 textContent
+        const normalized = codeBlock.innerText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').map((line) => line.replace(/\s+$/, ''));
+        const cleaned = [];
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const isEmpty = line.trim() === '';
+          if (isEmpty) {
+            const prevHasText = i > 0 && lines[i - 1].trim() !== '';
+            const nextHasText = i < lines.length - 1 && lines[i + 1].trim() !== '';
+            if (prevHasText && nextHasText) {
+              continue;
+            }
+          }
+          cleaned.push(line);
+        }
+        return cleaned.join('\n').trim();
+      };
+
+      document.querySelectorAll('pre > code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        pre.classList.add('copy-code-block');
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code-button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.textContent = 'Copy';
+
+        button.addEventListener('click', async () => {
+          const text = getCleanCode(codeBlock);
+          try {
+            await copyToClipboard(text);
+            button.textContent = 'Copied!';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          } catch (err) {
+            button.textContent = 'Retry';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    });
+  </script>
+</body>
+</html>

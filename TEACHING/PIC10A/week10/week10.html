@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Section 12</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <style>
+    pre.copy-code-block {
+      position: relative;
+    }
+    .copy-code-button {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .copy-code-button:hover,
+    .copy-code-button:focus {
+      background: #333;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+      <h2> Pointer</h2>
+      </section>
+      <section>
+      <h2> Memory Address </h2>
+      <div>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main() {
+                int i = 42;
+                cout &lt;&lt; i &lt;&lt; endl;            // Output the value of i
+                cout &lt;&lt; &amp;i &lt;&lt; endl;        // Output the memory address of i
+
+                int* p = &amp;i;               // Pointer p holds the address of i
+                cout &lt;&lt; p &lt;&lt; endl;              // Output the address stored in p
+                cout &lt;&lt; *p &lt;&lt; endl;             // Output the value at the address stored in p
+
+                *p = 1;
+                cout &lt;&lt; i &lt;&lt; endl;            // Output the modified value of i
+                cout &lt;&lt; *p &lt;&lt; endl;             // Output the modified value via pointer p
+                return 0;
+            }
+            </code>
+            </pre>
+      </div>
+    </section>
+    <section>
+        <h2> Null pointer </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main(){
+                int i = 0;
+                int* pi = &amp;i; // pi is a pointer that holds the address of i
+                int j = 1;
+                int* pj = &amp;j; // pj is a pointer that holds the address of j
+                int* p = nullptr; // p is a null pointer
+                p = pi; // p now points to i
+                cout &lt;&lt; &amp;i &lt;&lt; endl; // Output the address of i
+                cout &lt;&lt; p &lt;&lt; endl; // Output the address stored in p
+                cout &lt;&lt; *p &lt;&lt; endl; // Output the value of i via pointer p
+                p = pj; // p now points to j
+                cout &lt;&lt; &amp;j &lt;&lt; endl; // Output the address of j
+                cout &lt;&lt; p &lt;&lt; endl; // Output the address stored in p
+                cout &lt;&lt; *p &lt;&lt; endl; // Output the value of j via pointer p
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2>Pointer to Pointer </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main(){
+                int i = 42;
+                int* p = &amp;i; // p is a pointer to i
+                int** pp = &amp;p; // pp is a pointer to pointer p
+                cout &lt;&lt; i &lt;&lt; endl; // Output the value of i
+                cout &lt;&lt; *p &lt;&lt; endl; // Output the value of i via pointer p
+                cout &lt;&lt; **pp &lt;&lt; endl; // Output the value of i via pointer to pointer pp
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2> * and & </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main(){
+                int i = 42;
+                int& ri = i; // ri is a reference to i // int& means ri is a reference to an int
+                int* p = &amp;i; // p is a pointer to i; int* means p is a pointer to an int
+                cout &lt;&lt; *p &lt;&lt; endl; // Output the value of i via pointer p; *p is dereferencing pointer p
+                cout &lt;&lt; &amp;i &lt;&lt; endl; // Output the address of i; &amp;i is the address of i
+                cout &lt;&lt; &amp;ri &lt;&lt; endl; // Output the address of i via reference ri; &amp;ri is the address of i
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2>Pointer and  const </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main(){
+                double d1 = 1.1;
+                double d2 = 2.2;
+
+                double* _p_d = &amp;d1;           // pointer to double
+                const double* _pcd = &amp;d1;     // pointer to const double
+                double* const cp_d = &amp;d1;     // const pointer to double
+                const double* const cpcd = &amp;d1; // const pointer to const
+
+                _p_d = &amp;d2;        // OK: change pointer to another address
+                _pcd = &amp;d2;       // OK: change pointer to another address
+                //cp_d = &amp;d2;      // Error: cannot change const pointer to another address
+                //cpcd = &amp;d2;     // Error: cannot change const pointer to another address
+
+                *_p_d = 3.3;         // OK: change value at the address
+                // *_pcd = 4.4;      // Error: cannot change value at
+                *cp_d = 5.5;       // OK: change value at the address
+                // *cpcd = 6.6;    // Error: cannot change value at the address
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2> pointer to const T vs  const pointer to T </h2>
+        <table>
+            <tr>
+                <th>pointer to const T</th>
+                <th>const pointer to T</th>
+            </tr>
+            <tr>
+                <td>const int* p;</td>
+                <td>int* const p;</td>
+            </tr>
+            <tr>
+                <td>can change the pointer to point to another address</td>
+                <td>cannot change the pointer to point to another address</td>
+            </tr>
+            <tr>
+                <td>cannot change the value at the address <b> by dereferencing the pointer </b></td>
+                <td>can change the value at the address </td>
+            </tr>
+        </table>
+    </section>
+    <section>
+        <h2> swap again </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            void swap(int* p1, int* p2){
+                int temp = *p1;
+                *p1 = *p2;
+                *p2 = temp;
+            }
+            int main(){
+                int a = 1;
+                int b = 2;
+                cout &lt;&lt; "Before swap: a = " &lt;&lt; a &lt;&lt; ", b = " &lt;&lt; b &lt;&lt; endl;
+                swap(&amp;a, &amp;b);
+                cout &lt;&lt; "After swap: a = " &lt;&lt; a &lt;&lt; ", b = " &lt;&lt; b &lt;&lt; endl;
+                return 0;
+            }
+            </code>
+        </pre>  
+    </section>
+    <section>
+        
+    </section>
+    </div>
+    </div>
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      hash: true,
+      plugins: [ RevealHighlight ]
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyToClipboard = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            successful ? resolve() : reject();
+          } catch (err) {
+            document.body.removeChild(textarea);
+            reject(err);
+          }
+        });
+      };
+
+      const getCleanCode = (codeBlock) => {
+        // 用 innerText 而不是 textContent
+        const normalized = codeBlock.innerText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').map((line) => line.replace(/\s+$/, ''));
+        const cleaned = [];
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const isEmpty = line.trim() === '';
+          if (isEmpty) {
+            const prevHasText = i > 0 && lines[i - 1].trim() !== '';
+            const nextHasText = i < lines.length - 1 && lines[i + 1].trim() !== '';
+            if (prevHasText && nextHasText) {
+              continue;
+            }
+          }
+          cleaned.push(line);
+        }
+        return cleaned.join('\n').trim();
+      };
+
+      document.querySelectorAll('pre > code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        pre.classList.add('copy-code-block');
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code-button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.textContent = 'Copy';
+
+        button.addEventListener('click', async () => {
+          const text = getCleanCode(codeBlock);
+          try {
+            await copyToClipboard(text);
+            button.textContent = 'Copied!';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          } catch (err) {
+            button.textContent = 'Retry';
+            setTimeout(() => (button.textContent = 'Copy'), 1500);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    });
+  </script>
+</body>
+</html>

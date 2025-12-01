@@ -304,6 +304,72 @@
           </code>
         </pre>
       </section>
+      <section>
+        <h2> Header file and cpp arrangement</h2>
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            // point.h
+            #ifndef POINT_H
+            #define POINT_H
+
+            struct Point {
+              double x;
+              double y;
+              Point();
+              Point(double x_val, double y_val);
+              double distance(const Point& other) const;
+            };
+
+            #endif // POINT_H
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> class </h2>
+        <ul>
+          <li> By default, all members of a class are private</li>
+          <li> private members can only be accessed by member functions of the class</li>
+        </ul>
+      </section>
+      <section>
+        <h2> Example </h2>1 # include <iostream >
+        <pre>
+          <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            class A{
+              public:
+                A() : i(0) {}
+                void print_i() const { cout &lt;&lt; i &lt;&lt; ' '; f(); }
+                void mutate_i() { ++i; f(); }
+                void mutate_other_i(A& other) const;
+              private:
+                int i;
+                void f() const {}
+            };
+            void A::mutate_other_i(A& other) const { ++other.i; other.f(); }
+            int main() {
+              A a0, a1;
+              // a0.i; // Builderror.
+              // a0.f(); // Builderror.
+              a0.print_i();
+              a0.mutate_i();
+              a0.print_i();
+              a1.print_i();
+              a0.mutate_other_i(a1);
+              a1.print_i();
+              return 0;
+            }
+          </code>
+        </pre>
+      </section>
+      <section>
+        <h2> Build error</h2>
+        <ul>
+          <li> It is a build error to access a private member of a struct or class outside of the definitions of the class’s member functions and constructors</li>
+        </ul>
+      </section>
+      
     </div>
     </div>
   <script src="../reveal.js/dist/reveal.js"></script>

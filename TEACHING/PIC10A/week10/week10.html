@@ -198,7 +198,101 @@
         </pre>  
     </section>
     <section>
-        
+        <h1>C-type Arrays</h1>
+    </section>
+    <section>
+        <h2>Introduction to C-type Arrays</h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main(){
+                const int size = 5;
+                int arr[size] = {1, 2, 3, 4, 5}; // Declare and initialize an array of size 5
+                for(int i = 0; i &lt; size; ++i){
+                    cout &lt;&lt; arr[i] &lt;&lt; ' '; // Access array elements using index
+                }
+                cout &lt;&lt; endl;
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2>Array and Pointer</h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            int main(){
+                int* p = nullptr;
+
+                for (int i =0 ; i &lt; 5; ++i){
+                    cout &lt;&lt; p + i &lt;&lt; ' '; // Output the address of each element
+                }
+                cout &lt;&lt; endl;
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2> Array parameter </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+
+            void printArray(int arr[], int size){
+                for(int i = 0; i &lt; size; ++i){
+                    cout &lt;&lt; arr[i] &lt;&lt; ' ';
+                }
+                cout &lt;&lt; endl;
+            }
+            void printArrayPtr(int* arr, int size){
+                for(int i = 0; i &lt; size; ++i){
+                    cout &lt;&lt; *(arr + i) &lt;&lt; ' ';
+                }
+                cout &lt;&lt; endl;
+            }
+            int main(){
+                const int size = 5;
+                int arr[size] = {1, 2, 3, 4, 5};
+                printArray(arr, size); // Pass array to function
+                printArrayPtr(arr, size); // Pass array to function using pointer
+                return 0;
+            }
+            </code>
+        </pre>
+    </section>
+    <section>
+        <h2> add two vectors on even index </h2>
+        <pre>
+            <code class="language-cpp" data-trim data-line-numbers>
+            #include &lt;iostream&gt;
+            using namespace std;
+            void printArrayPtr(int* arr, int size){
+                for(int i = 0; i &lt; size; ++i){
+                    cout &lt;&lt; *(arr + i) &lt;&lt; ' ';
+                }
+                cout &lt;&lt; endl;
+            }
+            void addEvenIndex(const int* a, const int* b, int* result, int size){
+                for(int i = 0; i &lt; size; i += 2){
+                    result[i] = a[i] + b[i];
+                }
+            }
+            int main(){
+                const int size = 6;
+                int a[size] = {1, 2, 3, 4, 5, 6};
+                int b[size] = {10, 20, 30, 40, 50, 60};
+                int result[size] = {0};
+                addEvenIndex(a, b, result, size);
+                printArrayPtr(result, size);
+                return 0;
+            }
+            </code>
+        </pre>
     </section>
     </div>
     </div>

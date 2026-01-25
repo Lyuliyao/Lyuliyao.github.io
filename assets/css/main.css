@@ -1,5 +1,6 @@
 @import url(fontawesome-all.min.css);
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Roboto+Slab:400,700");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;600;700&display=swap");
 
 /* ============ Design Tokens ============ */
 :root{
@@ -447,4 +448,292 @@ hr {
   flex-direction: row-reverse;
   min-height: 100vh; }
 
+/* ============ Homepage Refresh ============ */
+body.home {
+  --home-ink: #1b2726;
+  --home-accent: #2a5c50;
+  --home-accent-strong: #b55a2d;
+  --home-panel: rgba(255, 255, 255, 0.86);
+  --home-border: rgba(20, 33, 32, 0.12);
+  color: var(--home-ink);
+  font-family: "Manrope", "Open Sans", sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% 10%, rgba(255, 235, 210, 0.65), transparent 60%),
+    radial-gradient(900px 500px at 90% 15%, rgba(203, 224, 220, 0.75), transparent 55%),
+    linear-gradient(160deg, #f7f2ea 0%, #e6f0ef 100%);
+}
 
+body.home::before,
+body.home::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body.home::before {
+  background: radial-gradient(520px 260px at 80% 80%, rgba(255, 219, 178, 0.4), transparent 70%);
+  opacity: 0.8;
+}
+
+body.home::after {
+  background-image: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0));
+  mix-blend-mode: multiply;
+}
+
+body.home #wrapper {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 22rem minmax(0, 1fr);
+  gap: 2.5rem;
+  align-items: start;
+}
+
+body.home #main {
+  grid-column: 2;
+}
+
+body.home #sidebar {
+  grid-column: 1;
+}
+
+body.home #main > .inner {
+  padding: 0 2.5rem 3rem;
+}
+
+body.home h1,
+body.home h2,
+body.home h3,
+body.home h4,
+body.home h5,
+body.home h6 {
+  font-family: "Fraunces", "Roboto Slab", serif;
+  letter-spacing: 0.01em;
+}
+
+body.home a {
+  color: var(--home-accent);
+  border-bottom-color: rgba(42, 92, 80, 0.35);
+}
+
+body.home a:hover {
+  color: var(--home-accent-strong);
+  border-bottom-color: rgba(181, 90, 45, 0.6);
+}
+
+body.home #header {
+  border-bottom: 1px solid var(--home-border);
+  padding: 2.5rem 0 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+body.home #header .logo {
+  font-size: clamp(18px, 1vw + 14px, 22px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.home #banner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 2.5rem;
+  padding: 2.75rem;
+  background: var(--home-panel);
+  border: 1px solid var(--home-border);
+  border-radius: 22px;
+  box-shadow: 0 24px 70px rgba(22, 34, 33, 0.12);
+  overflow: hidden;
+}
+
+body.home #banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+body.home #banner .content {
+  position: relative;
+  z-index: 1;
+}
+
+body.home #banner h1 {
+  font-size: clamp(40px, 4.8vw, 64px);
+  margin-bottom: 0.5rem;
+  border-bottom: none;
+}
+
+body.home #banner h4 {
+  margin-top: 1.1rem;
+  color: rgba(27, 39, 38, 0.75);
+  font-weight: 600;
+}
+
+body.home #banner .image.object {
+  position: relative;
+  z-index: 1;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(22, 34, 33, 0.18);
+  transform: translateY(6px);
+}
+
+body.home #banner .image.object img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+body.home #main > .inner > section:not(#banner) {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--home-border);
+  border-radius: 18px;
+  padding: 2.25rem;
+  margin-top: 2.5rem;
+  box-shadow: 0 18px 50px rgba(22, 34, 33, 0.08);
+}
+
+body.home #main > .inner > section:not(#banner) h2 {
+  border-bottom: 2px solid rgba(42, 92, 80, 0.25);
+  padding-bottom: 0.35rem;
+}
+
+body.home #main > .inner > section:not(#banner) h2 .logo {
+  border: 0;
+  padding: 0.2rem 0.6rem;
+  margin-left: 0.35rem;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(42, 92, 80, 0.12);
+  border-radius: 999px;
+}
+
+body.home #sidebar {
+  background: linear-gradient(160deg, rgba(33, 63, 58, 0.08), rgba(255, 255, 255, 0.6));
+  border: 1px solid rgba(33, 63, 58, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 22px 50px rgba(22, 34, 33, 0.12);
+  width: 100%;
+  max-width: 22rem;
+  position: relative;
+  top: auto;
+  left: auto;
+  height: auto;
+  z-index: 1;
+  align-self: start;
+}
+
+body.home #sidebar > .inner {
+  width: 100%;
+  max-width: 22rem;
+  position: relative;
+  top: auto;
+  left: auto;
+  height: auto;
+  overflow: visible;
+  box-sizing: border-box;
+}
+
+body.home #sidebar h2 {
+  letter-spacing: 0.04em;
+}
+
+body.home #sidebar .contact li {
+  font-size: 0.95em;
+}
+
+body.home #sidebar .toggle {
+  display: none;
+}
+
+body.home #sidebar.inactive {
+  margin-left: 0;
+}
+
+@keyframes homeFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes homeFadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+body.home #banner .content > * {
+  animation: homeFadeUp 0.8s ease both;
+}
+
+body.home #banner .content > *:nth-child(1) { animation-delay: 0.05s; }
+body.home #banner .content > *:nth-child(2) { animation-delay: 0.12s; }
+body.home #banner .content > *:nth-child(3) { animation-delay: 0.2s; }
+body.home #banner .content > *:nth-child(4) { animation-delay: 0.28s; }
+body.home #banner .content > *:nth-child(5) { animation-delay: 0.36s; }
+body.home #banner .content > *:nth-child(6) { animation-delay: 0.44s; }
+
+body.home #banner .image.object {
+  animation: homeFadeIn 0.9s ease 0.2s both;
+}
+
+@media screen and (max-width: 1280px) {
+  body.home #wrapper {
+    grid-template-columns: 20rem minmax(0, 1fr);
+  }
+  body.home #main > .inner {
+    padding: 0 2rem 3rem;
+  }
+  body.home #sidebar {
+    max-width: 20rem;
+    position: relative;
+    top: auto;
+    left: auto;
+    height: auto;
+    z-index: 1;
+  }
+  body.home #sidebar .toggle {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 980px) {
+  body.home #wrapper {
+    grid-template-columns: 1fr;
+  }
+  body.home #main,
+  body.home #sidebar {
+    grid-column: 1;
+  }
+  body.home #sidebar {
+    max-width: 100%;
+  }
+  body.home #sidebar > .inner {
+    max-width: 100%;
+  }
+  body.home #banner {
+    grid-template-columns: 1fr;
+  }
+  body.home #banner .image.object {
+    max-width: 420px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 736px) {
+  body.home #main > .inner {
+    padding: 0 1.25rem 2.5rem;
+  }
+  body.home #banner {
+    padding: 2rem 1.5rem;
+  }
+  body.home #main > .inner > section:not(#banner) {
+    padding: 1.6rem;
+  }
+}

@@ -18,6 +18,17 @@
     .wrap{max-width:var(--maxw); margin:auto; padding:24px}
     header.site{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0 20px}
     .brand{font-weight:800; letter-spacing:.3px; font-size:1.1rem}
+    .lang-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    .lang-toggle{
+      padding:0.35rem 0.6rem;
+      border:1px solid #c9c9c9;
+      border-radius:6px;
+      background:#fff;
+      color:inherit;
+      font-size:0.85rem;
+      cursor:pointer;
+    }
+    .lang-toggle:hover{background:#f2f2f2}
 
     /* Section titles */
     .section-title{font-size:1.8rem; margin:4px 0 14px}
@@ -67,46 +78,101 @@
     <div id="main">
         <div class="inner">
         <header id="header">
-            <a href="index.html" class="logo"><b>Lyu Liyao's</b> Home Page</a>
-            <nav aria-label="Skip links">
-            <a href="#interests" class="badge">Interests</a>
-            <a href="#mlmm" class="badge">ML × Multiscale</a>
-            <a href="#sci-ml" class="badge">Scientific ML</a>
-            <a href="#gfree" class="badge">Gradient‑Free</a>
-        </nav>
+            <a href="index.html" class="logo">
+              <b>
+                <span data-lang="en">Lyu Liyao's</span>
+                <span data-lang="zh" hidden>吕力遥</span>
+              </b>
+              <span data-lang="en"> Home Page</span>
+              <span data-lang="zh" hidden> 主页</span>
+            </a>
+            <div class="lang-controls">
+              <nav aria-label="Skip links">
+                <a href="#interests" class="badge">
+                  <span data-lang="en">Interests</span>
+                  <span data-lang="zh" hidden>兴趣方向</span>
+                </a>
+                <a href="#mlmm" class="badge">
+                  <span data-lang="en">ML × Multiscale</span>
+                  <span data-lang="zh" hidden>机器学习×多尺度</span>
+                </a>
+                <a href="#sci-ml" class="badge">
+                  <span data-lang="en">Scientific ML</span>
+                  <span data-lang="zh" hidden>科学机器学习</span>
+                </a>
+                <a href="#gfree" class="badge">
+                  <span data-lang="en">Gradient‑Free</span>
+                  <span data-lang="zh" hidden>无梯度优化</span>
+                </a>
+              </nav>
+              <button id="langToggle" class="lang-toggle" type="button" aria-pressed="false">中文</button>
+            </div>
         </header>
 
         <!-- Research Interests -->
         <section id="interests" class="block">
-        <h2 class="section-title">Research Interests</h2>
+        <h2 class="section-title">
+          <span data-lang="en">Research Interests</span>
+          <span data-lang="zh" hidden>研究方向</span>
+        </h2>
         <div class="pill-list grid">
             <div class="pill">
-            <strong>Multiscale Modeling</strong>
-            <div class="bullets">Coarse‑Grained Molecular Dynamics, Mori–Zwanzig, Generalized Langevin Equation, Model Reduction</div>
+            <strong>
+              <span data-lang="en">Multiscale Modeling</span>
+              <span data-lang="zh" hidden>多尺度建模</span>
+            </strong>
+            <div class="bullets">
+              <span data-lang="en">Coarse‑Grained Molecular Dynamics, Mori–Zwanzig, Generalized Langevin Equation, Model Reduction</span>
+              <span data-lang="zh" hidden>粗粒化分子动力学、Mori–Zwanzig、广义朗之万方程、模型降阶</span>
+            </div>
             </div>
             <div class="pill">
-            <strong>Optimization</strong>
-            <div class="bullets">Consensus‑Based Optimization & Sampling, Stochastic Optimal Control</div>
+            <strong>
+              <span data-lang="en">Optimization</span>
+              <span data-lang="zh" hidden>优化</span>
+            </strong>
+            <div class="bullets">
+              <span data-lang="en">Consensus‑Based Optimization & Sampling, Stochastic Optimal Control</span>
+              <span data-lang="zh" hidden>基于共识的优化与采样、随机最优控制</span>
+            </div>
             </div>
             <div class="pill">
-            <strong>Scientific Computing</strong>
-            <div class="bullets">Mixed Residual Methods, Deep‑Learning‑aided Discontinuous Galerkin, Reproducing Activation Functions</div>
+            <strong>
+              <span data-lang="en">Scientific Computing</span>
+              <span data-lang="zh" hidden>科学计算</span>
+            </strong>
+            <div class="bullets">
+              <span data-lang="en">Mixed Residual Methods, Deep‑Learning‑aided Discontinuous Galerkin, Reproducing Activation Functions</span>
+              <span data-lang="zh" hidden>混合残差方法、深度学习辅助的不连续 Galerkin、再现激活函数</span>
+            </div>
             </div>
         </div>
         </section>
 
         <!-- ML & Multiscale -->
         <section id="mlmm" class="block">
-        <h2 class="section-title">Machine Learning and Multiscale Modeling</h2>
-        <p class="subtle">Developing learning methodologies that enhance bottom‑up multiscale modeling and accurately predict complex physical phenomena.</p>
+        <h2 class="section-title">
+          <span data-lang="en">Machine Learning and Multiscale Modeling</span>
+          <span data-lang="zh" hidden>机器学习与多尺度建模</span>
+        </h2>
+        <p class="subtle">
+          <span data-lang="en">Developing learning methodologies that enhance bottom‑up multiscale modeling and accurately predict complex physical phenomena.</span>
+          <span data-lang="zh" hidden>发展数据驱动方法以提升自下而上的多尺度建模能力，并准确预测复杂物理现象。</span>
+        </p>
 
         <article class="feature">
             <div class="txt">
-            <h3 style="margin:0 0 6px">Non‑conservative Memory Terms for CGMD</h3>
+            <h3 style="margin:0 0 6px">
+              <span data-lang="en">Non‑conservative Memory Terms for CGMD</span>
+              <span data-lang="zh" hidden>CGMD 的非保守记忆项</span>
+            </h3>
             <ol>
-                <li><strong>Many‑body dissipative interactions.</strong> ML‑based coarse‑grained MD using Mori–Zwanzig to include non‑Markovian many‑body memory.</li>
-                <li><strong>Symmetry‑aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
-                <li><strong>Beyond mean‑field metrics.</strong> Built on Mori–Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
+                <li data-lang="en"><strong>Many‑body dissipative interactions.</strong> ML‑based coarse‑grained MD using Mori–Zwanzig to include non‑Markovian many‑body memory.</li>
+                <li data-lang="zh" hidden><strong>多体耗散相互作用。</strong> 基于 Mori–Zwanzig 的机器学习粗粒化分子动力学，引入非马尔可夫多体记忆项。</li>
+                <li data-lang="en"><strong>Symmetry‑aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
+                <li data-lang="zh" hidden><strong>对称性神经网络。</strong> 网络满足旋转、平移与置换对称性，用于刻画摩擦矩阵。</li>
+                <li data-lang="en"><strong>Beyond mean‑field metrics.</strong> Built on Mori–Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
+                <li data-lang="zh" hidden><strong>超越平均场度量。</strong> 基于 Mori–Zwanzig 传递异质信息，而非仅匹配速度自相关函数（VACF）。</li>
             </ol>
             </div>
             <div class="embed" aria-label="Von Hove animation">
@@ -116,10 +182,15 @@
 
         <article class="feature">
             <div class="txt">
-            <h3 style="margin:0 0 6px">Coarse‑Grained Models for <em>Non‑Equilibrium</em> Processes</h3>
+            <h3 style="margin:0 0 6px">
+              <span data-lang="en">Coarse‑Grained Models for <em>Non‑Equilibrium</em> Processes</span>
+              <span data-lang="zh" hidden>非平衡过程的粗粒化模型</span>
+            </h3>
             <ol>
-                <li><strong>Generalization challenge.</strong> Non‑equilibrium applicability is limited by inconsistent conditional distributions.</li>
-                <li><strong>Training CG variables.</strong> Time‑lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
+                <li data-lang="en"><strong>Generalization challenge.</strong> Non‑equilibrium applicability is limited by inconsistent conditional distributions.</li>
+                <li data-lang="zh" hidden><strong>泛化挑战。</strong> 非平衡情形下条件分布不一致限制了模型的适用性。</li>
+                <li data-lang="en"><strong>Training CG variables.</strong> Time‑lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
+                <li data-lang="zh" hidden><strong>训练粗粒变量。</strong> 采用时滞 ICA 寻找辅助粗粒变量，最小化未解析模态的熵贡献。</li>
             </ol>
             </div>
             <div class="embed" aria-label="Velocity evolution animation">
@@ -130,15 +201,24 @@
 
         <!-- Scientific ML Algorithms -->
         <section id="sci-ml" class="block">
-        <h2 class="section-title">Algorithms of Scientific Machine Learning</h2>
+        <h2 class="section-title">
+          <span data-lang="en">Algorithms of Scientific Machine Learning</span>
+          <span data-lang="zh" hidden>科学机器学习算法</span>
+        </h2>
 
         <article class="feature">
             <div class="txt">
-            <h3 style="margin:0 0 6px">Deep Mixed Residual Method (MIM) for <em>high‑order</em> PDEs</h3>
+            <h3 style="margin:0 0 6px">
+              <span data-lang="en">Deep Mixed Residual Method (MIM) for <em>high‑order</em> PDEs</span>
+              <span data-lang="zh" hidden>用于高阶 PDE 的深度混合残差方法（MIM）</span>
+            </h3>
             <ol>
-                <li><strong>Mixed residual.</strong> Rewrite a high‑order PDE as a first‑order system (akin to LDG and mixed FEM).</li>
-                <li><strong>Flexible networks.</strong> Share or separate DNNs for different unknowns as needed.</li>
-                <li><strong>Built‑in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
+                <li data-lang="en"><strong>Mixed residual.</strong> Rewrite a high‑order PDE as a first‑order system (akin to LDG and mixed FEM).</li>
+                <li data-lang="zh" hidden><strong>混合残差。</strong> 将高阶 PDE 改写为一阶系统（类似 LDG 与混合 FEM）。</li>
+                <li data-lang="en"><strong>Flexible networks.</strong> Share or separate DNNs for different unknowns as needed.</li>
+                <li data-lang="zh" hidden><strong>灵活网络。</strong> 根据未知量选择共享或独立的 DNN。</li>
+                <li data-lang="en"><strong>Built‑in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
+                <li data-lang="zh" hidden><strong>内置边界条件。</strong> 通过构造满足边界/初值条件的网络以保证一致性。</li>
             </ol>
             </div>
             <div class="embed" aria-label="Biharmonic visualization">
@@ -148,10 +228,15 @@
 
         <article class="feature">
             <div class="txt">
-            <h3 style="margin:0 0 6px">Deep Learning‑based Discontinuous Galerkin (D2GM)</h3>
+            <h3 style="margin:0 0 6px">
+              <span data-lang="en">Deep Learning‑based Discontinuous Galerkin (D2GM)</span>
+              <span data-lang="zh" hidden>基于深度学习的不连续 Galerkin 方法（D2GM）</span>
+            </h3>
             <ol>
-                <li><strong>Handles discontinuities.</strong> Weak formulation with discontinuous bases approximates shocks accurately.</li>
-                <li><strong>High‑dimensional uncertainty.</strong> Mini‑batch sampling controls sample count and mitigates curse of dimensionality.</li>
+                <li data-lang="en"><strong>Handles discontinuities.</strong> Weak formulation with discontinuous bases approximates shocks accurately.</li>
+                <li data-lang="zh" hidden><strong>处理不连续性。</strong> 采用不连续基函数的弱形式更准确地逼近间断。</li>
+                <li data-lang="en"><strong>High‑dimensional uncertainty.</strong> Mini‑batch sampling controls sample count and mitigates curse of dimensionality.</li>
+                <li data-lang="zh" hidden><strong>高维不确定性。</strong> 通过小批量采样控制样本数量并缓解维数灾难。</li>
             </ol>
             </div>
             <div class="embed" aria-label="Burgers visualization">
@@ -162,10 +247,13 @@
 
         <!-- Gradient‑Free -->
         <section id="gfree" class="block">
-        <h2 class="section-title">Gradient‑Free Optimization Methods</h2>
+        <h2 class="section-title">
+          <span data-lang="en">Gradient‑Free Optimization Methods</span>
+          <span data-lang="zh" hidden>无梯度优化方法</span>
+        </h2>
         <div class="card">
-            Exploring optimization strategies that bypass gradient calculations for complex, multi‑modal problems
-            (e.g., consensus‑based optimization/sampling, finite‑horizon stochastic control).
+            <span data-lang="en">Exploring optimization strategies that bypass gradient calculations for complex, multi‑modal problems (e.g., consensus‑based optimization/sampling, finite‑horizon stochastic control).</span>
+            <span data-lang="zh" hidden>探索无需梯度计算的优化策略，解决复杂多峰问题（如基于共识的优化/采样、有限时域随机控制）。</span>
         </div>
         </section>
     </div>
@@ -183,7 +271,10 @@
 				</script>
             <section>
                 <header class="major">
-                    <h2>Get in touch</h2>
+                    <h2>
+                      <span data-lang="en">Get in touch</span>
+                      <span data-lang="zh" hidden>联系方式</span>
+                    </h2>
                 </header>
                 <ul class="contact">
                     <li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
@@ -196,6 +287,33 @@
         </div>
   </div>
 </div>
+  <script>
+    (function(){
+      var currentLang = 'en';
+      var toggle = document.getElementById('langToggle');
+      var elements = document.querySelectorAll('[data-lang]');
+
+      function applyLang(lang){
+        currentLang = lang;
+        elements.forEach(function(el){
+          el.hidden = el.getAttribute('data-lang') !== lang;
+        });
+        if (toggle) {
+          toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');
+          toggle.textContent = lang === 'zh' ? 'English' : '中文';
+        }
+        document.documentElement.setAttribute('lang', lang);
+      }
+
+      if (toggle) {
+        toggle.addEventListener('click', function(){
+          applyLang(currentLang === 'en' ? 'zh' : 'en');
+        });
+      }
+
+      applyLang('en');
+    })();
+  </script>
   <!-- Optional: Google Analytics (kept async; safe to remove) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
   <script>

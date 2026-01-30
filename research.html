@@ -47,15 +47,20 @@
     .bullets{margin:6px 0 0; color:var(--muted)}
 
     /* Feature rows with text + media */
-    .feature{display:flex; gap:18px; align-items:flex-start; background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+    .feature{display:flex; gap:18px; align-items:flex-start; background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; min-height:480px}
     .feature + .feature{margin-top:16px}
     .feature .txt{flex:1; min-width:250px}
     .feature .txt ol{margin:6px 0 0 18px}
 
     /* Responsive embeds with stable aspect ratio */
-    .embed{position:relative; isolation:isolate; width:100%; max-width:680px; aspect-ratio:16/9; border-radius:12px; overflow:hidden; flex:1; min-width:280px; box-shadow:0 8px 30px rgba(0,0,0,.35)}
+    .embed{position:relative; isolation:isolate; width:100%; max-width:680px; aspect-ratio:4/3; min-height:420px; border-radius:12px; overflow:hidden; flex:1; min-width:280px; box-shadow:0 8px 30px rgba(0,0,0,.35)}
     .embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
     .embed::after{content:''; position:absolute; inset:0; box-shadow:inset 0 0 0 1px #ffffff10; border-radius:inherit; pointer-events:none}
+
+    @media (max-width: 820px){
+      .feature{min-height:360px}
+      .embed{min-height:300px}
+    }
 
     /* Section blocks */
     section.block{margin:20px 0}

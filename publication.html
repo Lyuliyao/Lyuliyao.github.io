@@ -1,10 +1,23 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
     <title>Publications</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
+    <style>
+      .lang-toggle{
+        margin-left:0.75rem;
+        padding:0.35rem 0.6rem;
+        border:1px solid #c9c9c9;
+        border-radius:6px;
+        background:#fff;
+        color:inherit;
+        font-size:0.85rem;
+        cursor:pointer;
+      }
+      .lang-toggle:hover{background:#f2f2f2}
+    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
@@ -20,11 +33,22 @@
         <div id="main">
             <div class="inner">
                 <header id="header">
-                    <a href="index.html" class="logo"><b>Lyu Liyao's </b>Home Page</a>
+                    <a href="index.html" class="logo">
+                      <b>
+                        <span data-lang="en">Lyu Liyao's</span>
+                        <span data-lang="zh" hidden>吕力遥</span>
+                      </b>
+                      <span data-lang="en"> Home Page</span>
+                      <span data-lang="zh" hidden> 主页</span>
+                    </a>
+                    <button id="langToggle" class="lang-toggle" type="button" aria-pressed="false">中文</button>
                 </header>
                 <section>
                     <header class="main">
-                        <h2>Publications</h2>
+                        <h2>
+                          <span data-lang="en">Publications</span>
+                          <span data-lang="zh" hidden>发表论文</span>
+                        </h2>
                     </header>
                     	<ol reversed>
 						<li>
@@ -110,9 +134,13 @@
 						</li>
                     </ol>
                     <footer id="footer">
-                        <p class="copyright">
+                        <p class="copyright" data-lang="en">
                             &copy;
                             <sup>*</sup> represent the corresponding author..
+                        </p>
+                        <p class="copyright" data-lang="zh" hidden>
+                            &copy;
+                            <sup>*</sup> 表示通讯作者。
                         </p>
                     </footer>
                 </section>
@@ -129,7 +157,10 @@
 				</script>
 				<section>
 					<header class="major">
-						<h2>Get in touch</h2>
+						<h2>
+                          <span data-lang="en">Get in touch</span>
+                          <span data-lang="zh" hidden>联系方式</span>
+                        </h2>
 					</header>
 					<ul class="contact">
 						<li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
@@ -143,5 +174,32 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+      (function(){
+        var currentLang = 'en';
+        var toggle = document.getElementById('langToggle');
+        var elements = document.querySelectorAll('[data-lang]');
+
+        function applyLang(lang){
+          currentLang = lang;
+          elements.forEach(function(el){
+            el.hidden = el.getAttribute('data-lang') !== lang;
+          });
+          if (toggle) {
+            toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');
+            toggle.textContent = lang === 'zh' ? 'English' : '中文';
+          }
+          document.documentElement.setAttribute('lang', lang);
+        }
+
+        if (toggle) {
+          toggle.addEventListener('click', function(){
+            applyLang(currentLang === 'en' ? 'zh' : 'en');
+          });
+        }
+
+        applyLang('en');
+      })();
+    </script>
 </body>
 </html>

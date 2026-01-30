@@ -1,10 +1,23 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
     <title>Lyu Liyao's Home page</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
     <link rel="stylesheet" href="assets/css/main.css"/>
+    <style>
+      .lang-toggle{
+        margin-left:0.75rem;
+        padding:0.35rem 0.6rem;
+        border:1px solid #c9c9c9;
+        border-radius:6px;
+        background:#fff;
+        color:inherit;
+        font-size:0.85rem;
+        cursor:pointer;
+      }
+      .lang-toggle:hover{background:#f2f2f2}
+    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
@@ -20,34 +33,62 @@
     <div id="main">
         <div class="inner">
             <header id="header">
-                <a href="index.html" class="logo"><b>Lyu Liyao's </b> Home Page</a>
+                <a href="index.html" class="logo">
+                  <b>
+                    <span data-lang="en">Lyu Liyao's</span>
+                    <span data-lang="zh" hidden>吕力遥</span>
+                  </b>
+                  <span data-lang="en"> Home Page</span>
+                  <span data-lang="zh" hidden> 主页</span>
+                </a>
+                <button id="langToggle" class="lang-toggle" type="button" aria-pressed="false">中文</button>
             </header>
             <section id="banner">
             <div class="content">
                 <header>
-                <h1>Lyu Liyao<br /><span lang="zh">吕力遥</span></h1>
+                <h1>
+                  <span data-lang="en">Lyu Liyao</span>
+                  <span data-lang="zh" hidden>吕力遥</span>
+                </h1>
                 </header>
 
-                <h4>Hedrick Assistant Adjunct Professor</h4>
+                <h4>
+                  <span data-lang="en">Hedrick Assistant Adjunct Professor</span>
+                  <span data-lang="zh" hidden>Hedrick 助理兼职教授</span>
+                </h4>
                 <p>
-                    2025-2026
+                  <span data-lang="en">2025-2026</span>
+                  <span data-lang="zh" hidden>2025-2026</span>
                 </p>
-                <p>UCLA Department of Mathematics</p>
+                <p>
+                  <span data-lang="en">UCLA Department of Mathematics</span>
+                  <span data-lang="zh" hidden>加州大学洛杉矶分校 数学系</span>
+                </p>
 
-                <h4>Ph.D.</h4>
+                <h4>
+                  <span data-lang="en">Ph.D.</span>
+                  <span data-lang="zh" hidden>博士</span>
+                </h4>
                 <p>
-                    2020-2025
+                  <span data-lang="en">2020-2025</span>
+                  <span data-lang="zh" hidden>2020-2025</span>
                 </p>
-                <p>Computational Mathematics, Science &amp; Engineering<br />Michigan State University</p>
+                <p>
+                  <span data-lang="en">Computational Mathematics, Science &amp; Engineering<br />Michigan State University</span>
+                  <span data-lang="zh" hidden>计算数学、科学与工程<br />密歇根州立大学</span>
+                </p>
 
-                <h4>B.S.</h4>
+                <h4>
+                  <span data-lang="en">B.S.</span>
+                  <span data-lang="zh" hidden>学士</span>
+                </h4>
                 <p>
-                    2016-2020
+                  <span data-lang="en">2016-2020</span>
+                  <span data-lang="zh" hidden>2016-2020</span>
                 </p>
                 <p>
-                Mathematics and Applied Mathematics<br />
-                School of Mathematical Sciences<br />
-                CW Chu College, Soochow University
+                  <span data-lang="en">Mathematics and Applied Mathematics<br />School of Mathematical Sciences<br />CW Chu College, Soochow University</span>
+                  <span data-lang="zh" hidden>数学与应用数学<br />数学科学学院<br />苏州大学 敬文书院</span>
                 </p>
             </div>
 
@@ -58,29 +99,51 @@
 
             <section>
             <header class="main">
-                <h2>Biography <a href="CV/cv.pdf" class="logo">[CV]</a></h2>
+                <h2>
+                  <span data-lang="en">Biography</span>
+                  <span data-lang="zh" hidden>简介</span>
+                  <a href="CV/cv.pdf" class="logo">
+                    <span data-lang="en">[CV]</span>
+                    <span data-lang="zh" hidden>[简历]</span>
+                  </a>
+                </h2>
             </header>
-            <p>
+            <p data-lang="en">
                 I will join School of Artificial Intelligence and Data Science in University of Science and Technology of China starting from Fall 2026.
             </p>
-            <p>
+            <p data-lang="zh" hidden>
+                我将于2026年秋季加入中国科学技术大学人工智能与数据科学学院。
+            </p>
+            <p data-lang="en">
                 I am a Hedrick Assistant Adjunct Professor in the UCLA Department of Mathematics (since Fall 2025) working with Prof. <a href="https://www.math.ucla.edu/~bertozzi/" class="logo">Andrea L. Bertozzi</a> and Prof. <a href="https://sites.google.com/view/haydenschaeffer/" class="logo">Hayden Schaeffer</a>.
             </p>
+            <p data-lang="zh" hidden>
+                自2025年秋季起，我在加州大学洛杉矶分校数学系担任 Hedrick 助理兼职教授，合作导师为 <a href="https://www.math.ucla.edu/~bertozzi/" class="logo">Andrea L. Bertozzi</a> 教授和 <a href="https://sites.google.com/view/haydenschaeffer/" class="logo">Hayden Schaeffer</a> 教授。
+            </p>
 
-            <p>
+            <p data-lang="en">
                 I began my Ph.D. in Computational Mathematics, Science, and Engineering at Michigan State University in Fall 2020, advised by Prof.
                 <a href="https://leihuan-mp.github.io/research/" class="logo">Huan Lei</a>.
             </p>
+            <p data-lang="zh" hidden>
+                我于2020年秋季在密歇根州立大学计算数学、科学与工程专业开始博士学习，导师为 <a href="https://leihuan-mp.github.io/research/" class="logo">Huan Lei</a> 教授。
+            </p>
 
-            <p>
+            <p data-lang="en">
                 I earned my B.S. in Mathematics and Applied Mathematics from Soochow University in July 2020, where I worked on computational chemistry and machine learning with Prof.
                 <a href="https://sz.ustc.edu.cn/rcdw_show/46.html" class="logo">Jingrun Chen</a>.
             </p>
+            <p data-lang="zh" hidden>
+                我于2020年7月获得苏州大学数学与应用数学学士学位，期间与 <a href="https://sz.ustc.edu.cn/rcdw_show/46.html" class="logo">Jingrun Chen</a> 教授合作开展计算化学与机器学习研究。
+            </p>
 
-            <p>
+            <p data-lang="en">
                 I also participated in the UC Berkeley Extension Program (Spring 2019), completed a research internship at HKUST with Prof.
                 <a href="https://www.math.ust.hk/~maxiang/" class="logo">Yang Xiang</a> (Summer 2019), and visited UMass Dartmouth to work on discontinuous Galerkin methods with Prof.
                 <a href="https://lesliechenz.github.io/webpage/" class="logo">Zheng Chen</a> (Fall 2019).
+            </p>
+            <p data-lang="zh" hidden>
+                我还参加了 UC Berkeley Extension Program（2019年春季），并于2019年夏季在香港科技大学与 <a href="https://www.math.ust.hk/~maxiang/" class="logo">Yang Xiang</a> 教授合作完成科研实习，2019年秋季在马萨诸塞大学达特茅斯分校与 <a href="https://lesliechenz.github.io/webpage/" class="logo">Zheng Chen</a> 教授合作开展不连续 Galerkin 方法研究。
             </p>
 
             <!-- 旧版本保留在这里也没问题 -->
@@ -88,28 +151,43 @@
 
             <section>
             <header class="main">
-                <h2>Research Interests</h2>
+                <h2>
+                  <span data-lang="en">Research Interests</span>
+                  <span data-lang="zh" hidden>研究方向</span>
+                </h2>
             </header>
 
             <h4 style="margin-bottom: 0;">
-                Machine-learning methods for multiscale modeling (model reduction)
+                <span data-lang="en">Machine-learning methods for multiscale modeling (model reduction)</span>
+                <span data-lang="zh" hidden>多尺度建模中的机器学习方法（模型降阶）</span>
             </h4>
-            <p>
+            <p data-lang="en">
                 Many-body non-Markovian dissipative particle dynamics; state-dependent general Langevin dynamics.
             </p>
-
-            <h4 style="margin-bottom: 0;">
-                Algorithms for scientific machine learning
-            </h4>
-            <p>
-                Mixed residual methods; deep-learning-based discontinuous Galerkin methods.
+            <p data-lang="zh" hidden>
+                多体非马尔可夫耗散粒子动力学；状态依赖的广义朗之万动力学。
             </p>
 
             <h4 style="margin-bottom: 0;">
-                Gradient-free optimization
+                <span data-lang="en">Algorithms for scientific machine learning</span>
+                <span data-lang="zh" hidden>科学机器学习算法</span>
             </h4>
-            <p>
+            <p data-lang="en">
+                Mixed residual methods; deep-learning-based discontinuous Galerkin methods.
+            </p>
+            <p data-lang="zh" hidden>
+                混合残差方法；基于深度学习的不连续 Galerkin 方法。
+            </p>
+
+            <h4 style="margin-bottom: 0;">
+                <span data-lang="en">Gradient-free optimization</span>
+                <span data-lang="zh" hidden>无梯度优化</span>
+            </h4>
+            <p data-lang="en">
                 Consensus-based optimization; consensus-based sampling.
+            </p>
+            <p data-lang="zh" hidden>
+                基于共识的优化；基于共识的采样。
             </p>
             </section>
         </div>
@@ -126,7 +204,10 @@
 				</script>
             <section>
                 <header class="major">
-                    <h2>Get in touch</h2>
+                    <h2>
+                      <span data-lang="en">Get in touch</span>
+                      <span data-lang="zh" hidden>联系方式</span>
+                    </h2>
                 </header>
                 <ul class="contact">
                     <li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
@@ -145,6 +226,33 @@
 <script src="assets/js/breakpoints.min.js"></script>
 <script src="assets/js/util.js"></script>
 <script src="assets/js/main.js"></script>
+<script>
+  (function(){
+    var currentLang = 'en';
+    var toggle = document.getElementById('langToggle');
+    var elements = document.querySelectorAll('[data-lang]');
+
+    function applyLang(lang){
+      currentLang = lang;
+      elements.forEach(function(el){
+        el.hidden = el.getAttribute('data-lang') !== lang;
+      });
+      if (toggle) {
+        toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');
+        toggle.textContent = lang === 'zh' ? 'English' : '中文';
+      }
+      document.documentElement.setAttribute('lang', lang);
+    }
+
+    if (toggle) {
+      toggle.addEventListener('click', function(){
+        applyLang(currentLang === 'en' ? 'zh' : 'en');
+      });
+    }
+
+    applyLang('en');
+  })();
+</script>
 <script>
   (function(){
     var btn = document.getElementById('sidebarToggle');

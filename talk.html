@@ -1,10 +1,23 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
     <title>Talk</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
+    <style>
+      .lang-toggle{
+        margin-left:0.75rem;
+        padding:0.35rem 0.6rem;
+        border:1px solid #c9c9c9;
+        border-radius:6px;
+        background:#fff;
+        color:inherit;
+        font-size:0.85rem;
+        cursor:pointer;
+      }
+      .lang-toggle:hover{background:#f2f2f2}
+    </style>
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
@@ -20,34 +33,66 @@
         <div id="main">
             <div class="inner">
                 <header id="header">
-                    <a href="index.html" class="logo"><b>Lyu Liyao's </b> Home Page</a>
+                    <a href="index.html" class="logo">
+                      <b>
+                        <span data-lang="en">Lyu Liyao's</span>
+                        <span data-lang="zh" hidden>吕力遥</span>
+                      </b>
+                      <span data-lang="en"> Home Page</span>
+                      <span data-lang="zh" hidden> 主页</span>
+                    </a>
+                    <button id="langToggle" class="lang-toggle" type="button" aria-pressed="false">中文</button>
                 </header>
                 <section>
                     <header class="main">
-                        <h2>Talks & Presentations</h2>
+                        <h2>
+                          <span data-lang="en">Talks &amp; Presentations</span>
+                          <span data-lang="zh" hidden>报告与演讲</span>
+                        </h2>
                     </header>
                     <section>
                         <h4>
-                            Seminar Presentations at Universities
+                            <span data-lang="en">Seminar Presentations at Universities</span>
+                            <span data-lang="zh" hidden>高校研讨会报告</span>
                         </h4>
                         <div>
                             <ul>
-                                <li> Student Computational Math Seminar, The Ohio State University, March 2024. <a href="https://u.osu.edu/studentcomputationalmathseminar">"Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory"</a> <a href="./Slides/OSU_2024_3_29/index.html">Slides</a></li>
-                                <li> Math Seminar, SUFE , June 2025. <a href="./Slides/USTC_2025_5_19/index.html">Slides</a></li>
+                                <li>
+                                  Student Computational Math Seminar, The Ohio State University, March 2024.
+                                  <a href="https://u.osu.edu/studentcomputationalmathseminar">"Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory"</a>
+                                  <a href="./Slides/OSU_2024_3_29/index.html">Slides</a>
+                                </li>
+                                <li>
+                                  Math Seminar, SUFE, June 2025.
+                                  <a href="./Slides/USTC_2025_5_19/index.html">Slides</a>
+                                </li>
                             </ul>
                         </div>
                     </section>
                     <section>
                     <h4>
-                        Presentations at Conferences
+                        <span data-lang="en">Presentations at Conferences</span>
+                        <span data-lang="zh" hidden>会议报告</span>
                     </h4>
                     <div>
                         <ul>
-                            <li> SIAM CSE, Fort Worth, USA, Mar 2025. "Machine Learning-based Coarse-Grained models for molecular systems" <a href="./Slides/CSE_2025/index.html">Slides</a></li>
-                            <li> Poster. Scale Bridging Meeting and Workshop, Los Alamos, NM, USA, Apr 2024. </li>
-                            <li> SIAM New York-New Jersey-Pennsylvania Section (SIAM-NNP), NJ, USA, Oct 2023.</li>
-                            <li> The 2023 SIAM Great Lakes Meeting, East Lansing, USA, Oct 2023.</li>
-                            <li> Mathematical Foundation and Applications of Deep Learning, Virtual, Aug 2021. </li>
+                            <li>
+                              SIAM CSE, Fort Worth, USA, Mar 2025.
+                              "Machine Learning-based Coarse-Grained models for molecular systems"
+                              <a href="./Slides/CSE_2025/index.html">Slides</a>
+                            </li>
+                            <li>
+                              Poster. Scale Bridging Meeting and Workshop, Los Alamos, NM, USA, Apr 2024.
+                            </li>
+                            <li>
+                              SIAM New York-New Jersey-Pennsylvania Section (SIAM-NNP), NJ, USA, Oct 2023.
+                            </li>
+                            <li>
+                              The 2023 SIAM Great Lakes Meeting, East Lansing, USA, Oct 2023.
+                            </li>
+                            <li>
+                              Mathematical Foundation and Applications of Deep Learning, Virtual, Aug 2021.
+                            </li>
                         </ul>
       
                     </div>
@@ -67,7 +112,10 @@
 				</script>
                 <section>
                     <header class="major">
-                        <h2>Get in touch</h2>
+                        <h2>
+                          <span data-lang="en">Get in touch</span>
+                          <span data-lang="zh" hidden>联系方式</span>
+                        </h2>
                     </header>
                 <ul class="contact">
                     <li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
@@ -81,5 +129,33 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+      (function(){
+        var currentLang = 'en';
+        var toggle = document.getElementById('langToggle');
+        var elements = document.querySelectorAll('[data-lang]');
+
+        function applyLang(lang){
+          currentLang = lang;
+          elements.forEach(function(el){
+            el.hidden = el.getAttribute('data-lang') !== lang;
+          });
+          if (toggle) {
+            toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');
+            toggle.textContent = lang === 'zh' ? 'English' : '中文';
+          }
+          document.documentElement.setAttribute('lang', lang);
+          document.title = lang === 'zh' ? '报告' : 'Talk';
+        }
+
+        if (toggle) {
+          toggle.addEventListener('click', function(){
+            applyLang(currentLang === 'en' ? 'zh' : 'en');
+          });
+        }
+
+        applyLang('en');
+      })();
+    </script>
 </body>
 </html>

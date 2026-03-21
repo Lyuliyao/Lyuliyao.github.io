@@ -52,6 +52,37 @@
 		}, 3000);
 	}
 
+	function runRevealLayout() {
+		if (typeof window.Reveal === 'undefined' || typeof window.Reveal.layout !== 'function') {
+			return;
+		}
+
+		window.Reveal.layout();
+	}
+
+	function scheduleRevealLayout() {
+		runRevealLayout();
+		window.setTimeout(runRevealLayout, 120);
+		window.setTimeout(runRevealLayout, 480);
+	}
+
+	function queueMathJaxLayout(target) {
+		const mathJaxHub = window.MathJax && window.MathJax.Hub;
+		if (!mathJaxHub || typeof mathJaxHub.Queue !== 'function') {
+			scheduleRevealLayout();
+			return;
+		}
+
+		const typesetTarget = target || document.querySelector('.slides');
+		if (typesetTarget) {
+			mathJaxHub.Queue(['Typeset', mathJaxHub, typesetTarget]);
+		}
+
+		mathJaxHub.Queue(function() {
+			scheduleRevealLayout();
+		});
+	}
+
 	function layoutHeatConductionPlot() {
 		if (typeof window.Plotly === 'undefined') {
 			return;
@@ -156,11 +187,13 @@
 		window.Reveal.on('ready', function() {
 			scheduleHeatConductionPlotLayout();
 			initEcologyVideoPlayback();
+			queueMathJaxLayout(window.Reveal.getCurrentSlide());
 		});
 
-		window.Reveal.on('slidechanged', function() {
+		window.Reveal.on('slidechanged', function(event) {
 			scheduleHeatConductionPlotLayout();
 			initEcologyVideoPlayback();
+			queueMathJaxLayout(event.currentSlide);
 		});
 	}
 
@@ -170,10 +203,12 @@
 		initEcologyVideoPlayback();
 		initRevealHooks();
 		window.addEventListener('resize', layoutHeatConductionPlot);
+		window.addEventListener('resize', scheduleRevealLayout);
 	});
 
 	window.addEventListener('load', function() {
 		scheduleHeatConductionPlotLayout();
 		initEcologyVideoPlayback();
+		queueMathJaxLayout(document.querySelector('.present') || document.querySelector('.slides'));
 	});
 })();

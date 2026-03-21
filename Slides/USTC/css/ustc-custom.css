@@ -1068,8 +1068,9 @@
 			}
 
 			.d2gm-method-slide .numerics-paper-grid {
-				display: flex;
-				gap: 24px;
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) minmax(320px, 392px);
+				gap: 20px;
 				align-items: flex-start;
 				margin-top: 10px;
 			}
@@ -1079,11 +1080,11 @@
 			}
 
 			.d2gm-method-slide .numerics-paper-stack:first-child {
-				flex: 1 1 auto;
+				min-width: 0;
 			}
 
 			.d2gm-method-slide .numerics-paper-stack:last-child {
-				flex: 0 0 430px;
+				min-width: 0;
 			}
 
 			.d2gm-method-slide .numerics-paper-card {
@@ -1096,18 +1097,18 @@
 
 			.d2gm-method-slide .numerics-paper-card p,
 			.d2gm-method-slide .numerics-paper-card li {
-				font-size: 0.56em;
-				line-height: 1.4;
+				font-size: 0.54em;
+				line-height: 1.38;
 			}
 
 			.d2gm-method-slide .numerics-paper-equation {
-				margin-top: 14px;
-				padding: 14px 16px;
+				margin-top: 12px;
+				padding: 12px 14px;
 				overflow: hidden;
 			}
 
 			.d2gm-method-slide .numerics-paper-equation .tight-math {
-				font-size: 0.64em;
+				font-size: 0.6em;
 			}
 
 			.d2gm-results-slide .numerics-paper-grid {
@@ -1675,6 +1676,11 @@
 					}
 
 					.numerics-paper-grid {
+						grid-template-columns: 1fr;
+					}
+
+					.mim-method-slide .numerics-paper-grid,
+					.d2gm-method-slide .numerics-paper-grid {
 						grid-template-columns: 1fr;
 					}
 

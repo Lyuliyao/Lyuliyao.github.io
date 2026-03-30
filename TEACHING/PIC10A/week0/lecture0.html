@@ -517,7 +517,6 @@
         </p>
         <div class="pill-row">
           <span class="pill">Spring 2026</span>
-          <span class="pill">Lec 3 / Lec 4 switch</span>
           <span class="pill">Your first C++ program</span>
         </div>
       </section>
@@ -639,6 +638,38 @@
       </section>
 
       <section>
+        <h2>Reading and Setup</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Textbook and Course Materials</h3>
+            <ul class="tight">
+              <li>The draft PIC 10A textbook on BruinLearn was written by PIC Director <strong>Michael Andrews</strong>.</li>
+              <li>The main published reference mentioned in the syllabus is <strong>Big C++: Late Objects</strong> by <strong>Cay S. Horstmann</strong>.</li>
+              <li>The draft text aligns more closely with this course; the published book has more polish and more exercises.</li>
+              <li>Lecture slides and code snippets will be posted before class.</li>
+            </ul>
+            <div class="helper-list">
+              <p class="meta"><strong>Lec 3:</strong> <a href="https://bruinlearn.ucla.edu/courses/228028" target="_blank" rel="noreferrer">bruinlearn.ucla.edu/courses/228028</a></p>
+              <p class="meta"><strong>Lec 4:</strong> <a href="https://bruinlearn.ucla.edu/courses/228019" target="_blank" rel="noreferrer">bruinlearn.ucla.edu/courses/228019</a></p>
+            </div>
+          </article>
+
+          <article class="card accent">
+            <h3>Compiler Expectations</h3>
+            <p class="meta">Official course compiler: <code>g++ -std=c++14</code></p>
+            <ul class="tight">
+              <li>Assignments are submitted on <a href="https://www.gradescope.com/" target="_blank" rel="noreferrer">Gradescope</a>.</li>
+              <li>Windows: install Microsoft Visual Studio Community 2022.</li>
+              <li>Mac: install Xcode.</li>
+            </ul>
+            <div class="callout">
+              Always verify your code on Gradescope before the deadline. If it works locally but fails there,
+              it still earns 0 points.
+            </div>
+          </article>
+        </div>
+      </section>
+      <section>
         <h2>Course Snapshot</h2>
         <div class="grid-2">
           <article class="card">
@@ -655,16 +686,40 @@
           </article>
 
           <article class="card secondary">
-            <h3>Course Materials and Sites</h3>
+            <h3>Why This Course Matters</h3>
             <ul class="tight">
-              <li>All course materials are posted on <a href="https://bruinlearn.ucla.edu/" target="_blank" rel="noreferrer">BruinLearn</a>.</li>
-              <li>Lecture slides and code snippets are posted before class.</li>
-              <li>Assignments are submitted on <a href="https://www.gradescope.com/" target="_blank" rel="noreferrer">Gradescope</a>.</li>
-              <li>Make sure you are checking the correct BruinLearn shell for your lecture section.</li>
+              <li>You are not only learning syntax. You are learning how programs store data, make decisions, and evolve step by step.</li>
+              <li>These foundations show up again in later languages, later PIC courses, and larger software projects.</li>
+              <li>The goal is to make you more independent when learning new tools later.</li>
             </ul>
-            <div class="helper-list">
-              <p class="meta"><strong>Lec 3:</strong> <a href="https://bruinlearn.ucla.edu/courses/228028" target="_blank" rel="noreferrer">bruinlearn.ucla.edu/courses/228028</a></p>
-              <p class="meta"><strong>Lec 4:</strong> <a href="https://bruinlearn.ucla.edu/courses/228019" target="_blank" rel="noreferrer">bruinlearn.ucla.edu/courses/228019</a></p>
+            <div class="callout cool">
+              By the end of PIC 10A, you should be able to read short C++ programs, explain what they do, and write small correct programs of your own.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Topics Roadmap</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Part 1 to Part 3</h3>
+            <ul class="tight">
+              <li><strong>Basics:</strong> hello world, errors, variables, types, arithmetic, <code>cin</code>/<code>cout</code>, math functions, <code>const</code>.</li>
+              <li><strong>Strings, control flow, and vectors:</strong> <code>string</code>, indexing, loops, conditionals, input buffer issues, <code>vector</code>.</li>
+              <li><strong>Functions and references:</strong> declarations, definitions, parameters, return values, pure functions, procedures, pass-by-value and pass-by-reference.</li>
+            </ul>
+          </article>
+
+          <article class="card secondary">
+            <h3>Part 4 and Part 5</h3>
+            <ul class="tight">
+              <li><strong>Structs and classes:</strong> interfaces, member functions, constructors, initializer lists, public/private, default values.</li>
+              <li><strong>Arrays and pointers:</strong> C-style arrays, pointer arithmetic, passing arrays to functions, and string literals.</li>
+              <li><strong>Source organization:</strong> headers, <code>.cpp</code> files, overloading, and const correctness.</li>
+            </ul>
+            <div class="callout">
+              This class covers a lot of ground. The course is designed to move from small syntax to increasingly structured programs.
             </div>
           </article>
         </div>
@@ -701,61 +756,6 @@
         </div>
       </section>
 
-      <section>
-        <h2>Reading and Setup</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Textbook</h3>
-            <ul class="tight">
-              <li>The draft PIC 10A textbook on BruinLearn was written by PIC Director <strong>Michael Andrews</strong>.</li>
-              <li>The main published reference mentioned in the syllabus is <strong>Big C++: Late Objects</strong> by <strong>Cay S. Horstmann</strong>.</li>
-              <li>The draft text aligns more closely with this course; the published book has more polish and more exercises.</li>
-            </ul>
-            <div class="callout cool">
-              The BruinLearn draft textbook should be enough for success in the course. The Horstmann book is optional, but useful for extra exercises.
-            </div>
-          </article>
-
-          <article class="card accent">
-            <h3>Compiler Expectations</h3>
-            <p class="meta">Official course compiler: <code>g++ -std=c++14</code></p>
-            <ul class="tight">
-              <li>Windows: install Microsoft Visual Studio Community 2022.</li>
-              <li>Mac: install Xcode.</li>
-            </ul>
-            <div class="callout">
-              Always verify your code on Gradescope before the deadline. If it works locally but fails there,
-              it still earns 0 points.
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Topics Roadmap</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Part 1 to Part 3</h3>
-            <ul class="tight">
-              <li><strong>Basics:</strong> hello world, errors, variables, types, arithmetic, <code>cin</code>/<code>cout</code>, math functions, <code>const</code>.</li>
-              <li><strong>Strings, control flow, and vectors:</strong> <code>string</code>, indexing, loops, conditionals, input buffer issues, <code>vector</code>.</li>
-              <li><strong>Functions and references:</strong> declarations, definitions, parameters, return values, pure functions, procedures, pass-by-value and pass-by-reference.</li>
-            </ul>
-          </article>
-
-          <article class="card secondary">
-            <h3>Part 4 and Part 5</h3>
-            <ul class="tight">
-              <li><strong>Structs and classes:</strong> interfaces, member functions, constructors, initializer lists, public/private, default values.</li>
-              <li><strong>Arrays and pointers:</strong> C-style arrays, pointer arithmetic, passing arrays to functions, and string literals.</li>
-              <li><strong>Source organization:</strong> headers, <code>.cpp</code> files, overloading, and const correctness.</li>
-            </ul>
-            <div class="callout">
-              By the end of the course, you should be able to explain build errors, runtime errors, and undefined behavior, and write short but correct C++ programs from scratch.
-            </div>
-          </article>
-        </div>
-      </section>
 
       <section>
         <h2>Homework Assignments</h2>
@@ -763,7 +763,7 @@
           <article class="card">
             <h3>Policies</h3>
             <ul class="tight">
-              <li>There will be between six and eight homework assignments.</li>
+              <li>There will be  <b>between six and eight</b>  homework assignments.</li>
               <li>They will not always be due on the same day of the week, but they will always be due at <strong>10:00pm</strong>.</li>
               <li>Your lowest two homework scores will be dropped.</li>
               <li>Late submissions will not be accepted.</li>
@@ -783,32 +783,6 @@
               Recommendation: do not wait until the last minute to submit. Leave yourself time to correct mistakes and avoid technical issues.
             </div>
           </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>AI, Google, and Collaboration</h2>
-        <div class="grid-3">
-          <article class="mini-card accent">
-            <h3>No AI-Written Code</h3>
-            <p class="meta">Do not use ChatGPT, Copilot, or similar AI tools to write homework code for this class.</p>
-            <p class="meta">The syllabus explicitly says AI-generated solutions may be reported to the Office of Student Conduct.</p>
-          </article>
-
-          <article class="mini-card">
-            <h3>No Internet Code</h3>
-            <p class="meta">Do not paste code found through Google, Stack Overflow, or Chegg into your solutions.</p>
-            <p class="meta">Even if the code works, using copied code still violates the course policy.</p>
-          </article>
-
-          <article class="mini-card secondary">
-            <h3>What Is Allowed</h3>
-            <p class="meta">You may discuss ideas with classmates, but do not inspect each other's code and do not share code.</p>
-            <p class="meta">If you discuss a homework problem, do not take notes and wait about an hour before writing code.</p>
-          </article>
-        </div>
-        <div class="callout cool">
-          Good collaboration sounds like: “Should this use a <code>while</code> loop?”, “Can you explain the algorithm with a picture?”, or “What made references click for you?”
         </div>
       </section>
 
@@ -951,26 +925,67 @@
               <li>Homework remains 15% in all four scenarios.</li>
             </ul>
             <div class="callout cool">
-              If the official syllabus for this quarter uses different weights, update this slide to match the
-              live syllabus before sharing it with students.
+              This slide is here so students can see the reweighting logic clearly instead of trying to infer it from text.
             </div>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Policies and Support</h2>
-        <div class="grid-3">
-          <article class="mini-card">
-            <h3>Grades</h3>
-            <p class="meta">
-              Grade boundaries are chosen carefully based on demonstrated learning, not by forcing a simple curve.
-            </p>
-            <p class="meta">
-              Questions about graded homework or midterms should be raised within one week of grading.
-            </p>
+        <h2>Grade Boundaries and Regrade Policy</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>How Final Letter Grades Are Decided</h3>
+            <ul class="tight">
+              <li>Your letter grade is determined by your course score together with carefully chosen grade boundaries.</li>
+              <li>Normally, around 30% of the class receives As and A-s, around 30% receives Bs and B-range grades, and around 30% receives Cs and C-range grades.</li>
+              <li>Those boundaries are not chosen by applying a simple rigid curve.</li>
+            </ul>
           </article>
 
+          <article class="card secondary">
+            <h3>What Instructors Look At</h3>
+            <ul class="tight">
+              <li>Final exams are examined carefully to assess learning outcomes and core competencies.</li>
+              <li>The point is not only how many points you earned, but also what mastery your work demonstrates.</li>
+              <li>This is why the boundaries are chosen with care instead of using an automatic formula.</li>
+            </ul>
+          </article>
+        </div>
+        <div class="callout cool">
+          If you have concerns about the grading of a homework or midterm, raise them within one week after it is graded. After that, score changes will not be allowed. All grades will be available through MyUCLA.
+        </div>
+      </section>
+
+      <section>
+        <h2>AI, Google, and Collaboration</h2>
+        <div class="grid-3">
+          <article class="mini-card accent">
+            <h3>No AI-Written Code</h3>
+            <p class="meta">Do not use ChatGPT, Copilot, or similar AI tools to write homework code for this class.</p>
+            <p class="meta">The syllabus explicitly says AI-generated solutions may be reported to the Office of Student Conduct.</p>
+          </article>
+
+          <article class="mini-card">
+            <h3>No Internet Code</h3>
+            <p class="meta">Do not paste code found through Google, Stack Overflow, or Chegg into your solutions.</p>
+            <p class="meta">Even if the code works, using copied code still violates the course policy.</p>
+          </article>
+
+          <article class="mini-card secondary">
+            <h3>What Is Allowed</h3>
+            <p class="meta">You may discuss ideas with classmates, but do not inspect each other's code and do not share code.</p>
+            <p class="meta">If you discuss a homework problem, do not take notes and wait about an hour before writing code.</p>
+          </article>
+        </div>
+        <div class="callout cool">
+          Good collaboration sounds like: “Should this use a <code>while</code> loop?”, “Can you explain the algorithm with a picture?”, or “What made references click for you?”
+        </div>
+      </section>
+
+      <section>
+        <h2>Policies and Support</h2>
+        <div class="grid-2">
           <article class="mini-card accent">
             <h3>Academic Integrity</h3>
             <p class="meta">Write your own solutions and follow the dedicated AI / Google / collaboration slide.</p>

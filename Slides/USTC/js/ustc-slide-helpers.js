@@ -74,10 +74,14 @@
 		}
 
 		const typesetTarget = target || document.querySelector('.slides');
-		if (typesetTarget) {
-			mathJaxHub.Queue(['Typeset', mathJaxHub, typesetTarget]);
+		if (!typesetTarget) {
+			mathJaxHub.Queue(function() {
+				scheduleRevealLayout();
+			});
+			return;
 		}
 
+		mathJaxHub.Queue(['Typeset', mathJaxHub, typesetTarget]);
 		mathJaxHub.Queue(function() {
 			scheduleRevealLayout();
 		});

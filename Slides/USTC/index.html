@@ -300,17 +300,17 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</div>
 					</div>
 				</section>
-				<section data-menu-title="MIM: Method" class="numerics-paper-slide mim-method-slide">
-					<h2>MIM: 从高阶 PDE 到一阶系统</h2>
+				<section data-menu-title="MIM: 方法" class="numerics-paper-slide mim-method-slide">
+					<h2>MIM: 从高阶偏微分方程到一阶系统</h2>
 					<div class="numerics-paper-grid">
 						<div class="numerics-paper-stack">
 							<div class="numerics-paper-card">
-								<h4>Motivation</h4>
+								<h4>研究动机</h4>
 								<p>
-									DGM / PINN 通常直接最小化 PDE 残差。对于高阶方程，这意味着需要稳定地计算高阶自动微分，并同时处理复杂边界条件，这往往会带来训练困难与误差放大。
+									DGM / PINN 通常直接最小化偏微分方程残差。对于高阶方程，这意味着需要稳定地计算高阶自动微分，并同时处理复杂边界条件，这往往会带来训练困难与误差放大。
 								</p>
 								<p>
-									MIM 的核心思想是借鉴 mixed FEM、LDG 和 least-squares FEM：先引入辅助变量，把高阶 PDE 改写成一阶系统，再最小化这个一阶系统的残差。
+									MIM 的核心思想是借鉴混合有限元、LDG 和最小二乘有限元方法：先引入辅助变量，把高阶偏微分方程改写成一阶系统，再最小化这个一阶系统的残差。
 								</p>
 								<div class="numerics-paper-equation">
 									<div class="tight-math">
@@ -325,8 +325,8 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 										&\quad + \|w-\nabla q\|_2^2 + \|\nabla\!\cdot w + f\|_2^2.
 										\end{aligned}
 										\]
-									</div>
-									<p>以 biharmonic 方程为例，先写出原始高阶方程，再将未知量从单个解函数扩展为解及其导数变量。</p>
+								</div>
+									<p>以双调和方程为例，先写出原始高阶方程，再将未知量从单个解函数扩展为解及其导数变量。</p>
 								</div>
 							</div>
 						</div>
@@ -334,7 +334,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							<div class="numerics-paper-card">
 								<h4>与 PINN/DGM 的区别</h4>
 								<ul>
-									<li>Loss 不再直接作用于高阶 PDE，而是作用于一阶系统残差。</li>
+									<li>损失函数不再直接作用于高阶偏微分方程，而是作用于一阶系统残差。</li>
 									<li>可以显式学习解函数及其中间导数量，提高高阶导数的逼近质量。</li>
 									<li>网络结构上既可共享一个 DNN，也可为不同未知量配置多个 DNN。</li>
 								</ul>
@@ -346,7 +346,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<i>Journal of Computational Physics</i>, 452 (2022), 110930.
 					</p>
 				</section>
-				<section data-menu-title="MIM: Results" class="numerics-paper-slide mim-results-slide">
+				<section data-menu-title="MIM: 结果" class="numerics-paper-slide mim-results-slide">
 					<h2>MIM: 数值结果与方法意义</h2>
 					<p class="paper-citation">
 						论文结论表明：在多数测试中，MIM 在相近网络规模与相近计算时间下，比 DGM 给出更准确的解与导数近似；多网络版本常常进一步提升效果。
@@ -355,58 +355,63 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<div class="numerics-figure-shell">
 							<img class="numerics-figure-image numerics-figure-image--pdf" src="./figure/biharmonic_2D_all_pdf.png" alt="Biharmonic 2D convergence curves">
 							<p class="numerics-figure-caption">
-								以 2D biharmonic 方程为例，四个子图分别给出 \(u\)、\(\nabla u\)、\(\Delta u\) 与 \(\nabla\Delta u\) 的相对 \(L^2\) 误差随迭代变化。
+								以二维双调和方程为例，四个子图分别给出 \(u\)、\(\nabla u\)、\(\Delta u\) 与 \(\nabla\Delta u\) 的相对 \(L^2\) 误差随迭代变化。
 							</p>
 						</div>
 						<div class="numerics-paper-stack">
 							<div class="numerics-paper-card">
-								<h4>Biharmonic Example</h4>
+								<h4>双调和方程示例</h4>
 								<ul>
 									<li>绿色曲线对应 DGM，其余曲线对应不同的 MIM 变体。</li>
 									<li>MIM 不仅提升了解 \(u\) 的精度，也显著改善了 \(\Delta u\) 与 \(\nabla\Delta u\) 等高阶量的逼近质量。</li>
-									<li>导数阶数越高，MIM 与 DGM 的差距越明显，说明 mixed reformulation 对高阶 PDE 尤其有效。</li>
+									<li>导数阶数越高，MIM 与 DGM 的差距越明显，说明混合重构对高阶偏微分方程尤其有效。</li>
 								</ul>
 							</div>
 							<div class="numerics-paper-card numerics-paper-accent">
-								<h4>Takeaway</h4>
+								<h4>主要结论</h4>
 								<ul>
-									<li>在多数 benchmark 上，MIM 相较 DGM 往往可把误差降低一个数量级以上。</li>
+									<li>在多数基准测试上，MIM 相较 DGM 往往可把误差降低一个数量级以上。</li>
 									<li>引入辅助变量后，高阶约束被拆成若干低阶一致性约束，训练更稳定、导数量更准确。</li>
-									<li>这说明高阶 PDE 不应直接套 PINN 残差，而应先利用数值分析结构重写方程，再设计 loss。</li>
+									<li>这说明高阶偏微分方程不应直接套 PINN 残差，而应先利用数值分析结构重写方程，再设计损失函数。</li>
 								</ul>
 							</div>
 						</div>
 					</div>
 				</section>
-				<section data-menu-title="D2GM: Method" class="numerics-paper-slide d2gm-method-slide">
-					<h2>D2GM: 从 DG 弱形式到可训练 Loss</h2>
+				<section data-menu-title="D2GM: 方法" class="numerics-paper-slide d2gm-method-slide">
+					<h2>D2GM: 从 DG 弱形式到可训练损失函数</h2>
 					<div class="numerics-paper-grid">
 						<div class="numerics-paper-stack">
 							<div class="numerics-paper-card">
-								<h4>Motivation</h4>
+								<h4>研究动机</h4>
 								<p>
 									对双曲守恒律而言，解常常包含激波等 <strong>非光滑结构</strong>；若再叠加高维随机参数，传统 SG 方法会遭遇维度灾难，而常规 PINN / DGM 又很难直接逼近不连续解。
 								</p>
 								<p>
-									D2GM 的核心思想是借鉴 discontinuous Galerkin：不直接对连续 PDE 做强形式残差最小化，而是在 <strong>离散弱形式</strong> 上构造 loss。这样虽然连续解不光滑，但离散系数仍可由 DNN 稳定学习。
+									D2GM 的核心思想是借鉴 DG 方法：不直接对连续偏微分方程做强形式残差最小化，而是在 <strong>离散弱形式</strong> 上构造损失函数。这样虽然连续解不光滑，但离散系数仍可由神经网络稳定学习。
 								</p>
 								<div class="numerics-paper-equation">
 									<div class="tight-math">
 										\[
-										u_t + \nabla_x \cdot f(u) = 0,\\
-										u_{h,\theta}(t,x,\omega) = \sum_{i,j} N^j_\theta(t,x_{i+\frac12},\omega)\,\phi_i^j(x).
+										\begin{aligned}
+										u_t + \nabla_x \cdot f(u) &= 0,\\
+										u_{h,\theta}(t,x,\omega)
+										&= \sum_{i,j} N^j_\theta(t,x_{i+\frac12},\omega)\,\phi_i^j(x).
+										\end{aligned}
 										\]
 										\[
 										\begin{aligned}
 										L_{i,j,n}
 										&=
 										\frac{N^j_\theta(t^{n+1},x_{i+\frac12},\omega)-N^j_\theta(t^n,x_{i+\frac12},\omega)}{\Delta t} \\
-										&\quad - \bigl(f(u_{h,\theta}(t^n)),(\phi_i^j)' \bigr)_{I_i}
-										+ \hat f_{i+1}\phi_i^j(x^-_{i+1}) - \hat f_i \phi_i^j(x^+_i),
+										&\quad - \bigl(f(u_{h,\theta}(t^n)),(\phi_i^j)' \bigr)_{I_i} \\
+										&\quad + \hat f_{i+1}\phi_i^j(x^-_{i+1})
+										- \hat f_i \phi_i^j(x^+_i),
 										\end{aligned}
 										\]
 										\[
-										\mathcal L(\theta) = \left(h\Delta t \sum_{i,j,n} |L_{i,j,n}|^2 \right)^{1/2}.
+										\mathcal L(\theta)
+										= \left(h\Delta t \sum_{i,j,n} |L_{i,j,n}|^2 \right)^{1/2}.
 										\]
 									</div>
 								</div>
@@ -414,12 +419,12 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</div>
 						<div class="numerics-paper-stack">
 							<div class="numerics-paper-card">
-								<h4>Method Features</h4>
+								<h4>方法特点</h4>
 								<ul>
-									<li>用 <strong>分片多项式基 + DNN 系数</strong> 表示解，天然允许单元间不连续。</li>
-									<li>对平流型问题使用 upwind / Godunov 数值通量，把经典 shock-capturing 结构直接写进 loss。</li>
+									<li>用 <strong>分片多项式基 + 神经网络系数</strong> 表示解，天然允许单元间不连续。</li>
+									<li>对平流型问题使用迎风 / Godunov 数值通量，把经典激波捕捉结构直接写进损失函数。</li>
 									<li>随机维度高时，对空间索引与随机变量都做随机采样，避免 SG 类方法指数级复杂度。</li>
-									<li>给出了 1D upwind 情形下的收敛分析。</li>
+									<li>给出了一维迎风格式情形下的收敛分析。</li>
 								</ul>
 							</div>
 						</div>
@@ -428,7 +433,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						J. Chen, S. Jin, <strong>L. Lyu</strong>, “A Deep Learning Based Discontinuous Galerkin Method for Hyperbolic Equations with Discontinuous Solutions and Random Uncertainties,” <i>Journal of Computational Mathematics</i>, 41(6) (2023), 1281-1304.
 					</p>
 				</section>
-				<section data-menu-title="D2GM: Results" class="numerics-paper-slide d2gm-results-slide">
+				<section data-menu-title="D2GM: 结果" class="numerics-paper-slide d2gm-results-slide">
 					<h2>D2GM: 非光滑解与高维随机不确定性</h2>
 					<p class="paper-citation">
 						论文数值实验覆盖线性守恒律、Burgers 方程及其随机版本；随机变量维度最高达到 200，重点验证了 D2GM 对激波和高维随机输入的鲁棒性。
@@ -437,11 +442,11 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<div class="numerics-figure-shell">
 							<div class="d2gm-figure-pair">
 								<div class="d2gm-figure-tile">
-									<span class="d2gm-figure-label">Expectation</span>
+										<span class="d2gm-figure-label">期望</span>
 									<img class="numerics-figure-image" src="./figure/d2gm_s10_eps005_E.png" alt="D2GM stochastic Burgers expectation">
 								</div>
 								<div class="d2gm-figure-tile">
-									<span class="d2gm-figure-label">Variance</span>
+										<span class="d2gm-figure-label">方差</span>
 									<img class="numerics-figure-image" src="./figure/d2gm_s10_eps005_V.png" alt="D2GM stochastic Burgers variance">
 								</div>
 							</div>
@@ -451,7 +456,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</div>
 						<div class="numerics-paper-stack">
 							<div class="numerics-paper-card">
-								<h4>Main Results</h4>
+								<h4>主要结果</h4>
 								<ul>
 									<li>对平滑线性守恒律，使用分片常数 / 分片线性基时，D2GM 分别表现出 <strong>一阶 / 二阶精度</strong>。</li>
 									<li>对 Burgers 方程这类会形成激波的非光滑问题，D2GM 仍能稳定逼近间断解，而不需要依赖高阶自动微分。</li>
@@ -459,9 +464,9 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 								</ul>
 							</div>
 							<div class="numerics-paper-card numerics-paper-accent">
-								<h4>Takeaway</h4>
+								<h4>主要结论</h4>
 								<ul>
-									<li>把 DG 的弱形式、数值通量和不连续基函数结构注入到 loss 里。</li>
+									<li>把 DG 的弱形式、数值通量和不连续基函数结构注入到损失函数里。</li>
 									<li>对 <strong>非光滑 + 高维随机</strong> 的双曲问题，弱形式比强形式残差更适合做深度学习求解器。</li>
 								</ul>
 							</div>
@@ -470,14 +475,14 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</section>
 				<section class="chapter-slide chapter-intro">
 					<div class="chapter-panel">
-						<div class="chapter-kicker">Chapter 2</div>
+						<div class="chapter-kicker">第二部分</div>
 						<h2>机器学习驱动的粗粒化分子动力学建模</h2>
 						<div class="chapter-body">
 							<p class="chapter-summary">
 								建模中的 <strong>多体耗散 </strong>、<strong> 非马尔可夫性 </strong>以及非平衡态下的<strong> 泛化能力 </strong>等问题。传统粗粒化模型多聚焦于保守项的近似，往往忽略记忆项的多体效应，因而存在明显偏差。
 							</p>
 							<div class="chapter-notes">
-									<span class="chapter-notes-label">Focus</span>
+									<span class="chapter-notes-label">重点</span>
 									<ul>
 										<li>多体耗散</li>
 										<li>对称性保持的建模</li>
@@ -488,10 +493,10 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 					</div>
 				</section>	
 				<section data-auto-animate>
-					<h2 style="color: var(--primary-color); font-size: 1.15em;">Mori-Zwanzig Formalism</h2>
+					<h2 style="color: var(--primary-color); font-size: 1.15em;">Mori-Zwanzig 形式</h2>
 				
 					<div style="text-align: left; font-size: 0.95em;">
-						<p>The dynamics of <b>coarse-grained (CG) variables</b> follow:</p>
+						<p><b>粗粒化变量（CG）</b>的动力学满足：</p>
 					</div>
 				
 					<div data-id="MZCG" style="font-size: 0.92em;">
@@ -505,23 +510,23 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
 						<ul>
 							<li class="fragment fade-in-then-semi-out" style="margin: 5px 0;">
-								<b>General</b> framework from Mori-Zwanzig
+								源自 Mori-Zwanzig 的<b>统一框架</b>
 							</li>
 							<li class="fragment fade-in-then-semi-out" style="margin: 5px 0;">
-								In practice: <span style="color:#E65100"><b>simple ad hoc</b></span> approximations
+								实际建模中：常用<span style="color:#E65100"><b>简单经验近似</b></span>
 							</li>
 							<li class="fragment fade-in-then-semi-out" style="margin: 5px 0;">
-								Memory oversimplification: <span style="color:#E65100"><b>under-explored</b></span>
+								记忆项过度简化：<span style="color:#E65100"><b>相关问题仍研究不足</b></span>
 							</li>
 						</ul>
 					</div>
 				</section>
 				<section data-auto-animate>
-					<h2>Ad hoc Approximations</h2>
+					<h2>常见经验近似</h2>
 					<div style="text-align: left; font-size: 1.1em; color: #2c3e50;">
 						<p class="fragment fade-in" data-fragment-index="1">
-							In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b> are unknown. 
-							Many existing models make <b>simplifying approximations</b>:
+							在 <b>Mori-Zwanzig 形式主义</b>中，<b>粗粒化变量（CG）</b>的动力学本身是未知的。
+							许多现有模型会采用以下<b>简化近似</b>：
 						</p>
 					</div>
 					<div style="justify-content: center; margin-top: 10px; font-size: 0.8em">
@@ -531,7 +536,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						
 							<!-- Markovian-Pairwise Model -->
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
-								<b>Markovian-Pairwise</b>
+								<b>马尔可夫成对模型</b>
 							</li>
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
 								\(
@@ -541,7 +546,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				
 							<!-- Non-Markovian Isotropic Model -->
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
-								<b>Non-Markovian Isotropic</b>
+								<b>非马尔可夫各向同性模型</b>
 							</li>
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
 								\(
@@ -551,7 +556,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				
 							<!-- Non-Markovian Pairwise Model -->
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="5">
-								<b>Non-Markovian Pairwise (NM-DPD)</b>
+								<b>非马尔可夫成对模型（NM-DPD）</b>
 							</li>
 							<li class="fragment fade-in-then-semi-out" data-fragment-index="5">
 								\(
@@ -561,7 +566,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				
 							<!-- Our Model - Highlighted -->
 							<li class="fragment fade-in" data-fragment-index="6">
-								<b style="color: #E65100;font-size:1em">🚀 Non-Markovian Manybody (Our Model)</b>
+								<b style="color: #E65100;font-size:1em">非马尔可夫多体模型（本文模型）</b>
 							</li>
 							<li class="fragment fade-in" data-fragment-index="6" style="border-left: 5px solid #E65100; padding-left: 10px;font-size: 1.2em;">
 								\(
@@ -570,7 +575,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							</li>
 						</ul>
 						<div class="fragment fade-in-then-semi-out" data-fragment-index="7" style="text-align: left; font-size: 1em; margin-top: 10px; margin-bottom: 20px;">
-							where \( \bm{\Xi}\) is neural network encode the <b style="color: #E65100;">manybody</b> and \( \bm{\Lambda} \) are learnable parameters encode the <b style="color: #E65100;">Non-Markovian</b>.
+							其中，\( \bm{\Xi}\) 由神经网络表示，用于编码<b style="color: #E65100;">多体结构</b>；\( \bm{\Lambda} \) 为可学习参数，用于编码<b style="color: #E65100;">非马尔可夫记忆</b>。
 						</div>
 					</div>
 			
@@ -594,7 +599,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</section>
 
 				<section data-auto-animate>
-					<h2>Important New Issues</h2>
+					<h2>新的关键问题</h2>
 					<div class="two-col-grid">
 					<!-- <div class="two-col" style="display: flex; flex-direction: row; align-items: flex-start; gap:16px;"> -->
 					<!-- <div class="two-col" style="display: flex; flex-direction: center; align-items: center; gap:16px;"> -->
@@ -602,21 +607,21 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							<ul>
 								<li>
 									<p class="fragment fade" data-fragment-index="1">
-										To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
+										为了准确刻画多体动力学，神经网络必须满足<b>物理对称性</b>：
 									</p>
 									<ol>
 										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
-											Translation Invariance:\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+											平移不变性：\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
 										</li>
 										<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
-											Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+											旋转对称性：\(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
 										</li>
 										<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
-											Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+											置换对称性：\(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
 										</li>
 									</ol>
 								</li>
-								<li class="fragment fade-in-then-semi-out" data-fragment-index="6"> Extensive 
+								<li class="fragment fade-in-then-semi-out" data-fragment-index="6"> 可拓展性
 								</li>
 							</ul>
 						</div>
@@ -646,7 +651,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 									</tr>
 								</table>
 							</div>
-								<button id="clearButton1">Clear</button>
+								<button id="clearButton1">清空</button>
 							</div>
 							<div>
 							<svg id="canvas2"></svg>
@@ -672,7 +677,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 									</tr>
 								</table>
 							</div>
-							<button id="clearButton2">Clear</button>
+							<button id="clearButton2">清空</button>
 							</div>
 							<script src="./figure/permutation.js"></script>
 						</div>
@@ -690,11 +695,11 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 					</aside>
 				</section>
 				<section data-auto-animate>
-					<h2>Neural Network Representation</h2>
+					<h2>神经网络表示</h2>
 
 					<!-- 顶部方程 -->
 					<div style="text-align:left; margin-bottom: 0.0em; font-size:0.85em" class="tight-math">
-						<b style="color:#E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
+						<b style="color:#E65100;">非马尔可夫多体模型（本文模型）</b>
 						\[
 						\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} 
 						\bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
@@ -707,18 +712,18 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<div>
 							<ul>
 								<li class="fragment fade-in;tight-math" style="font-size:0.85em" data-fragment-index="2">
-								Introducing coordinate feature \(\hat{\mathbf Q}^k_i\):
+								引入坐标特征 \(\hat{\mathbf Q}^k_i\)：
 								\(
 								\hat{ \mathbf Q}^k_i = \mathbf{Q}_i \oplus \sum_{l\in\mathcal{N}_i} 
 								f^k(|\mathbf{Q}_{il}|)\,\mathbf{Q}_{il} 
 								\) 
 								</li>
 								<li class="fragment fade-in" style="font-size:0.85em" data-fragment-index="3">
-								Compute the distance on the feature:
+								在特征空间中计算差分：
 								\( \hat{\mathbf{Q}}_{ij}^{k} = \hat{\mathbf{Q}}_i^{k} - \hat{\mathbf{Q}}_j^{k} \)
 								</li>
 								<li class="fragment fade-in" style="font-size:0.85em" data-fragment-index="4">
-								Construct the state dependent part of the memory kernel:
+								构造记忆核中的状态依赖部分：
 								\(
 								\boldsymbol{\Xi}^n_{ij} = \sum_{k=1}^K h_{n,k}(\hat{ \mathbf Q}_{ij}^T \hat{ \mathbf Q}_{ij}) 
 								\hat{ \mathbf Q}_{ij}^k \otimes \hat{ \mathbf Q}_{ij}^k
@@ -755,13 +760,13 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</section>
 				<section data-auto-animate class="cg-sim-slide">
 					<h3>
-						Simulation of the Coarse-Grained Models
+						粗粒化模型的动力学模拟
 					</h3>
 					<div class="cg-sim-wrap">
 						<div class="cg-sim-hero">
 							<div class="cg-sim-hero-head">
-								<span class="cg-sim-pill">Our Model</span>
-								<div class="cg-sim-tag">Non-Markovian Manybody</div>
+								<span class="cg-sim-pill">本文模型</span>
+								<div class="cg-sim-tag">非马尔可夫多体</div>
 							</div>
 							<div class="cg-sim-card cg-sim-eq tight-math">
 								\[
@@ -775,8 +780,8 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</div>
 						<div class="cg-sim-cards">
 							<div class="cg-sim-card cg-sim-system-card fragment fade-in" data-fragment-index="1">
-								<h4>Equivalent Markovian Lifting</h4>
-								<p class="cg-sim-caption">Introduce the auxiliary variable \(\bm\zeta\) and simulate the lifted system directly.</p>
+								<h4>等价的马尔可夫扩维</h4>
+								<p class="cg-sim-caption">引入辅助变量 \(\bm\zeta\)，直接模拟扩维后的动力系统。</p>
 								<div class="tight-math">
 									\[
 									\begin{aligned}
@@ -788,9 +793,9 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 								</div>
 							</div>
 							<div class="cg-sim-card cg-sim-thermo-card fragment fade-in" data-fragment-index="2">
-								<h4 style="color: #E65100;">Thermodynamic Consistency</h4>
+								<h4 style="color: #E65100;">热力学一致性</h4>
 								<div class="cg-sim-row">
-									<span class="cg-sim-label">Noise Covariance</span>
+									<span class="cg-sim-label">噪声协方差</span>
 									<div class="tight-math">
 										\[
 										\left\langle \bm \xi(t) \bm \xi(t') \right\rangle
@@ -799,7 +804,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 									</div>
 								</div>
 								<div class="cg-sim-row">
-									<span class="cg-sim-label">Invariant Density</span>
+									<span class="cg-sim-label">不变密度</span>
 									<div class="tight-math">
 										\[
 										\begin{aligned}
@@ -815,51 +820,64 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						</div>
 					</div>
 				</section>
-				<section data-auto-animate data-menu-title="VCCF">
+				<section data-auto-animate data-menu-title="速度互相关" class="cg-metric-slide">
 					<h2>
-						Numerical Result
+						数值结果
 					</h2>
-					<div style="display: flex; justify-content: center; align-items: center;">
-						<div style="text-align:left;">
-								Velocity cross correlation function (VCCF)
-							<p style=" font-size:0.8em">
-								\[ C^{xx}(t; r_0) = \mathbb{E}[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t) \vert Q_{ij}(0) = r_0] \]
-							</p>
-							<div style="font-size: 0.8em;" data-id="table">
-								<table border="1">
-									<tr>
-										<th>Model</th>
-										<th>Temporal</th>
-										<th>Spatial</th>
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">M-DPD</td>
-										<td>Markovian</td>
-										<td>Pairwise</td>
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">NM-GLE</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Isotropic</td>
-
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">NM-DPD</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Pairwise</td>
-									</tr>
-									<tr>
-										<td style="color:#E65100; white-space: nowrap;">NM-MB</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Manybody</td>
-									</tr>
-								</table>
+					<div class="cg-metric-layout">
+						<div class="cg-metric-copy">
+							<div class="cg-metric-heading">
+								<span class="cg-metric-kicker">时间相关</span>
+								<h3>速度互相关函数 <span>VCCF</span></h3>
+							</div>
+							<div class="cg-metric-equation tight-math">
+								\[
+								\begin{aligned}
+								C^{xx}(t; r_0)
+								&=
+								\mathbb{E}\!\left[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t)\right. \\
+								&\qquad\left.\mid Q_{ij}(0)=r_0\right]
+								\end{aligned}
+								\]
+							</div>
+							<div class="cg-metric-table-shell">
+								<div class="cg-metric-table" data-id="table">
+									<table border="1">
+										<tr>
+											<th>模型</th>
+											<th>时间</th>
+											<th>空间</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>马尔可夫</td>
+											<td>成对</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>各向同性</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>成对</td>
+										</tr>
+										<tr>
+											<td style="color:#E65100; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>多体</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 						</div>
-						<div
-							id=vccf
-							class="plotly-graph-div"
-							style="height:400; width:400;">
+						<div class="cg-metric-plot-shell">
+							<div
+								id=vccf
+								class="plotly-graph-div cg-metric-plot"
+								style="height:400; width:400;">
+							</div>
 						</div>
 						<script type="text/javascript" src="./text/vccf.js">
 						</script>
@@ -868,51 +886,63 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<!-- If we delve deeper into metrics like the Velocity Cross Correlation Function (VCCF), which represents the momentum transfer rate at a fixed distance, we see that GLE falls short, but our model still captures the main contribution. It’s also worth noting that NM-DPD shows decent results, but that’s because it uses VCCF as a fitting target. -->
 						</aside>
 				</section>
-				<section data-auto-animate data-menu-title="VHF">
+				<section data-auto-animate data-menu-title="van Hove函数" class="cg-metric-slide">
 					<h2>
-						Numerical Result
+						数值结果
 					</h2>
-					<div style="display: flex; justify-content: center; align-items: center;">
-						<div style="text-align:left">
-							van Hove function (VHF)
-							<p style="font-size: 0.8em;">
-								\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).		
-							</p>
-							<div style="font-size: 0.8em;" data-id="table">
-								<table border="1">
-									<tr>
-										<th>Model</th>
-										<th>Temporal</th>
-										<th>Spatial</th>
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">M-DPD</td>
-										<td>Markovian</td>
-										<td>Pairwise</td>
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">NM-GLE</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Isotropic</td>
-
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">NM-DPD</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Pairwise</td>
-									</tr>
-									<tr>
-										<td style="color:#E65100; white-space: nowrap;">NM-MB</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Manybody</td>
-									</tr>
-								</table>
+					<div class="cg-metric-layout">
+						<div class="cg-metric-copy">
+							<div class="cg-metric-heading">
+								<span class="cg-metric-kicker">结构统计</span>
+								<h3>van Hove 函数 <span>VHF</span></h3>
+							</div>
+							<div class="cg-metric-equation tight-math">
+								\[
+								\begin{aligned}
+								G(r, t)
+								&\propto \frac{1}{M^2}\sum_{j\neq i}^M \\
+								&\delta(\Vert \mathbf{Q}_i(t)-\mathbf{Q}_j(0)\Vert-r)
+								\end{aligned}
+								\]
+							</div>
+							<div class="cg-metric-table-shell">
+								<div class="cg-metric-table" data-id="table">
+									<table border="1">
+										<tr>
+											<th>模型</th>
+											<th>时间</th>
+											<th>空间</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>马尔可夫</td>
+											<td>成对</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>各向同性</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>成对</td>
+										</tr>
+										<tr>
+											<td style="color:#E65100; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>多体</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 						</div>
-						<div
-							id=vhf
-							class="plotly-graph-div"
-							style="height:400; width:400;">
+						<div class="cg-metric-plot-shell">
+							<div
+								id=vhf
+								class="plotly-graph-div cg-metric-plot"
+								style="height:400; width:400;">
+							</div>
 						</div>
 						<script type="text/javascript" src="./text/vhf.js">
 						</script>
@@ -921,58 +951,62 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 						<!-- Let’s look at another property, the van Hove Function (VHF), which is essentially a time evolution of the RDF. It measures the probability of finding a particle at time t with distance r from the central particle. Here, both NM-DPD and NM-GLE fall short, but our model stands strong! -->
 						</aside>
 				</section>
-				<section data-auto-animate data-menu-title="Hydromode">
+				<section data-auto-animate data-menu-title="流体模态" class="cg-metric-slide">
 					<h2>
-						Numerical Result
+						数值结果
 					</h2>
-					<div style="display: flex; justify-content: center; align-items: center;">
-						<div style="text-align:left">
-							<h5>
-								normalized correlations of the <br> <b>Transverse</b> Hydrodynamic Modes
-							</h5>
-							<p>
+					<div class="cg-metric-layout">
+						<div class="cg-metric-copy">
+							<div class="cg-metric-heading">
+								<span class="cg-metric-kicker">流体响应</span>
+								<h3>横向流体力学模态 <span>Hydromode</span></h3>
+							</div>
+							<div class="cg-metric-equation tight-math">
 								\[ 
 								\begin{split}
 								C_T(t) &= \langle \tilde{u}_2(t)\tilde{u}_2(0)\rangle \\
 								\tilde{\mb u} &= \frac{1}{M}\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
 								\end{split}
 								\]
-							</p>
-							<div style="font-size: 0.8em;" data-id="table">
-								<table border="1">
-									<tr>
-										<th>Model</th>
-										<th>Temporal</th>
-										<th>Spatial</th>
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">M-DPD</td>
-										<td>Markovian</td>
-										<td>Pairwise</td>
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">NM-GLE</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Isotropic</td>
-
-									</tr>
-									<tr>
-										<td style="white-space: nowrap;">NM-DPD</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Pairwise</td>
-									</tr>
-									<tr>
-										<td style="color:#E65100; white-space: nowrap;">NM-MB</td>
-										<td style="white-space: nowrap;">Non-Markovian</td>
-										<td>Manybody</td>
-									</tr>
-								</table>
+							</div>
+							<div class="cg-metric-table-shell">
+								<div class="cg-metric-table" data-id="table">
+									<table border="1">
+										<tr>
+											<th>模型</th>
+											<th>时间</th>
+											<th>空间</th>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">M-DPD</td>
+											<td>马尔可夫</td>
+											<td>成对</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-GLE</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>各向同性</td>
+										</tr>
+										<tr>
+											<td style="white-space: nowrap;">NM-DPD</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>成对</td>
+										</tr>
+										<tr>
+											<td style="color:#E65100; white-space: nowrap;">NM-MB</td>
+											<td style="white-space: nowrap;">非马尔可夫</td>
+											<td>多体</td>
+										</tr>
+									</table>
+								</div>
 							</div>
 						</div>
-						<div
-							id=trans_corr
-							class="plotly-graph-div"
-							style="height:300; width: 300;">
+						<div class="cg-metric-plot-shell">
+							<div
+								id=trans_corr
+								class="plotly-graph-div cg-metric-plot"
+								style="height:300; width: 300;">
+							</div>
 						</div>
 						<script type="text/javascript" src="./text/trans_corr.js">
 						</script>
@@ -982,7 +1016,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 
 				<section>
 					<h2>
-						Numerical Result:reverse Poiseuille flow
+						数值结果：反向泊肃叶流
 					</h2>
 					<div style="display: flex; justify-content: center; align-items: center;">
 						<div
@@ -1007,7 +1041,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 					</div>	
 				</section>
 				<section>
-					<h2>Numerical Result: Vortex flow</h2>
+					<h2>数值结果：涡旋流</h2>
 					 <div style="max-width: 700px; margin: 0 auto; text-align: center;">
 						<iframe
 						id="velFrame"
@@ -1154,7 +1188,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				<section class="future-bridge-slide">
 					<h2>从现有工作到未来工作</h2>
 					<p class="future-bridge-intro">
-						现有工作：多体建模、结构保持与热力学约束,可以自然延伸到基于场的多尺度建模，并支撑后续的宏观与 mean-field 方向。
+						现有工作：多体建模、结构保持与热力学约束,可以自然延伸到基于场的多尺度建模，并支撑后续的宏观与平均场方向。
 					</p>
 					<div class="future-bridge-panel">
 						<div class="future-bridge-head">
@@ -1180,7 +1214,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 									物理对称性保持
 								</div>
 								<div class="future-bridge-arrow">
-									<span class="future-bridge-arrow-label">从微观随机动力学到介观/宏观 PDE</span>
+									<span class="future-bridge-arrow-label">从微观随机动力学到介观/宏观偏微分方程</span>
 									<span class="future-bridge-arrow-icon">→</span>
 								</div>
 								<div class="future-bridge-card future-bridge-card--right">
@@ -1207,7 +1241,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 							</div>
 							<div class="future-bridge-note">
 								<strong>活性物质扩散</strong>
-								<span>面向软物质与生物体系，研究非平衡集体行为对应的 mean-field 场描述。</span>
+								<span>面向软物质与生物体系，研究非平衡集体行为对应的平均场描述。</span>
 							</div>
 						</div>
 					</div>
@@ -1220,27 +1254,27 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 					<div>
 						<ul>
 							<li class="fragment fade-in" data-fragment-index="1">
-								Non Fourier heat conduction
+								非傅立叶导热
 								<ul>
 									<li class="fragment fade-in" data-fragment-index="2">
-										Fourier Law
+										傅立叶定律
 										<p class="tight-math" style="margin:0.5em; text-align:center;">
 											\(
 										u_t = \kappa \Delta u
 											\)
 										</p>
-											<span style="color:#E65100;" class="fragment fade-in" data-fragment-index="3"><strong>Limitation:</strong></span>
+											<span style="color:#E65100;" class="fragment fade-in" data-fragment-index="3"><strong>局限性：</strong></span>
 											<ul>
 												<li class="fragment fade-in" data-fragment-index="3">
-													Linear Approximation
+													线性近似
 												</li>
 												<li class="fragment fade-in" data-fragment-index="3">
-													Temperature cannot close the dynamics by itself<br>
+													仅靠温度变量无法封闭动力学<br>
 													<div class="fragment fade-in" data-fragment-index="3">
-														<span style="color:#E65100;">Reason:</span> High temperature coexist multiple phases<br>
+														<span style="color:#E65100;">原因：</span>高温下可能存在多相共存<br>
 													</div>
 													<div class="fragment fade-in" data-fragment-index="3">
-														<span style="color:#E65100;">Solution:</span> Steinhardt order parameters as phase variables into dynamics.
+														<span style="color:#E65100;">解决思路：</span>将 Steinhardt 序参量作为相变量引入动力学。
 													</div>
 												</li>
 											</ul>
@@ -1254,10 +1288,10 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</section>
 				<section data-auto-animate class="macro-outlook-vertical-slide">
 					<h2 style="color: var(--primary-color); font-size: 1.15em; margin-bottom: 12px;">
-						Outlook: Macroscopic Model
+						展望：宏观模型
 					</h2>
 					<div class="macro-outlook-main">
-						<h3>Non-Fourier Heat Conduction</h3>
+						<h3>非傅立叶导热</h3>
 						<div class="macro-outlook-formula-shell">
 							<div class="tight-math macro-outlook-equation">
 								\[
@@ -1294,7 +1328,7 @@ We introduce a machine-learning-based coarse-grained molecular dynamics (CGMD) m
 				</section>
 				<section class="ecology-video-slide">
 					<h2 style="color: var(--primary-color); font-size: 1.15em; margin-bottom: 12px;">
-						Outlook: Mean field Model (Ecological data)
+						展望：平均场模型（生态数据）
 					</h2>
 					<div class="ecology-video-shell">
 						<video data-autoplay loop muted playsinline controls data-playback-rate="2" src="figure/comparison_2x2_density.mp4"></video>

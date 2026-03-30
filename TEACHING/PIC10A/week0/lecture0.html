@@ -1,0 +1,1304 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <style>
+    :root {
+      --bg: #f7f4ed;
+      --bg-soft: #fffaf2;
+      --ink: #16233b;
+      --muted: #5f6c82;
+      --line: rgba(22, 35, 59, 0.14);
+      --card: rgba(255, 252, 245, 0.88);
+      --accent: #c24d2c;
+      --accent-soft: rgba(194, 77, 44, 0.12);
+      --accent-2: #0c6c71;
+      --accent-2-soft: rgba(12, 108, 113, 0.12);
+      --shadow: 0 18px 50px rgba(25, 37, 59, 0.12);
+      --radius: 24px;
+    }
+
+    .reveal {
+      color: var(--ink);
+      font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 34px;
+      background:
+        radial-gradient(circle at top left, rgba(194, 77, 44, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(12, 108, 113, 0.12), transparent 30%),
+        linear-gradient(180deg, #fbf8f1 0%, #f3efe6 100%);
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal .slides section,
+    .reveal .slides section > section {
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .reveal h1,
+    .reveal h2,
+    .reveal h3 {
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--ink);
+    }
+
+    .reveal h1 {
+      font-size: 2.35em;
+      margin-bottom: 0.2em;
+    }
+
+    .reveal h2 {
+      font-size: 1.5em;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal h3 {
+      font-size: 0.8em;
+      margin-bottom: 0.4em;
+      color: var(--accent-2);
+    }
+
+    .reveal p,
+    .reveal li {
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .reveal a {
+      color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.14em;
+    }
+
+    .reveal strong,
+    .reveal b {
+      color: var(--ink);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: 0.28rem 0.7rem;
+      border: 1px solid rgba(194, 77, 44, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--accent);
+      font-size: 0.46em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      max-width: 22em;
+      font-size: 0.78em;
+      color: var(--muted);
+    }
+
+    .center-copy {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1.1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.24rem 0.64rem;
+      border-radius: 999px;
+      background: rgba(22, 35, 59, 0.08);
+      color: var(--ink);
+      font-size: 0.42em;
+      font-weight: 600;
+    }
+
+    .toggle-group {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 0.85rem;
+      padding: 0.32rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.62);
+      box-shadow: var(--shadow);
+    }
+
+    .toggle-button {
+      padding: 0.34rem 0.82rem;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.48em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+
+    .toggle-button:hover,
+    .toggle-button:focus {
+      color: var(--ink);
+      transform: translateY(-1px);
+    }
+
+    .toggle-button.active {
+      background: var(--ink);
+      color: #fff;
+    }
+
+    [data-lecture-panel][hidden] {
+      display: none !important;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100%;
+    }
+
+    .hero .lead {
+      max-width: 20em;
+      font-size: 0.82em;
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .stack {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .card,
+    .mini-card {
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .mini-card {
+      padding: 0.72rem 0.86rem;
+      border-radius: 20px;
+    }
+
+    .card.accent {
+      border-color: rgba(194, 77, 44, 0.22);
+      background: linear-gradient(180deg, rgba(255, 247, 243, 0.96), rgba(255, 251, 247, 0.92));
+    }
+
+    .card.secondary {
+      border-color: rgba(12, 108, 113, 0.2);
+      background: linear-gradient(180deg, rgba(242, 251, 251, 0.98), rgba(250, 255, 255, 0.92));
+    }
+
+    .meta {
+      margin: 0.28rem 0 0;
+      color: var(--muted);
+      font-size: 0.52em;
+    }
+
+    .meta-link {
+      display: inline-block;
+      margin-top: 0.35rem;
+      font-size: 0.52em;
+      font-weight: 700;
+    }
+
+    .tight,
+    .tight ul {
+      margin-top: 0.3rem;
+      margin-bottom: 0;
+    }
+
+    .tight li {
+      margin-bottom: 0.28rem;
+      font-size: 0.58em;
+    }
+
+    .note,
+    .tiny {
+      color: var(--muted);
+      font-size: 0.5em;
+    }
+
+    .callout {
+      margin-top: 0.8rem;
+      padding: 0.72rem 0.82rem;
+      border-left: 4px solid var(--accent);
+      border-radius: 16px;
+      background: var(--accent-soft);
+      font-size: 0.54em;
+      color: var(--ink);
+    }
+
+    .callout.cool {
+      border-left-color: var(--accent-2);
+      background: var(--accent-2-soft);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+
+    .stat {
+      padding: 0.66rem 0.76rem;
+      border-radius: 18px;
+      background: rgba(22, 35, 59, 0.05);
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 0.14rem;
+      color: var(--muted);
+      font-size: 0.42em;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 0.58em;
+      line-height: 1.3;
+    }
+
+    .discussion-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .section-label {
+      display: inline-block;
+      margin-bottom: 0.45rem;
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(12, 108, 113, 0.12);
+      color: var(--accent-2);
+      font-size: 0.42em;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .helper-list {
+      display: grid;
+      gap: 0.32rem;
+      margin-top: 0.45rem;
+    }
+
+    .helper-list .meta {
+      margin: 0;
+    }
+
+    .example-card {
+      display: grid;
+      gap: 0.55rem;
+      align-content: start;
+    }
+
+    .example-card h3 {
+      margin-bottom: 0.1rem;
+    }
+
+    .example-image {
+      width: 100%;
+      height: 235px;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 18px;
+      border: 1px solid rgba(22, 35, 59, 0.12);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .reference-link {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-top: 0.15rem;
+      padding: 0.22rem 0.56rem;
+      border-radius: 999px;
+      background: rgba(22, 35, 59, 0.08);
+      color: var(--ink);
+      font-size: 0.42em;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    .grade-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.42em;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .grade-table th,
+    .grade-table td {
+      padding: 0.45rem 0.5rem;
+      border: 1px solid rgba(22, 35, 59, 0.1);
+      text-align: center;
+    }
+
+    .grade-table th {
+      background: rgba(22, 35, 59, 0.08);
+      font-weight: 700;
+    }
+
+    .grade-table td:first-child,
+    .grade-table th:first-child {
+      text-align: left;
+    }
+
+    .escape-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.56em;
+    }
+
+    .escape-table td {
+      padding: 0.35rem 0;
+      border-bottom: 1px solid rgba(22, 35, 59, 0.08);
+    }
+
+    .escape-table td:first-child {
+      width: 4.5em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    pre.copy-code-block {
+      position: relative;
+    }
+
+    .reveal pre {
+      width: 100%;
+      margin: 0;
+      border-radius: 22px;
+      box-shadow: 0 24px 45px rgba(14, 17, 28, 0.22);
+      overflow: hidden;
+    }
+
+    .reveal pre code {
+      max-height: 420px;
+      padding: 1.2rem 1.1rem;
+      font-size: 0.68em;
+      line-height: 1.5;
+    }
+
+    .copy-code-button {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.8rem;
+      padding: 0.28rem 0.65rem;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.46em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .copy-code-button:hover,
+    .copy-code-button:focus {
+      background: rgba(255, 255, 255, 0.24);
+      transform: translateY(-1px);
+    }
+
+    .code-notes {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .code-notes .card {
+      min-height: 100%;
+    }
+
+    .transition-slide {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100%;
+    }
+
+    .transition-slide .lead {
+      max-width: 18em;
+    }
+
+    .reveal code:not(pre code) {
+      padding: 0.12em 0.32em;
+      border-radius: 8px;
+      background: rgba(22, 35, 59, 0.08);
+      color: var(--accent);
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 900px) {
+      .reveal {
+        font-size: 26px;
+      }
+
+      .grid-2,
+      .grid-3,
+      .discussion-grid,
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        justify-content: flex-start;
+        padding-top: 1.8rem;
+      }
+
+      .reveal pre code {
+        font-size: 0.58em;
+        max-height: 320px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero" data-auto-animate>
+        <div class="eyebrow">PIC 10A • Lecture 0</div>
+        <h1>Welcome to PIC 10A</h1>
+        <p class="lead">
+          Today we get oriented, set expectations for the course, and write the first few C++ programs
+          you will build on all quarter.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Spring 2026</span>
+          <span class="pill">Lec 3 / Lec 4 switch</span>
+          <span class="pill">Your first C++ program</span>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Teaching Team and Sections</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>Instructor</h3>
+            <p><strong>Lyu Liyao (吕力遥)</strong></p>
+            <p class="meta">Email: lyuliyao[at].math.ucla.edu</p>
+            <p class="meta">Spring 2026 instructor for both <strong>Lec 3</strong> and <strong>Lec 4</strong>.</p>
+            <p class="meta">Office hours and any logistics updates will be posted on the relevant BruinLearn site.</p>
+            <div class="callout">
+              This year the course runs with two lecture sections and three TA-led discussion sections.
+              Use the switch on the right to see the matching lecture room, discussion sections, and course site.
+            </div>
+          </article>
+
+          <div class="stack">
+            <div class="toggle-group" role="tablist" aria-label="Lecture section switcher">
+              <button type="button" class="toggle-button active" data-lecture-target="lec3" aria-pressed="true">Lec 3</button>
+              <button type="button" class="toggle-button" data-lecture-target="lec4" aria-pressed="false">Lec 4</button>
+            </div>
+
+            <div data-lecture-panel="lec3">
+              <article class="mini-card secondary">
+                <span class="section-label">Lecture section</span>
+                <div class="stat-grid">
+                  <div class="stat">
+                    <span class="stat-label">Meeting</span>
+                    <strong>MWF<br>12:00pm-12:50pm</strong>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Location</span>
+                    <strong>Geology Building 3656</strong>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Class ID</span>
+                    <strong>157050220</strong>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Course site</span>
+                    <strong><a href="https://bruinlearn.ucla.edu/courses/228028" target="_blank" rel="noreferrer">BruinLearn for Lec 3</a></strong>
+                  </div>
+                </div>
+              </article>
+
+              <div class="discussion-grid">
+                <article class="mini-card">
+                  <span class="section-label">Dis 3A</span>
+                  <p><strong>Hunter Liu</strong></p>
+                  <div class="helper-list">
+                    <p class="meta">TR, 12:00pm-12:50pm</p>
+                    <p class="meta">Mathematical Sciences 5137</p>
+                    <p class="meta">Contact: BruinLearn inbox</p>
+                  </div>
+                </article>
+
+                <article class="mini-card">
+                  <span class="section-label">Dis 3B</span>
+                  <p><strong>Hunter Liu</strong></p>
+                  <div class="helper-list">
+                    <p class="meta">TR, 1:00pm-1:50pm</p>
+                    <p class="meta">Mathematical Sciences 5137</p>
+                    <p class="meta">Contact: BruinLearn inbox</p>
+                  </div>
+                </article>
+              </div>
+            </div>
+
+            <div data-lecture-panel="lec4" hidden>
+              <article class="mini-card secondary">
+                <span class="section-label">Lecture section</span>
+                <div class="stat-grid">
+                  <div class="stat">
+                    <span class="stat-label">Meeting</span>
+                    <strong>MWF<br>1:00pm-1:50pm</strong>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Location</span>
+                    <strong>Mathematical Sciences 5200</strong>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Class ID</span>
+                    <strong>157050230</strong>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-label">Course site</span>
+                    <strong><a href="https://bruinlearn.ucla.edu/courses/228019" target="_blank" rel="noreferrer">BruinLearn for Lec 4</a></strong>
+                  </div>
+                </div>
+              </article>
+
+              <div class="discussion-grid">
+                <article class="mini-card">
+                  <span class="section-label">Dis 4A</span>
+                  <p><strong>Ely Jrade</strong></p>
+                  <div class="helper-list">
+                    <p class="meta">TR, 1:00pm-1:50pm</p>
+                    <p class="meta">Mathematical Sciences 5138</p>
+                    <p class="meta">Contact: BruinLearn inbox</p>
+                  </div>
+                </article>
+
+                <article class="mini-card">
+                  <span class="section-label">Dis 4B</span>
+                  <p><strong>Maciej Gluchowski</strong></p>
+                  <div class="helper-list">
+                    <p class="meta">TR, 2:00pm-2:50pm</p>
+                    <p class="meta">Mathematical Sciences 5138</p>
+                    <p class="meta">Contact: BruinLearn inbox</p>
+                  </div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Course Snapshot</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>What We Will Learn</h3>
+            <ul class="tight">
+              <li>No prior programming experience is assumed.</li>
+              <li>Basic principles of programming in C++.</li>
+              <li>Algorithmic and procedural problem solving.</li>
+              <li>Program design and development.</li>
+              <li>Data types, control structures, and functions.</li>
+              <li>Arrays, pointers, and an introduction to classes.</li>
+              <li>PIC 10A is the prerequisite for later PIC courses.</li>
+            </ul>
+          </article>
+
+          <article class="card secondary">
+            <h3>Course Materials and Sites</h3>
+            <ul class="tight">
+              <li>All course materials are posted on <a href="https://bruinlearn.ucla.edu/" target="_blank" rel="noreferrer">BruinLearn</a>.</li>
+              <li>Lecture slides and code snippets are posted before class.</li>
+              <li>Assignments are submitted on <a href="https://www.gradescope.com/" target="_blank" rel="noreferrer">Gradescope</a>.</li>
+              <li>Make sure you are checking the correct BruinLearn shell for your lecture section.</li>
+            </ul>
+            <div class="helper-list">
+              <p class="meta"><strong>Lec 3:</strong> <a href="https://bruinlearn.ucla.edu/courses/228028" target="_blank" rel="noreferrer">bruinlearn.ucla.edu/courses/228028</a></p>
+              <p class="meta"><strong>Lec 4:</strong> <a href="https://bruinlearn.ucla.edu/courses/228019" target="_blank" rel="noreferrer">bruinlearn.ucla.edu/courses/228019</a></p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Applications of Coding</h2>
+        <div class="grid-2">
+          <article class="card example-card">
+            <span class="section-label">Simulation example</span>
+            <h3>Gray-Scott Reaction-Diffusion</h3>
+            <img class="example-image" src="assets/gray-scott.png" alt="Gray-Scott reaction-diffusion pattern example">
+            <p class="meta">
+              Two chemicals diffuse and react. A simple local update rule, repeated over time on a grid,
+              creates surprisingly rich stripe and maze patterns.
+            </p>
+            <a class="reference-link" href="https://visualpde.com/nonlinear-physics/gray-scott" target="_blank" rel="noreferrer">
+              Interactive demo
+            </a>
+          </article>
+
+          <article class="card example-card secondary">
+            <span class="section-label">Social model example</span>
+            <h3>Schelling's Model</h3>
+            <img class="example-image" src="assets/schelling-model.png" alt="Schelling segregation model example">
+            <p class="meta">
+              Agents move when a neighborhood does not feel similar enough. Even with mild preferences,
+              large-scale segregation can emerge from small repeated rules.
+            </p>
+            <a class="reference-link" href="https://visualize-it.github.io/schelling_model/simulation.html" target="_blank" rel="noreferrer">
+              Interactive demo
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reading and Setup</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Textbook</h3>
+            <ul class="tight">
+              <li>The draft PIC 10A textbook on BruinLearn was written by PIC Director <strong>Michael Andrews</strong>.</li>
+              <li>The main published reference mentioned in the syllabus is <strong>Big C++: Late Objects</strong> by <strong>Cay S. Horstmann</strong>.</li>
+              <li>The draft text aligns more closely with this course; the published book has more polish and more exercises.</li>
+            </ul>
+            <div class="callout cool">
+              The BruinLearn draft textbook should be enough for success in the course. The Horstmann book is optional, but useful for extra exercises.
+            </div>
+          </article>
+
+          <article class="card accent">
+            <h3>Compiler Expectations</h3>
+            <p class="meta">Official course compiler: <code>g++ -std=c++14</code></p>
+            <ul class="tight">
+              <li>Windows: install Microsoft Visual Studio Community 2022.</li>
+              <li>Mac: install Xcode.</li>
+            </ul>
+            <div class="callout">
+              Always verify your code on Gradescope before the deadline. If it works locally but fails there,
+              it still earns 0 points.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Topics Roadmap</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Part 1 to Part 3</h3>
+            <ul class="tight">
+              <li><strong>Basics:</strong> hello world, errors, variables, types, arithmetic, <code>cin</code>/<code>cout</code>, math functions, <code>const</code>.</li>
+              <li><strong>Strings, control flow, and vectors:</strong> <code>string</code>, indexing, loops, conditionals, input buffer issues, <code>vector</code>.</li>
+              <li><strong>Functions and references:</strong> declarations, definitions, parameters, return values, pure functions, procedures, pass-by-value and pass-by-reference.</li>
+            </ul>
+          </article>
+
+          <article class="card secondary">
+            <h3>Part 4 and Part 5</h3>
+            <ul class="tight">
+              <li><strong>Structs and classes:</strong> interfaces, member functions, constructors, initializer lists, public/private, default values.</li>
+              <li><strong>Arrays and pointers:</strong> C-style arrays, pointer arithmetic, passing arrays to functions, and string literals.</li>
+              <li><strong>Source organization:</strong> headers, <code>.cpp</code> files, overloading, and const correctness.</li>
+            </ul>
+            <div class="callout">
+              By the end of the course, you should be able to explain build errors, runtime errors, and undefined behavior, and write short but correct C++ programs from scratch.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Homework Assignments</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Policies</h3>
+            <ul class="tight">
+              <li>There will be between six and eight homework assignments.</li>
+              <li>They will not always be due on the same day of the week, but they will always be due at <strong>10:00pm</strong>.</li>
+              <li>Your lowest two homework scores will be dropped.</li>
+              <li>Late submissions will not be accepted.</li>
+              <li>Resubmissions after the deadline will not be accepted.</li>
+              <li>Misnaming a file will lead to zero credit.</li>
+            </ul>
+          </article>
+
+          <article class="card accent">
+            <h3>Autograding and Submission</h3>
+            <ul class="tight">
+              <li>All homework will be graded using an autograding system.</li>
+              <li>You will receive immediate feedback and your final score once you submit.</li>
+              <li>You may resubmit your homework an unlimited number of times before the deadline without penalty.</li>
+            </ul>
+            <div class="callout cool">
+              Recommendation: do not wait until the last minute to submit. Leave yourself time to correct mistakes and avoid technical issues.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>AI, Google, and Collaboration</h2>
+        <div class="grid-3">
+          <article class="mini-card accent">
+            <h3>No AI-Written Code</h3>
+            <p class="meta">Do not use ChatGPT, Copilot, or similar AI tools to write homework code for this class.</p>
+            <p class="meta">The syllabus explicitly says AI-generated solutions may be reported to the Office of Student Conduct.</p>
+          </article>
+
+          <article class="mini-card">
+            <h3>No Internet Code</h3>
+            <p class="meta">Do not paste code found through Google, Stack Overflow, or Chegg into your solutions.</p>
+            <p class="meta">Even if the code works, using copied code still violates the course policy.</p>
+          </article>
+
+          <article class="mini-card secondary">
+            <h3>What Is Allowed</h3>
+            <p class="meta">You may discuss ideas with classmates, but do not inspect each other's code and do not share code.</p>
+            <p class="meta">If you discuss a homework problem, do not take notes and wait about an hour before writing code.</p>
+          </article>
+        </div>
+        <div class="callout cool">
+          Good collaboration sounds like: “Should this use a <code>while</code> loop?”, “Can you explain the algorithm with a picture?”, or “What made references click for you?”
+        </div>
+      </section>
+
+      <section>
+        <h2>Assessment Logistics</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Midterms and Final Exam</h3>
+            <ul class="tight">
+              <li>Midterm 1: <strong>Monday, April 27, 2026</strong> (tentative)</li>
+              <li>Midterm 2: <strong>Monday, May 18, 2026</strong> (tentative)</li>
+            </ul>
+
+            <p class="meta">Final exam information depends on whether you are enrolled in <strong>Lec 3</strong> or <strong>Lec 4</strong>.</p>
+            <div class="toggle-group" role="tablist" aria-label="Final exam section switcher">
+              <button type="button" class="toggle-button active" data-lecture-target="lec3" aria-pressed="true">Lec 3</button>
+              <button type="button" class="toggle-button" data-lecture-target="lec4" aria-pressed="false">Lec 4</button>
+            </div>
+
+            <div data-lecture-panel="lec3">
+              <div class="stat-grid">
+                <div class="stat">
+                  <span class="stat-label">Date</span>
+                  <strong>June 11, 2026</strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Day</span>
+                  <strong>Thursday</strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Time</span>
+                  <strong>8:00am-11:00am</strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Location</span>
+                  <strong>Check back on May 25, 2026</strong>
+                </div>
+              </div>
+            </div>
+
+            <div data-lecture-panel="lec4" hidden>
+              <div class="stat-grid">
+                <div class="stat">
+                  <span class="stat-label">Date</span>
+                  <strong>June 8, 2026</strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Day</span>
+                  <strong>Monday</strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Time</span>
+                  <strong>8:00am-11:00am</strong>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Location</span>
+                  <strong>Check back on May 25, 2026</strong>
+                </div>
+              </div>
+            </div>
+
+            <p class="tiny">Final exam location is scheduled to be posted on Monday, May 25, 2026.</p>
+          </article>
+
+          <article class="card secondary">
+            <h3>Policy Notes</h3>
+            <ul class="tight">
+              <li>Lecture-specific final exam dates differ between <strong>Lec 3</strong> and <strong>Lec 4</strong>.</li>
+              <li>The midterm dates listed here are tentative.</li>
+              <li>Grading weights and any course-specific policy details should come from the current syllabus.</li>
+              <li>The syllabus and BruinLearn are the authoritative source whenever this slide deck and the live course differ.</li>
+            </ul>
+            <div class="callout cool">
+              If you have a conflict, accommodation, or emergency that could affect an exam, contact the
+              instructional team as early as possible.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Grading Scheme</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Highest-Score Structure</h3>
+            <p class="meta">
+              Your course score is determined by the grading scheme that gives you the highest score.
+            </p>
+            <div class="table-wrap">
+              <table class="grade-table">
+                <thead>
+                  <tr>
+                    <th>Scenario</th>
+                    <th>Homework</th>
+                    <th>Midterm 1</th>
+                    <th>Midterm 2</th>
+                    <th>Final</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Both midterms counted</td>
+                    <td>15%</td>
+                    <td>25%</td>
+                    <td>25%</td>
+                    <td>35%</td>
+                  </tr>
+                  <tr>
+                    <td>Midterm 1 not counted</td>
+                    <td>15%</td>
+                    <td>0%</td>
+                    <td>25%</td>
+                    <td>60%</td>
+                  </tr>
+                  <tr>
+                    <td>Midterm 2 not counted</td>
+                    <td>15%</td>
+                    <td>25%</td>
+                    <td>0%</td>
+                    <td>60%</td>
+                  </tr>
+                  <tr>
+                    <td>Neither midterm counted</td>
+                    <td>15%</td>
+                    <td>0%</td>
+                    <td>0%</td>
+                    <td>85%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="card secondary">
+            <h3>How to Read This Table</h3>
+            <ul class="tight">
+              <li>If both midterms count, the final exam is worth 35%.</li>
+              <li>If one midterm does not count, the final exam absorbs that missing weight.</li>
+              <li>If neither midterm counts, the final exam becomes 85% of the course grade.</li>
+              <li>Homework remains 15% in all four scenarios.</li>
+            </ul>
+            <div class="callout cool">
+              If the official syllabus for this quarter uses different weights, update this slide to match the
+              live syllabus before sharing it with students.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Policies and Support</h2>
+        <div class="grid-3">
+          <article class="mini-card">
+            <h3>Grades</h3>
+            <p class="meta">
+              Grade boundaries are chosen carefully based on demonstrated learning, not by forcing a simple curve.
+            </p>
+            <p class="meta">
+              Questions about graded homework or midterms should be raised within one week of grading.
+            </p>
+          </article>
+
+          <article class="mini-card accent">
+            <h3>Academic Integrity</h3>
+            <p class="meta">Write your own solutions and follow the dedicated AI / Google / collaboration slide.</p>
+            <p class="meta">Questions about what is allowed are worth asking early, before you submit.</p>
+          </article>
+
+          <article class="mini-card secondary">
+            <h3>Inclusive Learning</h3>
+            <p class="meta">
+              UCLA values a respectful, welcoming, and inclusive environment. If the course design creates
+              barriers to your learning or assessment, please let us know.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Student Support</h2>
+        <div class="grid-3">
+          <article class="mini-card">
+            <h3>CAE</h3>
+            <p class="meta">
+              For disability-related academic accommodations, contact the
+              <a href="https://www.cae.ucla.edu/" target="_blank" rel="noreferrer">Center for Accessible Education</a>.
+            </p>
+          </article>
+
+          <article class="mini-card secondary">
+            <h3>CAPS</h3>
+            <p class="meta">
+              For mental health and immediate support, contact
+              <a href="https://www.counseling.ucla.edu/" target="_blank" rel="noreferrer">Counseling and Psychological Services</a>.
+              In urgent danger, call 911.
+            </p>
+          </article>
+
+          <article class="mini-card accent">
+            <h3>Title IX</h3>
+            <p class="meta">
+              For support and reporting options related to discrimination, harassment, assault, or stalking, visit the
+              <a href="https://sexualharassment.ucla.edu/" target="_blank" rel="noreferrer">UCLA Title IX Office</a>.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy" data-auto-animate>
+        <div class="eyebrow">Now let's code</div>
+        <h2>The first few C++ programs</h2>
+        <p class="lead center-copy">
+          We will start small: a program that does almost nothing, then one that prints text, then one that
+          uses escape sequences correctly.
+        </p>
+      </section>
+
+      <section data-auto-animate>
+        <h2>The Smallest Useful Program</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int main() {
+    return 0;
+}
+            </code>
+          </pre>
+
+          <article class="card fragment fade-in">
+            <ul class="tight">
+              <li>Every C++ program must have exactly one <code>main</code> function.</li>
+              <li>Execution begins in <code>main</code>.</li>
+              <li>Semicolons <code>;</code> mark the end of statements.</li>
+              <li><code>return 0;</code> means the program finished successfully.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Hello, World!</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "Hello, World!\n";
+    return 0;
+}
+            </code>
+          </pre>
+
+          <article class="card">
+            <ul class="tight">
+              <li><code>#include &lt;iostream&gt;</code> gives us stream-based input and output.</li>
+              <li><code>std::cout</code> is the standard output stream.</li>
+              <li><code>&lt;&lt;</code> sends data to that output stream.</li>
+              <li><code>\n</code> prints a newline character.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>A Shorter Version</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, World!" &lt;&lt; endl;
+    return 0;
+}
+            </code>
+          </pre>
+
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>using namespace std;</code> lets us omit the <code>std::</code> prefix.</li>
+              <li><code>endl</code> inserts a newline and flushes the output buffer.</li>
+              <li>This version is shorter, but it introduces a namespace decision we will discuss carefully in class.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Backslash Escape Sequences</h2>
+        <div class="grid-2 code-notes">
+          <article class="card">
+            <table class="escape-table">
+              <tbody>
+                <tr>
+                  <td>\n</td>
+                  <td>Newline</td>
+                </tr>
+                <tr>
+                  <td>\t</td>
+                  <td>Tab</td>
+                </tr>
+                <tr>
+                  <td>\\</td>
+                  <td>Backslash</td>
+                </tr>
+                <tr>
+                  <td>\"</td>
+                  <td>Double quote</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="callout cool">
+              These sequences let you print characters that would otherwise be interpreted specially inside a string.
+            </div>
+          </article>
+
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, \nWorld!\n";
+    cout &lt;&lt; "This is a tab:\tSee?\n";
+    cout &lt;&lt; "She said, \"Hello!\"\n";
+    cout &lt;&lt; "This is a backslash: \\\n";
+    return 0;
+}
+            </code>
+          </pre>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Check</h2>
+        <div class="grid-2 code-notes">
+          <article class="card">
+            <p class="meta">What will this program print?</p>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    cout &lt;&lt; "Hello, \\nWorld!\\n";
+    return 0;
+    cout &lt;&lt; "Hello, World!\n";
+}
+              </code>
+            </pre>
+          </article>
+
+          <article class="card accent fragment fade-in">
+            <h3>Notice Three Things</h3>
+            <ul class="tight">
+              <li><code>\\n</code> prints the two characters <code>\</code> and <code>n</code>, not a newline.</li>
+              <li><code>return 0;</code> ends the program immediately.</li>
+              <li>The final <code>cout</code> line is unreachable.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Questions?</div>
+        <h2>Ask early and often</h2>
+        <p class="lead center-copy">
+          Use lecture, office hours, TA/student hours, and email. Programming gets much easier once you
+          start asking questions before confusion piles up.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      controls: true,
+      hash: true,
+      progress: true,
+      slideNumber: true,
+      transition: 'fade',
+      plugins: [RevealHighlight]
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyToClipboard = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            successful ? resolve() : reject(new Error('Copy failed'));
+          } catch (err) {
+            document.body.removeChild(textarea);
+            reject(err);
+          }
+        });
+      };
+
+      const getCleanCode = (codeBlock) => {
+        const normalized = codeBlock.innerText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').map((line) => line.replace(/\s+$/, ''));
+        const cleaned = [];
+
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const isEmpty = line.trim() === '';
+
+          if (isEmpty) {
+            const prevHasText = i > 0 && lines[i - 1].trim() !== '';
+            const nextHasText = i < lines.length - 1 && lines[i + 1].trim() !== '';
+            if (prevHasText && nextHasText) {
+              continue;
+            }
+          }
+
+          cleaned.push(line);
+        }
+
+        return cleaned.join('\n').trim();
+      };
+
+      const lectureButtons = document.querySelectorAll('[data-lecture-target]');
+      const lecturePanels = document.querySelectorAll('[data-lecture-panel]');
+
+      const setLectureSection = (lecture) => {
+        lectureButtons.forEach((button) => {
+          const isActive = button.dataset.lectureTarget === lecture;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-pressed', String(isActive));
+        });
+
+        lecturePanels.forEach((panel) => {
+          panel.hidden = panel.dataset.lecturePanel !== lecture;
+        });
+      };
+
+      lectureButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          setLectureSection(button.dataset.lectureTarget);
+        });
+      });
+
+      setLectureSection('lec3');
+
+      document.querySelectorAll('pre > code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        pre.classList.add('copy-code-block');
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code-button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.textContent = 'Copy';
+
+        button.addEventListener('click', async () => {
+          const text = getCleanCode(codeBlock);
+          try {
+            await copyToClipboard(text);
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            }, 1500);
+          } catch (err) {
+            button.textContent = 'Retry';
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            }, 1500);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -931,6 +931,54 @@ cout &lt;&lt; is_even &lt;&lt; endl;
         </div>
       </section>
 
+      <section>
+        <h2>Lecture 1 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Question set A</h3>
+            <ul class="tight">
+              <li>How do you declare an <code>int</code> called <code>my_int</code>, and how do you make it store <code>8</code>?</li>
+              <li>What kind of error do you get if you use a variable before declaring it?</li>
+              <li>What is the difference between <code>=</code> and <code>==</code>?</li>
+              <li>What happens if you print an <code>int</code> before initializing it?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Question set B</h3>
+            <ul class="tight">
+              <li>What do <code>28 / 10</code> and <code>28 % 10</code> evaluate to?</li>
+              <li>Why is <code>const int HOURS = 24;</code> better than repeatedly typing <code>24</code>?</li>
+              <li>What does <code>cin &gt;&gt; a &gt;&gt; b;</code> do?</li>
+              <li>Write one expression that checks whether an integer <code>n</code> is even.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 1 Answer Check</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>Core answers</h3>
+            <ul class="tight">
+              <li><code>int my_int; my_int = 8;</code></li>
+              <li>Using a variable before declaration gives a build error.</li>
+              <li><code>=</code> assigns; <code>==</code> compares.</li>
+              <li>Printing before initialization gives undefined behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Computation check</h3>
+            <ul class="tight">
+              <li><code>28 / 10</code> is <code>2</code>, and <code>28 % 10</code> is <code>8</code>.</li>
+              <li><code>const</code> gives the value a clear name and prevents accidental reassignment.</li>
+              <li><code>cin &gt;&gt; a &gt;&gt; b;</code> reads two inputs into <code>a</code> and <code>b</code>.</li>
+              <li>One correct test is <code>n % 2 == 0</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
         <h2><code>double</code>, casting, and character codes</h2>
@@ -1002,6 +1050,21 @@ cout &lt;&lt; is_even &lt;&lt; endl;
 
         return cleaned.join('\n').trim();
       };
+
+      const addFragments = (selector) => {
+        document.querySelectorAll(selector).forEach((element) => {
+          if (!element.classList.contains('fragment')) {
+            element.classList.add('fragment', 'fade-in');
+          }
+        });
+      };
+
+      addFragments('section ul li');
+      addFragments('section .stat-grid > *');
+      addFragments('section .memory-row > *');
+      addFragments('section .equation-strip > *');
+      addFragments('section .check-grid > *');
+      addFragments('section .grid-2 > .mini-card');
 
       document.querySelectorAll('pre > code').forEach((codeBlock) => {
         const pre = codeBlock.parentElement;

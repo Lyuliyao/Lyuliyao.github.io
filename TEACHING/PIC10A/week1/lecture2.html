@@ -827,6 +827,54 @@ cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
         </div>
       </section>
 
+      <section>
+        <h2>Lecture 2 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Question set A</h3>
+            <ul class="tight">
+              <li>What is the difference between <code>sum / 3</code> and <code>sum / 3.0</code>?</li>
+              <li>What does <code>static_cast&lt;int&gt;(4.8)</code> evaluate to?</li>
+              <li>Why can checking <code>k == 0.0</code> be unreliable for a <code>double</code>?</li>
+              <li>What header do you include for functions like <code>sqrt</code> and <code>pow</code>?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Question set B</h3>
+            <ul class="tight">
+              <li>What is <code>static_cast&lt;int&gt;('A')</code>?</li>
+              <li>How would you turn a lowercase letter into uppercase using character arithmetic?</li>
+              <li>What is <code>std::size_t</code> typically used for?</li>
+              <li>Why should you be cautious with <code>unsigned int</code>?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 2 Answer Check</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>Core answers</h3>
+            <ul class="tight">
+              <li><code>sum / 3</code> does integer division, while <code>sum / 3.0</code> does floating-point division.</li>
+              <li><code>static_cast&lt;int&gt;(4.8)</code> is <code>4</code>.</li>
+              <li>A <code>double</code> is an approximation, so tiny rounding errors may remain.</li>
+              <li>Use <code>#include &lt;cmath&gt;</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Type and character check</h3>
+            <ul class="tight">
+              <li><code>static_cast&lt;int&gt;('A')</code> is <code>65</code> in ASCII.</li>
+              <li>One common pattern is <code>static_cast&lt;char&gt;(ch + 'A' - 'a')</code>.</li>
+              <li><code>std::size_t</code> is used for sizes and indices.</li>
+              <li><code>unsigned int</code> can wrap around in ways that are easy to misread.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
         <h2>Strings and the input buffer</h2>
@@ -898,6 +946,21 @@ cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
 
         return cleaned.join('\n').trim();
       };
+
+      const addFragments = (selector) => {
+        document.querySelectorAll(selector).forEach((element) => {
+          if (!element.classList.contains('fragment')) {
+            element.classList.add('fragment', 'fade-in');
+          }
+        });
+      };
+
+      addFragments('section ul li');
+      addFragments('section .stat-grid > *');
+      addFragments('section .memory-row > *');
+      addFragments('section .equation-strip > *');
+      addFragments('section .check-grid > *');
+      addFragments('section .grid-2 > .mini-card');
 
       document.querySelectorAll('pre > code').forEach((codeBlock) => {
         const pre = codeBlock.parentElement;

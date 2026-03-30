@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <style>
+    :root {
+      --bg: #f7f4ed;
+      --bg-soft: #fffaf2;
+      --ink: #16233b;
+      --muted: #5f6c82;
+      --line: rgba(22, 35, 59, 0.14);
+      --card: rgba(255, 252, 245, 0.88);
+      --accent: #c24d2c;
+      --accent-soft: rgba(194, 77, 44, 0.12);
+      --accent-2: #0c6c71;
+      --accent-2-soft: rgba(12, 108, 113, 0.12);
+      --shadow: 0 18px 50px rgba(25, 37, 59, 0.12);
+      --radius: 24px;
+    }
+
+    .reveal {
+      color: var(--ink);
+      font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", sans-serif;
+      font-size: 34px;
+      background:
+        radial-gradient(circle at top left, rgba(194, 77, 44, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(12, 108, 113, 0.12), transparent 30%),
+        linear-gradient(180deg, #fbf8f1 0%, #f3efe6 100%);
+    }
+
+    .reveal .slides {
+      text-align: left;
+    }
+
+    .reveal .slides section,
+    .reveal .slides section > section {
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .reveal h1,
+    .reveal h2,
+    .reveal h3 {
+      font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      letter-spacing: -0.02em;
+      text-transform: none;
+      color: var(--ink);
+    }
+
+    .reveal h1 {
+      font-size: 2.35em;
+      margin-bottom: 0.2em;
+    }
+
+    .reveal h2 {
+      font-size: 1.5em;
+      margin-bottom: 0.5em;
+    }
+
+    .reveal h3 {
+      font-size: 0.8em;
+      margin-bottom: 0.4em;
+      color: var(--accent-2);
+    }
+
+    .reveal p,
+    .reveal li {
+      color: var(--ink);
+      line-height: 1.4;
+    }
+
+    .reveal a {
+      color: var(--accent);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.14em;
+    }
+
+    .reveal strong,
+    .reveal b {
+      color: var(--ink);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: 0.28rem 0.7rem;
+      border: 1px solid rgba(194, 77, 44, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--accent);
+      font-size: 0.46em;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      max-width: 22em;
+      font-size: 0.78em;
+      color: var(--muted);
+    }
+
+    .center-copy {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 1.1rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.24rem 0.64rem;
+      border-radius: 999px;
+      background: rgba(22, 35, 59, 0.08);
+      color: var(--ink);
+      font-size: 0.42em;
+      font-weight: 600;
+    }
+
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100%;
+    }
+
+    .hero .lead {
+      max-width: 20em;
+      font-size: 0.82em;
+    }
+
+    .grid-2,
+    .grid-3,
+    .discussion-grid,
+    .stat-grid {
+      display: grid;
+      gap: 1rem;
+      align-items: stretch;
+    }
+
+    .grid-2,
+    .discussion-grid,
+    .stat-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .stack {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .card,
+    .mini-card {
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .mini-card {
+      padding: 0.72rem 0.86rem;
+      border-radius: 20px;
+    }
+
+    .card.accent {
+      border-color: rgba(194, 77, 44, 0.22);
+      background: linear-gradient(180deg, rgba(255, 247, 243, 0.96), rgba(255, 251, 247, 0.92));
+    }
+
+    .card.secondary,
+    .mini-card.secondary {
+      border-color: rgba(12, 108, 113, 0.2);
+      background: linear-gradient(180deg, rgba(242, 251, 251, 0.98), rgba(250, 255, 255, 0.92));
+    }
+
+    .mini-card.accent {
+      border-color: rgba(194, 77, 44, 0.22);
+      background: linear-gradient(180deg, rgba(255, 247, 243, 0.96), rgba(255, 251, 247, 0.92));
+    }
+
+    .meta {
+      margin: 0.28rem 0 0;
+      color: var(--muted);
+      font-size: 0.52em;
+    }
+
+    .tight,
+    .tight ul {
+      margin-top: 0.3rem;
+      margin-bottom: 0;
+    }
+
+    .tight li {
+      margin-bottom: 0.28rem;
+      font-size: 0.58em;
+    }
+
+    .note,
+    .tiny {
+      color: var(--muted);
+      font-size: 0.5em;
+    }
+
+    .callout {
+      margin-top: 0.8rem;
+      padding: 0.72rem 0.82rem;
+      border-left: 4px solid var(--accent);
+      border-radius: 16px;
+      background: var(--accent-soft);
+      font-size: 0.54em;
+      color: var(--ink);
+    }
+
+    .callout.cool {
+      border-left-color: var(--accent-2);
+      background: var(--accent-2-soft);
+    }
+
+    .stat {
+      padding: 0.66rem 0.76rem;
+      border-radius: 18px;
+      background: rgba(22, 35, 59, 0.05);
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 0.14rem;
+      color: var(--muted);
+      font-size: 0.42em;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 0.58em;
+      line-height: 1.3;
+    }
+
+    .section-label {
+      display: inline-block;
+      margin-bottom: 0.45rem;
+      padding: 0.18rem 0.5rem;
+      border-radius: 999px;
+      background: rgba(12, 108, 113, 0.12);
+      color: var(--accent-2);
+      font-size: 0.42em;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .memory-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin-top: 0.9rem;
+    }
+
+    .memory-box {
+      padding: 0.72rem 0.7rem;
+      border: 1px dashed rgba(22, 35, 59, 0.18);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.55);
+      text-align: center;
+    }
+
+    .memory-box .stat-label {
+      margin-bottom: 0.2rem;
+    }
+
+    .memory-box strong {
+      font-size: 0.72em;
+    }
+
+    .memory-box.empty strong {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .equation-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.85rem;
+    }
+
+    .equation-chip {
+      padding: 0.32rem 0.68rem;
+      border-radius: 999px;
+      background: rgba(22, 35, 59, 0.08);
+      font-size: 0.5em;
+      font-weight: 700;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .reveal pre {
+      width: 100%;
+      margin: 0;
+      border-radius: 22px;
+      box-shadow: 0 24px 45px rgba(14, 17, 28, 0.22);
+      overflow: hidden;
+    }
+
+    .reveal pre code {
+      max-height: 420px;
+      padding: 1.2rem 1.1rem;
+      font-size: 0.68em;
+      line-height: 1.5;
+    }
+
+    .code-notes {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .copy-code-block {
+      position: relative;
+    }
+
+    .copy-code-button {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.8rem;
+      padding: 0.28rem 0.65rem;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      font-size: 0.46em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .copy-code-button:hover,
+    .copy-code-button:focus {
+      background: rgba(255, 255, 255, 0.24);
+      transform: translateY(-1px);
+    }
+
+    .transition-slide {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100%;
+    }
+
+    .transition-slide .lead {
+      max-width: 18em;
+    }
+
+    .reveal code:not(pre code) {
+      padding: 0.12em 0.32em;
+      border-radius: 8px;
+      background: rgba(22, 35, 59, 0.08);
+      color: var(--accent);
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 900px) {
+      .reveal {
+        font-size: 26px;
+      }
+
+      .grid-2,
+      .grid-3,
+      .discussion-grid,
+      .stat-grid,
+      .memory-row,
+      .check-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        justify-content: flex-start;
+        padding-top: 1.8rem;
+      }
+
+      .reveal pre code {
+        font-size: 0.58em;
+        max-height: 320px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero" data-auto-animate>
+        <div class="eyebrow">PIC 10A • Lecture 1</div>
+        <h1>Variables, <code>int</code>, and input</h1>
+        <p class="lead">
+          Today we move from output-only programs to programs that store values, update state,
+          read user input, and make simple true/false statements.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Spring 2026</span>
+          <span class="pill">Section 5</span>
+          <span class="pill">About 45 minutes</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 0</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>What we already know</h3>
+            <ul class="tight">
+              <li>Every C++ program starts in <code>main()</code>.</li>
+              <li><code>#include &lt;iostream&gt;</code> gives access to console I/O.</li>
+              <li><code>std::cout</code> and <code>endl</code> print output.</li>
+              <li>Escape sequences like <code>\n</code>, <code>\t</code>, and <code>\\</code> change printed text.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Habits from last time</h3>
+            <ul class="tight">
+              <li>Read code line by line and ask what each line changes.</li>
+              <li>Semicolons end statements.</li>
+              <li><code>return 0;</code> ends the program successfully.</li>
+              <li>Comments help humans, not the compiler.</li>
+            </ul>
+            <div class="callout cool">
+              Today we keep the same output ideas, but now we start storing values instead of hard-coding everything.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Today's Roadmap</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight">
+              <li>Everything in C++ has a type.</li>
+              <li>Variables give names to values stored in memory.</li>
+              <li><code>=</code> updates a variable. It does not test equality.</li>
+              <li>With <code>int</code> we can do arithmetic and integer division.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practical tools</h3>
+            <ul class="tight">
+              <li><code>const</code> for values that should not change.</li>
+              <li><code>std::cin</code> for user input.</li>
+              <li><code>bool</code> and <code>==</code> for simple yes/no facts.</li>
+              <li>We will keep labeling errors as build error or undefined behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Everything Has a Type</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>Examples of fundamental types</h3>
+            <div class="stat-grid">
+              <div class="stat">
+                <span class="stat-label">Type</span>
+                <strong><code>int</code></strong>
+                <p class="meta">Whole numbers like <code>4</code> or <code>-12</code></p>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Type</span>
+                <strong><code>double</code></strong>
+                <p class="meta">Numbers like <code>3.14</code></p>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Type</span>
+                <strong><code>char</code></strong>
+                <p class="meta">Single characters like <code>'A'</code></p>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Type</span>
+                <strong><code>bool</code></strong>
+                <p class="meta"><code>true</code> or <code>false</code></p>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <h3>Why the compiler cares</h3>
+            <ul class="tight">
+              <li>The type tells the compiler what kind of value is stored.</li>
+              <li>The type determines which operations make sense.</li>
+              <li>Even things we already used have types: <code>std::cout</code>, string literals, and <code>endl</code>.</li>
+            </ul>
+            <div class="callout cool">
+              Thinking “what is the type of this thing?” will become one of your best debugging habits.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Variables Are Named Storage</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>What a variable gives us</h3>
+            <ul class="tight">
+              <li>A place to store a value.</li>
+              <li>A name we can use later.</li>
+              <li>A type that tells us how to interpret the stored bits.</li>
+              <li>For non-<code>const</code> variables, the value can change.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Picture in your head</h3>
+            <p class="meta">A variable is like a labeled box in memory.</p>
+            <div class="memory-row">
+              <div class="memory-box empty">
+                <span class="stat-label">Name</span>
+                <strong><code>age</code></strong>
+              </div>
+              <div class="memory-box">
+                <span class="stat-label">Type</span>
+                <strong><code>int</code></strong>
+              </div>
+              <div class="memory-box">
+                <span class="stat-label">Current value</span>
+                <strong><code>19</code></strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>Declaring and Assigning</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="4-8" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int i;
+    i = 1;
+    cout &lt;&lt; i &lt;&lt; endl;
+    return 0;
+}
+            </code>
+          </pre>
+
+          <article class="card">
+            <ul class="tight">
+              <li><code>int i;</code> declares and defines a variable named <code>i</code>.</li>
+              <li><code>i = 1;</code> assigns the value <code>1</code> to <code>i</code>.</li>
+              <li><code>cout &lt;&lt; i</code> prints the value stored in the variable, not the string literal <code>"i"</code>.</li>
+            </ul>
+            <div class="memory-row">
+              <div class="memory-box">
+                <span class="stat-label">After line 5</span>
+                <strong><code>i</code> exists</strong>
+              </div>
+              <div class="memory-box">
+                <span class="stat-label">After line 6</span>
+                <strong><code>i = 1</code></strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Two Early Build Errors</h2>
+        <div class="grid-2">
+          <article class="mini-card accent">
+            <span class="section-label">Build error</span>
+            <h3>Use before declaration</h3>
+            <pre>
+              <code data-trim data-line-numbers="2" contenteditable class="language-cpp">
+int main() {
+    j = 1;
+    return 0;
+}
+              </code>
+            </pre>
+            <p class="meta"><code>j</code> does not exist yet.</p>
+          </article>
+          <article class="mini-card secondary">
+            <span class="section-label">Build error</span>
+            <h3>Redefinition</h3>
+            <pre>
+              <code data-trim data-line-numbers="2,3" contenteditable class="language-cpp">
+int main() {
+    int i;
+    int i;
+    return 0;
+}
+              </code>
+            </pre>
+            <p class="meta">Same name, same scope, declared twice.</p>
+          </article>
+        </div>
+        <div class="callout">
+          Build errors are good news compared to hidden bugs: the compiler caught a problem before the program ran.
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2>The Assignment Operator</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-11" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int i, j, k;
+    i = 1; j = 2; k = 3;
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; " " &lt;&lt; k &lt;&lt; endl;
+    i = j;
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; " " &lt;&lt; k &lt;&lt; endl;
+    i = j + k;
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; " " &lt;&lt; k &lt;&lt; endl;
+}
+            </code>
+          </pre>
+
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>=</code> means “take the value on the right and store it in the variable on the left.”</li>
+              <li>The left side must be something assignable, usually a variable.</li>
+              <li><code>i = j + k;</code> updates <code>i</code>. It does not change <code>j</code> or <code>k</code>.</li>
+            </ul>
+            <div class="equation-strip">
+              <span class="equation-chip"><code>i = j</code></span>
+              <span class="equation-chip"><code>i = j + k</code></span>
+              <span class="equation-chip"><code>=</code> is not equality</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Initialization and Undefined Behavior</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-8" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int ub;
+    cout &lt;&lt; ub &lt;&lt; endl;
+    ub = 1;
+    return 0;
+}
+            </code>
+          </pre>
+          <article class="card accent">
+            <ul class="tight">
+              <li>The first assignment to a variable is called initialization.</li>
+              <li>Reading a variable before initialization gives <strong>undefined behavior</strong>.</li>
+              <li>Undefined behavior is dangerous because the program may appear to work sometimes.</li>
+            </ul>
+            <div class="callout">
+              Do not rely on “it printed 0 on my machine.” Undefined behavior means the language gives no promise.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Naming Rules and Conventions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Rules</h3>
+            <ul class="tight">
+              <li>Names may start with a letter or underscore.</li>
+              <li>After that, letters, digits, and underscores are allowed.</li>
+              <li>Names are case-sensitive: <code>score</code> and <code>Score</code> differ.</li>
+              <li><code>1score</code> is illegal because it starts with a digit.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Conventions</h3>
+            <ul class="tight">
+              <li>Use names that describe the value: <code>minutes_per_day</code>, <code>num_students</code>.</li>
+              <li>Many codebases use <code>lower_snake_case</code> or <code>lowerCamelCase</code>.</li>
+              <li>For constants, names like <code>HOURS_PER_DAY</code> are common.</li>
+            </ul>
+            <div class="callout cool">
+              Good names reduce comments because the code explains itself.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2><code>int</code> Arithmetic</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-17" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int i = 3, j = 2;
+
+    cout &lt;&lt; i + j &lt;&lt; endl;
+    cout &lt;&lt; i - j &lt;&lt; endl;
+    cout &lt;&lt; i * j &lt;&lt; endl;
+
+    i = i + 3;
+    j += 3;
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; endl;
+
+    i *= 2;
+    cout &lt;&lt; i &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>We have the usual arithmetic operators: <code>+</code>, <code>-</code>, <code>*</code>.</li>
+              <li>We also have update forms: <code>+=</code>, <code>-=</code>, <code>*=</code>.</li>
+              <li><code>j += 3;</code> is shorthand for <code>j = j + 3;</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>++</code>, <code>--</code>, <code>/</code>, and <code>%</code></h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Increment and decrement</h3>
+            <pre>
+              <code data-trim data-line-numbers="5-9" contenteditable class="language-cpp">
+int i = 0;
+cout &lt;&lt; ++i &lt;&lt; endl; // 1
+
+i = 0;
+cout &lt;&lt; i++ &lt;&lt; endl; // prints 0, then i becomes 1
+              </code>
+            </pre>
+            <div class="callout">
+              Using <code>++</code> more than once in the same expression can give undefined behavior. Keep it simple.
+            </div>
+          </article>
+          <article class="card secondary">
+            <h3>Integer division</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 28, j = 10;
+cout &lt;&lt; i / j &lt;&lt; endl; // 2
+cout &lt;&lt; i % j &lt;&lt; endl; // 8
+
+i = -28;
+cout &lt;&lt; i / j &lt;&lt; endl; // -2
+cout &lt;&lt; i % j &lt;&lt; endl; // -8
+              </code>
+            </pre>
+            <p class="meta">For <code>int</code>, division discards the fractional part.</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>const</code> Protects Meaning</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-10" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    const int HOURS_PER_DAY = 24;
+    const int MINUTES_PER_HOUR = 60;
+    const int MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
+    cout &lt;&lt; MINUTES_PER_DAY &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card accent">
+            <ul class="tight">
+              <li>A <code>const</code> variable must be initialized when declared.</li>
+              <li>Assigning to a <code>const</code> later gives a build error.</li>
+              <li>This helps eliminate unexplained “magic numbers.”</li>
+            </ul>
+            <div class="equation-strip">
+              <span class="equation-chip"><code>const int DAYS = 7;</code></span>
+              <span class="equation-chip">good for fixed facts</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2><code>std::cin</code> Reads Input</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-10" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int i1, i2;
+    cout &lt;&lt; "Enter two integers: ";
+    cin &gt;&gt; i1 &gt;&gt; i2;
+    cout &lt;&lt; "Their sum is " &lt;&lt; i1 + i2 &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>cin &gt;&gt; variable;</code> extracts input and stores it in the variable.</li>
+              <li>You can chain extractions: <code>cin &gt;&gt; i1 &gt;&gt; i2;</code>.</li>
+              <li>The input must match the expected type.</li>
+            </ul>
+            <div class="callout cool">
+              Later we will study the input buffer more carefully. For now, think of <code>cin</code> as feeding typed values into variables.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>bool</code> and <code>==</code></h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-11" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int a = 5, b = 10;
+    bool result = (a == b);
+    cout &lt;&lt; boolalpha;
+    cout &lt;&lt; a &lt;&lt; " == " &lt;&lt; b &lt;&lt; ": " &lt;&lt; result &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>bool</code> stores <code>true</code> or <code>false</code>.</li>
+              <li><code>==</code> tests equality. This is different from <code>=</code>.</li>
+              <li><code>boolalpha</code> makes booleans print as words instead of <code>1</code> and <code>0</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Read two integers and print whether they are equal.</p>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a, b;
+cout &lt;&lt; boolalpha;
+cin &gt;&gt; a &gt;&gt; b;
+bool same = (a == b);
+cout &lt;&lt; same &lt;&lt; endl;
+              </code>
+            </pre>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">Read one integer and print whether it is even.</p>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+int n;
+cout &lt;&lt; boolalpha;
+cin &gt;&gt; n;
+bool is_even = (n % 2 == 0);
+cout &lt;&lt; is_even &lt;&lt; endl;
+              </code>
+            </pre>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 1 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>Everything has a type, and variables are named storage.</li>
+              <li><code>=</code> assigns; <code>==</code> compares.</li>
+              <li><code>int</code> supports arithmetic, increment/decrement, and remainder.</li>
+              <li>Integer division discards the fractional part.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Initialize variables before using them.</li>
+              <li>Use <code>const</code> for fixed values.</li>
+              <li>Use <code>cin</code> to read input into variables.</li>
+              <li>Use <code>bool</code> to store true/false facts about your data.</li>
+            </ul>
+            <div class="callout cool">
+              If you can trace how a variable changes from line to line, you understand the core of today's lecture.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2><code>double</code>, casting, and character codes</h2>
+        <p class="lead center-copy">
+          Next time we will handle non-integer numbers, learn how conversion between types works,
+          and see why not all numbers behave exactly the way ordinary arithmetic suggests.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      center: true,
+      controls: true,
+      hash: true,
+      progress: true,
+      slideNumber: true,
+      transition: 'fade',
+      plugins: [RevealHighlight]
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const copyToClipboard = (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.style.position = 'fixed';
+          textarea.style.opacity = '0';
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          try {
+            const successful = document.execCommand('copy');
+            document.body.removeChild(textarea);
+            successful ? resolve() : reject(new Error('Copy failed'));
+          } catch (err) {
+            document.body.removeChild(textarea);
+            reject(err);
+          }
+        });
+      };
+
+      const getCleanCode = (codeBlock) => {
+        const normalized = codeBlock.innerText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = normalized.split('\n').map((line) => line.replace(/\s+$/, ''));
+        const cleaned = [];
+
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i];
+          const isEmpty = line.trim() === '';
+
+          if (isEmpty) {
+            const prevHasText = i > 0 && lines[i - 1].trim() !== '';
+            const nextHasText = i < lines.length - 1 && lines[i + 1].trim() !== '';
+            if (prevHasText && nextHasText) {
+              continue;
+            }
+          }
+
+          cleaned.push(line);
+        }
+
+        return cleaned.join('\n').trim();
+      };
+
+      document.querySelectorAll('pre > code').forEach((codeBlock) => {
+        const pre = codeBlock.parentElement;
+        pre.classList.add('copy-code-block');
+
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'copy-code-button';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        button.textContent = 'Copy';
+
+        button.addEventListener('click', async () => {
+          const text = getCleanCode(codeBlock);
+          try {
+            await copyToClipboard(text);
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            }, 1500);
+          } catch (err) {
+            button.textContent = 'Retry';
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            }, 1500);
+          }
+        });
+
+        pre.appendChild(button);
+      });
+    });
+  </script>
+</body>
+
+</html>

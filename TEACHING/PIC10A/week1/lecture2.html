@@ -216,6 +216,24 @@
       font-size: 0.58em;
     }
 
+    .qa-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .qa-list li {
+      margin-bottom: 0.36rem;
+    }
+
+    .qa-list .answer-line {
+      margin-left: 0.9rem;
+      color: var(--muted);
+    }
+
+    .qa-list .answer-line strong {
+      color: var(--accent-2);
+    }
+
     .note,
     .tiny {
       color: var(--muted);
@@ -416,14 +434,14 @@
     <div class="slides">
       <section class="hero" data-auto-animate>
         <div class="eyebrow">PIC 10A • Lecture 2</div>
-        <h1><code>double</code>, casting, and character codes</h1>
+        <h1><code>int</code>, <code>const</code>, input, and <code>bool</code></h1>
         <p class="lead">
-          Today we extend last lecture's integer world: fractions, conversions between types,
-          floating-point precision, and the idea that characters are also stored numerically.
+          Today we go deeper into integer behavior, then add constants, user input,
+          and simple true/false comparisons.
         </p>
         <div class="pill-row">
           <span class="pill">Spring 2026</span>
-          <span class="pill">Section 5 continued</span>
+          <span class="pill">Section 5</span>
           <span class="pill">About 45 minutes</span>
         </div>
       </section>
@@ -431,90 +449,183 @@
       <section>
         <h2>Review from Lecture 1</h2>
         <div class="grid-2">
-          <article class="mini-card accent">
-            <span class="section-label">Key recall</span>
-            <h3><code>int</code> arithmetic is still integer arithmetic</h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-int sum = 1;
-cout &lt;&lt; sum / 2 &lt;&lt; endl;
-              </code>
-            </pre>
-            <p class="meta">Answer: <code>0</code>, because <code>int</code> division discards the fractional part.</p>
+          <article class="card accent">
+            <h3>Core ideas from last time</h3>
+            <ul class="tight">
+              <li>Everything in C++ has a type.</li>
+              <li>Variables are named storage locations.</li>
+              <li><code>=</code> assigns a value, and initialization is the first assignment.</li>
+              <li>Basic <code>int</code> arithmetic already lets us update state step by step.</li>
+            </ul>
           </article>
-          <article class="mini-card secondary">
-            <span class="section-label">Key recall</span>
-            <h3>Facts from last lecture</h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-bool same = (a == b);
-              </code>
-            </pre>
-            <p class="meta"><code>==</code> checks a fact. <code>=</code> updates a variable.</p>
-            <p class="meta">We also learned <code>const</code>, <code>cin</code>, and why uninitialized variables are dangerous.</p>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Build errors often mean the compiler caught a real mistake early.</li>
+              <li>Uninitialized variables are dangerous because they cause undefined behavior.</li>
+              <li>Clear naming makes it easier to read and debug code.</li>
+              <li>Tracing variable values line by line is still the best first move.</li>
+            </ul>
+            <div class="callout cool">
+              Today we keep using variables, but we focus on the rules of integer computation and the first real user input.
+            </div>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Why We Need <code>double</code></h2>
+        <h2>Today's Roadmap</h2>
         <div class="grid-2">
-          <article class="card accent">
-            <h3><code>int</code> was not enough</h3>
+          <article class="card">
+            <h3>Integer behavior</h3>
             <ul class="tight">
-              <li><code>int</code> stores integers only.</li>
-              <li>Many quantities have fractional parts: averages, distances, probabilities, slopes.</li>
-              <li>That is where <code>double</code> becomes useful.</li>
+              <li>We extend basic arithmetic with <code>++</code>, <code>--</code>, <code>/</code>, and <code>%</code>.</li>
+              <li>We study integer division and its undefined-behavior traps.</li>
+              <li>We slow down and ask what an <code>int</code> actually is.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Idea</h3>
+            <h3>New tools</h3>
             <ul class="tight">
-              <li><code>double</code> stands for double-precision floating point.</li>
-              <li>It can represent many decimal-looking numbers, but not every real number exactly.</li>
-              <li>That “not exactly” will matter later in the lecture.</li>
+              <li><code>const</code> for values that should not change.</li>
+              <li><code>std::cin</code> for user input.</li>
+              <li><code>bool</code> and <code>==</code> for simple yes/no facts.</li>
+              <li>We keep tracking which mistakes are build errors and which are undefined behavior.</li>
             </ul>
-            <div class="callout cool">
-              Use <code>double</code> when the quantity naturally has a fractional part.
-            </div>
           </article>
         </div>
       </section>
 
       <section data-auto-animate>
-        <h2><code>double</code> Arithmetic</h2>
+        <h2>Recap: <code>int</code> Arithmetic</h2>
         <div class="grid-2 code-notes">
           <pre>
-            <code data-trim data-line-numbers="5-13" contenteditable class="language-cpp">
+            <code data-trim data-line-numbers="5-17" contenteditable class="language-cpp">
 #include &lt;iostream&gt;
 using namespace std;
 
 int main() {
-    double d1 = 1.25;
-    double d2 = 0.5;
+    int i = 3, j = 2;
 
-    cout &lt;&lt; d1 + d2 &lt;&lt; endl;
-    cout &lt;&lt; d1 - d2 &lt;&lt; endl;
-    cout &lt;&lt; d1 * d2 &lt;&lt; endl;
-    cout &lt;&lt; d1 / d2 &lt;&lt; endl;
+    cout &lt;&lt; i + j &lt;&lt; endl;
+    cout &lt;&lt; i - j &lt;&lt; endl;
+    cout &lt;&lt; i * j &lt;&lt; endl;
+
+    i = i + 3;
+    j += 3;
+    cout &lt;&lt; i &lt;&lt; " " &lt;&lt; j &lt;&lt; endl;
+
+    i *= 2;
+    cout &lt;&lt; i &lt;&lt; endl;
 }
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>double</code> supports <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>.</li>
-              <li>When both operands are <code>double</code>, division is ordinary fractional division.</li>
-              <li>Here <code>1.25 / 0.5</code> gives <code>2.5</code>.</li>
+              <li>We have the usual arithmetic operators: <code>+</code>, <code>-</code>, <code>*</code>.</li>
+              <li>We also have update forms: <code>+=</code>, <code>-=</code>, <code>*=</code>.</li>
+              <li><code>j += 3;</code> is shorthand for <code>j = j + 3;</code>.</li>
             </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>++</code>, <code>--</code>, <code>/</code>, and <code>%</code></h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Increment and decrement</h3>
+            <pre>
+              <code data-trim data-line-numbers="5-9" contenteditable class="language-cpp">
+int i = 0;
+cout &lt;&lt; ++i &lt;&lt; endl; // 1
+
+i = 0;
+cout &lt;&lt; i++ &lt;&lt; endl; // prints 0, then i becomes 1
+              </code>
+            </pre>
             <div class="callout">
-              Dividing by <code>0.0</code> is undefined behavior in the course model. Do not do it.
+              Using <code>++</code> more than once in the same expression can give undefined behavior. Keep it simple.
+            </div>
+          </article>
+          <article class="card secondary">
+            <h3>Integer division</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 28, j = 10;
+cout &lt;&lt; i / j &lt;&lt; endl; // 2
+cout &lt;&lt; i % j &lt;&lt; endl; // 8
+
+i = -28;
+cout &lt;&lt; i / j &lt;&lt; endl; // -2
+cout &lt;&lt; i % j &lt;&lt; endl; // -8
+              </code>
+            </pre>
+            <p class="meta">For <code>int</code>, division discards the fractional part.</p>
+            <div class="callout cool">
+              <strong>Undefined behavior:</strong> dividing an <code>int</code> by <code>0</code> is undefined behavior.
+              The same warning applies to <code>% 0</code>.
             </div>
           </article>
         </div>
       </section>
 
-      <section data-auto-animate>
-        <h2>Casting Between <code>int</code> and <code>double</code></h2>
+      <section>
+        <h2>What Is an <code>int</code>?</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Typical model</h3>
+            <ul class="tight">
+              <li>On almost all machines you will use here, an <code>int</code> uses 4 bytes, or 32 bits.</li>
+              <li>That usually means the range is about <code>-2^31</code> to <code>2^31 - 1</code>.</li>
+              <li>So <code>int</code> is not “all integers.” It is a fixed-size container for a limited range.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>If a computation tries to go outside the allowed range, the result is a problem.</li>
+              <li>For this course, you should treat <code>int</code> overflow as dangerous and not something to rely on.</li>
+              <li>So the type is useful, but it is finite and machine-represented.</li>
+            </ul>
+            <div class="callout">
+              Good mental model: an <code>int</code> is a fast, fixed-width storage box for ordinary whole-number computations, not a perfect model of mathematics.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Range Matters</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int biggest = 2147483647;
+    cout &lt;&lt; biggest &lt;&lt; endl;
+    biggest += 1;
+    cout &lt;&lt; biggest &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card accent">
+            <ul class="tight">
+              <li>An <code>int</code> has a limited range, so arithmetic is not unlimited.</li>
+              <li>If a calculation tries to go beyond that range, you are in dangerous territory.</li>
+              <li>For this course, treat integer overflow as something to avoid, not something to rely on.</li>
+            </ul>
+            <div class="callout">
+              This is one reason we asked “what is an <code>int</code>?” instead of treating it like pure mathematics.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>const</code> Protects Meaning</h2>
         <div class="grid-2 code-notes">
           <pre>
             <code data-trim data-line-numbers="5-10" contenteditable class="language-cpp">
@@ -522,251 +633,131 @@ int main() {
 using namespace std;
 
 int main() {
-    int i = 2;
-    double x = static_cast&lt;double&gt;(i);
-
-    double d = 4.8;
-    int truncated = static_cast&lt;int&gt;(d);
-    cout &lt;&lt; x &lt;&lt; " " &lt;&lt; truncated &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li><code>static_cast&lt;double&gt;(i)</code> turns <code>2</code> into <code>2.0</code>.</li>
-              <li><code>static_cast&lt;int&gt;(4.8)</code> discards the fractional part and gives <code>4</code>.</li>
-              <li>Prefer explicit <code>static_cast</code> when a conversion matters to the meaning of the code.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Mixed Division and the Average Bug</h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="5-13" contenteditable class="language-cpp">
-#include &lt;iostream&gt;
-using namespace std;
-
-int main() {
-    int i1 = 0, i2 = 0, i3 = 1;
-    int sum = i1 + i2 + i3;
-
-    cout &lt;&lt; sum / 3 &lt;&lt; endl;
-    cout &lt;&lt; sum / 3.0 &lt;&lt; endl;
-    cout &lt;&lt; static_cast&lt;double&gt;(sum) / 3 &lt;&lt; endl;
+    const int HOURS_PER_DAY = 24;
+    const int MINUTES_PER_HOUR = 60;
+    const int MINUTES_PER_DAY = HOURS_PER_DAY * MINUTES_PER_HOUR;
+    cout &lt;&lt; MINUTES_PER_DAY &lt;&lt; endl;
 }
             </code>
           </pre>
           <article class="card accent">
             <ul class="tight">
-              <li><code>sum / 3</code> performs <code>int</code> division and prints <code>0</code>.</li>
-              <li>As soon as one side is a <code>double</code>, the result is a <code>double</code>.</li>
-              <li>So <code>sum / 3.0</code> and <code>static_cast&lt;double&gt;(sum) / 3</code> work for averages.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section data-auto-animate>
-        <h2><code>&lt;cmath&gt;</code> Gives Common Math Functions</h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="1-10" contenteditable class="language-cpp">
-#include &lt;iostream&gt;
-#include &lt;cmath&gt;
-using namespace std;
-
-int main() {
-    cout &lt;&lt; sqrt(9.0) &lt;&lt; endl;
-    cout &lt;&lt; pow(2.0, 8.0) &lt;&lt; endl;
-    cout &lt;&lt; cos(0.0) &lt;&lt; endl;
-    cout &lt;&lt; acos(-1.0) &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Include <code>&lt;cmath&gt;</code> when you want standard math functions.</li>
-              <li>Useful examples: <code>sqrt</code>, <code>pow</code>, <code>cos</code>, <code>acos</code>.</li>
-              <li><code>acos(-1.0)</code> is a common way to produce <code>pi</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Precision of <code>double</code></h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="1-11" contenteditable class="language-cpp">
-#include &lt;iostream&gt;
-#include &lt;iomanip&gt;
-using namespace std;
-
-int main() {
-    double x = 1.0 / 3.0;
-    cout &lt;&lt; x &lt;&lt; endl;
-    cout &lt;&lt; setprecision(2)  &lt;&lt; x &lt;&lt; endl;
-    cout &lt;&lt; setprecision(5)  &lt;&lt; x &lt;&lt; endl;
-    cout &lt;&lt; setprecision(10) &lt;&lt; x &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Many decimals cannot be represented exactly in binary floating point.</li>
-              <li><code>setprecision</code> changes how many digits you display.</li>
-              <li>Changing the printout does not change the stored approximation.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Why <code>== 0.0</code> Can Surprise You</h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="4-9" contenteditable class="language-cpp">
-double i = 4.0, j = 3.0;
-double k = i / j - 1.0 - 1.0 / 3.0;
-
-cout &lt;&lt; k &lt;&lt; endl;
-cout &lt;&lt; boolalpha &lt;&lt; (k == 0.0) &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card accent">
-            <ul class="tight">
-              <li>Mathematically, that expression should be <code>0</code>.</li>
-              <li>In floating-point arithmetic, tiny representation errors can remain.</li>
-              <li>So exact equality with doubles needs caution.</li>
-            </ul>
-            <div class="callout">
-              For now, the important lesson is conceptual: floating-point numbers are approximations.
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2><code>unsigned int</code></h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>What it means</h3>
-            <ul class="tight">
-              <li><code>unsigned int</code> stores only non-negative integers.</li>
-              <li>On most machines it ranges from <code>0</code> to <code>2^32 - 1</code>.</li>
-              <li>It is not just “an int but better.” It behaves differently.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Why we are cautious</h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-unsigned int u = 0;
-u = u - 1;
-cout &lt;&lt; u &lt;&lt; endl;
-              </code>
-            </pre>
-            <p class="meta">Subtracting 1 from 0 wraps to a huge value.</p>
-          </article>
-        </div>
-        <div class="callout cool">
-          Use <code>unsigned</code> only when there is a real reason. Otherwise, ordinary <code>int</code> is usually easier to reason about.
-        </div>
-      </section>
-
-      <section>
-        <h2><code>std::size_t</code></h2>
-        <div class="grid-2">
-          <article class="card accent">
-            <h3>What it is</h3>
-            <ul class="tight">
-              <li><code>std::size_t</code> is an unsigned integer type.</li>
-              <li>It is used for sizes and indices.</li>
-              <li>We will see it again immediately when we start strings.</li>
-            </ul>
-          </article>
-          <article class="card">
-            <h3>Why mention it now?</h3>
-            <ul class="tight">
-              <li>Library functions like <code>string::size()</code> return it.</li>
-              <li>So the language is already preparing us for indexing collections.</li>
-              <li>For now, just recognize the name and the fact that it is unsigned.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section data-auto-animate>
-        <h2><code>char</code> Stores One Character</h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="4-9" contenteditable class="language-cpp">
-char c = 'A';
-int i = 65;
-
-cout &lt;&lt; c &lt;&lt; endl;
-cout &lt;&lt; static_cast&lt;int&gt;(c) &lt;&lt; endl;
-cout &lt;&lt; static_cast&lt;char&gt;(i) &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Character literals use single quotes: <code>'A'</code>.</li>
-              <li>Each character has a numerical code point.</li>
-              <li><code>static_cast&lt;int&gt;(c)</code> reveals the code point.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2><code>char</code> Arithmetic Uses Code Points</h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="4-7" contenteditable class="language-cpp">
-char c = 'A';
-cout &lt;&lt; c &lt;&lt; endl;
-cout &lt;&lt; c + 1 &lt;&lt; endl;
-cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card accent">
-            <ul class="tight">
-              <li>In arithmetic expressions, a <code>char</code> is promoted to an integer code point.</li>
-              <li>So <code>c + 1</code> is a number, not automatically a character.</li>
-              <li>If you want the next character, cast back: <code>static_cast&lt;char&gt;(c + 1)</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section data-auto-animate>
-        <h2>Explicit vs Implicit Casting</h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="4-10" contenteditable class="language-cpp">
-int i = 5.9;                  // implicit truncation
-char ch = 65;                 // implicit conversion to 'A'
-bool b1 = static_cast&lt;bool&gt;(0);
-bool b2 = static_cast&lt;bool&gt;(-3.14);
-
-cout &lt;&lt; ch &lt;&lt; endl;
-cout &lt;&lt; boolalpha &lt;&lt; b1 &lt;&lt; " " &lt;&lt; b2 &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Implicit casting happens automatically.</li>
-              <li>Explicit casting uses <code>static_cast&lt;T&gt;(expr)</code>.</li>
-              <li>When the conversion matters for correctness or clarity, explicit is better.</li>
+              <li>A <code>const</code> variable must be initialized when declared.</li>
+              <li>Assigning to a <code>const</code> later gives a build error.</li>
+              <li>This helps eliminate unexplained “magic numbers.”</li>
             </ul>
             <div class="equation-strip">
-              <span class="equation-chip"><code>0 -&gt; false</code></span>
-              <span class="equation-chip">nonzero <code>-&gt; true</code></span>
+              <span class="equation-chip"><code>const int DAYS = 7;</code></span>
+              <span class="equation-chip">good for fixed facts</span>
             </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Two Common <code>const</code> Errors</h2>
+        <div class="grid-2">
+          <article class="mini-card accent">
+            <span class="section-label">Build error</span>
+            <h3>Not initialized</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int HOURS_PER_DAY;
+              </code>
+            </pre>
+            <p class="meta">A <code>const</code> fundamental type must be initialized when declared.</p>
+          </article>
+          <article class="mini-card secondary">
+            <span class="section-label">Build error</span>
+            <h3>Assigned later</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int HOURS_PER_DAY = 24;
+HOURS_PER_DAY = 25;
+              </code>
+            </pre>
+            <p class="meta">Once initialized, that value cannot be changed.</p>
+          </article>
+        </div>
+      </section>
+
+      <section data-auto-animate>
+        <h2><code>std::cin</code> Reads Input</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-10" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int i1, i2;
+    cout &lt;&lt; "Enter two integers: ";
+    cin &gt;&gt; i1 &gt;&gt; i2;
+    cout &lt;&lt; "Their sum is " &lt;&lt; i1 + i2 &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>cin &gt;&gt; variable;</code> extracts input and stores it in the variable.</li>
+              <li>You can chain extractions: <code>cin &gt;&gt; i1 &gt;&gt; i2;</code>.</li>
+              <li>The input must match the expected type.</li>
+            </ul>
+            <div class="callout cool">
+              Later we will study the input buffer more carefully. For now, think of <code>cin</code> as feeding typed values into variables.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Another <code>cin</code> Pattern</h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int age;
+    cout &lt;&lt; "Enter your age: ";
+    cin &gt;&gt; age;
+    cout &lt;&lt; "Your age is " &lt;&lt; age &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>cin</code> works for one input or many inputs.</li>
+              <li>The variable on the right side of <code>&gt;&gt;</code> receives the typed value.</li>
+              <li>Once the value is stored, we can use it in later computations.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>bool</code> and <code>==</code></h2>
+        <div class="grid-2 code-notes">
+          <pre>
+            <code data-trim data-line-numbers="5-11" contenteditable class="language-cpp">
+#include &lt;iostream&gt;
+using namespace std;
+
+int main() {
+    int a = 5, b = 10;
+    bool result = (a == b);
+    cout &lt;&lt; boolalpha;
+    cout &lt;&lt; a &lt;&lt; " == " &lt;&lt; b &lt;&lt; ": " &lt;&lt; result &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>bool</code> stores <code>true</code> or <code>false</code>.</li>
+              <li><code>==</code> tests equality. This is different from <code>=</code>.</li>
+              <li><code>boolalpha</code> makes booleans print as words instead of <code>1</code> and <code>0</code>.</li>
+            </ul>
           </article>
         </div>
       </section>
@@ -776,24 +767,27 @@ cout &lt;&lt; boolalpha &lt;&lt; b1 &lt;&lt; " " &lt;&lt; b2 &lt;&lt; endl;
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Print the average of three integers correctly as a decimal.</p>
+            <p class="meta">Read two integers and print whether they are equal.</p>
             <pre>
               <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a, b, c;
-cin &gt;&gt; a &gt;&gt; b &gt;&gt; c;
-int sum = a + b + c;
-cout &lt;&lt; static_cast&lt;double&gt;(sum) / 3 &lt;&lt; endl;
+int a, b;
+cout &lt;&lt; boolalpha;
+cin &gt;&gt; a &gt;&gt; b;
+bool same = (a == b);
+cout &lt;&lt; same &lt;&lt; endl;
               </code>
             </pre>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Given an uppercase letter, print the next uppercase letter.</p>
+            <p class="meta">Read one integer and print whether it is even.</p>
             <pre>
               <code data-trim data-line-numbers contenteditable class="language-cpp">
-char c;
-cin &gt;&gt; c;
-cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
+int n;
+cout &lt;&lt; boolalpha;
+cin &gt;&gt; n;
+bool is_even = (n % 2 == 0);
+cout &lt;&lt; is_even &lt;&lt; endl;
               </code>
             </pre>
           </article>
@@ -806,22 +800,22 @@ cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>double</code> handles quantities with fractional parts.</li>
-              <li>Mixed division changes once a <code>double</code> is involved.</li>
-              <li><code>static_cast</code> makes type conversion explicit.</li>
-              <li><code>&lt;cmath&gt;</code> adds standard math functions.</li>
+              <li><code>int</code> arithmetic includes <code>++</code>, <code>--</code>, <code>/</code>, and <code>%</code>.</li>
+              <li>Integer division discards the fractional part, and dividing by <code>0</code> is undefined behavior.</li>
+              <li><code>int</code> has a finite machine range, so overflow is not something to ignore.</li>
+              <li><code>const</code> marks values that should not change.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Important cautions</h3>
+            <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Floating-point values are approximations, so exact equality can be tricky.</li>
-              <li><code>unsigned int</code> and <code>std::size_t</code> are unsigned types.</li>
-              <li><code>char</code> values also have numeric code points.</li>
-              <li>Implicit casts happen automatically, but explicit casts are often clearer.</li>
+              <li>Use <code>cin</code> to read input into variables.</li>
+              <li>Use <code>bool</code> to store true/false facts about your data.</li>
+              <li>Use <code>==</code> when you want to compare values.</li>
+              <li>Keep asking whether a value should be changeable or constant.</li>
             </ul>
             <div class="callout cool">
-              We now have enough type machinery to start working with strings and indexed data next time.
+              By the end of this lecture, a student should be able to explain what an <code>int</code> stores and read simple console input correctly.
             </div>
           </article>
         </div>
@@ -831,45 +825,89 @@ cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
         <h2>Lecture 2 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Question set A</h3>
-            <ul class="tight">
-              <li>What is the difference between <code>sum / 3</code> and <code>sum / 3.0</code>?</li>
-              <li>What does <code>static_cast&lt;int&gt;(4.8)</code> evaluate to?</li>
-              <li>Why can checking <code>k == 0.0</code> be unreliable for a <code>double</code>?</li>
-              <li>What header do you include for functions like <code>sqrt</code> and <code>pow</code>?</li>
+            <h3>Integer rules</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the difference between <code>++i</code> and <code>i++</code> when they appear inside a larger expression?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>++i</code> increments first and then yields the new value; <code>i++</code> yields the old value and increments afterward.</li>
+              <li><strong>Q2.</strong> What do <code>28 / 10</code> and <code>28 % 10</code> evaluate to?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>2</code> and <code>8</code>.</li>
+              <li><strong>Q3.</strong> What kind of problem occurs if you do <code>i / 0</code> for an <code>int</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Undefined behavior.</li>
+              <li><strong>Q4.</strong> Why is it useful to remember that an <code>int</code> has a finite range?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because machine integers are limited, so overflow and out-of-range computations are real problems.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Question set B</h3>
-            <ul class="tight">
-              <li>What is <code>static_cast&lt;int&gt;('A')</code>?</li>
-              <li>How would you turn a lowercase letter into uppercase using character arithmetic?</li>
-              <li>What is <code>std::size_t</code> typically used for?</li>
-              <li>Why should you be cautious with <code>unsigned int</code>?</li>
+            <h3>Constants, input, and logic</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> Why is <code>const int HOURS = 24;</code> better than repeatedly typing <code>24</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> It gives the value a meaningful name and prevents accidental reassignment.</li>
+              <li><strong>Q6.</strong> What does <code>cin &gt;&gt; a &gt;&gt; b;</code> do?</li>
+              <li class="answer-line"><strong>Answer:</strong> It reads two inputs from the user into <code>a</code> and <code>b</code>.</li>
+              <li><strong>Q7.</strong> What is the difference between <code>=</code> and <code>==</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>=</code> assigns a value, while <code>==</code> compares two values.</li>
+              <li><strong>Q8.</strong> Write one expression that checks whether an integer <code>n</code> is even.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>n % 2 == 0</code></li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 2 Answer Check</h2>
+        <h2>Lecture 2 Code Review</h2>
         <div class="grid-2">
-          <article class="card accent">
-            <h3>Core answers</h3>
-            <ul class="tight">
-              <li><code>sum / 3</code> does integer division, while <code>sum / 3.0</code> does floating-point division.</li>
-              <li><code>static_cast&lt;int&gt;(4.8)</code> is <code>4</code>.</li>
-              <li>A <code>double</code> is an approximation, so tiny rounding errors may remain.</li>
-              <li>Use <code>#include &lt;cmath&gt;</code>.</li>
+          <article class="card">
+            <h3>Trace the output</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> This is adapted from textbook 5.3.5(1). What is the output?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a = 2;
+int b = 3;
+
+cout &lt;&lt; a &lt;&lt; " " &lt;&lt; b &lt;&lt; endl;
+
+a += 4;
+b *= 5;
+
+cout &lt;&lt; a &lt;&lt; " " &lt;&lt; b &lt;&lt; endl;
+cout &lt;&lt; b / a &lt;&lt; " " &lt;&lt; b % a &lt;&lt; endl;
+cout &lt;&lt; a &lt;&lt; " " &lt;&lt; b &lt;&lt; endl;
+
+b %= a;
+a %= b;
+
+cout &lt;&lt; a &lt;&lt; " " &lt;&lt; b &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The output is <code>2 3</code>, then <code>6 15</code>, then <code>2 3</code>, then <code>0 3</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Type and character check</h3>
-            <ul class="tight">
-              <li><code>static_cast&lt;int&gt;('A')</code> is <code>65</code> in ASCII.</li>
-              <li>One common pattern is <code>static_cast&lt;char&gt;(ch + 'A' - 'a')</code>.</li>
-              <li><code>std::size_t</code> is used for sizes and indices.</li>
-              <li><code>unsigned int</code> can wrap around in ways that are easy to misread.</li>
+            <h3>Classify the problem</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Is this a build error, runtime error, or undefined behavior?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int A_CONSTANT;
+cout &lt;&lt; A_CONSTANT &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Build error. A <code>const int</code> must be initialized when it is defined.</li>
+              <li>
+                <strong>Q3.</strong> Is this a build error, runtime error, or undefined behavior?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 8;
+cout &lt;&lt; i / 0 &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Undefined behavior, because an <code>int</code> divided by <code>0</code> is undefined.</li>
             </ul>
           </article>
         </div>
@@ -877,10 +915,10 @@ cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Strings and the input buffer</h2>
+        <h2><code>double</code>, precision, and character data</h2>
         <p class="lead center-copy">
-          Next time we use the new type ideas on actual text: <code>std::string</code>, indexing,
-          and why mixing <code>cin &gt;&gt;</code> with <code>getline</code> can go wrong.
+          Next time we move beyond integers: <code>double</code>, type casting, floating-point precision,
+          and how characters are also stored numerically.
         </p>
       </section>
     </div>
@@ -954,6 +992,17 @@ cout &lt;&lt; static_cast&lt;char&gt;(c + 1) &lt;&lt; endl;
           }
         });
       };
+
+      document.querySelectorAll('section').forEach((section) => {
+        let fragmentIndex = 1;
+        section.querySelectorAll('.qa-list').forEach((list) => {
+          Array.from(list.children).forEach((item) => {
+            item.classList.add('fragment', 'fade-in');
+            item.dataset.fragmentIndex = String(fragmentIndex);
+            fragmentIndex += 1;
+          });
+        });
+      });
 
       addFragments('section ul li');
       addFragments('section .stat-grid > *');

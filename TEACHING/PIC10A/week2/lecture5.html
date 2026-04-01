@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 5</div>
+        <h1>Indexing and Bounds</h1>
+        <p class="lead">
+          Strings are sequences, so we need indices. Today is about <code>[]</code>, <code>at()</code>,
+          mutation, zero-based counting, and why bounds matter.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 6.2</span>
+          <span class="pill">zero-based indexing</span>
+          <span class="pill">runtime error vs UB</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 4</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Last time</h3>
+            <ul class="tight">
+              <li><code>std::string</code> stores text.</li>
+              <li>We constructed strings from literals and repeated characters.</li>
+              <li>We used <code>+</code>, <code>+=</code>, <code>length()</code>, and <code>empty()</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Today’s shift</h3>
+            <ul class="tight">
+              <li>Stop treating a string as one blob of text.</li>
+              <li>Start treating it as many characters in order.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Indexing</span>
+            <strong><code>s[0]</code> means first character</strong>
+            <span>Strings use zero-based indexing.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Safety</span>
+            <strong><code>at()</code> checks bounds</strong>
+            <span><code>[]</code> does not.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Zero-Based Indexing</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+cout &lt;&lt; alphabet[0] &lt;&lt; endl;
+cout &lt;&lt; alphabet[1] &lt;&lt; endl;
+cout &lt;&lt; alphabet[25] &lt;&lt; endl;
+cout &lt;&lt; alphabet[alphabet.length() - 1] &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The first valid index is <code>0</code>.</li>
+              <li>The last valid index is <code>length() - 1</code>.</li>
+              <li>If a string has length <code>n</code>, its indices run from <code>0</code> to <code>n - 1</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>[]</code> Versus <code>at()</code></h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3><code>[]</code></h3>
+            <ul class="tight">
+              <li>Short and common.</li>
+              <li>No bounds checking.</li>
+              <li>Out of range means undefined behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3><code>at()</code></h3>
+            <ul class="tight">
+              <li>Member function call.</li>
+              <li>Checks bounds.</li>
+              <li>Out of range gives a runtime error.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Mutating Characters</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "bruin";
+
+s[0] = 'B';
+s.at(1) = 'R';
+s.at(2) += 'A' - 'a';
+
+cout &lt;&lt; s &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Indexing is not only for reading. It can also change characters.</li>
+              <li>The same caution about bounds still applies.</li>
+              <li>Character arithmetic still works inside strings because each element is a <code>char</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Out-of-Bounds Rules</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Undefined behavior</h3>
+            <ul class="tight">
+              <li><code>s[pos]</code> with <code>pos &gt;= s.length()</code></li>
+              <li><code>s[s.length()] = ch</code></li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Runtime error</h3>
+            <ul class="tight">
+              <li><code>s.at(pos)</code> with <code>pos &gt;= s.length()</code></li>
+            </ul>
+            <div class="callout cool">
+              While learning, <code>at()</code> is often better because it fails loudly instead of silently corrupting your assumptions.
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What Is <code>size_t</code> Doing Here?</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;cstddef&gt;
+#include &lt;string&gt;
+
+string s = "hello";
+size_t n = s.length();
+
+cout &lt;&lt; n &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>length()</code> and <code>size()</code> return <code>std::size_t</code>.</li>
+              <li>It is an unsigned integer type meant for sizes and indices.</li>
+              <li>We will keep seeing <code>size_t</code> throughout strings and vectors.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">If <code>string s = "UCLA";</code>, what is <code>s[2]</code>?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">If a string has length <code>7</code>, what is the last valid index?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 5 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>Strings use zero-based indexing.</li>
+              <li><code>[]</code> is unchecked; <code>at()</code> is checked.</li>
+              <li>The last valid index is <code>length() - 1</code>.</li>
+              <li>Indexing can read or modify characters.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Be suspicious whenever you see <code>length()</code> and an index in the same expression.</li>
+              <li>Use <code>at()</code> while learning or debugging.</li>
+              <li>Remember that <code>size_t</code> is the type of string sizes.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 5 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> If <code>string s = "cat";</code>, what does <code>s[0]</code> refer to?</li>
+              <li class="answer-line"><strong>Answer:</strong> The first character, <code>'c'</code>.</li>
+              <li><strong>Q2.</strong> If a string has length <code>n</code>, what is the last valid index?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>n - 1</code></li>
+              <li><strong>Q3.</strong> What is the main safety difference between <code>[]</code> and <code>at()</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>at()</code> checks bounds, while <code>[]</code> does not.</li>
+              <li><strong>Q4.</strong> What type do <code>length()</code> and <code>size()</code> return?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>std::size_t</code></li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> Why is <code>s[s.length()]</code> suspicious?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because the last valid index is <code>s.length() - 1</code>, so <code>s.length()</code> is already out of range.</li>
+              <li><strong>Q6.</strong> Can indexing change characters, or only read them?</li>
+              <li class="answer-line"><strong>Answer:</strong> It can do both.</li>
+              <li><strong>Q7.</strong> Which is safer for beginners: <code>[]</code> or <code>at()</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>at()</code></li>
+              <li><strong>Q8.</strong> Why do we call this “zero-based indexing”?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because counting positions starts at <code>0</code>, not <code>1</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 5 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Undefined behavior or not?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Classify the issue.
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "0123";
+cout &lt;&lt; s[s.length()] &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Undefined behavior. <code>s.length()</code> is one past the last valid index.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Runtime error or not?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Classify the issue.
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "0123";
+cout &lt;&lt; s.at(10) &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Runtime error, because <code>at()</code> checks bounds and index <code>10</code> is invalid.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>More String Member Functions</h2>
+        <p class="lead center-copy">
+          Next time we keep going with strings: <code>substr</code>, <code>push_back</code>, <code>pop_back</code>,
+          <code>find</code>, <code>rfind</code>, and how <code>size_t</code> shows up in searches.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

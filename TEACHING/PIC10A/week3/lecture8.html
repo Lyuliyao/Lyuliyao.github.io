@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 8</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 8</div>
+        <h1>Control Flow and <code>if</code></h1>
+        <p class="lead">
+          Programs become interesting when they make decisions. Today is about <code>if</code>,
+          <code>if-else</code>, <code>else if</code>, boolean logic, and scope inside blocks.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 8.1-8.2</span>
+          <span class="pill">decisions</span>
+          <span class="pill">boolean logic</span>
+          <span class="pill">scope</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 7</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Input model</h3>
+            <ul class="tight">
+              <li><code>cin &gt;&gt;</code> and <code>getline</code> read input in different ways.</li>
+              <li>The input buffer can keep leftovers.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters now</h3>
+            <ul class="tight">
+              <li>Control flow often depends on user input.</li>
+              <li>Read a value, then choose what to do next.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Branching</span>
+            <strong><code>if</code>, <code>if-else</code>, <code>else if</code></strong>
+            <span>Run different blocks depending on a condition.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Logic</span>
+            <strong><code>&amp;&amp;</code>, <code>||</code>, <code>!</code></strong>
+            <span>Build larger boolean tests from smaller ones.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>if</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+if (score &gt;= 60) {
+    cout &lt;&lt; "pass" &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The condition must be a boolean expression.</li>
+              <li>If the condition is true, the block runs.</li>
+              <li>If the condition is false, the block is skipped.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>if-else</code> and <code>else if</code></h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+if (x &gt; 0) {
+    cout &lt;&lt; "positive" &lt;&lt; endl;
+} else if (x &lt; 0) {
+    cout &lt;&lt; "negative" &lt;&lt; endl;
+} else {
+    cout &lt;&lt; "zero" &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Conditions are checked from top to bottom.</li>
+              <li>The first true branch runs.</li>
+              <li>The final <code>else</code> catches everything not handled earlier.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Boolean Operators</h2>
+        <div class="grid-3">
+          <article class="mini-card accent">
+            <h3><code>&amp;&amp;</code></h3>
+            <p class="meta">Both parts must be true.</p>
+          </article>
+          <article class="mini-card secondary">
+            <h3><code>||</code></h3>
+            <p class="meta">At least one part must be true.</p>
+          </article>
+          <article class="mini-card">
+            <h3><code>!</code></h3>
+            <p class="meta">Negates a boolean value.</p>
+          </article>
+        </div>
+        <div class="callout">
+          Example: a leap year test is naturally a composition of several smaller boolean ideas.
+        </div>
+      </section>
+
+      <section>
+        <h2>Scope Inside Blocks</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+if (true) {
+    int x = 5;
+    cout &lt;&lt; x &lt;&lt; endl;
+}
+
+cout &lt;&lt; x &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The <code>x</code> inside the block only exists inside that block.</li>
+              <li>Trying to use it outside gives a build error.</li>
+              <li>Scope questions become very important as soon as control flow appears.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Write a condition that checks whether <code>n</code> is between <code>1</code> and <code>10</code>, inclusive.</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">Why is it safer to use braces even when a block has only one statement?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 8 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li><code>if</code> runs code conditionally.</li>
+              <li><code>if-else</code> and <code>else if</code> let us branch among cases.</li>
+              <li>Boolean operators combine simpler conditions into richer logic.</li>
+              <li>Variables declared inside a block only exist in that block.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Read conditions aloud in English.</li>
+              <li>Keep branches mutually clear and logically ordered.</li>
+              <li>Use braces consistently.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 8 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Branching</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What happens when an <code>if</code> condition is false?</li>
+              <li class="answer-line"><strong>Answer:</strong> Its block is skipped.</li>
+              <li><strong>Q2.</strong> In an <code>else if</code> chain, how many branches run?</li>
+              <li class="answer-line"><strong>Answer:</strong> At most one.</li>
+              <li><strong>Q3.</strong> What does <code>&amp;&amp;</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> Both conditions must be true.</li>
+              <li><strong>Q4.</strong> What does <code>!</code> do?</li>
+              <li class="answer-line"><strong>Answer:</strong> It negates a boolean value.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Scope</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> Why can a variable declared inside an <code>if</code> block cause a build error later?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because it goes out of scope when the block ends.</li>
+              <li><strong>Q6.</strong> What does <code>||</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> At least one condition must be true.</li>
+              <li><strong>Q7.</strong> Why is ordering important in an <code>else if</code> chain?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because the first true branch wins.</li>
+              <li><strong>Q8.</strong> Why are braces a good habit?</li>
+              <li class="answer-line"><strong>Answer:</strong> They make block boundaries explicit and prevent subtle mistakes.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 8 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Build error</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Why does this fail to build?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+if (score &gt;= 90) { char grade = 'A'; }
+else if (score &gt;= 80) { grade = 'B'; }
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>grade</code> is declared only inside the first block, so the second branch cannot see it.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Logic check</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What is wrong with this?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+if (x % 2 == 0) {
+    cout &lt;&lt; "even" &lt;&lt; endl;
+}
+if (x % 2 != 0) {
+    cout &lt;&lt; "odd" &lt;&lt; endl;
+}
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> It builds and runs, but it is better expressed as <code>if-else</code> because the two cases are complementary.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2><code>while</code> Loops</h2>
+        <p class="lead center-copy">
+          Next time we move from decisions to repetition: how <code>while</code> loops work,
+          how infinite loops happen, and how to read loop state carefully.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

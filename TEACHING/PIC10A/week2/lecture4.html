@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 4</div>
+        <h1>The String Class</h1>
+        <p class="lead">
+          Today we move from single characters to text: how to construct <code>std::string</code>,
+          combine strings, and ask basic questions like length and emptiness.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 6.1</span>
+          <span class="pill">construction</span>
+          <span class="pill">concatenation</span>
+          <span class="pill">length and size</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 3</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Data Model</span>
+            <strong><code>char</code> stores one character</strong>
+            <span>That is enough for one code point, not for a whole name or sentence.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Careful Thinking</span>
+            <strong><code>double</code> is approximate</strong>
+            <span>Last lecture taught us that representation details matter.</span>
+          </article>
+        </div>
+        <div class="callout cool">
+          A <code>string</code> gives us a higher-level container for text, just like <code>int</code> and <code>double</code> gave us higher-level containers for numbers.
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>What we learn today</h3>
+            <ul class="tight">
+              <li>Why we need <code>std::string</code></li>
+              <li>How to construct strings</li>
+              <li>How concatenation works</li>
+              <li>How to ask for the length of a string</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>What waits for next time</h3>
+            <ul class="tight">
+              <li>Indexing with <code>[]</code> and <code>at()</code></li>
+              <li>Mutating characters</li>
+              <li>Bounds and <code>size_t</code></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why <code>std::string</code>?</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>One <code>char</code> is too small</h3>
+            <ul class="tight">
+              <li><code>char letter = 'A';</code> stores one character.</li>
+              <li>A full name or sentence needs many characters together.</li>
+              <li><code>std::string</code> stores a sequence of characters.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Typical uses</h3>
+            <ul class="tight">
+              <li>Names</li>
+              <li>Words and full sentences</li>
+              <li>User input that contains text</li>
+            </ul>
+            <div class="equation-strip">
+              <span class="equation-chip"><code>string first = "Ada";</code></span>
+              <span class="equation-chip"><code>string city = "Los Angeles";</code></span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Constructing <code>std::string</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;string&gt;
+using namespace std;
+
+string s0;
+string s1 = "hello";
+string s2("Bruin");
+string s3(5, '!');
+
+cout &lt;&lt; s0 &lt;&lt; endl;
+cout &lt;&lt; s1 &lt;&lt; endl;
+cout &lt;&lt; s2 &lt;&lt; endl;
+cout &lt;&lt; s3 &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Remember <code>#include &lt;string&gt;</code>.</li>
+              <li><code>s0</code> is the empty string.</li>
+              <li><code>s3(5, '!')</code> makes <code>"!!!!!"</code>.</li>
+              <li>String literals like <code>"hello"</code> are not the same type as <code>string</code>, but they can initialize one.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Concatenation</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string first = "Grace";
+string last = "Hopper";
+string full = first + " " + last;
+
+cout &lt;&lt; full &lt;&lt; endl;
+
+full += "!";
+cout &lt;&lt; full &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>+</code> builds a new string by joining pieces.</li>
+              <li><code>+=</code> appends onto an existing string.</li>
+              <li>Concatenation is a major reason strings feel more convenient than raw characters.</li>
+            </ul>
+            <div class="callout">
+              When you read <code>first + " " + last</code>, think “build a longer piece of text.”
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Length, Size, and Empty</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "Hello world";
+
+cout &lt;&lt; s.length() &lt;&lt; endl;
+cout &lt;&lt; s.size() &lt;&lt; endl;
+cout &lt;&lt; boolalpha &lt;&lt; s.empty() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>length()</code> and <code>size()</code> give the same answer for strings.</li>
+              <li><code>empty()</code> tells you whether the string has zero characters.</li>
+              <li>We will soon care about the exact return type. For today, the main idea is “how many characters are there?”</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Write code that stores <code>"Go Bruins"</code> in a string called <code>cheer</code>.</p>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+string cheer = "Go Bruins";
+              </code>
+            </pre>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">If <code>string city = "LA";</code>, what do <code>city + "!"</code> and <code>city.length()</code> mean?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 4 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li><code>std::string</code> stores text as a sequence of characters.</li>
+              <li>Construct strings with literals, direct initialization, or repeated characters.</li>
+              <li>Use <code>+</code> and <code>+=</code> for concatenation.</li>
+              <li>Use <code>length()</code>, <code>size()</code>, and <code>empty()</code> for basic string facts.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Remember <code>#include &lt;string&gt;</code>.</li>
+              <li>Prefer meaningful variable names like <code>first_name</code> or <code>message</code>.</li>
+              <li>Think of concatenation as building a new string value.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 4 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> Why is <code>char</code> not enough when we want to store a full name?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because <code>char</code> stores one character, while a full name needs a sequence of characters.</li>
+              <li><strong>Q2.</strong> What header should you include before using <code>std::string</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>#include &lt;string&gt;</code></li>
+              <li><strong>Q3.</strong> What does <code>string s3(5, '!');</code> construct?</li>
+              <li class="answer-line"><strong>Answer:</strong> A string containing five exclamation points.</li>
+              <li><strong>Q4.</strong> What is the difference between <code>+</code> and <code>+=</code> for strings?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>+</code> creates a combined string expression; <code>+=</code> appends onto an existing string variable.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What do <code>length()</code> and <code>size()</code> report for a string?</li>
+              <li class="answer-line"><strong>Answer:</strong> The number of characters in the string.</li>
+              <li><strong>Q6.</strong> What does <code>empty()</code> check?</li>
+              <li class="answer-line"><strong>Answer:</strong> Whether the string has zero characters.</li>
+              <li><strong>Q7.</strong> If <code>first = "Ada"</code> and <code>last = "Lovelace"</code>, what does <code>first + " " + last</code> produce?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>"Ada Lovelace"</code></li>
+              <li><strong>Q8.</strong> Why is <code>message</code> a better variable name than <code>x</code> for a string?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because it communicates what the text means.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 4 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Build error or not?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Does this code build? If not, why?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "Bruins";
+cout &lt;&lt; s.length &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> It does not build. <code>length</code> is a member function, so we need <code>s.length()</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Trace the output</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What is the output?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+string school = "UCLA";
+school += "!";
+cout &lt;&lt; school &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>UCLA!</code></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Indexing Strings Safely</h2>
+        <p class="lead center-copy">
+          Next time we treat a string like a sequence: <code>[]</code>, <code>at()</code>, last indices,
+          mutation, and what happens when you go out of bounds.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

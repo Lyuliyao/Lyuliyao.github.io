@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 7</div>
+        <h1><code>cin</code> and the Input Buffer</h1>
+        <p class="lead">
+          Today is about what the program actually reads from the keyboard:
+          <code>cin &gt;&gt; variable</code>, <code>getline</code>, <code>ignore</code>, <code>get</code>, and <code>peek</code>.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 7</span>
+          <span class="pill">buffer leftovers</span>
+          <span class="pill">getline</span>
+          <span class="pill">ignore / get / peek</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 6</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>String tools we already have</h3>
+            <ul class="tight">
+              <li><code>substr</code></li>
+              <li><code>push_back</code> and <code>pop_back</code></li>
+              <li><code>find</code>, <code>rfind</code>, and <code>string::npos</code></li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why input matters now</h3>
+            <ul class="tight">
+              <li>Strings become much more useful when users can type them.</li>
+              <li>Input bugs often come from misunderstanding the buffer.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Extraction</span>
+            <strong><code>cin &gt;&gt; variable</code></strong>
+            <span>Reads one formatted value and may leave extra characters behind.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Lines</span>
+            <strong><code>getline(cin, s)</code></strong>
+            <span>Reads a whole line, including spaces.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What <code>cin &gt;&gt; variable</code> Does</h2>
+        <div class="grid-2">
+          <article class="card">
+            <ul class="tight">
+              <li>If the buffer is empty, the program waits for input.</li>
+              <li>Leading whitespace is skipped.</li>
+              <li>Characters are consumed according to the target type.</li>
+              <li>Unused characters stay in the input buffer.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <div class="equation-strip">
+              <span class="equation-chip"><code>int</code> reads digits</span>
+              <span class="equation-chip"><code>double</code> reads decimal digits</span>
+              <span class="equation-chip"><code>string</code> stops at whitespace</span>
+              <span class="equation-chip"><code>char</code> reads one character</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Examples of Leftovers</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Example 1</h3>
+            <p class="meta">Buffer contains <code>90024UCLA\n</code></p>
+            <ul class="tight">
+              <li><code>int zip;</code> reads <code>90024</code></li>
+              <li>Leftover becomes <code>UCLA\n</code></li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Example 2</h3>
+            <p class="meta">Buffer contains <code>900.24U CLA\n</code></p>
+            <ul class="tight">
+              <li><code>string s;</code> reads <code>900.24U</code></li>
+              <li>Leftover becomes <code> CLA\n</code></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>getline(cin, s)</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string full_name;
+getline(cin, full_name);
+cout &lt;&lt; full_name &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>getline</code> reads everything up to the newline.</li>
+              <li>The newline is removed from the buffer, but not stored in the string.</li>
+              <li>Unlike <code>cin &gt;&gt; s</code>, spaces are allowed inside the result.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why Mixing <code>&gt;&gt;</code> and <code>getline</code> Breaks</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int age;
+cin &gt;&gt; age;
+
+string name;
+getline(cin, name);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>After <code>cin &gt;&gt; age</code>, the trailing newline is still in the buffer.</li>
+              <li><code>getline</code> immediately sees that newline and reads an empty string.</li>
+              <li>The usual fix is <code>cin.ignore();</code> before <code>getline</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>ignore</code>, <code>get</code>, and <code>peek</code></h2>
+        <div class="grid-3">
+          <article class="mini-card accent">
+            <h3><code>cin.ignore()</code></h3>
+            <p class="meta">Discard one character, often the leftover newline.</p>
+          </article>
+          <article class="mini-card secondary">
+            <h3><code>cin.get()</code></h3>
+            <p class="meta">Extract one character and return it.</p>
+          </article>
+          <article class="mini-card">
+            <h3><code>cin.peek()</code></h3>
+            <p class="meta">Look at the next character without removing it.</p>
+          </article>
+        </div>
+        <div class="callout cool">
+          A good mental model: <code>peek</code> looks, <code>get</code> takes, and <code>ignore</code> throws away.
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Why can <code>getline</code> return an empty string right after <code>cin &gt;&gt; age;</code>?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">Which tool should you use if you only want to look at the next character in the buffer?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 7 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li><code>cin &gt;&gt; variable</code> reads formatted input and can leave leftovers in the buffer.</li>
+              <li><code>getline</code> reads a full line, including spaces.</li>
+              <li>Mixing <code>&gt;&gt;</code> and <code>getline</code> requires care.</li>
+              <li><code>ignore</code>, <code>get</code>, and <code>peek</code> manipulate the buffer in different ways.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Ask what is still left in the buffer after each read.</li>
+              <li>Use <code>cin.ignore()</code> before <code>getline</code> when a leftover newline is the issue.</li>
+              <li>Choose the input tool that matches the kind of data you want.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 7 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What does <code>cin &gt;&gt; s</code> do when <code>s</code> is a string?</li>
+              <li class="answer-line"><strong>Answer:</strong> It reads characters up to the next whitespace and stores them in <code>s</code>.</li>
+              <li><strong>Q2.</strong> What does <code>getline(cin, s)</code> read?</li>
+              <li class="answer-line"><strong>Answer:</strong> The whole line up to the newline.</li>
+              <li><strong>Q3.</strong> Why can <code>getline</code> read an empty string after formatted extraction?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because the leftover newline may still be sitting in the input buffer.</li>
+              <li><strong>Q4.</strong> What does <code>cin.ignore()</code> do in its simplest form?</li>
+              <li class="answer-line"><strong>Answer:</strong> It removes one character from the buffer.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Buffer tools</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the difference between <code>cin.get()</code> and <code>cin.peek()</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>get()</code> extracts the character, while <code>peek()</code> only looks at it.</li>
+              <li><strong>Q6.</strong> Which input tool should you use for a full name with spaces?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>getline</code></li>
+              <li><strong>Q7.</strong> What should you ask yourself after every input line?</li>
+              <li class="answer-line"><strong>Answer:</strong> What characters are left in the buffer now?</li>
+              <li><strong>Q8.</strong> Does <code>cin &gt;&gt; int_var</code> always empty the whole buffer?</li>
+              <li class="answer-line"><strong>Answer:</strong> No. It only consumes the characters needed for the integer and leaves the rest.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 7 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Why is the name empty?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Explain the bug.
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+int age;
+cin &gt;&gt; age;
+
+string name;
+getline(cin, name);
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The newline after the age is still in the buffer, so <code>getline</code> immediately consumes it and stores the empty string. Add <code>cin.ignore();</code> before <code>getline</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Choose the right tool</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What should replace the blank if we only want to look at the next character?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+char ch = cin._____();
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>peek</code>, if the goal is to inspect without removing the character.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Control Flow and <code>if</code></h2>
+        <p class="lead center-copy">
+          Next time we start making decisions in code: <code>if</code>, <code>if-else</code>,
+          boolean logic, and block scope.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

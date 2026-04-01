@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 6</div>
+        <h1>More String Tools</h1>
+        <p class="lead">
+          Today we make strings more useful: cut pieces out with <code>substr</code>, grow and shrink with
+          <code>push_back</code> and <code>pop_back</code>, and search with <code>find</code> and <code>rfind</code>.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 6.3</span>
+          <span class="pill">substr</span>
+          <span class="pill">find / rfind</span>
+          <span class="pill">npos</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 5</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>What we already know</h3>
+            <ul class="tight">
+              <li>Strings use zero-based indexing.</li>
+              <li><code>[]</code> is unchecked and <code>at()</code> is checked.</li>
+              <li><code>length()</code> returns a <code>size_t</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>What we add today</h3>
+            <ul class="tight">
+              <li>Extracting pieces</li>
+              <li>Appending and removing characters</li>
+              <li>Searching for text inside text</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Cut</span>
+            <strong><code>substr(start, count)</code></strong>
+            <span>Extract a smaller string.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Search</span>
+            <strong><code>find</code> and <code>rfind</code></strong>
+            <span>Return positions as <code>size_t</code>.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>substr</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string campus = "Westwood";
+
+cout &lt;&lt; campus.substr(0, 4) &lt;&lt; endl;
+cout &lt;&lt; campus.substr(4, 4) &lt;&lt; endl;
+cout &lt;&lt; campus.substr(2, 3) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The first argument is the starting index.</li>
+              <li>The second argument is how many characters to take.</li>
+              <li>The result is a new string; <code>campus</code> itself is unchanged.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>push_back</code> and <code>pop_back</code></h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "Bruin";
+
+s.push_back('s');
+cout &lt;&lt; s &lt;&lt; endl;
+
+s.pop_back();
+cout &lt;&lt; s &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>push_back(ch)</code> adds one character at the end.</li>
+              <li><code>pop_back()</code> removes the last character.</li>
+              <li>These are convenient when building or trimming text step by step.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>find</code> and <code>rfind</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "bananas";
+
+size_t p1 = s.find("ana");
+size_t p2 = s.rfind("ana");
+
+cout &lt;&lt; p1 &lt;&lt; endl;
+cout &lt;&lt; p2 &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>find</code> looks from the left.</li>
+              <li><code>rfind</code> looks from the right.</li>
+              <li>Both return positions, so the type is <code>size_t</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>When Search Fails: <code>npos</code></h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string school = "ucla";
+
+size_t pos = school.find("x");
+cout &lt;&lt; (pos == string::npos) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>If the target is not found, the answer is <code>string::npos</code>.</li>
+              <li>Do not guess a fake index like <code>-1</code>.</li>
+              <li>Because the result type is <code>size_t</code>, comparing to <code>string::npos</code> is the standard pattern.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Common <code>find</code> Bug</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string name = "amy";
+
+if (name.find("a")) {
+    cout &lt;&lt; "found" &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>This code is wrong when the answer is position <code>0</code>.</li>
+              <li><code>0</code> converts to <code>false</code>, so the branch is skipped.</li>
+              <li>Use <code>name.find("a") != string::npos</code> instead.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">If <code>string s = "computer";</code>, what does <code>s.substr(3, 2)</code> return?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">How should you test whether <code>s.find("u")</code> succeeded?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 6 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li><code>substr</code> extracts smaller strings.</li>
+              <li><code>push_back</code> and <code>pop_back</code> grow and shrink strings.</li>
+              <li><code>find</code> and <code>rfind</code> return positions as <code>size_t</code>.</li>
+              <li>Failed searches return <code>string::npos</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Test searches with <code>!= string::npos</code>.</li>
+              <li>Remember that search answers are indices, not booleans.</li>
+              <li>Read <code>substr(start, count)</code> carefully: start first, then how many.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 6 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What does <code>substr(2, 3)</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> Start at index <code>2</code> and take <code>3</code> characters.</li>
+              <li><strong>Q2.</strong> What does <code>push_back</code> add to a string?</li>
+              <li class="answer-line"><strong>Answer:</strong> One character at the end.</li>
+              <li><strong>Q3.</strong> What does <code>pop_back</code> remove?</li>
+              <li class="answer-line"><strong>Answer:</strong> The last character.</li>
+              <li><strong>Q4.</strong> What is the difference between <code>find</code> and <code>rfind</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>find</code> searches from the left and <code>rfind</code> searches from the right.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Search logic</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What does a failed search return?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>string::npos</code></li>
+              <li><strong>Q6.</strong> Why is <code>if (s.find("a"))</code> dangerous?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because a match at index <code>0</code> converts to <code>false</code>.</li>
+              <li><strong>Q7.</strong> What type do <code>find</code> and <code>rfind</code> return?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>size_t</code></li>
+              <li><strong>Q8.</strong> How do you test whether <code>s.find("x")</code> succeeded?</li>
+              <li class="answer-line"><strong>Answer:</strong> Check whether the result is not equal to <code>string::npos</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 6 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Spot the logic bug</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Why can this fail even when the string contains <code>"a"</code>?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+string name = "amy";
+if (name.find("a")) {
+    cout &lt;&lt; "found" &lt;&lt; endl;
+}
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The match is at index <code>0</code>, and <code>0</code> converts to <code>false</code>. The test should compare against <code>string::npos</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Trace the output</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What is the output?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "cat";
+s.push_back('s');
+cout &lt;&lt; s.substr(1, 2) &lt;&lt; endl;
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>at</code></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2><code>cin</code> and the Input Buffer</h2>
+        <p class="lead center-copy">
+          Next time we connect strings to user input: what <code>cin &gt;&gt; variable</code> really does,
+          how <code>getline</code> differs, and why mixing them can be tricky.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

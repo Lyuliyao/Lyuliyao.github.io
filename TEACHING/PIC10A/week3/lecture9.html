@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 9</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 9</div>
+        <h1><code>while</code> Loops</h1>
+        <p class="lead">
+          A loop runs code repeatedly. Today we focus on <code>while</code>:
+          loop conditions, counting patterns, sentinel loops, and common infinite-loop mistakes.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 8.3-8.4</span>
+          <span class="pill">repetition</span>
+          <span class="pill">sentinel loops</span>
+          <span class="pill">infinite loops</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review from Lecture 8</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Control flow so far</h3>
+            <ul class="tight">
+              <li><code>if</code> chooses whether a block runs.</li>
+              <li>Conditions are boolean expressions.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>New idea</h3>
+            <ul class="tight">
+              <li><code>while</code> keeps revisiting the same block while the condition stays true.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Anatomy</span>
+            <strong><code>while (condition) { ... }</code></strong>
+            <span>Check first, then maybe run the body.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Risk</span>
+            <strong>Infinite loops</strong>
+            <span>Usually caused by a condition that never becomes false.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Basic Pattern</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 0;
+
+while (i &lt; 5) {
+    cout &lt;&lt; i &lt;&lt; endl;
+    ++i;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Initialize loop state first.</li>
+              <li>Test the condition before each iteration.</li>
+              <li>Update the state inside the loop body.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Counting and Accumulation</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 1;
+int sum = 0;
+
+while (i &lt;= 4) {
+    sum += i;
+    ++i;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Loops often update more than one variable.</li>
+              <li>Here, <code>i</code> tracks position and <code>sum</code> tracks a running answer.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Sentinel Loops</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+char response = 'y';
+
+while (response != 'n') {
+    cout &lt;&lt; "Continue? ";
+    response = cin.get();
+    cin.ignore();
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The loop stops when a special value appears.</li>
+              <li>That special value is the sentinel.</li>
+              <li>Input and loops naturally combine.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>How Infinite Loops Happen</h2>
+        <div class="grid-2">
+          <article class="card accent">
+            <h3>Common causes</h3>
+            <ul class="tight">
+              <li>Forgetting the update</li>
+              <li>Updating the wrong variable</li>
+              <li>Using a condition that can never become false</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Debugging question</h3>
+            <div class="callout cool">
+              Which variable is supposed to change so that the condition eventually becomes false?
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What values of <code>i</code> are printed by the basic pattern slide?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is missing from this loop? <code>while (i &lt; 10) { cout &lt;&lt; i &lt;&lt; endl; }</code></p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 9 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li><code>while</code> repeats while its condition is true.</li>
+              <li>Loop state must be initialized before the loop and updated during the loop.</li>
+              <li>Sentinel loops stop when a special value is seen.</li>
+              <li>Infinite loops usually come from broken state updates.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Trace loop variables line by line.</li>
+              <li>Check whether the condition can eventually become false.</li>
+              <li>Keep loop bodies small enough to reason about.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 9 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Loop basics</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> When does a <code>while</code> loop check its condition?</li>
+              <li class="answer-line"><strong>Answer:</strong> Before each iteration.</li>
+              <li><strong>Q2.</strong> What three ingredients appear in most loops?</li>
+              <li class="answer-line"><strong>Answer:</strong> Initialization, a condition, and an update.</li>
+              <li><strong>Q3.</strong> What is a sentinel loop?</li>
+              <li class="answer-line"><strong>Answer:</strong> A loop that stops when a special stopping value appears.</li>
+              <li><strong>Q4.</strong> What is the classic cause of an infinite loop?</li>
+              <li class="answer-line"><strong>Answer:</strong> The condition never becomes false.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Reasoning</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> Why should you trace loop variables?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because the correctness of a loop depends on how its state changes over time.</li>
+              <li><strong>Q6.</strong> Can a <code>while</code> loop body run zero times?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes, if the condition is false immediately.</li>
+              <li><strong>Q7.</strong> What does the update usually accomplish?</li>
+              <li class="answer-line"><strong>Answer:</strong> It moves the loop closer to termination.</li>
+              <li><strong>Q8.</strong> Why do loops pair naturally with input?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because programs often need to keep asking or processing until a stopping response arrives.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 9 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Infinite loop</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What is wrong with this loop?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 0;
+while (i &lt; 10) {
+    cout &lt;&lt; i &lt;&lt; endl;
+}
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>i</code> never changes, so the condition stays true forever. The loop is infinite.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Trace the result</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What is printed?
+                <pre>
+                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 3;
+while (i &gt; 0) {
+    cout &lt;&lt; i &lt;&lt; " ";
+    --i;
+}
+                  </code>
+                </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>3 2 1 </code></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2><code>for</code> Loops</h2>
+        <p class="lead center-copy">
+          Next time we rewrite many counting loops in a cleaner form:
+          the <code>for</code> loop, traversal patterns, and nested loops.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

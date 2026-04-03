@@ -555,16 +555,18 @@ int main() {
           <article class="card">
             <h3>Increment and decrement</h3>
             <pre>
-              <code data-trim data-line-numbers="5-9" contenteditable class="language-cpp">
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
 int i = 0;
-cout &lt;&lt; ++i &lt;&lt; endl; // 1
+cout &lt;&lt; ++i &lt;&lt; endl; // prints 1  (increment, then use)
+cout &lt;&lt; i   &lt;&lt; endl; // still 1
 
 i = 0;
-cout &lt;&lt; i++ &lt;&lt; endl; // prints 0, then i becomes 1
+cout &lt;&lt; i++ &lt;&lt; endl; // prints 0  (use, then increment)
+cout &lt;&lt; i   &lt;&lt; endl; // now 1
               </code>
             </pre>
             <div class="callout">
-              Using <code>++</code> more than once in the same expression can give undefined behavior. Keep it simple.
+              Never use <code>++</code> or <code>--</code> more than once on the same variable in a single expression — the order is not guaranteed.
             </div>
           </article>
           <article class="card secondary">
@@ -730,53 +732,31 @@ int main() {
       </section>
 
       <section>
-        <h2>Another <code>cin</code> Pattern</h2>
+        <h2><code>bool</code> and Comparison Operators</h2>
         <div class="grid-2 code-notes">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-#include &lt;iostream&gt;
-using namespace std;
+int a = 5, b = 10;
+cout &lt;&lt; boolalpha;
 
-int main() {
-    int age;
-    cout &lt;&lt; "Enter your age: ";
-    cin &gt;&gt; age;
-    cout &lt;&lt; "Your age is " &lt;&lt; age &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>cin</code> works for one input or many inputs.</li>
-              <li>The variable on the right side of <code>&gt;&gt;</code> receives the typed value.</li>
-              <li>Once the value is stored, we can use it in later computations.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2><code>bool</code> and <code>==</code></h2>
-        <div class="grid-2 code-notes">
-          <pre>
-            <code data-trim data-line-numbers="5-11" contenteditable class="language-cpp">
-#include &lt;iostream&gt;
-using namespace std;
-
-int main() {
-    int a = 5, b = 10;
-    bool result = (a == b);
-    cout &lt;&lt; boolalpha;
-    cout &lt;&lt; a &lt;&lt; " == " &lt;&lt; b &lt;&lt; ": " &lt;&lt; result &lt;&lt; endl;
-}
+cout &lt;&lt; (a == b) &lt;&lt; endl; // false — equal?
+cout &lt;&lt; (a != b) &lt;&lt; endl; // true  — not equal?
+cout &lt;&lt; (a &lt;  b) &lt;&lt; endl; // true  — less than?
+cout &lt;&lt; (a &gt;  b) &lt;&lt; endl; // false — greater than?
+cout &lt;&lt; (a &lt;= b) &lt;&lt; endl; // true  — less than or equal?
+cout &lt;&lt; (a &gt;= b) &lt;&lt; endl; // false — greater than or equal?
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
               <li><code>bool</code> stores <code>true</code> or <code>false</code>.</li>
-              <li><code>==</code> tests equality. This is different from <code>=</code>.</li>
-              <li><code>boolalpha</code> makes booleans print as words instead of <code>1</code> and <code>0</code>.</li>
+              <li>Every comparison returns a <code>bool</code> you can store or print.</li>
+              <li><code>boolalpha</code> makes booleans print as words instead of <code>1</code>/<code>0</code>.</li>
+              <li>Do not confuse <code>=</code> (assignment) with <code>==</code> (equality test).</li>
             </ul>
+            <div class="callout cool">
+              These operators work on any numeric type — we will use them heavily with <code>if</code> and loops.
+            </div>
           </article>
         </div>
       </section>

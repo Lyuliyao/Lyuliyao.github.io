@@ -81,9 +81,9 @@ cout &lt;&lt; alphabet[alphabet.length() - 1] &lt;&lt; endl;
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The first valid index is <code>0</code>.</li>
-              <li>The last valid index is <code>length() - 1</code>.</li>
-              <li>If a string has length <code>n</code>, its indices run from <code>0</code> to <code>n - 1</code>.</li>
+              <li>Character indexing starts at <code>0</code>.</li>
+              <li>The last character is at index <code>length() - 1</code>.</li>
+              <li>If a string has length <code>n</code>, its character indices run from <code>0</code> to <code>n - 1</code>.</li>
             </ul>
           </article>
         </div>
@@ -97,7 +97,8 @@ cout &lt;&lt; alphabet[alphabet.length() - 1] &lt;&lt; endl;
             <ul class="tight">
               <li>Short and common.</li>
               <li>No bounds checking.</li>
-              <li>Out of range means undefined behavior.</li>
+              <li><code>s[pos]</code> is undefined behavior when <code>pos &gt; s.length()</code>.</li>
+              <li><code>s[s.length()]</code> is usually a mistake, even though the textbook notes it is not undefined behavior.</li>
             </ul>
           </article>
           <article class="card secondary">
@@ -105,7 +106,7 @@ cout &lt;&lt; alphabet[alphabet.length() - 1] &lt;&lt; endl;
             <ul class="tight">
               <li>Member function call.</li>
               <li>Checks bounds.</li>
-              <li>Out of range gives a runtime error.</li>
+              <li><code>s.at(pos)</code> gives a runtime error when <code>pos &gt;= s.length()</code>.</li>
             </ul>
           </article>
         </div>

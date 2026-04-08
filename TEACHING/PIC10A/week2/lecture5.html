@@ -110,6 +110,11 @@ cout &lt;&lt; alphabet[alphabet.length() - 1] &lt;&lt; endl;
             </ul>
           </article>
         </div>
+        <div class="mini-card secondary">
+          <p class="tiny">
+            <code>string s = "abc"</code> looks like <code>[0]='a' | [1]='b' | [2]='c' | [3]='\0'</code>, so <code>s[s.length()]</code> touches the reserved terminator slot.
+          </p>
+        </div>
       </section>
 
       <section>
@@ -142,8 +147,8 @@ cout &lt;&lt; s &lt;&lt; endl;
           <article class="card">
             <h3>Undefined behavior</h3>
             <ul class="tight">
-              <li><code>s[pos]</code> with <code>pos &gt;= s.length()</code></li>
-              <li><code>s[s.length()] = ch</code></li>
+              <li><code>s[pos]</code> with <code>pos &gt; s.length()</code></li>
+              <li><code>s[s.length()] = ch</code> when <code>ch != '\0'</code></li>
             </ul>
           </article>
           <article class="card secondary">
@@ -239,7 +244,7 @@ cout &lt;&lt; n &lt;&lt; endl;
             <h3>Practice</h3>
             <ul class="tight qa-list">
               <li><strong>Q5.</strong> Why is <code>s[s.length()]</code> suspicious?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because the last valid index is <code>s.length() - 1</code>, so <code>s.length()</code> is already out of range.</li>
+              <li class="answer-line"><strong>Answer:</strong> Because it touches the reserved <code>'\0'</code> slot instead of an ordinary character, so it is usually a logic mistake.</li>
               <li><strong>Q6.</strong> Can indexing change characters, or only read them?</li>
               <li class="answer-line"><strong>Answer:</strong> It can do both.</li>
               <li><strong>Q7.</strong> Which is safer for beginners: <code>[]</code> or <code>at()</code>?</li>
@@ -266,7 +271,7 @@ cout &lt;&lt; s[s.length()] &lt;&lt; endl;
                   </code>
                 </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Undefined behavior. <code>s.length()</code> is one past the last valid index.</li>
+              <li class="answer-line"><strong>Answer:</strong> Not undefined behavior, but usually a mistake. It reads the reserved <code>'\0'</code> slot, so nothing visible is printed before <code>endl</code>.</li>
             </ul>
           </article>
           <article class="card secondary">

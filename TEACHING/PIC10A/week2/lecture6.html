@@ -17,16 +17,16 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 6</div>
-        <h1>More String Tools</h1>
+        <h1><code>cin</code> and the Input Buffer</h1>
         <p class="lead">
-          Today we make strings more useful: cut pieces out with <code>substr</code>, grow and shrink with
-          <code>push_back</code> and <code>pop_back</code>, and search with <code>find</code> and <code>rfind</code>.
+          Today is about what the program actually reads from the keyboard:
+          <code>cin &gt;&gt; variable</code>, <code>getline</code>, <code>ignore</code>, <code>get</code>, and <code>peek</code>.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 6.3</span>
-          <span class="pill">substr</span>
-          <span class="pill">find / rfind</span>
-          <span class="pill">npos</span>
+          <span class="pill">Chapter 7</span>
+          <span class="pill">buffer leftovers</span>
+          <span class="pill">getline</span>
+          <span class="pill">ignore / get / peek</span>
         </div>
       </section>
 
@@ -34,19 +34,18 @@
         <h2>Review from Lecture 5</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>What we already know</h3>
+            <h3>String tools we already have</h3>
             <ul class="tight">
-              <li>Strings use zero-based indexing.</li>
-              <li><code>[]</code> is unchecked and <code>at()</code> is checked.</li>
-              <li><code>length()</code> returns a <code>size_t</code>.</li>
+              <li><code>substr</code></li>
+              <li><code>push_back</code> and <code>pop_back</code></li>
+              <li><code>find</code>, <code>rfind</code>, and <code>string::npos</code></li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>What we add today</h3>
+            <h3>Why input matters now</h3>
             <ul class="tight">
-              <li>Extracting pieces</li>
-              <li>Appending and removing characters</li>
-              <li>Searching for text inside text</li>
+              <li>Strings become much more useful when users can type them.</li>
+              <li>Input bugs often come from misunderstanding the buffer.</li>
             </ul>
           </article>
         </div>
@@ -56,128 +55,122 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Cut</span>
-            <strong><code>substr(start, count)</code></strong>
-            <span>Extract a smaller string.</span>
+            <span class="kicker">Extraction</span>
+            <strong><code>cin &gt;&gt; variable</code></strong>
+            <span>Reads one formatted value and may leave extra characters behind.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Search</span>
-            <strong><code>find</code> and <code>rfind</code></strong>
-            <span>Return positions as <code>size_t</code>.</span>
+            <span class="kicker">Lines</span>
+            <strong><code>getline(cin, s)</code></strong>
+            <span>Reads a whole line, including spaces.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2><code>substr</code></h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-string campus = "Westwood";
-
-cout &lt;&lt; campus.substr(0, 4) &lt;&lt; endl;
-cout &lt;&lt; campus.substr(4, 4) &lt;&lt; endl;
-cout &lt;&lt; campus.substr(2, 3) &lt;&lt; endl;
-            </code>
-          </pre>
+        <h2>What <code>cin &gt;&gt; variable</code> Does</h2>
+        <div class="grid-2">
           <article class="card">
             <ul class="tight">
-              <li>The first argument is the starting index.</li>
-              <li>The second argument is how many characters to take.</li>
-              <li>The result is a new string; <code>campus</code> itself is unchanged.</li>
+              <li>If the buffer is empty, the program waits for input.</li>
+              <li>Leading whitespace is skipped.</li>
+              <li>Characters are consumed according to the target type.</li>
+              <li>Unused characters stay in the input buffer.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <div class="equation-strip">
+              <span class="equation-chip"><code>int</code> reads digits</span>
+              <span class="equation-chip"><code>double</code> reads decimal digits</span>
+              <span class="equation-chip"><code>string</code> stops at whitespace</span>
+              <span class="equation-chip"><code>char</code> reads one character</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Examples of Leftovers</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Example 1</h3>
+            <p class="meta">Buffer contains <code>90024UCLA\n</code></p>
+            <ul class="tight">
+              <li><code>int zip;</code> reads <code>90024</code></li>
+              <li>Leftover becomes <code>UCLA\n</code></li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Example 2</h3>
+            <p class="meta">Buffer contains <code>900.24U CLA\n</code></p>
+            <ul class="tight">
+              <li><code>string s;</code> reads <code>900.24U</code></li>
+              <li>Leftover becomes <code> CLA\n</code></li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2><code>push_back</code> and <code>pop_back</code></h2>
+        <h2><code>getline(cin, s)</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string full_name;
+getline(cin, full_name);
+cout &lt;&lt; full_name &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>getline</code> reads everything up to the newline.</li>
+              <li>The newline is removed from the buffer, but not stored in the string.</li>
+              <li>Unlike <code>cin &gt;&gt; s</code>, spaces are allowed inside the result.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why Mixing <code>&gt;&gt;</code> and <code>getline</code> Breaks</h2>
         <div class="grid-2">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-string s = "Bruin";
+int age;
+cin &gt;&gt; age;
 
-s.push_back('s');
-cout &lt;&lt; s &lt;&lt; endl;
-
-s.pop_back();
-cout &lt;&lt; s &lt;&lt; endl;
+string name;
+getline(cin, name);
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><code>push_back(ch)</code> adds one character at the end.</li>
-              <li><code>pop_back()</code> removes the last character.</li>
-              <li>These are convenient when building or trimming text step by step.</li>
+              <li>After <code>cin &gt;&gt; age</code>, the trailing newline is still in the buffer.</li>
+              <li><code>getline</code> immediately sees that newline and reads an empty string.</li>
+              <li>The usual fix is <code>cin.ignore();</code> before <code>getline</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2><code>find</code> and <code>rfind</code></h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-string s = "bananas";
-
-size_t p1 = s.find("ana");
-size_t p2 = s.rfind("ana");
-
-cout &lt;&lt; p1 &lt;&lt; endl;
-cout &lt;&lt; p2 &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>find</code> looks from the left.</li>
-              <li><code>rfind</code> looks from the right.</li>
-              <li>Both return positions, so the type is <code>size_t</code>.</li>
-            </ul>
+        <h2><code>ignore</code>, <code>get</code>, and <code>peek</code></h2>
+        <div class="grid-3">
+          <article class="mini-card accent">
+            <h3><code>cin.ignore()</code></h3>
+            <p class="meta">Discard one character, often the leftover newline.</p>
+          </article>
+          <article class="mini-card secondary">
+            <h3><code>cin.get()</code></h3>
+            <p class="meta">Extract one character and return it.</p>
+          </article>
+          <article class="mini-card">
+            <h3><code>cin.peek()</code></h3>
+            <p class="meta">Look at the next character without removing it.</p>
           </article>
         </div>
-      </section>
-
-      <section>
-        <h2>When Search Fails: <code>npos</code></h2>
-        <div class="grid-2">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-string school = "ucla";
-
-size_t pos = school.find("x");
-cout &lt;&lt; (pos == string::npos) &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>If the target is not found, the answer is <code>string::npos</code>.</li>
-              <li>Do not guess a fake index like <code>-1</code>.</li>
-              <li>Because the result type is <code>size_t</code>, comparing to <code>string::npos</code> is the standard pattern.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>A Common <code>find</code> Bug</h2>
-        <div class="grid-2">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-string name = "amy";
-
-if (name.find("a")) {
-    cout &lt;&lt; "found" &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>This code is wrong when the answer is position <code>0</code>.</li>
-              <li><code>0</code> converts to <code>false</code>, so the branch is skipped.</li>
-              <li>Use <code>name.find("a") != string::npos</code> instead.</li>
-            </ul>
-          </article>
+        <div class="callout cool">
+          A good mental model: <code>peek</code> looks, <code>get</code> takes, and <code>ignore</code> throws away.
         </div>
       </section>
 
@@ -186,11 +179,11 @@ if (name.find("a")) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">If <code>string s = "computer";</code>, what does <code>s.substr(3, 2)</code> return?</p>
+            <p class="meta">Why can <code>getline</code> return an empty string right after <code>cin &gt;&gt; age;</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">How should you test whether <code>s.find("u")</code> succeeded?</p>
+            <p class="meta">Which tool should you use if you only want to look at the next character in the buffer?</p>
           </article>
         </div>
       </section>
@@ -201,18 +194,18 @@ if (name.find("a")) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>substr</code> extracts smaller strings.</li>
-              <li><code>push_back</code> and <code>pop_back</code> grow and shrink strings.</li>
-              <li><code>find</code> and <code>rfind</code> return positions as <code>size_t</code>.</li>
-              <li>Failed searches return <code>string::npos</code>.</li>
+              <li><code>cin &gt;&gt; variable</code> reads formatted input and can leave leftovers in the buffer.</li>
+              <li><code>getline</code> reads a full line, including spaces.</li>
+              <li>Mixing <code>&gt;&gt;</code> and <code>getline</code> requires care.</li>
+              <li><code>ignore</code>, <code>get</code>, and <code>peek</code> manipulate the buffer in different ways.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Test searches with <code>!= string::npos</code>.</li>
-              <li>Remember that search answers are indices, not booleans.</li>
-              <li>Read <code>substr(start, count)</code> carefully: start first, then how many.</li>
+              <li>Ask what is still left in the buffer after each read.</li>
+              <li>Use <code>cin.ignore()</code> before <code>getline</code> when a leftover newline is the issue.</li>
+              <li>Choose the input tool that matches the kind of data you want.</li>
             </ul>
           </article>
         </div>
@@ -224,27 +217,27 @@ if (name.find("a")) {
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What does <code>substr(2, 3)</code> mean?</li>
-              <li class="answer-line"><strong>Answer:</strong> Start at index <code>2</code> and take <code>3</code> characters.</li>
-              <li><strong>Q2.</strong> What does <code>push_back</code> add to a string?</li>
-              <li class="answer-line"><strong>Answer:</strong> One character at the end.</li>
-              <li><strong>Q3.</strong> What does <code>pop_back</code> remove?</li>
-              <li class="answer-line"><strong>Answer:</strong> The last character.</li>
-              <li><strong>Q4.</strong> What is the difference between <code>find</code> and <code>rfind</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>find</code> searches from the left and <code>rfind</code> searches from the right.</li>
+              <li><strong>Q1.</strong> What does <code>cin &gt;&gt; s</code> do when <code>s</code> is a string?</li>
+              <li class="answer-line"><strong>Answer:</strong> It reads characters up to the next whitespace and stores them in <code>s</code>.</li>
+              <li><strong>Q2.</strong> What does <code>getline(cin, s)</code> read?</li>
+              <li class="answer-line"><strong>Answer:</strong> The whole line up to the newline.</li>
+              <li><strong>Q3.</strong> Why can <code>getline</code> read an empty string after formatted extraction?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because the leftover newline may still be sitting in the input buffer.</li>
+              <li><strong>Q4.</strong> What does <code>cin.ignore()</code> do in its simplest form?</li>
+              <li class="answer-line"><strong>Answer:</strong> It removes one character from the buffer.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Search logic</h3>
+            <h3>Buffer tools</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What does a failed search return?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>string::npos</code></li>
-              <li><strong>Q6.</strong> Why is <code>if (s.find("a"))</code> dangerous?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because a match at index <code>0</code> converts to <code>false</code>.</li>
-              <li><strong>Q7.</strong> What type do <code>find</code> and <code>rfind</code> return?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>size_t</code></li>
-              <li><strong>Q8.</strong> How do you test whether <code>s.find("x")</code> succeeded?</li>
-              <li class="answer-line"><strong>Answer:</strong> Check whether the result is not equal to <code>string::npos</code>.</li>
+              <li><strong>Q5.</strong> What is the difference between <code>cin.get()</code> and <code>cin.peek()</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>get()</code> extracts the character, while <code>peek()</code> only looks at it.</li>
+              <li><strong>Q6.</strong> Which input tool should you use for a full name with spaces?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>getline</code></li>
+              <li><strong>Q7.</strong> What should you ask yourself after every input line?</li>
+              <li class="answer-line"><strong>Answer:</strong> What characters are left in the buffer now?</li>
+              <li><strong>Q8.</strong> Does <code>cin &gt;&gt; int_var</code> always empty the whole buffer?</li>
+              <li class="answer-line"><strong>Answer:</strong> No. It only consumes the characters needed for the integer and leaves the rest.</li>
             </ul>
           </article>
         </div>
@@ -254,36 +247,35 @@ if (name.find("a")) {
         <h2>Lecture 6 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Spot the logic bug</h3>
+            <h3>Why is the name empty?</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> Why can this fail even when the string contains <code>"a"</code>?
+                <strong>Q1.</strong> Explain the bug.
                 <pre>
                   <code data-trim data-line-numbers contenteditable class="language-cpp">
-string name = "amy";
-if (name.find("a")) {
-    cout &lt;&lt; "found" &lt;&lt; endl;
-}
+int age;
+cin &gt;&gt; age;
+
+string name;
+getline(cin, name);
                   </code>
                 </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The match is at index <code>0</code>, and <code>0</code> converts to <code>false</code>. The test should compare against <code>string::npos</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> The newline after the age is still in the buffer, so <code>getline</code> immediately consumes it and stores the empty string. Add <code>cin.ignore();</code> before <code>getline</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Trace the output</h3>
+            <h3>Choose the right tool</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What is the output?
+                <strong>Q2.</strong> What should replace the blank if we only want to look at the next character?
                 <pre>
                   <code data-trim data-line-numbers contenteditable class="language-cpp">
-string s = "cat";
-s.push_back('s');
-cout &lt;&lt; s.substr(1, 2) &lt;&lt; endl;
+char ch = cin._____();
                   </code>
                 </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>at</code></li>
+              <li class="answer-line"><strong>Answer:</strong> <code>peek</code>, if the goal is to inspect without removing the character.</li>
             </ul>
           </article>
         </div>
@@ -291,10 +283,10 @@ cout &lt;&lt; s.substr(1, 2) &lt;&lt; endl;
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2><code>cin</code> and the Input Buffer</h2>
+        <h2>Control Flow and <code>if</code></h2>
         <p class="lead center-copy">
-          Next time we connect strings to user input: what <code>cin &gt;&gt; variable</code> really does,
-          how <code>getline</code> differs, and why mixing them can be tricky.
+          Next time we start making decisions in code: <code>if</code>, <code>if-else</code>,
+          boolean logic, and block scope.
         </p>
       </section>
     </div>

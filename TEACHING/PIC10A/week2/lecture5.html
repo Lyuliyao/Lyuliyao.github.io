@@ -17,41 +17,44 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 5</div>
-        <h1>Indexing and Bounds</h1>
+        <h1>String Indexing and More Tools</h1>
         <p class="lead">
-          Strings are sequences, so we need indices. Today is about <code>[]</code>, <code>at()</code>,
-          mutation, zero-based counting, and why bounds matter.
+          We start with <code>[]</code>, <code>at()</code>, bounds, and mutation, then move to
+          <code>substr</code>, <code>push_back</code>, <code>pop_back</code>, <code>find</code>, <code>rfind</code>,
+          and <code>string::npos</code>.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 6.2</span>
-          <span class="pill">zero-based indexing</span>
-          <span class="pill">runtime error vs UB</span>
+          <span class="pill">Chapters 6.2-6.3</span>
+          <span class="pill">indexing</span>
+          <span class="pill">substr</span>
+          <span class="pill">find / rfind</span>
         </div>
       </section>
 
       <section>
-        <h2>Review from Lecture 4</h2>
+        <h2>Where We Are</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Last time</h3>
+            <h3>Before today</h3>
             <ul class="tight">
               <li><code>std::string</code> stores text.</li>
-              <li>We constructed strings from literals and repeated characters.</li>
-              <li>We used <code>+</code>, <code>+=</code>, <code>length()</code>, and <code>empty()</code>.</li>
+              <li>We already saw constructors, <code>+</code>, <code>+=</code>, <code>length()</code>, and <code>empty()</code>.</li>
+              <li>So far we mostly treated a string as one block of text.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Today’s shift</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>Stop treating a string as one blob of text.</li>
-              <li>Start treating it as many characters in order.</li>
+              <li>Treat a string as characters in order.</li>
+              <li>Extract pieces and search inside text.</li>
+              <li>See where <code>size_t</code> keeps appearing.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
+        <h2>Part I Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
             <span class="kicker">Indexing</span>
@@ -164,7 +167,7 @@ cout &lt;&lt; s &lt;&lt; endl;
       </section>
 
       <section>
-        <h2>What Is <code>size_t</code> Doing Here?</h2>
+        <h2>Why Does <code>size_t</code> Keep Appearing?</h2>
         <div class="grid-2">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
@@ -181,14 +184,14 @@ cout &lt;&lt; n &lt;&lt; endl;
             <ul class="tight">
               <li><code>length()</code> and <code>size()</code> return <code>std::size_t</code>.</li>
               <li>It is an unsigned integer type meant for sizes and indices.</li>
-              <li>We will keep seeing <code>size_t</code> throughout strings and vectors.</li>
+              <li>We will keep seeing <code>size_t</code> in indexing and searching.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Quick Checks</h2>
+        <h2>Checkpoint 1</h2>
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
@@ -201,25 +204,183 @@ cout &lt;&lt; n &lt;&lt; endl;
         </div>
       </section>
 
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part II</div>
+        <h2>More String Member Functions</h2>
+        <p class="lead center-copy">
+          Now that indexing feels concrete, we can use strings as data structures: cut them up,
+          grow them, shrink them, and search through them.
+        </p>
+      </section>
+
       <section>
-        <h2>Lecture 5 Summary</h2>
-        <div class="grid-2">
+        <h2>Part II Roadmap</h2>
+        <div class="grid-3">
+          <article class="stat">
+            <span class="kicker">Cut</span>
+            <strong><code>substr(start, count)</code></strong>
+            <span>Extract a smaller string.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Grow</span>
+            <strong><code>push_back</code> / <code>pop_back</code></strong>
+            <span>Edit the end of a string.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Search</span>
+            <strong><code>find</code> / <code>rfind</code></strong>
+            <span>Return positions as <code>size_t</code>.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>substr</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string campus = "Westwood";
+
+cout &lt;&lt; campus.substr(0, 4) &lt;&lt; endl;
+cout &lt;&lt; campus.substr(4, 4) &lt;&lt; endl;
+cout &lt;&lt; campus.substr(2, 3) &lt;&lt; endl;
+            </code>
+          </pre>
           <article class="card">
-            <h3>Main ideas</h3>
             <ul class="tight">
-              <li>Strings use zero-based indexing.</li>
-              <li><code>[]</code> is unchecked; <code>at()</code> is checked.</li>
-              <li>The last valid index is <code>length() - 1</code>.</li>
-              <li>Indexing can read or modify characters.</li>
+              <li>The first argument is the starting index.</li>
+              <li>The second argument is how many characters to take.</li>
+              <li>The result is a new string; <code>campus</code> itself is unchanged.</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>substr</code> Edge Cases</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "0123456789";
+
+cout &lt;&lt; s.substr(4) &lt;&lt; endl;
+cout &lt;&lt; s.substr(4, 44) &lt;&lt; endl;
+cout &lt;&lt; "[" &lt;&lt; s.substr(10) &lt;&lt; "]" &lt;&lt; endl;
+// cout &lt;&lt; s.substr(11) &lt;&lt; endl;
+            </code>
+          </pre>
           <article class="card secondary">
-            <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Be suspicious whenever you see <code>length()</code> and an index in the same expression.</li>
-              <li>Use <code>at()</code> while learning or debugging.</li>
-              <li>Remember that <code>size_t</code> is the type of string sizes.</li>
+              <li><code>substr(start)</code> returns everything from <code>start</code> to the end.</li>
+              <li>If <code>count</code> is too large, it just uses the remaining characters.</li>
+              <li>If <code>start == s.length()</code>, the result is the empty string.</li>
+              <li>If <code>start &gt; s.length()</code>, a runtime error follows.</li>
             </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>push_back</code> and <code>pop_back</code></h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "Bruin";
+
+s.push_back('s');
+cout &lt;&lt; s &lt;&lt; endl;
+
+s.pop_back();
+cout &lt;&lt; s &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>push_back(ch)</code> adds one character at the end.</li>
+              <li><code>pop_back()</code> removes the last character.</li>
+              <li>These are convenient when building or trimming text step by step.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>find</code> and <code>rfind</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "bananas";
+
+size_t p1 = s.find("ana");
+size_t p2 = s.rfind("ana");
+
+cout &lt;&lt; p1 &lt;&lt; endl;
+cout &lt;&lt; p2 &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>find</code> looks from the left.</li>
+              <li><code>rfind</code> looks from the right.</li>
+              <li>Both return positions, so the type is <code>size_t</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>When Search Fails: <code>npos</code></h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string school = "ucla";
+
+size_t pos = school.find("x");
+cout &lt;&lt; (pos == string::npos) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>If the target is not found, the answer is <code>string::npos</code>.</li>
+              <li>Do not guess a fake index like <code>-1</code>.</li>
+              <li>Because the result type is <code>size_t</code>, comparing to <code>string::npos</code> is the standard pattern.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Common <code>find</code> Bug</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string name = "amy";
+
+if (name.find("a")) {
+    cout &lt;&lt; "found" &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>This code is wrong when the answer is position <code>0</code>.</li>
+              <li><code>0</code> converts to <code>false</code>, so the branch is skipped.</li>
+              <li>Use <code>name.find("a") != string::npos</code> instead.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Checkpoint 2</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 3</h3>
+            <p class="meta">If <code>string s = "computer";</code>, what does <code>s.substr(3, 2)</code> return?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 4</h3>
+            <p class="meta">How should you test whether <code>s.find("u")</code> succeeded?</p>
           </article>
         </div>
       </section>
@@ -228,7 +389,7 @@ cout &lt;&lt; n &lt;&lt; endl;
         <h2>Lecture 5 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Core ideas</h3>
+            <h3>Indexing and Bounds</h3>
             <ul class="tight qa-list">
               <li><strong>Q1.</strong> If <code>string s = "cat";</code>, what does <code>s[0]</code> refer to?</li>
               <li class="answer-line"><strong>Answer:</strong> The first character, <code>'c'</code>.</li>
@@ -236,21 +397,21 @@ cout &lt;&lt; n &lt;&lt; endl;
               <li class="answer-line"><strong>Answer:</strong> <code>n - 1</code></li>
               <li><strong>Q3.</strong> What is the main safety difference between <code>[]</code> and <code>at()</code>?</li>
               <li class="answer-line"><strong>Answer:</strong> <code>at()</code> checks bounds, while <code>[]</code> does not.</li>
-              <li><strong>Q4.</strong> What type do <code>length()</code> and <code>size()</code> return?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>std::size_t</code></li>
+              <li><strong>Q4.</strong> Why is <code>s[s.length()]</code> suspicious?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because it touches the reserved <code>'\0'</code> slot instead of an ordinary character.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>String Tools</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> Why is <code>s[s.length()]</code> suspicious?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because it touches the reserved <code>'\0'</code> slot instead of an ordinary character, so it is usually a logic mistake.</li>
-              <li><strong>Q6.</strong> Can indexing change characters, or only read them?</li>
-              <li class="answer-line"><strong>Answer:</strong> It can do both.</li>
-              <li><strong>Q7.</strong> Which is safer for beginners: <code>[]</code> or <code>at()</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>at()</code></li>
-              <li><strong>Q8.</strong> Why do we call this “zero-based indexing”?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because counting positions starts at <code>0</code>, not <code>1</code>.</li>
+              <li><strong>Q5.</strong> What does <code>substr(2, 3)</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> Start at index <code>2</code> and take <code>3</code> characters.</li>
+              <li><strong>Q6.</strong> What does a failed search return?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>string::npos</code></li>
+              <li><strong>Q7.</strong> Why is <code>if (s.find("a"))</code> dangerous?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because a match at index <code>0</code> converts to <code>false</code>.</li>
+              <li><strong>Q8.</strong> What type do <code>length()</code>, <code>find</code>, and <code>rfind</code> return?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>size_t</code></li>
             </ul>
           </article>
         </div>
@@ -275,18 +436,45 @@ cout &lt;&lt; s[s.length()] &lt;&lt; endl;
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Runtime error or not?</h3>
+            <h3>Spot the logic bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> Classify the issue.
+                <strong>Q2.</strong> Why can this fail even when the string contains <code>"a"</code>?
                 <pre>
                   <code data-trim data-line-numbers contenteditable class="language-cpp">
-string s = "0123";
-cout &lt;&lt; s.at(10) &lt;&lt; endl;
+string name = "amy";
+if (name.find("a")) {
+    cout &lt;&lt; "found" &lt;&lt; endl;
+}
                   </code>
                 </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Runtime error, because <code>at()</code> checks bounds and index <code>10</code> is invalid.</li>
+              <li class="answer-line"><strong>Answer:</strong> The match is at index <code>0</code>, and <code>0</code> converts to <code>false</code>. The test should compare against <code>string::npos</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 5 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>Strings use zero-based indexing.</li>
+              <li><code>[]</code> is unchecked; <code>at()</code> is checked.</li>
+              <li><code>substr</code> extracts smaller strings.</li>
+              <li><code>push_back</code> and <code>pop_back</code> grow and shrink strings.</li>
+              <li><code>find</code> and <code>rfind</code> return positions.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Watch bounds carefully whenever <code>length()</code> appears in an index expression.</li>
+              <li>Use <code>at()</code> while learning or debugging.</li>
+              <li>Read <code>substr(start, count)</code> as start first, then how many.</li>
+              <li>Test searches with <code>!= string::npos</code>.</li>
             </ul>
           </article>
         </div>
@@ -294,10 +482,10 @@ cout &lt;&lt; s.at(10) &lt;&lt; endl;
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>More String Member Functions</h2>
+        <h2><code>cin</code> and the Input Buffer</h2>
         <p class="lead center-copy">
-          Next time we keep going with strings: <code>substr</code>, <code>push_back</code>, <code>pop_back</code>,
-          <code>find</code>, <code>rfind</code>, and how <code>size_t</code> shows up in searches.
+          Next time we connect strings to user input: what <code>cin &gt;&gt; variable</code> really does,
+          how <code>getline</code> differs, and why mixing them can be tricky.
         </p>
       </section>
     </div>

@@ -17,16 +17,16 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 10</div>
-        <h1><code>for</code> Loops</h1>
+        <h1>Vectors</h1>
         <p class="lead">
-          The <code>for</code> loop is the standard tool when the loop variable changes in a regular way.
-          Today we cover loop anatomy, traversal, and nested loops.
+          Strings are one special container. A vector is the general version:
+          an expandable sequence of values all having the same type.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 8.5-8.6</span>
-          <span class="pill">counting loops</span>
-          <span class="pill">string traversal</span>
-          <span class="pill">nested loops</span>
+          <span class="pill">Chapter 11.1-11.3</span>
+          <span class="pill">dynamic sequence</span>
+          <span class="pill">push_back / pop_back</span>
+          <span class="pill">indexing</span>
         </div>
       </section>
 
@@ -34,17 +34,17 @@
         <h2>Review from Lecture 9</h2>
         <div class="grid-2">
           <article class="card">
-            <h3><code>while</code> recap</h3>
+            <h3>Loop connection</h3>
             <ul class="tight">
-              <li>Initialization, condition, and update are the core loop ingredients.</li>
-              <li>Infinite loops happen when the update fails to move the condition toward false.</li>
+              <li>We know how to traverse a string by index.</li>
+              <li>We know how to reason about bounds carefully.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why <code>for</code> exists</h3>
+            <h3>Why that matters</h3>
             <ul class="tight">
-              <li>Many loops have a very regular counting pattern.</li>
-              <li><code>for</code> keeps that pattern in one place.</li>
+              <li>Vectors also have indices, sizes, and traversal patterns.</li>
+              <li>Many string ideas transfer directly.</li>
             </ul>
           </article>
         </div>
@@ -54,120 +54,134 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Anatomy</span>
-            <strong><code>for (init; condition; update)</code></strong>
-            <span>All loop machinery appears in one header.</span>
+            <span class="kicker">Container</span>
+            <strong><code>vector&lt;T&gt;</code></strong>
+            <span>A sequence of elements, all of the same type <code>T</code>.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Patterns</span>
-            <strong>Count, traverse, nest</strong>
-            <span>These are the most common early uses.</span>
+            <span class="kicker">Operations</span>
+            <strong><code>push_back</code>, <code>pop_back</code>, <code>size</code>, indexing</strong>
+            <span>The same core ideas as strings, generalized.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Basic Form</h2>
+        <h2>Declaring Vectors</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-for (int i = 0; i &lt; 5; ++i) {
-    cout &lt;&lt; i &lt;&lt; endl;
-}
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+vector&lt;int&gt; scores;
+vector&lt;double&gt; weights;
+vector&lt;string&gt; names;
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Initialization runs once.</li>
-              <li>The condition is checked before each iteration.</li>
-              <li>The update runs after each iteration.</li>
+              <li>Include <code>&lt;vector&gt;</code>.</li>
+              <li>The type inside angle brackets is the element type.</li>
+              <li>Every element in one vector has the same type.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2><code>for</code> Versus <code>while</code></h2>
+        <h2><code>push_back</code>, <code>pop_back</code>, and <code>size()</code></h2>
         <div class="grid-2">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int i = 0;
-while (i &lt; 5) {
-    cout &lt;&lt; i &lt;&lt; endl;
-    ++i;
+vector&lt;int&gt; v;
+
+v.push_back(10);
+v.push_back(20);
+v.push_back(30);
+
+cout &lt;&lt; v.size() &lt;&lt; endl;
+
+v.pop_back();
+cout &lt;&lt; v.size() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>push_back</code> adds one element at the end.</li>
+              <li><code>pop_back</code> removes the last element.</li>
+              <li><code>size()</code> reports how many elements are currently stored.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Indexing: <code>[]</code> and <code>at()</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; v;
+v.push_back(4);
+v.push_back(7);
+v.push_back(9);
+
+cout &lt;&lt; v[1] &lt;&lt; endl;
+cout &lt;&lt; v.at(2) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The same safety story from strings appears again.</li>
+              <li><code>v[pos]</code> out of range is undefined behavior.</li>
+              <li><code>v.at(pos)</code> out of range is a runtime error.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Traversing a Vector</h2>
+        <div class="grid-2">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; v;
+v.push_back(4);
+v.push_back(7);
+v.push_back(9);
+
+for (size_t i = 0; i &lt; v.size(); ++i) {
+    cout &lt;&lt; v[i] &lt;&lt; endl;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>This is almost the same loop as the previous slide.</li>
-              <li><code>for</code> is often clearer for regular counting.</li>
-              <li><code>while</code> is often clearer for irregular or sentinel-driven loops.</li>
+              <li>This pattern should feel familiar from strings.</li>
+              <li>The stopping rule is still “stay strictly below the size.”</li>
+              <li><code>size_t</code> appears again because sizes and indices belong together.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Common Pattern: Summation</h2>
-        <div class="code-pair">
+        <h2>Vectors of Strings</h2>
+        <div class="grid-2">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int sum = 0;
+vector&lt;string&gt; roster;
+roster.push_back("Ada");
+roster.push_back("Grace");
 
-for (int i = 1; i &lt;= 4; ++i) {
-    sum += i;
-}
+cout &lt;&lt; roster[0] &lt;&lt; endl;
+cout &lt;&lt; roster[1].length() &lt;&lt; endl;
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A loop variable often walks through a numeric range.</li>
-              <li>Inside the loop, we accumulate or compute something from each value.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Traversing a String by Index</h2>
-        <div class="grid-2">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-string s = "bruins";
-
-for (size_t i = 0; i &lt; s.length(); ++i) {
-    cout &lt;&lt; s[i] &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>This pattern connects loops to string indexing.</li>
-              <li>Notice the use of <code>size_t</code> for the index.</li>
-              <li>The stopping condition is still “stay strictly below the length.”</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Nested Loops</h2>
-        <div class="grid-2">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-for (int row = 1; row &lt;= 3; ++row) {
-    for (int col = 1; col &lt;= 3; ++col) {
-        cout &lt;&lt; row * col &lt;&lt; " ";
-    }
-    cout &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>The inner loop runs completely for each outer-loop step.</li>
-              <li>Nested loops are natural for tables, grids, and repeated patterns.</li>
+              <li>Vectors and strings compose naturally.</li>
+              <li>Each element can itself be a richer type like <code>string</code>.</li>
             </ul>
           </article>
         </div>
@@ -178,11 +192,11 @@ for (int row = 1; row &lt;= 3; ++row) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What values of <code>i</code> run in <code>for (int i = 2; i &lt; 6; ++i)</code>?</p>
+            <p class="meta">If <code>v.size() == 5</code>, what is the last valid index?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Why is <code>i &lt; s.length()</code> correct but <code>i &lt;= s.length()</code> suspicious when indexing?</p>
+            <p class="meta">What is the difference between <code>vector&lt;int&gt;</code> and <code>vector&lt;string&gt;</code>?</p>
           </article>
         </div>
       </section>
@@ -193,18 +207,18 @@ for (int row = 1; row &lt;= 3; ++row) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>for</code> packages initialization, condition, and update into one loop header.</li>
-              <li>It is ideal for regular counting and traversal.</li>
-              <li>Strings are commonly traversed with indexed <code>for</code> loops.</li>
-              <li>Nested loops let us work with tables and two-dimensional patterns.</li>
+              <li><code>vector&lt;T&gt;</code> stores a sequence of values of type <code>T</code>.</li>
+              <li><code>push_back</code>, <code>pop_back</code>, and <code>size()</code> manage a vector’s contents.</li>
+              <li>Vectors use indexing with the same bounds cautions as strings.</li>
+              <li>Loops are the standard way to traverse vectors.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Check your loop bounds carefully.</li>
-              <li>Read loop headers left to right: init, condition, update.</li>
-              <li>Trace small examples by hand before trusting a nested loop.</li>
+              <li>Keep the element type in mind at all times.</li>
+              <li>Use <code>i &lt; v.size()</code>, not <code>&lt;=</code>, for indexed traversal.</li>
+              <li>Recognize that many string skills transfer directly to vectors.</li>
             </ul>
           </article>
         </div>
@@ -214,29 +228,29 @@ for (int row = 1; row &lt;= 3; ++row) {
         <h2>Lecture 10 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Loop anatomy</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What are the three parts of a <code>for</code> loop header?</li>
-              <li class="answer-line"><strong>Answer:</strong> Initialization, condition, and update.</li>
-              <li><strong>Q2.</strong> When is <code>for</code> usually clearer than <code>while</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> When the loop follows a regular counting pattern.</li>
-              <li><strong>Q3.</strong> Why is <code>i &lt; s.length()</code> a common string traversal condition?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because the last valid index is one less than the length.</li>
-              <li><strong>Q4.</strong> What do nested loops let us express naturally?</li>
-              <li class="answer-line"><strong>Answer:</strong> Grids, tables, and repeated two-level patterns.</li>
+              <li><strong>Q1.</strong> What does <code>vector&lt;int&gt;</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> A vector whose elements are integers.</li>
+              <li><strong>Q2.</strong> What does <code>push_back</code> do?</li>
+              <li class="answer-line"><strong>Answer:</strong> It adds one element at the end.</li>
+              <li><strong>Q3.</strong> What does <code>pop_back</code> do?</li>
+              <li class="answer-line"><strong>Answer:</strong> It removes the last element.</li>
+              <li><strong>Q4.</strong> What does <code>size()</code> report?</li>
+              <li class="answer-line"><strong>Answer:</strong> The number of elements currently in the vector.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Reasoning</h3>
+            <h3>Bounds and traversal</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What values of <code>i</code> occur in <code>for (int i = 0; i &lt; 3; ++i)</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>0</code>, <code>1</code>, and <code>2</code></li>
-              <li><strong>Q6.</strong> Why is <code>&lt;=</code> often dangerous in an indexing loop?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because it can step one past the last valid index.</li>
-              <li><strong>Q7.</strong> Why might <code>size_t</code> be a natural choice for a string index?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because string lengths and sizes are reported as <code>size_t</code>.</li>
-              <li><strong>Q8.</strong> What should you inspect first when a loop prints too many or too few values?</li>
-              <li class="answer-line"><strong>Answer:</strong> The loop bounds and update.</li>
+              <li><strong>Q5.</strong> What is the last valid index when <code>v.size() == n</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>n - 1</code></li>
+              <li><strong>Q6.</strong> What is the safety difference between <code>v[pos]</code> and <code>v.at(pos)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>at()</code> checks bounds and <code>[]</code> does not.</li>
+              <li><strong>Q7.</strong> Why do loops and vectors go together naturally?</li>
+              <li class="answer-line"><strong>Answer:</strong> Because loops let us process each element one by one.</li>
+              <li><strong>Q8.</strong> Can a vector store strings instead of ints?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes. For example, <code>vector&lt;string&gt;</code>.</li>
             </ul>
           </article>
         </div>
@@ -246,35 +260,38 @@ for (int row = 1; row &lt;= 3; ++row) {
         <h2>Lecture 10 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Off-by-one bug</h3>
+            <h3>Bounds bug</h3>
             <ul class="tight qa-list">
               <li>
                 <strong>Q1.</strong> What is suspicious here?
                 <pre>
                   <code data-trim data-line-numbers contenteditable class="language-cpp">
-for (size_t i = 0; i &lt;= s.length(); ++i) {
-    cout &lt;&lt; s[i] &lt;&lt; endl;
+for (size_t i = 0; i &lt;= v.size(); ++i) {
+    cout &lt;&lt; v[i] &lt;&lt; endl;
 }
                   </code>
                 </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The loop reaches <code>i == s.length()</code>, which is already out of bounds for indexing.</li>
+              <li class="answer-line"><strong>Answer:</strong> The loop reaches <code>i == v.size()</code>, which is already out of bounds for indexing.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Loop body mistake</h3>
+            <h3>Trace the result</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What does this actually print?
+                <strong>Q2.</strong> What is printed?
                 <pre>
                   <code data-trim data-line-numbers contenteditable class="language-cpp">
-for (int i = 0; i &lt; 3; ++i) {
-    cout &lt;&lt; 3 &lt;&lt; endl;
-}
+vector&lt;int&gt; v;
+v.push_back(2);
+v.push_back(4);
+v.push_back(6);
+
+cout &lt;&lt; v[1] &lt;&lt; endl;
                   </code>
                 </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It prints the number <code>3</code> three times, not the values of <code>i</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>4</code></li>
             </ul>
           </article>
         </div>
@@ -282,10 +299,10 @@ for (int i = 0; i &lt; 3; ++i) {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Vectors</h2>
+        <h2>Functions</h2>
         <p class="lead center-copy">
-          Next time we move from strings to a more general container:
-          <code>std::vector</code>, dynamic size, indexing, and loop-based traversal.
+          Next time we start packaging code into reusable pieces:
+          function declarations, definitions, parameters, and return values.
         </p>
       </section>
     </div>

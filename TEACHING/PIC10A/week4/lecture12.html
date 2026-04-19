@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 12</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 12</div>
+        <h1>Functions II</h1>
+        <p class="lead">
+          We continue functions by tracing calls, returning values, ending function calls, documenting behavior, and separating pure functions from procedures.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 9.1-9.4</span>
+          <span class="pill">return values</span>
+          <span class="pill">void</span>
+          <span class="pill">function scope</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>From Functions I</h3>
+            <ul class="tight">
+              <li>A declaration lets a call compile.</li>
+              <li>A definition supplies the body.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Today</h3>
+            <ul class="tight">
+              <li>Trace what happens during a function call.</li>
+              <li>Decide whether a function should return a value or perform a side effect.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Return</span>
+            <strong>send one value back</strong>
+            <span>A non-void function must return a value on every path.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Scope</span>
+            <strong>call-local variables</strong>
+            <span>Parameters and local variables disappear when the call ends.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Return Values</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int abs_val(int x) {
+    if (x &lt; 0) {
+        return -x;
+    }
+    return x;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A return statement ends the function call.</li>
+              <li>The expression after <code>return</code> becomes the value of the call.</li>
+              <li>Code after a guaranteed return does not run.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Void Functions</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print_box(int n) {
+    for (int i = 0; i &lt; n; ++i) {
+        cout &lt;&lt; &quot;[]&quot;;
+    }
+    cout &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>void</code> means no returned value.</li>
+              <li>A void function often performs a side effect like printing.</li>
+              <li>A plain <code>return;</code> can end a void function early.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Function Scope</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int add_one(int x) {
+    int y = x + 1;
+    return y;
+}
+
+cout &lt;&lt; y &lt;&lt; endl;   // error
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Parameters and local variables live in function scope.</li>
+              <li>They are created for each call.</li>
+              <li>They disappear when the call ends.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Function Comments</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+/**
+  Returns the larger of two integers.
+  @param a one integer
+  @param b another integer
+  @return the larger value
+*/
+int my_max(int a, int b);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A function comment explains purpose, parameters, and return value.</li>
+              <li>Good comments let users call the function without reading its body.</li>
+              <li>Keep comments consistent with the declaration.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pure Functions and Procedures</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int square(int n) {
+    return n * n;
+}
+
+void print_square(int n) {
+    cout &lt;&lt; n * n &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A pure function returns a value and has no side effects.</li>
+              <li>A procedure has return type <code>void</code> and does something observable.</li>
+              <li>Some functions mix both, but simple designs are easier to reason about.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Trace a Function Call</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int i, int j) {
+    if (i &gt; j) {
+        return i;
+    }
+    return j;
+}
+
+int a = 3;
+int b = 7;
+int c = my_max(a, b);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Create a function scope containing parameters <code>i</code> and <code>j</code>.</li>
+              <li>Copy arguments into parameters: <code>i = 3</code>, <code>j = 7</code>.</li>
+              <li>Execute the body; <code>return j</code> ends the call and assigns <code>7</code> to <code>c</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Early Return in a <code>void</code> Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print_positive(int x) {
+    if (x &lt;= 0) {
+        return;
+    }
+
+    cout &lt;&lt; x &lt;&lt; " is positive" &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A <code>void</code> function cannot return an expression.</li>
+              <li>A plain <code>return;</code> can still end the function call early.</li>
+              <li>This avoids deeply nested <code>if</code> statements for guard cases.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Why must every path in a non-void function return a value?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">Is a function that prints to <code>cout</code> pure?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 12 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>A return statement ends the current function call.</li>
+              <li>Function scope is created for each call and then destroyed.</li>
+              <li>Function comments document how to use a function.</li>
+              <li>Pure functions and procedures have different design goals.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer returning computed values instead of printing from every helper.</li>
+              <li>Write comments for functions whose purpose is not obvious.</li>
+              <li>Check all paths in non-void functions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 12 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What does <code>return</code> do?</li>
+              <li class="answer-line"><strong>Answer:</strong> It ends the call and optionally sends back a value.</li>
+              <li><strong>Q2.</strong> What does <code>void</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> The function does not return a value.</li>
+              <li><strong>Q3.</strong> Where do parameters live?</li>
+              <li class="answer-line"><strong>Answer:</strong> In the function scope for that call.</li>
+              <li><strong>Q4.</strong> What is a pure function?</li>
+              <li class="answer-line"><strong>Answer:</strong> A value-returning function without side effects.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Reasoning</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is a procedure?</li>
+              <li class="answer-line"><strong>Answer:</strong> A void function that performs a side effect.</li>
+              <li><strong>Q6.</strong> Why write function comments?</li>
+              <li class="answer-line"><strong>Answer:</strong> To document purpose, parameters, and return values.</li>
+              <li><strong>Q7.</strong> Can a non-void function fall off the end safely?</li>
+              <li class="answer-line"><strong>Answer:</strong> No, that can cause undefined behavior.</li>
+              <li><strong>Q8.</strong> How many values does one function call return?</li>
+              <li class="answer-line"><strong>Answer:</strong> At most one value.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 12 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Missing return</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What is wrong?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int sign(int x) {
+    if (x &gt; 0) { return 1; }
+    if (x &lt; 0) { return -1; }
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The path where <code>x == 0</code> returns no value.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Scope confusion</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Why does this fail?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void f() {
+    int local = 3;
+}
+
+cout &lt;&lt; local &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>local</code> exists only inside <code>f</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>References I</h2>
+        <p class="lead center-copy">
+          Next time Chapter 10 explains why pass-by-value is not enough for functions such as swap.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

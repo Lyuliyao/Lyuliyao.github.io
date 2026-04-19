@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 28</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 28</div>
+        <h1>C-style Arrays I</h1>
+        <p class="lead">
+          C-style arrays are lower-level fixed-size sequences. They connect indexing to pointer arithmetic.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 18.1-18.2</span>
+          <span class="pill">arrays</span>
+          <span class="pill">fixed size</span>
+          <span class="pill">pointer arithmetic</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>arrays</strong>
+            <span>Today centers on arrays.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>fixed size</strong>
+            <span>We use examples and code review to make fixed size concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>C-Style Array</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {10, 20, 30, 40};
+cout &lt;&lt; a[0] &lt;&lt; endl;
+cout &lt;&lt; a[3] &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>C-style arrays have fixed size.</li>
+              <li>Indices still start at zero.</li>
+              <li>There is no bounds checking.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Looping Over an Array</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {10, 20, 30, 40};
+
+for (int i = 0; i &lt; 4; ++i) {
+    cout &lt;&lt; a[i] &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>You must know or store the size.</li>
+              <li>The loop condition uses the array length.</li>
+              <li><code>i &lt; 4</code> avoids one-past-the-end access.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pointer Arithmetic</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {10, 20, 30, 40};
+int* p = a;
+
+cout &lt;&lt; *p &lt;&lt; endl;
+cout &lt;&lt; *(p + 1) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>An array name often behaves like a pointer to its first element.</li>
+              <li><code>p + 1</code> moves to the next int.</li>
+              <li>Indexing and pointer arithmetic are connected.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Bounds Bug: One Past the End</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[3] = {4, 5, 6};
+
+for (int i = 0; i &lt;= 3; ++i) {
+    cout &lt;&lt; a[i] &lt;&lt; endl;  // bug when i is 3
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Valid indices are <code>0</code>, <code>1</code>, and <code>2</code>.</li>
+              <li><code>i &lt;= 3</code> eventually accesses <code>a[3]</code>.</li>
+              <li>C-style arrays do not stop you from reading invalid memory.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pointer Arithmetic Trace</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {10, 20, 30, 40};
+
+cout &lt;&lt; *(a + 0) &lt;&lt; endl;  // a[0]
+cout &lt;&lt; *(a + 2) &lt;&lt; endl;  // a[2]
+cout &lt;&lt; 3[a] &lt;&lt; endl;      // legal, but do not write this
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>a[i]</code> is defined in terms of <code>*(a + i)</code>.</li>
+              <li>Pointer arithmetic moves by elements, not raw bytes in your source code.</li>
+              <li>The strange <code>3[a]</code> example explains the rule; it is not good style.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 28 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops c-style arrays i.</li>
+              <li>Key chapters: 18.1-18.2.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 28 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of C-style Arrays I?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is arrays connected to fixed size.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 28 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {};
+a[0] = 7;
+a[4] = 9;
+
+cout &lt;&lt; a[0] + a[4] &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Trace which indices are explicitly changed and which remain zero-initialized.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[3] = {1, 2, 3};
+int* p = a + 1;
+
+cout &lt;&lt; *p &lt;&lt; endl;
+cout &lt;&lt; *(p + 1) &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>p</code> starts at <code>a[1]</code>, so <code>*(p + 1)</code> reads <code>a[2]</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>C-style Arrays II</h2>
+        <p class="lead center-copy">
+          Next time we pass arrays to functions and discuss decay, size parameters, and C strings.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

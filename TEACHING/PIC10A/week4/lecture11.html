@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>PIC 10A Lecture 11 Archive</title>
+  <title>PIC 10A Lecture 11</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
   <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
@@ -17,22 +17,334 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 11</div>
-        <h1>Archive Notice</h1>
+        <h1>Functions I</h1>
         <p class="lead">
-          Lecture 5 and Lecture 6 were combined into one longer deck, so the numbering shifted down by one.
-          The vectors material now lives in <code>week4/lecture10.html</code>.
+          Functions let us name reusable pieces of code. We start with declarations, definitions, calls, parameters, arguments, and signatures.
         </p>
         <div class="pill-row">
-          <span class="pill">numbering shifted</span>
-          <span class="pill">use lecture10.html</span>
+          <span class="pill">Chapter 9.1</span>
+          <span class="pill">declarations</span>
+          <span class="pill">definitions</span>
+          <span class="pill">parameters</span>
         </div>
       </section>
 
       <section>
-        <h2>Where To Go Instead</h2>
-        <div class="callout cool">
-          Open <code>TEACHING/PIC10A/week4/lecture10.html</code> for the current vectors lecture.
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>From control flow</h3>
+            <ul class="tight">
+              <li>Branches and loops organize instructions inside one function.</li>
+              <li>Now we learn how to create more functions.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why functions</h3>
+            <ul class="tight">
+              <li>They reduce repeated code.</li>
+              <li>They give names to ideas and make programs easier to test.</li>
+            </ul>
+          </article>
         </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Interface</span>
+            <strong>declaration</strong>
+            <span>Tell the compiler that a function exists.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Implementation</span>
+            <strong>definition</strong>
+            <span>Give the function body that actually runs.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Function Declaration</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int a, int b);
+void print_line(string text);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A declaration ends with a semicolon.</li>
+              <li>It gives the return type, name, and parameter types.</li>
+              <li>It is enough for the compiler to understand later calls.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Function Definition</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int a, int b) {
+    if (a &gt; b) {
+        return a;
+    }
+    return b;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A definition includes the body in braces.</li>
+              <li>A definition also counts as a declaration.</li>
+              <li>The body runs only when the function is called.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Calling a Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int bigger = my_max(7, 4);
+print_line(&quot;done&quot;);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Calling means using the function.</li>
+              <li>Arguments are the values supplied at the call site.</li>
+              <li>The returned value can be stored or used in a larger expression.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameters vs Arguments</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int square(int n) {
+    return n * n;
+}
+
+int x = 5;
+int y = square(x);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>n</code> is a parameter.</li>
+              <li><code>x</code> is an argument.</li>
+              <li>At the start of the call, the argument value is copied into the parameter.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Function Signatures</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+double average(int total, int count);
+void print_score(string name, int score);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A signature is the name plus the parameter types.</li>
+              <li>Return type is important, but it does not distinguish overloads later.</li>
+              <li>Signatures are how declarations and calls are matched.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Declarations and Calls Together</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int i, int j);
+void print(double d);
+
+int main() {
+    int a = 3;
+    int b = 7;
+
+    int c = my_max(a, b);
+    cout &lt;&lt; c &lt;&lt; endl;
+
+    print(1.01);
+    return 0;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The declarations let <code>main</code> call the functions before their definitions appear.</li>
+              <li><code>a</code>, <code>b</code>, and <code>1.01</code> are arguments.</li>
+              <li>The declarations are a compact map of the helper functions used by <code>main</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Definitions After <code>main</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int i, int j) {
+    if (i &gt; j) {
+        return i;
+    }
+    return j;
+}
+
+void print(double d) {
+    cout &lt;&lt; "value: " &lt;&lt; d &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The definition gives the body that runs during a function call.</li>
+              <li>Parameter names such as <code>i</code>, <code>j</code>, and <code>d</code> belong to their function definitions.</li>
+              <li>The return type controls whether the function call produces a usable value.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What is the difference between a declaration and a definition?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">In <code>int y = square(x);</code>, which name is the argument?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 11 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>Function declarations announce functions before they are used.</li>
+              <li>Function definitions provide the executable body.</li>
+              <li>Arguments are provided by calls; parameters live inside the function call.</li>
+              <li>Function signatures document the name and parameter types.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Put declarations before calls.</li>
+              <li>Use names that describe the purpose of the function.</li>
+              <li>Keep one function focused on one job.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 11 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What does a function declaration tell the compiler?</li>
+              <li class="answer-line"><strong>Answer:</strong> The return type, name, and parameter types.</li>
+              <li><strong>Q2.</strong> What does a function definition add?</li>
+              <li class="answer-line"><strong>Answer:</strong> The function body.</li>
+              <li><strong>Q3.</strong> What is a function call?</li>
+              <li class="answer-line"><strong>Answer:</strong> An instruction to run the function.</li>
+              <li><strong>Q4.</strong> What is a parameter?</li>
+              <li class="answer-line"><strong>Answer:</strong> A variable listed in the function definition/declaration.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Reasoning</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is an argument?</li>
+              <li class="answer-line"><strong>Answer:</strong> A value supplied in a function call.</li>
+              <li><strong>Q6.</strong> Can a function be declared before it is defined?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes.</li>
+              <li><strong>Q7.</strong> Why are function names useful?</li>
+              <li class="answer-line"><strong>Answer:</strong> They give a reusable idea a readable name.</li>
+              <li><strong>Q8.</strong> What should you check when a call does not build?</li>
+              <li class="answer-line"><strong>Answer:</strong> Whether a matching declaration is visible before the call.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 11 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Missing declaration</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Why does this fail?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int main() {
+    cout &lt;&lt; triple(4) &lt;&lt; endl;
+}
+
+int triple(int n) {
+    return 3 * n;
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>triple</code> is called before the compiler has seen a declaration.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Parameter names</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What value is printed?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int f(int x) {
+    return x + 1;
+}
+
+int x = 10;
+cout &lt;&lt; f(3) &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> It prints <code>4</code>. The parameter <code>x</code> inside <code>f</code> is separate from the outer <code>x</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Functions II</h2>
+        <p class="lead center-copy">
+          Next time we continue Chapter 9 with return values, <code>void</code>, function scope, comments, and pure functions versus procedures.
+        </p>
       </section>
     </div>
   </div>

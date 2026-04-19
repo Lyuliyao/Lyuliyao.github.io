@@ -17,34 +17,33 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 10</div>
-        <h1>Vectors</h1>
+        <h1>Control-Flow Workshop</h1>
         <p class="lead">
-          Strings are one special container. A vector is the general version:
-          an expandable sequence of values all having the same type.
+          Chapter 8 has more than syntax. This workshop uses scope, input-loop, and prime-number examples to practice tracing real control flow.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 11.1-11.3</span>
-          <span class="pill">dynamic sequence</span>
-          <span class="pill">push_back / pop_back</span>
-          <span class="pill">indexing</span>
+          <span class="pill">Chapters 8.2, 8.4, 8.6</span>
+          <span class="pill">scope bugs</span>
+          <span class="pill">prime examples</span>
+          <span class="pill">debugging</span>
         </div>
       </section>
 
       <section>
-        <h2>Review from Lecture 9</h2>
+        <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Loop connection</h3>
+            <h3>From Chapter 8</h3>
             <ul class="tight">
-              <li>We know how to traverse a string by index.</li>
-              <li>We know how to reason about bounds carefully.</li>
+              <li>Scope bugs can be build errors or undefined behavior.</li>
+              <li>Input loops often need a precise stopping rule.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why that matters</h3>
+            <h3>Today's examples</h3>
             <ul class="tight">
-              <li>Vectors also have indices, sizes, and traversal patterns.</li>
-              <li>Many string ideas transfer directly.</li>
+              <li>Grade shadowing from Section 8.2.</li>
+              <li>Prime-number programs from Section 8.6.</li>
             </ul>
           </article>
         </div>
@@ -54,134 +53,251 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Container</span>
-            <strong><code>vector&lt;T&gt;</code></strong>
-            <span>A sequence of elements, all of the same type <code>T</code>.</span>
+            <span class="kicker">Scope</span>
+            <strong>shadowing can hide bugs</strong>
+            <span>Trace which variable a line actually uses.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Operations</span>
-            <strong><code>push_back</code>, <code>pop_back</code>, <code>size</code>, indexing</strong>
-            <span>The same core ideas as strings, generalized.</span>
+            <span class="kicker">Patterns</span>
+            <strong>test, count, search</strong>
+            <span>Prime examples combine flags, breaks, nested loops, and while loops.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Declaring Vectors</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-#include &lt;vector&gt;
-#include &lt;string&gt;
-
-vector&lt;int&gt; scores;
-vector&lt;double&gt; weights;
-vector&lt;string&gt; names;
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Include <code>&lt;vector&gt;</code>.</li>
-              <li>The type inside angle brackets is the element type.</li>
-              <li>Every element in one vector has the same type.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2><code>push_back</code>, <code>pop_back</code>, and <code>size()</code></h2>
+        <h2>8.2.4: Grade Shadowing</h2>
         <div class="grid-2">
+          <article class="card accent">
+            <h3>Bug</h3>
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;int&gt; v;
+int score = 93;
+char grade;
 
-v.push_back(10);
-v.push_back(20);
-v.push_back(30);
+if (score &gt;= 90) {
+    char grade = 'A';  // shadows the outer grade
+} else if (score &gt;= 80) {
+    grade = 'B';
+} else {
+    grade = 'F';
+}
 
-cout &lt;&lt; v.size() &lt;&lt; endl;
-
-v.pop_back();
-cout &lt;&lt; v.size() &lt;&lt; endl;
+cout &lt;&lt; grade &lt;&lt; endl;  // undefined behavior
             </code>
           </pre>
+          </article>
           <article class="card secondary">
-            <ul class="tight">
-              <li><code>push_back</code> adds one element at the end.</li>
-              <li><code>pop_back</code> removes the last element.</li>
-              <li><code>size()</code> reports how many elements are currently stored.</li>
-            </ul>
+            <h3>Fix</h3>
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int score = 93;
+char grade;
+
+if (score &gt;= 90) {
+    grade = 'A';
+} else if (score &gt;= 80) {
+    grade = 'B';
+} else {
+    grade = 'F';
+}
+
+cout &lt;&lt; grade &lt;&lt; endl;
+            </code>
+          </pre>
           </article>
         </div>
+        <div class="callout cool">The bug is not the <code>if</code>. The bug is declaring a new <code>grade</code> inside one branch.</div>
       </section>
 
       <section>
-        <h2>Indexing: <code>[]</code> and <code>at()</code></h2>
+        <h2>8.4.3: Sum One Line of Ints</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;int&gt; v;
-v.push_back(4);
-v.push_back(7);
-v.push_back(9);
+int sum = 0;
 
-cout &lt;&lt; v[1] &lt;&lt; endl;
-cout &lt;&lt; v.at(2) &lt;&lt; endl;
+while (true) {
+    int i;
+    cin &gt;&gt; i;
+    sum += i;
+
+    char next = cin.get();
+    if (next == '\n') {
+        break;
+    }
+}
+
+cout &lt;&lt; sum &lt;&lt; endl;
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The same safety story from strings appears again.</li>
-              <li><code>v[pos]</code> out of range is undefined behavior.</li>
-              <li><code>v.at(pos)</code> out of range is a runtime error.</li>
+              <li>This is not the same as a sentinel-value loop.</li>
+              <li><code>cin &gt;&gt; i</code> reads the next integer and skips whitespace first.</li>
+              <li><code>cin.get()</code> checks whether the next character was the newline.</li>
+              <li>The code assumes no extra spaces before ENTER.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Traversing a Vector</h2>
-        <div class="grid-2">
+        <h2>8.6.4: Is <code>n</code> Prime?</h2>
+        <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;int&gt; v;
-v.push_back(4);
-v.push_back(7);
-v.push_back(9);
+const unsigned int n = 35;  // assume n &gt;= 2
+bool n_is_prime = true;
 
-for (size_t i = 0; i &lt; v.size(); ++i) {
-    cout &lt;&lt; v[i] &lt;&lt; endl;
+for (unsigned int d = 2; d &lt; n; ++d) {
+    if (n % d == 0) {
+        cout &lt;&lt; n &lt;&lt; " == " &lt;&lt; d
+             &lt;&lt; " * " &lt;&lt; n / d &lt;&lt; endl;
+        n_is_prime = false;
+        break;
+    }
+}
+
+if (n_is_prime) {
+    cout &lt;&lt; n &lt;&lt; " is prime" &lt;&lt; endl;
+} else {
+    cout &lt;&lt; n &lt;&lt; " is not prime" &lt;&lt; endl;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>This pattern should feel familiar from strings.</li>
-              <li>The stopping rule is still “stay strictly below the size.”</li>
-              <li><code>size_t</code> appears again because sizes and indices belong together.</li>
+              <li>The boolean flag starts as <code>true</code> and changes only if a divisor is found.</li>
+              <li><code>break</code> is correct because one divisor is enough.</li>
+              <li>This simple version mishandles <code>0</code> and <code>1</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Vectors of Strings</h2>
-        <div class="grid-2">
+        <h2>8.6.5: Primes Up To <code>N</code></h2>
+        <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;string&gt; roster;
-roster.push_back("Ada");
-roster.push_back("Grace");
+const unsigned int N = 19;
 
-cout &lt;&lt; roster[0] &lt;&lt; endl;
-cout &lt;&lt; roster[1].length() &lt;&lt; endl;
+for (unsigned int n = 2; n &lt;= N; ++n) {
+    bool n_is_prime = true;
+
+    for (unsigned int d = 2; d &lt; n; ++d) {
+        if (n % d == 0) {
+            n_is_prime = false;
+            break;
+        }
+    }
+
+    if (n_is_prime) {
+        cout &lt;&lt; n &lt;&lt; " ";
+    }
+}
+cout &lt;&lt; endl;
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Vectors and strings compose naturally.</li>
-              <li>Each element can itself be a richer type like <code>string</code>.</li>
+              <li>The outer loop chooses the candidate <code>n</code>.</li>
+              <li>The inner loop searches for a non-trivial divisor.</li>
+              <li>The flag must be reset for each new candidate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Loop Debugging Checklist</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>State questions</h3>
+            <ul class="tight">
+              <li>Where is each loop variable initialized?</li>
+              <li>What condition stops the loop?</li>
+              <li>What statement moves the state toward stopping?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Bounds questions</h3>
+            <ul class="tight">
+              <li>What is the first value?</li>
+              <li>What is the last value that should run?</li>
+              <li>Could the code step one past a valid index?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>8.6.6: First <code>N</code> Primes</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const unsigned int N = 5;
+unsigned int primes_so_far = 0;
+unsigned int candidate = 2;
+
+while (primes_so_far &lt; N) {
+    bool candidate_is_prime = true;
+
+    for (unsigned int d = 2; d &lt; candidate; ++d) {
+        if (candidate % d == 0) {
+            candidate_is_prime = false;
+            break;
+        }
+    }
+
+    if (candidate_is_prime) {
+        cout &lt;&lt; candidate &lt;&lt; " ";
+        ++primes_so_far;
+    }
+    ++candidate;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Use <code>while</code> because we do not know the final candidate in advance.</li>
+              <li><code>primes_so_far</code> controls when the program stops.</li>
+              <li><code>candidate</code> must increase every iteration, prime or not.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>8.6.2: Sieve Idea</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const size_t N = 19;
+string is_prime(N + 1, 't');
+
+is_prime[0] = 'f';
+is_prime[1] = 'f';
+
+for (size_t i = 2; i &lt;= N; ++i) {
+    for (size_t j = 2; i * j &lt;= N; ++j) {
+        is_prime[i * j] = 'f';
+    }
+}
+
+for (size_t p = 0; p &lt;= N; ++p) {
+    if (is_prime[p] == 't') {
+        cout &lt;&lt; p &lt;&lt; " ";
+    }
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The string stores a table of truth values using <code>'t'</code> and <code>'f'</code>.</li>
+              <li>The nested loops cross out composite numbers.</li>
+              <li>The condition <code>i * j &lt;= N</code> keeps indices valid.</li>
             </ul>
           </article>
         </div>
@@ -192,11 +308,11 @@ cout &lt;&lt; roster[1].length() &lt;&lt; endl;
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">If <code>v.size() == 5</code>, what is the last valid index?</p>
+            <p class="meta">In the grade example, which <code>grade</code> does <code>cout</code> read when <code>score == 93</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the difference between <code>vector&lt;int&gt;</code> and <code>vector&lt;string&gt;</code>?</p>
+            <p class="meta">In the first-primes example, why is <code>while</code> more natural than <code>for (candidate &lt;= N)</code>?</p>
           </article>
         </div>
       </section>
@@ -207,18 +323,18 @@ cout &lt;&lt; roster[1].length() &lt;&lt; endl;
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>vector&lt;T&gt;</code> stores a sequence of values of type <code>T</code>.</li>
-              <li><code>push_back</code>, <code>pop_back</code>, and <code>size()</code> manage a vector’s contents.</li>
-              <li>Vectors use indexing with the same bounds cautions as strings.</li>
-              <li>Loops are the standard way to traverse vectors.</li>
+              <li>Shadowing can leave an outer variable uninitialized.</li>
+              <li>Input loops can stop using the newline, not only a sentinel value.</li>
+              <li>Prime tests combine flags, divisibility, and <code>break</code>.</li>
+              <li>The sieve uses nested loops and a string as a temporary table.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Keep the element type in mind at all times.</li>
-              <li>Use <code>i &lt; v.size()</code>, not <code>&lt;=</code>, for indexed traversal.</li>
-              <li>Recognize that many string skills transfer directly to vectors.</li>
+              <li>Pick <code>while</code> when the stopping candidate is not known in advance.</li>
+              <li>Reset flags inside the correct loop.</li>
+              <li>Trace the exact variable used by each line.</li>
             </ul>
           </article>
         </div>
@@ -228,29 +344,29 @@ cout &lt;&lt; roster[1].length() &lt;&lt; endl;
         <h2>Lecture 10 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Core ideas</h3>
+            <h3>Scope and state</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What does <code>vector&lt;int&gt;</code> mean?</li>
-              <li class="answer-line"><strong>Answer:</strong> A vector whose elements are integers.</li>
-              <li><strong>Q2.</strong> What does <code>push_back</code> do?</li>
-              <li class="answer-line"><strong>Answer:</strong> It adds one element at the end.</li>
-              <li><strong>Q3.</strong> What does <code>pop_back</code> do?</li>
-              <li class="answer-line"><strong>Answer:</strong> It removes the last element.</li>
-              <li><strong>Q4.</strong> What does <code>size()</code> report?</li>
-              <li class="answer-line"><strong>Answer:</strong> The number of elements currently in the vector.</li>
+              <li><strong>Q1.</strong> What is shadowing?</li>
+              <li class="answer-line"><strong>Answer:</strong> A new inner variable has the same name as an outer variable and hides it inside the inner scope.</li>
+              <li><strong>Q2.</strong> Why is the grade-shadowing example undefined behavior for score 93?</li>
+              <li class="answer-line"><strong>Answer:</strong> The inner <code>grade</code> gets <code>'A'</code>, then disappears; the outer <code>grade</code> is still uninitialized.</li>
+              <li><strong>Q3.</strong> Why does the one-line sum use <code>cin.get()</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> It inspects the character after the integer to detect the newline.</li>
+              <li><strong>Q4.</strong> What does <code>break</code> do in the prime test?</li>
+              <li class="answer-line"><strong>Answer:</strong> It stops searching once one divisor proves the number is not prime.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Bounds and traversal</h3>
+            <h3>Debugging</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the last valid index when <code>v.size() == n</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>n - 1</code></li>
-              <li><strong>Q6.</strong> What is the safety difference between <code>v[pos]</code> and <code>v.at(pos)</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>at()</code> checks bounds and <code>[]</code> does not.</li>
-              <li><strong>Q7.</strong> Why do loops and vectors go together naturally?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because loops let us process each element one by one.</li>
-              <li><strong>Q8.</strong> Can a vector store strings instead of ints?</li>
-              <li class="answer-line"><strong>Answer:</strong> Yes. For example, <code>vector&lt;string&gt;</code>.</li>
+              <li><strong>Q5.</strong> Where must <code>n_is_prime</code> be reset when printing primes up to <code>N</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Inside the outer loop, once for each candidate <code>n</code>.</li>
+              <li><strong>Q6.</strong> Why does first <code>N</code> primes use <code>primes_so_far</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> The program stops by count, not by a known last candidate.</li>
+              <li><strong>Q7.</strong> What does <code>is_prime[i * j] = 'f'</code> mean in the sieve?</li>
+              <li class="answer-line"><strong>Answer:</strong> It marks a composite number as not prime.</li>
+              <li><strong>Q8.</strong> What should you trace in nested loops?</li>
+              <li class="answer-line"><strong>Answer:</strong> The outer-loop value, then every inner-loop value for that outer value.</li>
             </ul>
           </article>
         </div>
@@ -260,38 +376,46 @@ cout &lt;&lt; roster[1].length() &lt;&lt; endl;
         <h2>Lecture 10 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Bounds bug</h3>
+            <h3>Shadowing bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What is suspicious here?
-                <pre>
-                  <code data-trim data-line-numbers contenteditable class="language-cpp">
-for (size_t i = 0; i &lt;= v.size(); ++i) {
-    cout &lt;&lt; v[i] &lt;&lt; endl;
+                <strong>Q1.</strong> What is the bug?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+char grade;
+int score = 95;
+
+if (score &gt;= 90) {
+    char grade = 'A';
 }
-                  </code>
-                </pre>
+
+cout &lt;&lt; grade &lt;&lt; endl;
+            </code>
+          </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The loop reaches <code>i == v.size()</code>, which is already out of bounds for indexing.</li>
+              <li class="answer-line"><strong>Answer:</strong> The branch creates a different <code>grade</code>; the outer <code>grade</code> remains uninitialized.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Trace the result</h3>
+            <h3>Missing update</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What is printed?
-                <pre>
-                  <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;int&gt; v;
-v.push_back(2);
-v.push_back(4);
-v.push_back(6);
+                <strong>Q2.</strong> Why might this never stop?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+unsigned int primes_so_far = 0;
+unsigned int candidate = 2;
 
-cout &lt;&lt; v[1] &lt;&lt; endl;
-                  </code>
-                </pre>
+while (primes_so_far &lt; 5) {
+    if (candidate == 2) {
+        ++primes_so_far;
+    }
+    // forgot: ++candidate;
+}
+            </code>
+          </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>4</code></li>
+              <li class="answer-line"><strong>Answer:</strong> <code>candidate</code> stays 2, so the loop keeps counting the same candidate forever.</li>
             </ul>
           </article>
         </div>
@@ -299,10 +423,9 @@ cout &lt;&lt; v[1] &lt;&lt; endl;
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Functions</h2>
+        <h2>Functions I</h2>
         <p class="lead center-copy">
-          Next time we start packaging code into reusable pieces:
-          function declarations, definitions, parameters, and return values.
+          Next time we start Chapter 9 by packaging code into reusable functions with declarations, definitions, calls, parameters, and arguments.
         </p>
       </section>
     </div>

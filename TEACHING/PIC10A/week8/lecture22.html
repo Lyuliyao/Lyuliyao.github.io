@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 22</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 22</div>
+        <h1>Constructors I</h1>
+        <p class="lead">
+          Constructors control how objects begin life. We introduce default and parameterized constructors.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 15.3</span>
+          <span class="pill">constructors</span>
+          <span class="pill">initialization</span>
+          <span class="pill">objects</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>constructors</strong>
+            <span>Today centers on constructors.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>initialization</strong>
+            <span>We use examples and code review to make initialization concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Default Constructor</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Timer {
+    int seconds;
+
+    Timer() {
+        seconds = 0;
+    }
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A constructor runs when an object is created.</li>
+              <li>A default constructor takes no arguments.</li>
+              <li>It should establish a valid starting state.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameterized Constructor</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Point {
+    double x;
+    double y;
+
+    Point(double x_in, double y_in) {
+        x = x_in;
+        y = y_in;
+    }
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Constructor parameters initialize member variables.</li>
+              <li>The call provides the starting data.</li>
+              <li>Use meaningful parameter names.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Constructor Calls</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Point origin(0, 0);
+Point p(3, 4);
+Counter c;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Objects are constructed before they are used.</li>
+              <li>Different constructors support different creation patterns.</li>
+              <li>The declaration determines which constructor is called.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Constructor Trace</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Rectangle {
+    double width;
+    double height;
+
+    Rectangle(double w, double h) {
+        width = w;
+        height = h;
+    }
+};
+
+Rectangle r(3, 4);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Object storage is created first.</li>
+              <li>Constructor parameters <code>w</code> and <code>h</code> receive the arguments.</li>
+              <li>The constructor body assigns member variables into a valid state.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Default Constructor Motivation</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Student {
+    string name;
+    int score;
+
+    Student() {
+        name = "unknown";
+        score = 0;
+    }
+};
+
+Student s;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A default constructor makes no-argument construction meaningful.</li>
+              <li>It prevents objects from starting in an unclear state.</li>
+              <li>Every constructor should establish class invariants.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 22 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops constructors i.</li>
+              <li>Key chapter: 15.3.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 22 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Constructors I?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is constructors connected to initialization.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 22 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Counter {
+    int value;
+
+    Counter() {
+        value = 0;
+    }
+};
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The default constructor makes a newly created timer start at zero.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Student {
+    string name;
+    int id;
+
+    Student(string n, int i) {
+        name = n;
+        id = i;
+    }
+};
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The constructor parameters provide the information needed to initialize the object.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Const Member Functions</h2>
+        <p class="lead center-copy">
+          Next time const member functions make read-only object behavior part of the interface.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

@@ -111,7 +111,7 @@ int main() {
         <ul>
           <li><code>s[pos]</code> with <code>pos &gt; s.length()</code> → <b>undefined behavior</b>.</li>
           <li><code>s.at(pos)</code> with <code>pos &gt;= s.length()</code> → <b>runtime error</b> (throws / terminates).</li>
-          <li>Reading <code>s[s.length()]</code> is usually a mistake, but the textbook says it is <b>not</b> undefined behavior.</li>
+          <li>Reading <code>s[s.length()]</code> is usually a mistake, but it is <b>not</b> undefined behavior.</li>
           <li>Writing <code>s[s.length()] = ch</code> on a non-const <code>s</code> and non-<code>'\0'</code> <code>ch</code> → <b>undefined behavior</b>.</li>
         </ul>
         <pre><code data-trim data-line-numbers class="language-cpp">
@@ -288,7 +288,7 @@ int main() {
         Here are the instructions that <code>cin &gt;&gt; variable;</code> performs:
         <ol style="list-style-type: 1; font-size: 0.8em;">
             <li> If there are no characters in the input buffer, the program waits for the user to enter a value.</li>
-            <li> Remove leading whitespace characters from the input buffer. (different from textbook,explain latter)</li>
+            <li> Remove leading whitespace characters from the input buffer.</li>
             <li> Repeat until a non-whitespace character is found.</li>
             <li> <b>Starting at the beginning of the input buffer, interpret as many characters as possible as the desired type</b> (e.g., int, double, string).</li>
         </ol>

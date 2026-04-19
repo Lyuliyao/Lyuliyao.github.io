@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 18</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 18</div>
+        <h1>Vector Functions and Parameter Types</h1>
+        <p class="lead">
+          Now we choose parameter types deliberately for vector functions: copy, read-only reference, or mutable reference.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 12</span>
+          <span class="pill">parameter choices</span>
+          <span class="pill">const ref</span>
+          <span class="pill">mutation</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>parameter choices</strong>
+            <span>Today centers on parameter choices.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>const ref</strong>
+            <span>We use examples and code review to make const ref concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Read-Only Vector Parameter</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+double average_or_zero(const vector&lt;int&gt;&amp; v) {
+    if (v.empty()) {
+        return 0.0;
+    }
+
+    int total = 0;
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        total += v[i];
+    }
+    return static_cast&lt;double&gt;(total) / v.size();
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Read-only vector functions should usually use <code>const T&amp;</code>.</li>
+              <li>Avoid copying the whole vector.</li>
+              <li>Do not mutate what you only need to inspect.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Mutating Vector Parameter</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void add_one(vector&lt;int&gt;&amp; v) {
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        ++v[i];
+    }
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Use non-const reference when mutation is the point.</li>
+              <li>The caller sees the changed vector.</li>
+              <li>Make mutation obvious in the function name.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Returning a Vector</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; first_n_squares(int n) {
+    vector&lt;int&gt; result;
+    for (int i = 1; i &lt;= n; ++i) {
+        result.push_back(i * i);
+    }
+    return result;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Returning a vector is clear for newly created data.</li>
+              <li>Build the result locally.</li>
+              <li>Let the call site store the returned vector.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameter Choice: Search</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+bool contains(const vector&lt;double&gt;&amp; v, double target) {
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        if (v[i] == target) {
+            return true;
+        }
+    }
+    return false;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The vector is read-only, so <code>const vector&lt;double&gt;&amp;</code> is appropriate.</li>
+              <li>The target is a small fundamental type, so passing by value is fine.</li>
+              <li>Returning <code>bool</code> is clearer than using an output parameter.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameter Choice: Sort-Like Mutation</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void clamp_nonnegative(vector&lt;int&gt;&amp; v) {
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        if (v[i] &lt; 0) {
+            v[i] = 0;
+        }
+    }
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The function intentionally changes the caller's vector.</li>
+              <li>That is why the parameter is <code>vector&lt;int&gt;&amp;</code>, not <code>const vector&lt;int&gt;&amp;</code>.</li>
+              <li>The function name should make the mutation unsurprising.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 18 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops vector functions and parameter types.</li>
+              <li>Key chapter: 12.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 18 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Vector Functions and Parameter Types?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is parameter choices connected to const ref.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 18 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+double average(const vector&lt;int&gt;&amp; v) {
+    int total = 0;
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        total += v[i];
+    }
+    return static_cast&lt;double&gt;(total) / v.size();
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Trace the empty case separately from the non-empty loop case.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void append_total(vector&lt;int&gt;&amp; v) {
+    int total = 0;
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        total += v[i];
+    }
+    v.push_back(total);
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The vector must be non-const because the function appends a new element.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Header and CPP Organization</h2>
+        <p class="lead center-copy">
+          Next time we organize declarations and definitions across header and cpp files.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

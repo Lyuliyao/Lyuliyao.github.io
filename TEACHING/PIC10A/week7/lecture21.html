@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 21</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 21</div>
+        <h1>Structs and Classes I</h1>
+        <p class="lead">
+          Structs and classes bundle data and behavior. We start with member variables and member functions.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 15.1-15.2</span>
+          <span class="pill">structs</span>
+          <span class="pill">members</span>
+          <span class="pill">methods</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>structs</strong>
+            <span>Today centers on structs.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>members</strong>
+            <span>We use examples and code review to make members concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Simple Struct</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Book {
+    string title;
+    int pages;
+};
+
+Book b;
+b.title = "C++";
+b.pages = 300;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A struct groups related values.</li>
+              <li>Each instance has its own member variables.</li>
+              <li>Use the dot operator to access members.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Point {
+    double x;
+    double y;
+
+    double radius() const {
+        return sqrt(x * x + y * y);
+    }
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A member function belongs to the struct/class.</li>
+              <li>It can use member variables directly.</li>
+              <li>The call looks like <code>p.radius()</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Free vs Member</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+double radius(Point p);
+
+Point p;
+radius(p);
+p.radius();
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A free function receives the object as an explicit argument.</li>
+              <li>A member function is called through an object.</li>
+              <li>Choose the style that makes the interface clear.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Rectangle Example</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Rectangle {
+    double width;
+    double height;
+};
+
+double area(Rectangle r) {
+    return r.width * r.height;
+}
+
+Rectangle box;
+box.width = 3;
+box.height = 4;
+cout &lt;&lt; area(box) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A struct groups related member variables into one type.</li>
+              <li>The free function receives a rectangle as an explicit argument.</li>
+              <li>This is the first step toward objects with behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Move Behavior Into the Type</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Rectangle {
+    double width;
+    double height;
+
+    double area() const {
+        return width * height;
+    }
+};
+
+Rectangle box{3, 4};
+cout &lt;&lt; box.area() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A member function is called through an object.</li>
+              <li>Inside the member function, member variables can be used directly.</li>
+              <li>The interface now reads like “ask this rectangle for its area.”</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 21 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops structs and classes i.</li>
+              <li>Key chapters: 15.1-15.2.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 21 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Structs and Classes I?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is structs connected to members.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 21 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Point {
+    double x;
+    double y;
+};
+
+Point p;
+p.x = 3;
+p.y = 4;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Trace each member separately: <code>title</code> and <code>pages</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Circle {
+    double radius;
+
+    double area() const {
+        return 3.14159 * radius * radius;
+    }
+};
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>area</code> belongs in the type because it uses the circle's own state.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Constructors I</h2>
+        <p class="lead center-copy">
+          Next time constructors explain how objects are initialized.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 27</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 27</div>
+        <h1>Pointers II</h1>
+        <p class="lead">
+          Pointers become safer when we reason about constness, null pointers, and object member access.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 17.3-17.5</span>
+          <span class="pill">const pointers</span>
+          <span class="pill">nullptr</span>
+          <span class="pill">this</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>const pointers</strong>
+            <span>Today centers on const pointers.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>nullptr</strong>
+            <span>We use examples and code review to make nullptr concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pointer to Const</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int x = 5;
+const int* p = &amp;x;
+// *p = 6;  // error
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The pointer can read the int.</li>
+              <li>It cannot modify the int through <code>p</code>.</li>
+              <li>This is similar to a const reference.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Const Pointer</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int x = 5;
+int y = 9;
+int* const p = &amp;x;
+*p = 6;
+// p = &amp;y;  // error
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The pointer itself cannot point somewhere else.</li>
+              <li>The pointee can still be changed.</li>
+              <li>Read declarations carefully.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Null and Arrow</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Point* p = nullptr;
+
+if (p != nullptr) {
+    cout &lt;&lt; p-&gt;x &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>nullptr</code> means no object.</li>
+              <li>Do not dereference null pointers.</li>
+              <li><code>p-&gt;x</code> abbreviates <code>(*p).x</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Constness Cases Side by Side</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int x = 1;
+int y = 2;
+
+const int* read_only = &amp;x;
+// *read_only = 3;   // error
+read_only = &amp;y;      // ok
+
+int* const fixed = &amp;x;
+*fixed = 3;          // ok
+// fixed = &amp;y;       // error
+
+const int* const fixed_read = &amp;x;
+// *fixed_read = 4;  // error
+// fixed_read = &amp;y;  // error
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const int*</code>: cannot mutate the int through the pointer.</li>
+              <li><code>int* const</code>: cannot reassign the pointer itself.</li>
+              <li><code>const int* const</code>: neither operation is allowed.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2><code>this</code> and <code>-&gt;</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Counter {
+public:
+    void bump() { ++this-&gt;value; }
+    int get() const { return value; }
+
+private:
+    int value = 0;
+};
+
+Counter c;
+Counter* p = &amp;c;
+p-&gt;bump();
+cout &lt;&lt; p-&gt;get() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Inside a member function, <code>this</code> points to the current object.</li>
+              <li><code>p-&gt;bump()</code> means <code>(*p).bump()</code>.</li>
+              <li>Use <code>-&gt;</code> when the left side is a pointer to an object.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 27 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops pointers ii.</li>
+              <li>Key chapters: 17.3-17.5.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 27 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Pointers II?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is const pointers connected to nullptr.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 27 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const double pi = 3.14159;
+const double* p = &amp;pi;
+
+cout &lt;&lt; *p &lt;&lt; endl;
+// *p = 3.0;  // error
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The pointer can read <code>pi</code>, but cannot mutate it through <code>p</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Point pt{2, 3};
+Point* p = &amp;pt;
+
+cout &lt;&lt; (*p).x &lt;&lt; endl;
+cout &lt;&lt; p-&gt;y &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>p-&gt;y</code> is the cleaner form of <code>(*p).y</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>C-style Arrays I</h2>
+        <p class="lead center-copy">
+          Next time we introduce C-style arrays and connect array indexing with pointer arithmetic.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

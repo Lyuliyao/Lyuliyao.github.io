@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 23</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 23</div>
+        <h1>Const Member Functions</h1>
+        <p class="lead">
+          Const member functions let objects promise read-only behavior through their interface.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 15.4-15.5</span>
+          <span class="pill">const objects</span>
+          <span class="pill">const methods</span>
+          <span class="pill">interfaces</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>const objects</strong>
+            <span>Today centers on const objects.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>const methods</strong>
+            <span>We use examples and code review to make const methods concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Const Object</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const string name = &quot;Ada&quot;;
+cout &lt;&lt; name.length() &lt;&lt; endl;
+// name += &quot;!&quot;;  // error
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Const objects cannot be mutated.</li>
+              <li>They can call functions that promise not to mutate.</li>
+              <li>This idea extends to your own classes.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Const Member Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Rectangle {
+    double width;
+    double height;
+
+    double area() const {
+        return width * height;
+    }
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The <code>const</code> after the parameter list is a promise.</li>
+              <li>The member function should not change the object.</li>
+              <li>Const objects can call const member functions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Non-Const Member Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Counter {
+    int value;
+
+    void bump() { ++value; }
+    int get() const { return value; }
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Mutating functions should not be marked const.</li>
+              <li>Observer functions usually should be const.</li>
+              <li>This makes interfaces safer.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why Mark Member Functions <code>const</code>?</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Counter {
+    int value;
+
+    int get() const {
+        return value;
+    }
+};
+
+const Counter c{5};
+cout &lt;&lt; c.get() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A const object can only call member functions that promise not to mutate it.</li>
+              <li>The promise appears after the parameter list: <code>get() const</code>.</li>
+              <li>Observer functions should usually be marked <code>const</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Build Error: Mutating Inside <code>const</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Counter {
+    int value;
+
+    int bad_get() const {
+        ++value;      // build error
+        return value;
+    }
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The function promised not to modify the object.</li>
+              <li>Changing a member variable breaks that promise.</li>
+              <li>This is the member-function version of reference-to-const protection.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 23 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops const member functions.</li>
+              <li>Key chapters: 15.4-15.5.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 23 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Const Member Functions?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is const objects connected to const methods.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 23 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const vector&lt;int&gt; values = {1, 2, 3};
+cout &lt;&lt; values.size() &lt;&lt; endl;
+// values.push_back(4);  // error
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> A const vector can be inspected but not changed.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Stopwatch {
+    double seconds;
+
+    double elapsed() const { return seconds; }
+    void reset() { seconds = 0; }
+};
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>elapsed</code> can be const, but <code>reset</code> must be non-const.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Constructors II</h2>
+        <p class="lead center-copy">
+          Next time we finish the class core with initializer lists, access control, and source organization.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

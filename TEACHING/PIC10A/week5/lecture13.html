@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 13</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 13</div>
+        <h1>References I</h1>
+        <p class="lead">
+          References let a parameter refer to an existing variable instead of receiving a copy. We use swap to see why this matters.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 10.1-10.4</span>
+          <span class="pill">pass-by-value</span>
+          <span class="pill">aliases</span>
+          <span class="pill">swap</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Function calls</h3>
+            <ul class="tight">
+              <li>Arguments are assigned to parameters at the start of a call.</li>
+              <li>So far those assignments copied values.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Problem</h3>
+            <ul class="tight">
+              <li>Some functions need to modify caller variables.</li>
+              <li>Pass-by-value cannot do that.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Copy</span>
+            <strong>pass by value</strong>
+            <span>The function receives its own local parameter.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Alias</span>
+            <strong>reference parameter</strong>
+            <span>The parameter becomes another name for the argument variable.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Bad Swap</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void bad_swap(int a, int b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int x = 5, y = 10;
+bad_swap(x, y);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>a</code> and <code>b</code> are copies.</li>
+              <li>The copies swap successfully.</li>
+              <li><code>x</code> and <code>y</code> do not change.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reference Alias</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int x = 5;
+int&amp; r = x;
+
+r = 8;
+cout &lt;&lt; x &lt;&lt; endl;   // 8
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A reference is an alias for an existing variable.</li>
+              <li>Using the reference means using the original variable.</li>
+              <li>A reference must be initialized.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Good Swap</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void good_swap(int&amp; a, int&amp; b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int x = 5, y = 10;
+good_swap(x, y);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>a</code> references <code>x</code>.</li>
+              <li><code>b</code> references <code>y</code>.</li>
+              <li>Assignments through <code>a</code> and <code>b</code> update the originals.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Assignments Through References</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int i = 1;
+int&amp; r = i;
+r = 2;
+
+int j = 9;
+r = j;   // assigns 9 to i
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The reference does not rebind to <code>j</code>.</li>
+              <li>The assignment changes the value being referenced.</li>
+              <li>Draw arrows to avoid confusion.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reference Rules</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int&amp; good = i;
+// int&amp; bad;        // build error
+// int&amp; also_bad = 4; // not for now
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A non-const reference must start by referencing a variable.</li>
+              <li>It cannot be left uninitialized.</li>
+              <li>It stays attached to the same storage location.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Trace: Why <code>bad_swap</code> Fails</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void bad_swap(int a, int b) {
+    int c = a;
+    a = b;
+    b = c;
+}
+
+int i = 0;
+int j = 1;
+bad_swap(i, j);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The call creates a function scope containing copies <code>a</code> and <code>b</code>.</li>
+              <li>The body swaps the copies correctly.</li>
+              <li>When the call ends, the copies disappear and <code>i</code>, <code>j</code> are unchanged.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Trace: Why <code>good_swap</code> Works</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void good_swap(int&amp; a, int&amp; b) {
+    int c = a;
+    a = b;
+    b = c;
+}
+
+int i = 0;
+int j = 1;
+good_swap(i, j);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>a</code> references <code>i</code>; <code>b</code> references <code>j</code>.</li>
+              <li>Assignments through <code>a</code> and <code>b</code> update the original variables.</li>
+              <li>The function still has local variable <code>c</code>, which disappears after the call.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Why does <code>bad_swap</code> fail to change the caller variables?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What does <code>int&amp; r = x;</code> mean?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 13 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>Pass-by-value copies arguments into parameters.</li>
+              <li>A reference is an alias for an existing variable.</li>
+              <li>Reference parameters can modify caller variables.</li>
+              <li>Assignments through a reference affect the referred-to variable.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Use reference parameters only when mutation is intended.</li>
+              <li>Draw arrows for reference examples.</li>
+              <li>Use distinct names while learning function calls.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 13 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is pass-by-value?</li>
+              <li class="answer-line"><strong>Answer:</strong> Copying the argument value into the parameter.</li>
+              <li><strong>Q2.</strong> Why does <code>bad_swap</code> not work?</li>
+              <li class="answer-line"><strong>Answer:</strong> It swaps only local copies.</li>
+              <li><strong>Q3.</strong> What is a reference?</li>
+              <li class="answer-line"><strong>Answer:</strong> An alias for an existing variable.</li>
+              <li><strong>Q4.</strong> What does <code>int&amp; a</code> mean in a parameter list?</li>
+              <li class="answer-line"><strong>Answer:</strong> The parameter is a reference to an int.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Reasoning</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> Can a reference be uninitialized?</li>
+              <li class="answer-line"><strong>Answer:</strong> No.</li>
+              <li><strong>Q6.</strong> Does assigning to a reference rebind it?</li>
+              <li class="answer-line"><strong>Answer:</strong> No, it assigns to the referred-to variable.</li>
+              <li><strong>Q7.</strong> Why does <code>good_swap</code> work?</li>
+              <li class="answer-line"><strong>Answer:</strong> Its parameters reference the caller variables.</li>
+              <li><strong>Q8.</strong> What visual model helps with references?</li>
+              <li class="answer-line"><strong>Answer:</strong> Arrows from references to variables.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 13 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Copy problem</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What prints after this call?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void f(int x) {
+    x = 100;
+}
+
+int n = 3;
+f(n);
+cout &lt;&lt; n &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> It prints <code>3</code>; <code>f</code> changed only its copy.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Reference update</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What prints here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void f(int&amp; x) {
+    x = 100;
+}
+
+int n = 3;
+f(n);
+cout &lt;&lt; n &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> It prints <code>100</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>References II</h2>
+        <p class="lead center-copy">
+          Next time we add <code>const</code> references and decide how parameter types should be chosen.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

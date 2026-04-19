@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 16</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 16</div>
+        <h1>Vectors I</h1>
+        <p class="lead">
+          Vectors are expandable sequences of values of one type. We start with construction, size, push/pop, indexing, and traversal.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 11.1-11.2</span>
+          <span class="pill">vector</span>
+          <span class="pill">indexing</span>
+          <span class="pill">size</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>vector</strong>
+            <span>Today centers on vector.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>indexing</strong>
+            <span>We use examples and code review to make indexing concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Declaring Vectors</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+vector&lt;int&gt; scores;
+vector&lt;double&gt; weights;
+vector&lt;string&gt; names;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Include <code>&lt;vector&gt;</code>.</li>
+              <li>The type inside angle brackets is the element type.</li>
+              <li>All elements in one vector have the same type.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Growing and Shrinking</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; v;
+v.push_back(10);
+v.push_back(20);
+cout &lt;&lt; v.size() &lt;&lt; endl;
+v.pop_back();
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>push_back</code> appends one element.</li>
+              <li><code>pop_back</code> removes the last element.</li>
+              <li><code>size()</code> reports the current number of elements.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Indexing</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; v = {4, 7, 9};
+cout &lt;&lt; v[1] &lt;&lt; endl;
+cout &lt;&lt; v.at(2) &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Indices start at zero.</li>
+              <li><code>[]</code> out of range is undefined behavior.</li>
+              <li><code>at()</code> out of range is a runtime error.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Vector Constructors</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Size and fill value</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; zeros(5);
+vector&lt;int&gt; eights(5, 8);
+
+cout &lt;&lt; zeros.size() &lt;&lt; endl;
+cout &lt;&lt; eights[0] &lt;&lt; endl;
+              </code>
+            </pre>
+          </article>
+          <article class="card secondary">
+            <h3>Initializer list</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;string&gt; names = {"Ada", "Grace"};
+
+names.push_back("Katherine");
+cout &lt;&lt; names.size() &lt;&lt; endl;
+              </code>
+            </pre>
+          </article>
+        </div>
+        <div class="callout cool">
+          A vector has a current size. It can start empty, start with repeated values, or start from listed values.
+        </div>
+      </section>
+
+      <section>
+        <h2>More Vector Member Functions</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; v = {1, 2, 3};
+
+cout &lt;&lt; v.empty() &lt;&lt; endl;
+
+v.clear();
+cout &lt;&lt; v.size() &lt;&lt; endl;
+
+v.resize(4);
+cout &lt;&lt; v.size() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>empty()</code> asks whether the size is zero.</li>
+              <li><code>clear()</code> removes all elements.</li>
+              <li><code>resize(n)</code> changes the current size and value-initializes new elements.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 16 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops vectors i.</li>
+              <li>Key chapters: 11.1-11.2.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 16 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Vectors I?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is vector connected to indexing.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 16 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; nums = {3, 1, 4};
+nums.push_back(1);
+
+cout &lt;&lt; nums[0] &lt;&lt; " "
+     &lt;&lt; nums.size() &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Trace the vector contents and its size after <code>push_back</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; v(3, 0);
+v.at(1) = 7;
+cout &lt;&lt; v.at(3) &lt;&lt; endl;  // error
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>at(3)</code> is out of range because valid indices are 0, 1, and 2.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Vectors II</h2>
+        <p class="lead center-copy">
+          Next time we use vectors with functions: printing, searching, summarizing, and avoiding unnecessary copies.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

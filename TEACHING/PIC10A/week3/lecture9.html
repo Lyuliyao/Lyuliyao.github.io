@@ -19,32 +19,31 @@
         <div class="eyebrow">PIC 10A • Lecture 9</div>
         <h1><code>for</code> Loops</h1>
         <p class="lead">
-          The <code>for</code> loop is the standard tool when the loop variable changes in a regular way.
-          Today we cover loop anatomy, traversal, and nested loops.
+          The <code>for</code> loop is the standard tool when a loop variable changes in a regular way. Today we focus on counting, bounds, step sizes, string traversal, and loop-variable scope.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 8.5-8.6</span>
+          <span class="pill">Chapter 8.5</span>
           <span class="pill">counting loops</span>
+          <span class="pill">bounds</span>
           <span class="pill">string traversal</span>
-          <span class="pill">nested loops</span>
         </div>
       </section>
 
       <section>
-        <h2>Review from Lecture 8</h2>
+        <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3><code>while</code> recap</h3>
+            <h3>From <code>while</code></h3>
             <ul class="tight">
-              <li>Initialization, condition, and update are the core loop ingredients.</li>
-              <li>Infinite loops happen when the update fails to move the condition toward false.</li>
+              <li>A loop needs initialization, a condition, and an update.</li>
+              <li>A bad update can create an infinite loop.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why <code>for</code> exists</h3>
+            <h3>Why <code>for</code></h3>
             <ul class="tight">
-              <li>Many loops have a very regular counting pattern.</li>
-              <li><code>for</code> keeps that pattern in one place.</li>
+              <li>Counting loops repeat with a predictable update.</li>
+              <li><code>for</code> keeps the loop machinery in one header.</li>
             </ul>
           </article>
         </div>
@@ -55,19 +54,19 @@
         <div class="stat-grid">
           <article class="stat">
             <span class="kicker">Anatomy</span>
-            <strong><code>for (init; condition; update)</code></strong>
-            <span>All loop machinery appears in one header.</span>
+            <strong><code>for (init; test; update)</code></strong>
+            <span>Read the header from left to right.</span>
           </article>
           <article class="stat">
             <span class="kicker">Patterns</span>
-            <strong>Count, traverse, nest</strong>
-            <span>These are the most common early uses.</span>
+            <strong>count, step, traverse</strong>
+            <span>Most early <code>for</code> loops fit one of these shapes.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Basic Form</h2>
+        <h2>Basic Counting Form</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
@@ -78,96 +77,149 @@ for (int i = 0; i &lt; 5; ++i) {
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Initialization runs once.</li>
+              <li>Initialization runs once before the loop starts.</li>
               <li>The condition is checked before each iteration.</li>
-              <li>The update runs after each iteration.</li>
+              <li>The update runs after the body each time.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2><code>for</code> Versus <code>while</code></h2>
-        <div class="grid-2">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int i = 0;
-while (i &lt; 5) {
-    cout &lt;&lt; i &lt;&lt; endl;
-    ++i;
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>This is almost the same loop as the previous slide.</li>
-              <li><code>for</code> is often clearer for regular counting.</li>
-              <li><code>while</code> is often clearer for irregular or sentinel-driven loops.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Common Pattern: Summation</h2>
+        <h2>Counting Ranges</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int sum = 0;
-
-for (int i = 1; i &lt;= 4; ++i) {
-    sum += i;
+for (int i = 2; i &lt; 6; ++i) {
+    cout &lt;&lt; i &lt;&lt; &quot; &quot;;
 }
+
+// prints: 2 3 4 5
             </code>
           </pre>
-          <article class="card">
+          <article class="card secondary">
             <ul class="tight">
-              <li>A loop variable often walks through a numeric range.</li>
-              <li>Inside the loop, we accumulate or compute something from each value.</li>
+              <li>The starting value is included.</li>
+              <li>The loop stops before the first value that makes the condition false.</li>
+              <li>Translate the header into a list of values before trusting it.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Traversing a String by Index</h2>
-        <div class="grid-2">
+        <h2>Step Sizes and Countdown</h2>
+        <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-string s = "bruins";
+for (int i = 0; i &lt;= 10; i += 2) {
+    cout &lt;&lt; i &lt;&lt; &quot; &quot;;
+}
+
+for (int j = 5; j &gt; 0; --j) {
+    cout &lt;&lt; j &lt;&lt; &quot; &quot;;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The update can add more than one.</li>
+              <li>A countdown usually uses <code>--j</code> and a decreasing condition.</li>
+              <li>The condition and update must move in compatible directions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Traversing a String</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = &quot;bruins&quot;;
 
 for (size_t i = 0; i &lt; s.length(); ++i) {
-    cout &lt;&lt; s[i] &lt;&lt; endl;
+    cout &lt;&lt; i &lt;&lt; &quot;: &quot; &lt;&lt; s[i] &lt;&lt; endl;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>This pattern connects loops to string indexing.</li>
-              <li>Notice the use of <code>size_t</code> for the index.</li>
-              <li>The stopping condition is still “stay strictly below the length.”</li>
+              <li>Valid indices are <code>0</code> through <code>s.length() - 1</code>.</li>
+              <li>Use <code>i &lt; s.length()</code>, not <code>i &lt;= s.length()</code>.</li>
+              <li><code>size_t</code> is the type used by string sizes.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Nested Loops</h2>
-        <div class="grid-2">
+        <h2>Loop Variable Scope</h2>
+        <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-for (int row = 1; row &lt;= 3; ++row) {
-    for (int col = 1; col &lt;= 3; ++col) {
-        cout &lt;&lt; row * col &lt;&lt; " ";
-    }
-    cout &lt;&lt; endl;
+for (int i = 0; i &lt; 3; ++i) {
+    cout &lt;&lt; i &lt;&lt; endl;
 }
+
+cout &lt;&lt; i &lt;&lt; endl;   // build error
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The inner loop runs completely for each outer-loop step.</li>
-              <li>Nested loops are natural for tables, grids, and repeated patterns.</li>
+              <li>A loop variable declared in the header belongs to the <code>for</code> statement.</li>
+              <li>After the loop ends, that <code>i</code> is out of scope.</li>
+              <li>Declare a variable before the loop only if code after the loop needs it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Table of Squares</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+cout &lt;&lt; "n  n^2" &lt;&lt; endl;
+cout &lt;&lt; "------" &lt;&lt; endl;
+
+for (int n = 1; n &lt;= 6; ++n) {
+    cout &lt;&lt; n &lt;&lt; "  " &lt;&lt; n * n &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>This is a regular counting loop, so <code>for</code> is the natural choice.</li>
+              <li>The loop variable <code>n</code> is also the data being processed.</li>
+              <li>The body computes one row of the table per iteration.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Count Matches</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+string s = "mississippi";
+int count = 0;
+
+for (size_t i = 0; i &lt; s.length(); ++i) {
+    if (s[i] == 's') {
+        ++count;
+    }
+}
+
+cout &lt;&lt; count &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>This combines string traversal, <code>if</code>, and an accumulator.</li>
+              <li><code>count</code> must be declared before the loop because it is needed after the loop.</li>
+              <li>Each iteration asks one small question: is this character a match?</li>
             </ul>
           </article>
         </div>
@@ -178,11 +230,11 @@ for (int row = 1; row &lt;= 3; ++row) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What values of <code>i</code> run in <code>for (int i = 2; i &lt; 6; ++i)</code>?</p>
+            <p class="meta">What values does <code>for (int i = 3; i &lt;= 7; i += 2)</code> use?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Why is <code>i &lt; s.length()</code> correct but <code>i &lt;= s.length()</code> suspicious when indexing?</p>
+            <p class="meta">Why is <code>i &lt;= s.length()</code> dangerous when indexing a string?</p>
           </article>
         </div>
       </section>
@@ -193,18 +245,18 @@ for (int row = 1; row &lt;= 3; ++row) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>for</code> packages initialization, condition, and update into one loop header.</li>
-              <li>It is ideal for regular counting and traversal.</li>
-              <li>Strings are commonly traversed with indexed <code>for</code> loops.</li>
-              <li>Nested loops let us work with tables and two-dimensional patterns.</li>
+              <li><code>for</code> packages initialization, condition, and update together.</li>
+              <li>Counting loops are easiest to debug by listing the values of the loop variable.</li>
+              <li>String traversal requires staying strictly below the length.</li>
+              <li>Loop variables declared in the header have limited scope.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Check your loop bounds carefully.</li>
-              <li>Read loop headers left to right: init, condition, update.</li>
-              <li>Trace small examples by hand before trusting a nested loop.</li>
+              <li>Trace small loops by hand.</li>
+              <li>Check the start, stop, and update together.</li>
+              <li>Prefer <code>++i</code> or clear step updates over hidden state changes.</li>
             </ul>
           </article>
         </div>
@@ -214,28 +266,28 @@ for (int row = 1; row &lt;= 3; ++row) {
         <h2>Lecture 9 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Loop anatomy</h3>
+            <h3>Loop headers</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What are the three parts of a <code>for</code> loop header?</li>
+              <li><strong>Q1.</strong> What are the three pieces of a <code>for</code> loop header?</li>
               <li class="answer-line"><strong>Answer:</strong> Initialization, condition, and update.</li>
-              <li><strong>Q2.</strong> When is <code>for</code> usually clearer than <code>while</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> When the loop follows a regular counting pattern.</li>
-              <li><strong>Q3.</strong> Why is <code>i &lt; s.length()</code> a common string traversal condition?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because the last valid index is one less than the length.</li>
-              <li><strong>Q4.</strong> What do nested loops let us express naturally?</li>
-              <li class="answer-line"><strong>Answer:</strong> Grids, tables, and repeated two-level patterns.</li>
+              <li><strong>Q2.</strong> When does the update run?</li>
+              <li class="answer-line"><strong>Answer:</strong> After each execution of the loop body.</li>
+              <li><strong>Q3.</strong> What does <code>++i</code> do?</li>
+              <li class="answer-line"><strong>Answer:</strong> It increases <code>i</code> by one.</li>
+              <li><strong>Q4.</strong> Why use <code>size_t</code> for string indices?</li>
+              <li class="answer-line"><strong>Answer:</strong> String lengths are reported as <code>size_t</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What values of <code>i</code> occur in <code>for (int i = 0; i &lt; 3; ++i)</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>0</code>, <code>1</code>, and <code>2</code></li>
-              <li><strong>Q6.</strong> Why is <code>&lt;=</code> often dangerous in an indexing loop?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because it can step one past the last valid index.</li>
-              <li><strong>Q7.</strong> Why might <code>size_t</code> be a natural choice for a string index?</li>
-              <li class="answer-line"><strong>Answer:</strong> Because string lengths and sizes are reported as <code>size_t</code>.</li>
-              <li><strong>Q8.</strong> What should you inspect first when a loop prints too many or too few values?</li>
+              <li><strong>Q5.</strong> What values occur in <code>for (int i = 1; i &lt; 4; ++i)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>1</code>, <code>2</code>, and <code>3</code>.</li>
+              <li><strong>Q6.</strong> What is the last valid index of a string of length <code>n</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>n - 1</code>.</li>
+              <li><strong>Q7.</strong> Can a loop variable declared in a <code>for</code> header be used after the loop?</li>
+              <li class="answer-line"><strong>Answer:</strong> No.</li>
+              <li><strong>Q8.</strong> What should you inspect first for too many iterations?</li>
               <li class="answer-line"><strong>Answer:</strong> The loop bounds and update.</li>
             </ul>
           </article>
@@ -246,35 +298,35 @@ for (int row = 1; row &lt;= 3; ++row) {
         <h2>Lecture 9 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Off-by-one bug</h3>
+            <h3>Off-by-one</h3>
             <ul class="tight qa-list">
               <li>
                 <strong>Q1.</strong> What is suspicious here?
-                <pre>
-                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
 for (size_t i = 0; i &lt;= s.length(); ++i) {
     cout &lt;&lt; s[i] &lt;&lt; endl;
 }
-                  </code>
-                </pre>
+            </code>
+          </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The loop reaches <code>i == s.length()</code>, which is already out of bounds for indexing.</li>
+              <li class="answer-line"><strong>Answer:</strong> The loop reaches <code>i == s.length()</code>, which is one past the last valid index.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Loop body mistake</h3>
+            <h3>Wrong variable</h3>
             <ul class="tight qa-list">
               <li>
                 <strong>Q2.</strong> What does this actually print?
-                <pre>
-                  <code data-trim data-line-numbers contenteditable class="language-cpp">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
 for (int i = 0; i &lt; 3; ++i) {
     cout &lt;&lt; 3 &lt;&lt; endl;
 }
-                  </code>
-                </pre>
+            </code>
+          </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It prints the number <code>3</code> three times, not the values of <code>i</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> It prints <code>3</code> three times, not the values of <code>i</code>.</li>
             </ul>
           </article>
         </div>
@@ -282,10 +334,9 @@ for (int i = 0; i &lt; 3; ++i) {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Vectors</h2>
+        <h2>Control-Flow Workshop</h2>
         <p class="lead center-copy">
-          Next time we move from strings to a more general container:
-          <code>std::vector</code>, dynamic size, indexing, and loop-based traversal.
+          Next time we slow down and practice the hardest Chapter 8 ideas: scope, accumulators, sentinel loops, nested loops, and common loop bugs.
         </p>
       </section>
     </div>

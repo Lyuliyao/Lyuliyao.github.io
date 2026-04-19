@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 30</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 30</div>
+        <h1>Final Review and PIC 10B Preview</h1>
+        <p class="lead">
+          We close by connecting the course themes: state, control flow, functions, references, containers, classes, pointers, and arrays.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 1-18</span>
+          <span class="pill">review</span>
+          <span class="pill">debugging</span>
+          <span class="pill">next steps</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>review</strong>
+            <span>Today centers on review.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>debugging</strong>
+            <span>We use examples and code review to make debugging concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Course Map</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// data: variables, strings, vectors, classes
+// control: if, while, for
+// abstraction: functions, references, methods
+// memory: pointers, arrays
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Most topics are combinations of state and control.</li>
+              <li>Functions and classes package ideas.</li>
+              <li>Pointers and arrays expose lower-level memory details.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Debugging Checklist</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// 1. Does it build?
+// 2. Does it run safely?
+// 3. Does it produce the intended result?
+// 4. Can you trace why?
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Separate build errors from runtime errors and logic errors.</li>
+              <li>Trace small examples before guessing.</li>
+              <li>Use types and signatures as documentation.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>PIC 10B Preview</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// deeper classes
+// dynamic memory
+// templates
+// data structures
+// larger projects
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>PIC 10A gives the foundation.</li>
+              <li>PIC 10B builds larger abstractions.</li>
+              <li>The habits from tracing and debugging carry forward.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Integrated Example: Grade Book</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class GradeBook {
+public:
+    void add(int score) {
+        scores.push_back(score);
+    }
+
+    double average() const {
+        if (scores.empty()) {
+            return 0.0;
+        }
+
+        int total = 0;
+        for (size_t i = 0; i &lt; scores.size(); ++i) {
+            total += scores[i];
+        }
+        return static_cast&lt;double&gt;(total) / scores.size();
+    }
+
+private:
+    vector&lt;int&gt; scores;
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The vector stores changing state.</li>
+              <li>The loop computes an accumulator.</li>
+              <li>The const member function promises not to change the object.</li>
+              <li>The empty case prevents division by zero.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Final Debugging Table</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Error categories</h3>
+            <ul class="tight">
+              <li><strong>Build:</strong> missing declaration, signature mismatch, wrong header.</li>
+              <li><strong>Runtime:</strong> out-of-bounds access, null dereference, division by zero.</li>
+              <li><strong>Logic:</strong> off-by-one loop, wrong accumulator update, wrong branch condition.</li>
+              <li><strong>Design:</strong> unnecessary copy, missing <code>const</code>, public data that should be private.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>What to do first</h3>
+            <ul class="tight">
+              <li>Reduce the input to the smallest case that still shows the bug.</li>
+              <li>Write down variable values after each statement.</li>
+              <li>Check function signatures before changing function bodies.</li>
+              <li>Check bounds before changing loop logic.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 30 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops final review and pic 10b preview.</li>
+              <li>Key chapters: 1-18.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 30 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Final Review and PIC 10B Preview?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is review connected to debugging.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 30 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+vector&lt;int&gt; readings = {4, 7, 9};
+int count = 0;
+
+for (size_t i = 0; i &lt; readings.size(); ++i) {
+    if (readings[i] &gt; 5) {
+        ++count;
+    }
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Trace <code>i</code> and <code>count</code>; only values greater than 5 increment the count.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Door {
+public:
+    void open() { is_open = true; }
+    bool open_status() const { return is_open; }
+
+private:
+    bool is_open = false;
+};
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The mutator changes private state; the const observer reports it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Course Complete</h2>
+        <p class="lead center-copy">
+          The planned lecture sequence is complete.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

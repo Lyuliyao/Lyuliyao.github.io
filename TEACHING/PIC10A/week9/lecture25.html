@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 25</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 25</div>
+        <h1>Review: Vectors to Classes</h1>
+        <p class="lead">
+          This catch-up lecture reinforces vector functions, parameter choices, classes, constructors, and const correctness.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapters 11-15</span>
+          <span class="pill">review</span>
+          <span class="pill">design</span>
+          <span class="pill">debugging</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Previous topic</h3>
+            <ul class="tight">
+              <li>Use the previous abstraction instead of starting from scratch.</li>
+              <li>Keep tracing concrete state.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Why this matters</h3>
+            <ul class="tight">
+              <li>The next topic removes a limitation from the previous one.</li>
+              <li>Syntax is useful only when connected to behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Core idea</span>
+            <strong>review</strong>
+            <span>Today centers on review.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Practice</span>
+            <strong>design</strong>
+            <span>We use examples and code review to make design concrete.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Vector Function Trace</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int count_positive(const vector&lt;int&gt;&amp; v) {
+    int count = 0;
+    for (size_t i = 0; i &lt; v.size(); ++i) {
+        if (v[i] &gt; 0) {
+            ++count;
+        }
+    }
+    return count;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Identify whether the vector is copied.</li>
+              <li>Trace the counter only when the condition is true.</li>
+              <li>Check bounds before indexing.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Class Trace</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Counter c;
+c.bump();
+c.bump();
+cout &lt;&lt; c.get() &lt;&lt; endl;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Constructor creates a valid object.</li>
+              <li>Member calls update or observe state.</li>
+              <li>Const correctness says which calls are allowed.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Check</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// For each function ask:
+// 1. Does it mutate?
+// 2. Does it need a copy?
+// 3. What does it return?
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Good signatures answer design questions.</li>
+              <li>References and const are communication tools.</li>
+              <li>Classes should hide representation when possible.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review Drill: Vector and Class Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Student {
+public:
+    Student(string n, double s) : name(n), score(s) {}
+    double get_score() const { return score; }
+
+private:
+    string name;
+    double score;
+};
+
+double average_score(const vector&lt;Student&gt;&amp; roster) {
+    double total = 0;
+    for (size_t i = 0; i &lt; roster.size(); ++i) {
+        total += roster[i].get_score();
+    }
+    return total / roster.size();
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const vector&lt;Student&gt;&amp;</code> avoids copying the roster.</li>
+              <li><code>get_score()</code> must be <code>const</code> because the roster is read-only.</li>
+              <li>Before using this in real code, decide what happens for an empty roster.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review Drill: Const-Correct Interface</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class BankAccount {
+public:
+    BankAccount(double initial);
+    void deposit(double amount);
+    double get_balance() const;
+};
+
+const BankAccount acct(100);
+cout &lt;&lt; acct.get_balance() &lt;&lt; endl;
+// acct.deposit(5);  // error: deposit may mutate acct
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A const object can call only const member functions.</li>
+              <li>Accessor functions usually should be marked <code>const</code>.</li>
+              <li>Mutating functions should not pretend to be read-only.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Design Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Before writing code</h3>
+            <ul class="tight">
+              <li>What data changes over time?</li>
+              <li>What function owns each task?</li>
+              <li>What type communicates the intent?</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Before debugging</h3>
+            <ul class="tight">
+              <li>What should happen on a tiny input?</li>
+              <li>Where can scope or lifetime end?</li>
+              <li>Which operation may access invalid memory?</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">What part of the example controls state?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">What is the first bug you would check for in this topic?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 25 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li>This lecture develops review: vectors to classes.</li>
+              <li>Key chapters: 11-15.</li>
+              <li>Examples should be traced using small values.</li>
+              <li>Function signatures and types communicate intent.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Prefer explicit names and simple examples.</li>
+              <li>Trace before guessing.</li>
+              <li>Use const and references to communicate design when appropriate.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 25 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What is the central idea of Review: Vectors to Classes?</li>
+              <li class="answer-line"><strong>Answer:</strong> The central idea is review connected to design.</li>
+              <li><strong>Q2.</strong> Why do we trace examples?</li>
+              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
+              <li><strong>Q3.</strong> What should types communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
+              <li><strong>Q4.</strong> What should a small test case do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Practice</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
+              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
+              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
+              <li><strong>Q7.</strong> Why keep examples small?</li>
+              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
+              <li><strong>Q8.</strong> What should code review focus on?</li>
+              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 25 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Trace it</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What should you trace first?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int max_value(const vector&lt;int&gt;&amp; v) {
+    int best = v[0];
+    for (size_t i = 1; i &lt; v.size(); ++i) {
+        if (v[i] &gt; best) {
+            best = v[i];
+        }
+    }
+    return best;
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Trace <code>best</code> and start the loop at index 1 because index 0 initializes the answer.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Fix the design</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What design question matters here?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+GradeBook book;
+book.add(80);
+book.add(90);
+cout &lt;&lt; book.average() &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The public calls hide the vector representation inside the object.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Pointers I</h2>
+        <p class="lead center-copy">
+          Next time we begin pointers with addresses, pointer variables, and dereferencing.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>PIC 10A Lecture 14</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="../reveal.js/dist/theme/white-contrast.css" id="theme">
+  <link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../lecture-theme.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="hero">
+        <div class="eyebrow">PIC 10A • Lecture 14</div>
+        <h1>References II</h1>
+        <p class="lead">
+          References can avoid copies and can allow mutation. <code>const</code> references give read-only access, which is essential for safe and efficient function parameters.
+        </p>
+        <div class="pill-row">
+          <span class="pill">Chapter 10.5 and Chapter 12 intro</span>
+          <span class="pill">const references</span>
+          <span class="pill">parameter choices</span>
+          <span class="pill">mutation</span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>References I</h3>
+            <ul class="tight">
+              <li>A non-const reference parameter can modify the caller variable.</li>
+              <li>This is useful but should be intentional.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Today</h3>
+            <ul class="tight">
+              <li>Use <code>const</code> references for read-only access.</li>
+              <li>Choose parameter types based on size and mutation.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Roadmap</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Read-only</span>
+            <strong><code>const T&amp;</code></strong>
+            <span>Avoid a copy while promising not to mutate.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Mutable</span>
+            <strong><code>T&amp;</code></strong>
+            <span>Use only when the function should change the argument.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reference to Const</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print_name(const string&amp; name) {
+    cout &lt;&lt; name &lt;&lt; endl;
+    // name += &quot;!&quot;;  // build error
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The parameter can read the string.</li>
+              <li>The function cannot modify it through the reference.</li>
+              <li>This avoids copying large objects.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Choosing Parameter Types</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int square(int n);
+void print(const string&amp; s);
+void increment(int&amp; n);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Small fundamental types are usually passed by value.</li>
+              <li>Large read-only objects are often passed by <code>const</code> reference.</li>
+              <li>Use non-const reference only for intentional mutation.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Output Parameters</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void divide(int a, int b, int&amp; q, int&amp; r) {
+    q = a / b;
+    r = a % b;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A non-const reference can be an output parameter.</li>
+              <li>Use this sparingly because it hides outputs in arguments.</li>
+              <li>Name output parameters clearly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Const Arguments</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print(const string&amp; s);
+
+const string course = &quot;PIC 10A&quot;;
+print(course);
+print(&quot;hello&quot;);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A <code>const</code> reference can bind to const objects.</li>
+              <li>It can also bind to temporary values in many useful cases.</li>
+              <li>This makes printing and read-only helpers flexible.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameter Decision Table</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// wants a copy:        T x
+// wants read-only:    const T&amp; x
+// wants to mutate:    T&amp; x
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Ask whether the function needs to change the argument.</li>
+              <li>Ask whether copying is cheap or expensive.</li>
+              <li>Make the signature communicate the answer.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Printing Without Copying</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print(const string&amp; s) {
+    for (size_t i = 0; i &lt; s.length(); ++i) {
+        cout &lt;&lt; s[i];
+    }
+    cout &lt;&lt; endl;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The function only reads the string, so mutation should be forbidden.</li>
+              <li>The reference avoids copying every character into a new string object.</li>
+              <li>This same idea becomes very important for vectors.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Choose the Parameter Type</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Read-only helper</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+bool starts_with_a(const string&amp; s) {
+    return s.length() &gt; 0 &amp;&amp; s[0] == 'a';
+}
+              </code>
+            </pre>
+          </article>
+          <article class="card secondary">
+            <h3>Mutating helper</h3>
+            <pre>
+              <code data-trim data-line-numbers contenteditable class="language-cpp">
+void make_zero(int&amp; n) {
+    n = 0;
+}
+              </code>
+            </pre>
+          </article>
+        </div>
+        <div class="callout cool">
+          The signature should tell the reader whether the function copies, reads, or mutates its argument.
+        </div>
+      </section>
+
+      <section>
+        <h2>Quick Checks</h2>
+        <div class="check-grid">
+          <article class="card">
+            <h3>Exercise 1</h3>
+            <p class="meta">Why is <code>const string&amp;</code> useful for a print function?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 2</h3>
+            <p class="meta">When should a parameter be a non-const reference?</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 14 Summary</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Main ideas</h3>
+            <ul class="tight">
+              <li><code>const T&amp;</code> gives read-only access without copying.</li>
+              <li><code>T&amp;</code> communicates intentional mutation.</li>
+              <li>Small values can usually be passed by value.</li>
+              <li>Parameter types are part of function design.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Programming habits</h3>
+            <ul class="tight">
+              <li>Do not use non-const references just to avoid typing.</li>
+              <li>Let the signature reveal whether mutation can happen.</li>
+              <li>Prefer simple return values when there is only one output.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 14 Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Core ideas</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> What does <code>const string&amp; s</code> promise?</li>
+              <li class="answer-line"><strong>Answer:</strong> The function will not modify <code>s</code> through that reference.</li>
+              <li><strong>Q2.</strong> Why avoid copying large objects?</li>
+              <li class="answer-line"><strong>Answer:</strong> Copying can waste time and memory.</li>
+              <li><strong>Q3.</strong> When is <code>int n</code> fine?</li>
+              <li class="answer-line"><strong>Answer:</strong> When the function only needs a small copied value.</li>
+              <li><strong>Q4.</strong> When is <code>int&amp; n</code> appropriate?</li>
+              <li class="answer-line"><strong>Answer:</strong> When the function should modify the caller variable.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Reasoning</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q5.</strong> Can a non-const reference bind to a const object?</li>
+              <li class="answer-line"><strong>Answer:</strong> No.</li>
+              <li><strong>Q6.</strong> What is an output parameter?</li>
+              <li class="answer-line"><strong>Answer:</strong> A reference parameter used to send a value back by mutation.</li>
+              <li><strong>Q7.</strong> What should signatures communicate?</li>
+              <li class="answer-line"><strong>Answer:</strong> Whether arguments are copied, read, or mutated.</li>
+              <li><strong>Q8.</strong> Which is clearer for one computed result: return or output parameter?</li>
+              <li class="answer-line"><strong>Answer:</strong> Usually return.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Lecture 14 Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Const violation</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> Why does this fail?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void shout(const string&amp; s) {
+    s += &quot;!&quot;;
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> The function promised read-only access with <code>const string&amp;</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Parameter choice</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Which parameter type is better for read-only vector printing?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print(vector&lt;int&gt; v);
+void print(const vector&lt;int&gt;&amp; v);
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>const vector&lt;int&gt;&amp;</code> avoids copying and prevents mutation.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Next Lecture</div>
+        <h2>Review and Catch-Up</h2>
+        <p class="lead center-copy">
+          Next time we pause to review loops, scope, functions, and references before moving into vectors.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <script src="../reveal.js/dist/reveal.js"></script>
+  <script src="../reveal.js/plugin/highlight/highlight.js"></script>
+  <script src="../lecture-common.js"></script>
+</body>
+
+</html>

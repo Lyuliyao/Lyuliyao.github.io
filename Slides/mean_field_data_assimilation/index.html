@@ -1,0 +1,657 @@
+<!--
+title: Multiscale Nudge — Cross-Scale Data Assimilation for Mean-Field Dynamics
+abstract:
+Multiscale Nudge is a cross-scale data assimilation framework that injects macroscopic observations into microscopic mean-field dynamics. The observation mismatch is formulated as a quadratic functional on probability measures, and the nudging term is derived as a Wasserstein gradient flow, avoiding model linearization and ensemble covariance management. Under regularity assumptions we prove exponential decay of the L^2 error up to a bias floor set by model misspecification. Numerical experiments on linear, bimodal, chaotic, kinetic, and collective-motion systems demonstrate consistent improvement in forecast accuracy.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Multiscale Nudge — Mean-Field Data Assimilation</title>
+	<link rel="stylesheet" href="../UCLA_2025_Nov/dist/reset.css">
+	<link rel="stylesheet" href="../UCLA_2025_Nov/dist/reveal.css">
+	<link rel="stylesheet" href="../UCLA_2025_Nov/dist/theme/serif.css">
+	<style>
+		.tight-math mjx-container[jax="CHTML"][display="true"],
+		.tight-math .MathJax_Display { margin: 0.2em 0 !important; }
+		/* Keep displayed equations inside the slide */
+		.reveal .slides section .MathJax_SVG_Display,
+		.reveal .slides section .MathJax_Display,
+		.reveal .slides section mjx-container[jax="SVG"][display="true"],
+		.reveal .slides section mjx-container[jax="CHTML"][display="true"] {
+			max-width: 100%;
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+		.reveal .slides section .MathJax_SVG,
+		.reveal .slides section mjx-container[jax="SVG"] svg {
+			max-width: 100%;
+			height: auto;
+		}
+		div.highlight {
+			background-color:#FFF9C4;
+			text-align: left;
+			margin-top: 20px;
+			padding: 15px;
+			border-radius: 8px;
+			box-shadow: 2px 2px 10px #ccc;
+		}
+		figcaption {
+			color: black;
+			font-style: italic;
+			padding: 2px;
+			font-size: large;
+			text-align: center;
+		}
+		cite {
+			font-size: 0.4em;
+			display: block;
+			color: #444;
+		}
+		.theorem, .proposition {
+			border: 1px solid #000;
+			padding: 10px;
+			margin: 10px 0;
+			text-align: left;
+		}
+		.theorem { background-color: #f0f0f0; }
+		.proposition { background-color: #e0e0e0; }
+		.theorem h4, .proposition h4 { margin: 0; font-size: 1em; }
+		.content { margin-top: 5px; font-size: 1em; }
+		.small { font-size: 0.8em; }
+		.refbox {
+			opacity: 0.7;
+			font-size: 0.55em;
+			text-align: left;
+			margin-top: 10px;
+		}
+		ul.compact li { margin: 2px 0; }
+		.accent { color:#E65100; }
+		.box {
+			border: 1px solid #bbb;
+			border-radius: 6px;
+			padding: 8px 12px;
+			margin: 6px 0;
+			text-align: left;
+		}
+		/* Keep figures inside the slide */
+		.reveal .slides section figure img,
+		.reveal .slides section figure video {
+			max-height: 600px;
+			width: auto;
+			max-width: 100%;
+			object-fit: contain;
+		}
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+					bx: "\\mathbf{x}",
+					by: "\\mathbf{y}",
+					bz: "\\mathbf{z}",
+					bX: "\\mathbf{X}",
+					bY: "\\mathbf{Y}",
+					bZ: "\\mathbf{Z}",
+					bW: "\\mathbf{W}",
+					bb: "\\mathbf{b}",
+					bu: "\\mathbf{u}",
+					bv: "\\mathbf{v}",
+					intd: "\\mathrm{d}",
+					Rd: "\\mathbb{R}^d",
+					bmodel: "\\mathbf{b}_{\\mathrm{model}}",
+					btrue: "\\mathbf{b}_{\\mathrm{true}}",
+					muobs: "\\mu^{\\mathrm{obs}}",
+					Law: "\\mathrm{Law}"
+				}
+			}
+		});
+	</script>
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+
+			<!-- =========================================================
+			     Title
+			============================================================== -->
+			<section data-menu-title="Title"
+				style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%;">
+				<h2 style="margin-top: 30px; color:#2c3e50; font-weight:700;">Multiscale Nudge</h2>
+				<h4 style="color:#34495e; margin-top: 0;">Cross-Scale Data Assimilation for Mean-Field Dynamics</h4>
+
+				<div style="text-align:center; font-size:1.0em; color:#34495e; margin-top:60px; line-height:1.5;">
+					<span style="font-size:1.2em; font-weight:bold; color:#2c3e50;">Liyao Lyu</span><br>
+					Department of Mathematics<br>
+					<span style="font-weight:bold;">University of California, Los Angeles</span><br>
+					<span style="font-style:italic;">Joint work with Hayden Schaeffer and Xinyue Yu</span>
+				</div>
+
+				<aside class="notes">
+					Today I'll present Multiscale Nudge — a framework for injecting macroscopic observations
+					back into microscopic mean-field dynamics. Joint work with Hayden Schaeffer and Xinyue Yu.
+				</aside>
+			</section>
+
+			<!-- =========================================================
+			     Motivation — fish video + scale mismatch
+			============================================================== -->
+			<section data-menu-title="Motivation">
+				<h3>Motivation: a scale mismatch in data assimilation</h3>
+				<div style="display:flex; gap:20px; align-items:flex-start;">
+					<div style="flex:1; text-align:left;">
+						<ul class="compact">
+							<li class="fragment fade-in-then-semi-out">Many-body systems (fluids, plasmas, flocks, cells) admit a <b>mean-field limit</b> — a McKean–Vlasov SDE.</li>
+							<li class="fragment fade-in-then-semi-out">In practice, the true drift is <span class="accent">unknown</span>; only an <b>approximate model</b> is available.</li>
+							<li class="fragment fade-in-then-semi-out">Model bias + initial error ⇒ forecast <span class="accent">drifts</span> over time.</li>
+							<li class="fragment fade-in-then-semi-out">Observations are typically <b>macroscopic</b>: density fields, unlabeled particle locations, not full microscopic state.</li>
+							<li class="fragment fade-in-then-semi-out">Classical EnKF / 4D-Var assume same-scale observation &mdash; <span class="accent">breaks down here.</span></li>
+						</ul>
+					</div>
+					<div style="flex:1;">
+						<figure>
+							<video muted autoplay loop playsinline style="width:85%;">
+								<source src="./fish_preview.mp4" type="video/mp4">
+							</video>
+							<figcaption>Collective motion: ~1000 fish, raw observation.</figcaption>
+						</figure>
+					</div>
+				</div>
+				<div class="highlight fragment">
+					<b>Goal.</b> Add a feedback (<i>nudging</i>) term to the approximate mean-field SDE so the model distribution stays consistent with macroscopic observations.
+				</div>
+
+				<aside class="notes">
+					The key pain point: microscopic model, macroscopic data. Standard filters weren't designed for this.
+				</aside>
+			</section>
+
+			<!-- =========================================================
+			     Problem Setup
+			============================================================== -->
+			<section data-menu-title="Setup">
+				<h3>True vs. model dynamics (McKean–Vlasov)</h3>
+				<div class="box">
+					<b>True process</b> \(\bX_t\in\Rd\):
+					\[
+					\intd \bX_t = \btrue(\bX_t,\mu_t)\,\intd t + \Sigma\,\intd\bW_t,\quad \mu_t=\Law(\bX_t).
+					\]
+				</div>
+				<div class="box fragment">
+					<b>Approximate model</b> \(\bY_t\) (drift known only approximately):
+					\[
+					\intd \bY_t = \bmodel(\bY_t,\nu_t)\,\intd t + \Sigma\,\intd\bW_t,\quad \nu_t=\Law(\bY_t).
+					\]
+				</div>
+				<div class="box fragment">
+					<b>Model bias</b>:
+					\(
+					\mathbf{R}(\bx,\mu) := \bmodel(\bx,\mu) - \btrue(\bx,\mu).
+					\)
+				</div>
+				<div class="refbox">
+					Sznitman '91 (propagation of chaos); Carmona–Delarue (mean-field lectures).
+				</div>
+
+				<aside class="notes">
+					We keep the diffusion coefficient shared so the noise channel is not the source of error — bias is in the drift.
+				</aside>
+			</section>
+
+			<!-- =========================================================
+			     Observation Operator
+			============================================================== -->
+			<section data-menu-title="Observations">
+				<h3>What do we actually observe?</h3>
+				<p style="text-align:left;">Let \(K_h(\bx)=h^{-d}K(\bx/h)\) be a smoothing kernel (e.g.\ Gaussian), bandwidth \(h\).</p>
+
+				<div style="display:flex; gap:20px;">
+					<div class="box fragment" style="flex:1;">
+						<b>Case A — pixel / density observation</b>
+						\[
+						\muobs_t(\bz) = (K_h*\mu_t)(\bz).
+						\]
+						Satellite imagery, reconstructed densities.
+					</div>
+					<div class="box fragment" style="flex:1;">
+						<b>Case B — unlabeled particle locations</b>
+						\[
+						\muobs_t(\bz) = \tfrac{1}{M}\sum_{k=1}^{M} K_h(\bz-\bX_t^{\mathrm{obs},k,M}).
+						\]
+						Tracking with dropouts, no index matching.
+					</div>
+				</div>
+				<div class="highlight fragment">
+					Both cases enter the same assimilation framework through the same measure \(\muobs\).
+				</div>
+
+				<aside class="notes">
+					The punchline: the assimilated dynamics depends on \mu^{obs} only as a measure — so both observation modalities plug into the same formula.
+				</aside>
+			</section>
+
+			<!-- =========================================================
+			     Nudging via Wasserstein gradient flow
+			============================================================== -->
+			<section data-menu-title="Misfit functional">
+				<h3>Observation misfit functional</h3>
+				<p style="text-align:left;">Quadratic observation-misfit functional (smoothed at observation scale \(h\)):</p>
+				\[
+				J_{\mathrm{nud},h}(\nu,\muobs) \;=\; \tfrac{1}{2}\int_{\Rd} \big|(K_h*\nu)(\bx)-\muobs(\bx)\big|^2\,\intd\bx .
+				\]
+
+				<div class="fragment box">
+					<b>First variation</b> (Fréchet derivative w.r.t.\ the measure \(\nu\)):
+					\[
+					\frac{\delta J_{\mathrm{nud},h}}{\delta \nu}(\bx) \;=\; \big(\widetilde K_h*\nu - K_h*\muobs\big)(\bx),
+					\qquad \widetilde K_h := K_h*K_h.
+					\]
+				</div>
+
+				<div class="highlight fragment">
+					Smoothing by \(K_h\) matches the <span class="accent">observation scale</span> and restores enough regularity for well-posedness.
+				</div>
+
+				<aside class="notes">
+					K_h smoothing is what lets the nudging term be well-defined when nu is only a measure.
+				</aside>
+			</section>
+
+			<section data-menu-title="Nudging velocity">
+				<h3>Nudging as a Wasserstein gradient flow</h3>
+				<p style="text-align:left;">In Wasserstein geometry, steepest descent of \(J_{\mathrm{nud},h}\) has velocity field \(-\nabla\,\delta J/\delta\nu\).</p>
+
+				<div class="box fragment">
+					<b>Nudging velocity</b> (intensity \(\lambda&gt;0\)):
+					\[
+					\bu_{\mathrm{nud}}(\bz,\nu,\muobs) \;=\; -\lambda\,\nabla_\bz\!\left(\widetilde K_h*\nu - K_h*\muobs\right)(\bz).
+					\]
+				</div>
+
+				<div class="highlight fragment">
+					<b>Structure-preserving.</b> If \(\bmodel=-\nabla\frac{\delta F}{\delta\nu}\) and \(\Sigma=\sqrt{2\beta}\,\mathbf I\), the assimilated system is itself a Wasserstein gradient flow of
+					\[
+					\mathcal F_t(\nu) \;=\; F(\nu) + \lambda\,J_{\mathrm{nud},h}(\nu,\muobs_t) + \beta\,\mathrm{Ent}(\nu).
+					\]
+				</div>
+
+				<aside class="notes">
+					The key structural result: nudging doesn't break the gradient-flow structure — it just adds a time-dependent potential tied to observations.
+				</aside>
+			</section>
+
+			<!-- =========================================================
+			     Assimilated dynamics (SDE + FPK)
+			============================================================== -->
+			<section data-menu-title="Assimilated dynamics">
+				<h3>Assimilated dynamics</h3>
+				<div class="box">
+					<b>Regularized assimilated SDE</b>
+					\[
+					\begin{aligned}
+					\intd \bZ_t \;=\;& \bmodel(\bZ_t,\nu_t)\,\intd t + \Sigma\,\intd\bW_t \\
+					& -\,\lambda\,\nabla\!\left(\widetilde K_h*\nu_t - K_h*\muobs_t\right)(\bZ_t)\,\intd t.
+					\end{aligned}
+					\]
+				</div>
+
+				<div class="box fragment">
+					<b>Nonlinear Fokker–Planck</b> for \(\nu_t=\Law(\bZ_t)\), with \(A=\Sigma\Sigma^\top,\ r=K_h*\nu_t-\muobs_t\):
+					\[
+					\begin{aligned}
+					\partial_t\nu_t \;=\;& -\nabla\!\cdot(\nu_t\,\bmodel) + \nabla\!\cdot(A\nabla\nu_t) \\
+					& +\,\lambda\,\nabla\!\cdot\!\big(\nu_t\,\nabla(K_h*r)\big).
+					\end{aligned}
+					\]
+				</div>
+
+				<div class="proposition fragment">
+					<h4>Proposition (Well-posedness)</h4>
+					Under Lipschitz \(\bmodel\) in \((\bx, W_2)\) and Lipschitz \(\nabla\widetilde K_h\), for any \(T&gt;0\) and \(\bZ_0\sim \mathcal P_2(\Rd)\), the assimilated SDE has a unique strong solution on \([0,T]\); its law solves the FPK equation above.
+				</div>
+
+				<aside class="notes">
+					Well-posedness uses the Carmona–Delarue framework: joint Lipschitz of drift in state and Wasserstein.
+				</aside>
+			</section>
+
+			<!-- =========================================================
+			     Particle approximation / propagation of chaos
+			============================================================== -->
+			<section data-menu-title="Particle system">
+				<h3>Interacting particle approximation</h3>
+				<p style="text-align:left;">Empirical measure \(\nu^N_t=\tfrac1N\sum_j \delta_{\bZ^{j,N}_t}\). Particle dynamics (unlabeled observations):</p>
+				\[
+				\begin{aligned}
+				\intd\bZ^{i,N}_t \;=\;& \bmodel(\bZ^{i,N}_t,\nu^N_t)\,\intd t + \Sigma\,\intd\bW^i_t \\
+				& -\,\lambda\,\Bigl[\,\tfrac1N\!\sum_{j=1}^N\!\nabla\widetilde K_h(\bZ^{i,N}_t{-}\bZ^{j,N}_t) \\
+				& \qquad\quad -\, \tfrac1M\!\sum_{k=1}^M\!\nabla\widetilde K_h(\bZ^{i,N}_t{-}\bX_t^{\mathrm{obs},k,M})\,\Bigr]\,\intd t.
+				\end{aligned}
+				\]
+
+				<div class="proposition fragment">
+					<h4>Proposition (Mean-field convergence / Propagation of chaos)</h4>
+					Assume well-posedness + \(\|\nabla\widetilde K_h\|_\infty&lt;\infty\), \(f_0\)-chaotic initial data. Then
+					\[
+					\lim_{N\to\infty} W_2\!\left(f^{1,N}_{[0,T]},\,f_{[0,T]}\right)=0.
+					\]
+				</div>
+
+				<div style="text-align:left;" class="fragment small">
+					Proof: synchronous coupling, Itô + Grönwall, with a \(1/N\) decorrelation term from the i.i.d.\ copies. (Sznitman; Chaintron–Diez.)
+				</div>
+			</section>
+
+			<!-- =========================================================
+			     Main Theorem: exponential decay to bias floor
+			============================================================== -->
+			<section data-menu-title="Main theorem">
+				<section>
+					<h3>Main result — assumptions</h3>
+					<p style="text-align:left; margin:4px 0;">
+						\(\Omega=\mathbb T^d\); \(A=\Sigma\Sigma^\top\) SPD with smallest eigenvalue \(\kappa&gt;0\). Error \(e_t:=\nu_t-\mu_t\), energy \(V(t):=\tfrac12\|e_t\|_{L^2}^2\).
+					</p>
+					<div class="box" style="font-size:0.9em;">
+						<ul class="compact" style="margin:0 0 0 18px;">
+							<li><b>(C1)</b> \(L^2\)-Lipschitz model drift: \(\|\bmodel(\cdot,\mu)-\bmodel(\cdot,\nu)\|_{L^2}\le L_\mu\|\mu-\nu\|_{L^2}\).</li>
+							<li><b>(C2)</b> Density bounds: \(\|\mu_t\|_{L^\infty}\le\bar\rho,\ \nu_t\ge\underline\nu&gt;0\).</li>
+							<li><b>(C3)</b> Zero-mean initial error: \(\int_\Omega(\nu_0-\mu_0)\,\intd x=0\).</li>
+							<li><b>(C4)</b> Kernel approximation: \(\|\nabla e_t - \nabla(\widetilde K_h*e_t)\|_{L^2}\le \delta(h)\|\nabla e_t\|_{L^2}\), with \(\delta(h)\to 0\) as \(h\to 0\).</li>
+							<li><b>(C5)</b> Observation model: \(\muobs_t = K_h*\mu_t\) (no observation noise).</li>
+						</ul>
+					</div>
+					<p style="text-align:left; margin:6px 0;">
+						<b>Definitions.</b>
+						\(C_{\mathrm{adv}}:=B_{\mathrm{model}}+\bar\rho\,L_\mu\) (advection instability);
+						\(\Delta:=\sup_t\|\bmodel(\cdot,\mu_t)-\btrue(\cdot,\mu_t)\|_{L^\infty}\) (model bias);
+						\(C_P\) — Poincaré constant on zero-mean functions.
+					</p>
+
+					<aside class="notes">
+						(C5) is the key — observation is the smoothed law, not the law itself. Δ measures uniform model error.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Main result — conclusion</h3>
+					<div class="theorem">
+						<h4>Theorem (\(L^2\) decay under kernel-regularised nudging)</h4>
+						<div class="content">
+							<p style="margin:4px 0;">If</p>
+							\[
+							\delta(h)\le \frac{\underline\nu}{2\bar\rho},
+							\qquad
+							\lambda \;&gt;\; \frac{2}{\underline\nu}\!\left(\frac{C_{\mathrm{adv}}^2 C_P}{\kappa}-\kappa\right),
+							\]
+							<p style="margin:4px 0;">then there exists \(\alpha&gt;0\) such that</p>
+							\[
+							\tfrac{\intd}{\intd t}V(t)\le -\alpha V(t)+\tfrac{\bar\rho^{\,2}}{\kappa}\Delta^2,
+							\qquad
+							V(t)\le e^{-\alpha t}V(0)+\tfrac{\bar\rho^{\,2}}{\alpha\kappa}\Delta^2.
+							\]
+						</div>
+					</div>
+					<div class="highlight fragment">
+						<b>Interpretation.</b> Exponential \(L^2\) contraction to a <span class="accent">bias floor \(\propto \Delta^2\)</span> set by model misspecification.
+					</div>
+
+					<aside class="notes">
+						Larger λ beats advective instability via Poincaré; smaller h shrinks the smoothing error δ(h).
+					</aside>
+				</section>
+			</section>
+
+			<!-- =========================================================
+			     Numerical: 1D linear / scan over lambda
+			============================================================== -->
+			<section data-menu-title="Numerics: 1D linear">
+				<section>
+					<h3>Linear 1D benchmark — model &amp; ground truth</h3>
+					<div class="box">
+						<b>Particle system</b> (shared form; \(m_t=\tfrac1N\sum_i X_t^i\) is the empirical mean):
+						\[
+						\intd X_t^i = -a\bigl(X_t^i - m_t\bigr)\,\intd t + \intd W_t^i.
+						\]
+					</div>
+					<div style="display:flex; gap:20px;">
+						<div class="box fragment" style="flex:1;">
+							<b>Ground truth</b>
+							<ul class="compact">
+								<li>\(a_{\mathrm{true}}=1\)</li>
+								<li>\(X_0^i\sim\mathcal N(0,0.5)\)</li>
+								<li>Euler–Maruyama, \(\Delta t = 0.01\), \(T=1\)</li>
+							</ul>
+						</div>
+						<div class="box fragment" style="flex:1;">
+							<b>Biased forecast model</b>
+							<ul class="compact">
+								<li>Same equation, wrong interaction \(a\in\{0.5,2,5\}\)</li>
+								<li>\(a&lt;1\): <span class="accent">under-interacting</span> (too diffuse)</li>
+								<li>\(a&gt;1\): <span class="accent">over-interacting</span> (too concentrated)</li>
+							</ul>
+						</div>
+					</div>
+					<div class="box fragment">
+						<b>Observation</b>: smoothed density \(K_h*\mu_t\) with bandwidth \(h=0.5\) (Gaussian kernel).
+					</div>
+
+					<aside class="notes">
+						Same functional form on both sides — the only source of bias is a mis-specified interaction coefficient a. Observations are density only, not particle positions.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Linear 1D benchmark — across interaction regimes</h3>
+					<p style="text-align:left;" class="small">
+						Each panel shows space–time density: <span class="accent">truth</span> / biased forecast / assimilated (increasing \(\lambda\)).
+					</p>
+					<div style="display:flex; gap:15px;">
+						<figure style="flex:1;">
+							<img src="./figure/1d_case_density_a_0.5.png" style="width:95%;">
+							<figcaption>\(a=0.5\) — under-interacting</figcaption>
+						</figure>
+						<figure style="flex:1;">
+							<img src="./figure/1d_case_density_a_2.png" style="width:95%;">
+							<figcaption>\(a=2\) — over-interacting</figcaption>
+						</figure>
+						<figure style="flex:1;">
+							<img src="./figure/1d_case_density_a_5.png" style="width:95%;">
+							<figcaption>\(a=5\) — strongly over-interacting</figcaption>
+						</figure>
+					</div>
+					<div class="refbox">Biased forecast is overly diffuse; larger \(\lambda\) restores the correct profile across all three regimes.</div>
+				</section>
+
+				<section>
+					<h3>\(W_2\) error vs.\ nudging intensity \(\lambda\)</h3>
+					<figure>
+						<img src="./figure/w2_vs_lambda_iter20.png" style="width:55%;">
+						<figcaption>Error decreases with \(\lambda\), saturates at the bias floor — consistent with theorem.</figcaption>
+					</figure>
+				</section>
+			</section>
+
+			<!-- =========================================================
+			     Numerical: Vlasov-Poisson
+			============================================================== -->
+			<section data-menu-title="Numerics: Vlasov–Poisson">
+				<section>
+					<h3>Kinetic setting — Vlasov–Poisson</h3>
+					<p style="text-align:left;">Phase-space density \(f(t,\bx,\bv)\), self-consistent Poisson coupling:</p>
+					\[
+					\partial_t f + \bv\!\cdot\!\nabla_\bx f + E\!\cdot\!\nabla_\bv f \;=\; 0,
+					\]
+					\[
+					E = -\nabla_\bx\phi,\qquad -\Delta\phi = \rho - 1,\qquad \rho(t,\bx)=\textstyle\int f(t,\bx,\bv)\,\intd\bv.
+					\]
+					<div class="highlight fragment">
+						<b>Observation.</b> The smoothed <span class="accent">phase-space density</span> \(\muobs_t = K_h * f_t\) on \((\bx,\bv)\) — not just the marginal \(\rho(t,\bx)\).
+					</div>
+					<p class="small fragment">Model is exact; the only discrepancy comes from imperfect initialization.</p>
+				</section>
+
+				<section>
+					<h3>Particle-in-cell view: ODE for \((X^i,V^i)\)</h3>
+					<p style="text-align:left;">
+						Sample \(N\) characteristics of \(f\). Each particle obeys a deterministic ODE driven by the self-consistent field:
+					</p>
+					<div class="box">
+						\[
+						\begin{aligned}
+						\intd X_t^i &amp;= V_t^i\,\intd t,\\
+						\intd V_t^i &amp;= E(X_t^i,t)\,\intd t,
+						\end{aligned}
+						\qquad
+						E = -\nabla_x \phi.
+						\]
+					</div>
+					<div class="box fragment">
+						<b>Self-consistent coupling</b> via the empirical density:
+						\[
+						-\Delta\phi(x,t) = \rho^N(x,t) - 1,
+						\qquad
+						\rho^N(x,t) = \tfrac{1}{N}\sum_{i=1}^{N}\delta(x-X_t^i).
+						\]
+					</div>
+					<div class="highlight fragment">
+						As \(N\to\infty\), the empirical phase-space measure \(f^N_t = \tfrac1N\sum_i\delta_{(X^i_t,V^i_t)}\) converges to the Vlasov–Poisson solution \(f_t\). Nudging acts on \((X^i,V^i)\) via the Wasserstein gradient of \(K_h*f^N - K_h*f\).
+					</div>
+
+					<aside class="notes">
+						This is the bridge: the Vlasov PDE on the previous slide is the mean-field limit of these particle ODEs. The nudging mechanism applies directly to the particle level.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Landau damping</h3>
+					<div style="display:flex; gap:14px; align-items:center;">
+						<div style="flex:1; text-align:left; font-size:0.9em;">
+							<p style="margin:2px 0;">Maxwellian \(f_{M,\sigma}(v)=\tfrac{1}{\sqrt{2\pi}\sigma}e^{-v^2/(2\sigma^2)}\); \(x\in[0,4\pi],\ v\in[-6,6]\).</p>
+							<div class="box" style="padding:6px 10px; margin:4px 0;">
+								<b>Truth</b>: \(f(x,v,0)\propto f_{M,1}(v)\bigl(1+\varepsilon\cos(\kappa x)\bigr)\),<br>
+								\(\varepsilon=0.5,\ \kappa=\tfrac12\).
+							</div>
+							<div class="box" style="padding:6px 10px; margin:4px 0;">
+								<b>Biased model</b>: same dynamics, but initialized from the <span class="accent">unperturbed Maxwellian</span> (\(\varepsilon=0\)) — no initial density modulation.
+							</div>
+						</div>
+						<figure style="flex:1.4; margin:0;">
+							<img src="./figure/landau_damping.png" style="max-height:520px;">
+							<figcaption>Phase-space density at final time — truth / biased / assimilated.</figcaption>
+						</figure>
+					</div>
+				</section>
+
+				<section>
+					<h3>Two-stream instability — initial conditions</h3>
+					<div class="box">
+						<b>Truth</b> — bimodal velocity distribution with weak spatial perturbation:
+						\[
+						f(x,v,0)\propto \tfrac12\bigl(f_{M,\sigma}(v-u_0)+f_{M,\sigma}(v+u_0)\bigr)\bigl(1+\varepsilon\cos(\kappa x)\bigr).
+						\]
+						<span class="small">\(\sigma=0.2,\ u_0=1,\ \varepsilon=0.01,\ \kappa=0.5\).</span>
+					</div>
+					<div class="box fragment">
+						<b>Biased model</b> — single Maxwellian, same perturbation:
+						\[
+						f(x,v,0)\propto f_{M,1}(v)\bigl(1+\varepsilon\cos(\kappa x)\bigr).
+						\]
+						<span class="small">Misses the underlying two-stream structure entirely.</span>
+					</div>
+
+					<aside class="notes">
+						The bias here is structural — single-Maxwellian initialization cannot generate the bimodal phase-space dynamics.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Two-stream instability — phase-space evolution</h3>
+					<div style="display:flex; gap:20px;">
+						<figure style="flex:1;">
+							<img src="./figure/two_stream_step_1000.png" style="max-height:540px;">
+							<figcaption>step 1000</figcaption>
+						</figure>
+						<figure style="flex:1;">
+							<img src="./figure/two_stream_step_2000.png" style="max-height:540px;">
+							<figcaption>step 2000</figcaption>
+						</figure>
+					</div>
+					<div class="refbox">Each panel: reference (top) / biased (center) / assimilated (bottom). Nudging on \(K_h*f\) recovers filamentation and vortex merging absent from the biased model.</div>
+				</section>
+			</section>
+
+			<!-- =========================================================
+			     Numerical: Fish — closing the loop on the opener
+			============================================================== -->
+			<section data-menu-title="Numerics: Collective motion">
+				<section>
+					<h3>Back to the fish — setup</h3>
+					<ul style="text-align:left;">
+						<li>~1000 fish in a quasi-2D tank <sup>[Walter &amp; Couzin 2021]</sup>.</li>
+						<li>Trajectories have occlusions and index dropouts — no consistent particle labeling.</li>
+						<li>Observation: KDE density at discrete times — <b>Case B</b> (unlabeled locations).</li>
+						<li>Biased model: generic interaction without the true inter-fish coupling.</li>
+					</ul>
+
+					<aside class="notes">
+						This is the real-data payoff. Case B observation modality; biased model deliberately kept simple.
+					</aside>
+				</section>
+
+				<section>
+					<h3>Assimilated dynamics vs.\ biased forecast</h3>
+					<figure>
+						<video muted autoplay loop playsinline style="max-height:580px;">
+							<source src="./comparison_3panel.mp4" type="video/mp4">
+						</video>
+						<figcaption>Left: observation. Middle: biased model. Right: Multiscale Nudge.</figcaption>
+					</figure>
+				</section>
+			</section>
+
+			<!-- =========================================================
+			     Takeaways
+			============================================================== -->
+			<!-- =========================================================
+			     Thanks
+			============================================================== -->
+			<section data-menu-title="Thanks">
+				<h2 style="margin-top: 40px;">Thank you</h2>
+				<p style="margin-top: 20px;">Questions?</p>
+				<div style="margin-top: 40px; text-align:left;" class="small">
+					<b>Selected references</b>
+					<ul class="compact">
+						<li>Bessaih, Olson, Titi (2015). Continuous data assimilation with stochastically noisy data. <i>Nonlinearity</i>.</li>
+						<li>Azouani, Olson, Titi (2014). Continuous data assimilation using general interpolant observables. <i>J.\ Nonlinear Sci.</i></li>
+						<li>Jordan, Kinderlehrer, Otto (1998). The variational formulation of the Fokker–Planck equation.</li>
+						<li>Ambrosio, Gigli, Savaré (2005). <i>Gradient flows in metric spaces and in the space of probability measures.</i></li>
+						<li>Sznitman (1991); Chaintron &amp; Diez (2021). Propagation of chaos.</li>
+						<li>Walter &amp; Couzin (2021). TRex: fast multi-animal tracking. <i>eLife</i>.</li>
+					</ul>
+				</div>
+			</section>
+
+		</div>
+	</div>
+
+	<script src="../UCLA_2025_Nov/dist/reveal.js"></script>
+	<script src="../UCLA_2025_Nov/plugin/notes/notes.js"></script>
+	<script src="../UCLA_2025_Nov/plugin/markdown/markdown.js"></script>
+	<script src="../UCLA_2025_Nov/plugin/highlight/highlight.js"></script>
+	<script>
+		Reveal.initialize({
+			slideNumber: 'c/t',
+			width: 1200,
+			height: 800,
+			margin: 0,
+			padding: 0,
+			hash: true,
+			plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+		});
+	</script>
+</body>
+</html>

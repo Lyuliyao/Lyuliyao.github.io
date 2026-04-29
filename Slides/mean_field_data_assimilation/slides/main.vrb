@@ -1,0 +1,9 @@
+\frametitle{Code listing}
+\begin{lstlisting}[language=Python, caption={Simple Lennard-Jones force sample}]
+import numpy as np
+def lj_force(r2, eps=1.0, sigma=1.0):
+    inv = (sigma*sigma)/r2
+    inv3 = inv*inv*inv
+    inv6 = inv3*inv3
+    return 24*eps*(2*inv6*inv6 - inv6)
+\end{lstlisting}

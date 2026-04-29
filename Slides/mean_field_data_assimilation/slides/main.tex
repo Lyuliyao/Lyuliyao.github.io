@@ -1,0 +1,457 @@
+
+\documentclass[aspectratio=169]{beamer}
+\usetheme{UCLA}
+\usepackage{note/lyu}
+% ---- Packages you may want ----
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage[backend=biber,style=authoryear,maxbibnames=99,doi=false,isbn=false,url=true]{biblatex}
+
+\addbibresource{references.bib}
+\DeclareCiteCommand{\footcite}[\mkbibfootnote]
+  {\usebibmacro{prenote}}
+  {\printnames[family-given]{labelname}%
+   \setunit{\addnbspace}
+   \printfield{journaltitle}%
+   \setunit{\addnbspace}
+   \printlabeldateextra}
+  {\addsemicolon\space}
+  {\usebibmacro{postnote}}
+\DeclareDelimFormat{multicitedelim}{\addsemicolon\space}
+\DeclareMultiCiteCommand{\footcites}[\mkbibfootnote]{\footcite}{\multicitedelim}
+
+% Listings setup
+\lstdefinestyle{ucla}{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\bfseries\color{uclaBlue},
+  commentstyle=\itshape\color{uclaGray},
+  stringstyle=\color{uclaDarkBlue},
+  frame=single,
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=2
+}
+\lstset{style=ucla}
+
+% Metadata
+\title[Parti2Field]{Parti2Field:Data-Driven Approximation of Mean-Field Limits from Interacting Particle Systems}
+% \subtitle{Optional Subtitle}
+\author[L. Lyu]{Liyao Lyu}
+\cooperator{Hayden Schaeffer, Xinyue Yu}
+\institute[UCLA Mathematics]{Department of Mathematics \\ University of California, Los Angeles}
+\date{\today}
+
+% Optional logo on title page (replace file with the official UCLA logo if permitted)
+\titlegraphic{\hfill \includegraphics[height=1.2cm]{ucla_math_logo.png}}
+
+\begin{document}
+
+% Title
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% Outline
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+
+% =========================================================
+\begin{frame}{Motivation}
+\begin{itemize}
+  \item We have a \textbf{true} mean-field system (McKean--Vlasov SDE), but its drift is only approximately known.
+  \item Model bias and initialization errors cause the approximate system to drift away over time.
+  \item We also have \textbf{partial observations} (often of the law / density, not full state).
+  \item Goal: add a \textbf{feedback control (nudging)} term so the model distribution stays consistent with observations.
+\end{itemize}
+\vspace{0.5em}
+Key idea: choose nudging as a \textbf{Wasserstein gradient flow} of an observation misfit functional.
+\end{frame}
+
+% =========================================================
+\section{Problem Setup}
+
+\begin{frame}{True and Model Dynamics (Mean-Field SDE)}
+Let $(\Omega,\mathcal{F},\mathbb{P})$ with filtration $(\mathcal{F}_t)_{t\ge 0}$.
+
+\medskip
+\textbf{True process} $X_t\in\Rd$:
+\[
+dX_t = b_{\text{true}}(X_t,\mu_t)\,dt + \Sigma\, dW_t,\qquad X_0\sim \mu_0,
+\]
+where $\mu_t=\Law(X_t)\in\mathcal{P}_2$.
+
+\medskip
+\textbf{Approximate model} $Y_t$:
+\[
+dY_t = b_{\text{model}}(Y_t,\nu_t)\,dt + \Sigma\, dW_t,\qquad \nu_t=\Law(Y_t).
+\]
+
+\medskip
+\textbf{Model bias:}\quad
+\[
+R(x,\mu) := b_{\text{model}}(x,\mu)-b_{\text{true}}(x,\mu).
+\]
+\end{frame}
+
+% =========================================================
+\begin{frame}{Observation Operator}
+Assume we observe the law through a smoothed density map:
+\[
+\mathcal{O}_h(\mu_t)(z) = \int K_h(z-x)\,\mu_t(dx) \;=\; (K_h * \mu_t)(z).
+\]
+
+\medskip
+In practice: observations may be obtained from partial trajectories/locations
+$\{X^{\text{obs},k,M}_t\}_{k=1}^M$ and approximated by empirical measures / KDE.
+
+\medskip
+Objective: drive $\nu_t$ toward observation-consistency without knowing $b_{\text{true}}$ exactly.
+\end{frame}
+
+% =========================================================
+\section{Nudging via Wasserstein Gradient Flow}
+
+\begin{frame}{Quadratic Observation Misfit Functional}
+Define the observation misfit cost:
+\[
+J(\nu,\mu^{\text{obs}}) :=
+\frac12 \int_{\Rd} \Big|(K_h*\nu)(x)-(K_h*\mu^{\text{obs}})(x)\Big|^2\,dx.
+\]
+
+\medskip
+Its first variation (Frech\'et derivative in measure sense):
+\[
+\frac{\delta J}{\delta \nu}(x)
+= \big(\widetilde K_h * (\nu-\mu^{\text{obs}})\big)(x),
+\qquad \widetilde K_h := K_h * K_h
+\]
+(assuming symmetry so convolution is self-adjoint on $L^2$).
+\end{frame}
+
+% =========================================================
+\begin{frame}{Nudging Vector Field}
+In Wasserstein geometry, gradient flow corresponds to velocity field
+$-\grad (\delta J/\delta \nu)$.
+
+\medskip
+With nudging intensity $\lambda>0$:
+\[
+u_{\text{nud}}(y,\nu,\mu^{\text{obs}})
+:= -\lambda\,\grad_y\!\left(\frac{\delta J}{\delta \nu}(y)\right)
+= -\lambda\,\grad\!\big(\widetilde K_h * (\nu-\mu^{\text{obs}})\big)(y).
+\]
+
+\medskip
+Assimilated mean-field SDE:
+\[
+dY_t = b_{\text{model}}(Y_t,\nu_t)\,dt
++ u_{\text{nud}}(Y_t,\nu_t,\mu^{\text{obs}}_t)\,dt
++ \Sigma\, dW_t.
+\]
+\end{frame}
+
+% =========================================================
+\section{Particle Approximation}
+
+\begin{frame}{Interacting Particle System}
+Approximate $\nu_t$ by particles $\{Y_t^{i,N}\}_{i=1}^N$:
+\[
+\nu_t^N := \frac1N\sum_{j=1}^N \delta_{Y_t^{j,N}}.
+\]
+
+\medskip
+Particle dynamics:
+\[
+dY_t^{i,N} =
+b_{\text{model}}(Y_t^{i,N},\nu_t^N)\,dt
+-\lambda\Big[
+\grad(\widetilde K_h*\nu_t^N)(Y_t^{i,N})
+-\grad(\widetilde K_h*\mu_t^{\text{obs}})(Y_t^{i,N})
+\Big]dt
++ \Sigma\, dW_t^i.
+\]
+
+\medskip
+Expanding convolutions (explicit interactions):
+\[
+dY_t^{i,N} =
+b_{\text{model}}(Y_t^{i,N},\nu_t^N)\,dt
+-\lambda\left(
+\frac1N\sum_{j=1}^N \grad \widetilde K_h(Y_t^{i,N}-Y_t^{j,N})
+-\frac1M\sum_{k=1}^M \grad \widetilde K_h(Y_t^{i,N}-X_t^{\text{obs},k,M})
+\right)dt
++\Sigma\, dW_t^i.
+\]
+\end{frame}
+
+% =========================================================
+\section{Mean-Field PDE View and Error Dynamics}
+
+\begin{frame}{Nonlinear Fokker--Planck Equation (Formal)}
+Let $A=\Sigma\Sigma^\top$.
+Writing $r := K_h*(\nu_t-\mu_t^{\text{obs}})$, the assimilated law $\nu_t$ satisfies:
+\[
+\partial_t \nu_t
+= -\grad\cdot(\nu_t\, b_{\text{model}}(x,\nu_t))
++ \grad\cdot(A\grad \nu_t)
++ \lambda\, \grad\cdot\big(\nu_t\,\grad(K_h*r)\big).
+\]
+
+\medskip
+True mean-field dynamics:
+\[
+\partial_t \mu_t
+= -\grad\cdot(\mu_t\, b_{\text{true}}(x,\mu_t))
++ \grad\cdot(A\grad \mu_t).
+\]
+\end{frame}
+
+% =========================================================
+\begin{frame}{Error Equation}
+Define error $v_t := \nu_t-\mu_t$.
+Subtracting true from assimilated dynamics yields (schematically):
+\[
+\partial_t v_t
+= -\grad\cdot\Big(\nu_t b_{\text{model}}(x,\nu_t) - \mu_t b_{\text{true}}(x,\mu_t)\Big)
++ \grad\cdot(A\grad v_t)
++ \lambda\,\grad\cdot\big(\nu_t\,\grad(K_h*r)\big),
+\]
+with $r=K_h*(\nu_t-\mu_t^{\text{obs}})$.
+
+\medskip
+In the theorem statement below, a clean case is $\mu_t^{\text{obs}}=\mu_t$ (perfect observations of the law).
+\end{frame}
+
+% =========================================================
+\section{Stability Result (From the Note)}
+
+\begin{frame}{Assumption Set (Regularity / Stability / Error Sources)}
+On periodic domain $\Omega$ (e.g.\ $\mathbb{T}^d$), assume:
+
+\begin{itemize}
+  \item[(A1)] Bounded model drift and divergence:
+  $\|b_{\text{model}}(\cdot,\rho)\|_{L^\infty}\le B_{\text{model}}$,
+  $\|\grad\cdot b_{\text{model}}(\cdot,\rho)\|_{L^\infty}\le B_{\text{model}}$.
+  \item[(A2)] Measure-Lipschitz true drift:
+  $\|b_{\text{true}}(x,\rho)-b_{\text{true}}(x,\rho')\|\le L_\mu \|\rho-\rho'\|$.
+  \item[(A3)] Density bounds: $\|\mu_t\|_{L^\infty}\le \bar\rho$ and $\nu_t(x)\ge \nu>0$ a.e.
+  \item[(A4)] Uniform model bias bound:
+  $\sup_{t\ge0}\|b_{\text{model}}(x,\rho)-b_{\text{true}}(x,\rho)\|\le \Delta$.
+  \item[(A5)] Symmetric kernel $K_h$; convolution self-adjoint and commutes with derivatives.
+  \item[(A6)] Smoothing error estimate:
+  $\|\grad v - \grad(\widetilde K_h*v)\|_{L^2}\le \delta(h)\|\grad v\|_{L^2}$, with $\delta(h)\to0$ as $h\to0$.
+\end{itemize}
+\end{frame}
+
+% =========================================================
+\begin{frame}{Theorem: Exponential Decay to a Bias Floor}
+Let $V(t)=\frac12\|v_t\|^2$ with $v_t=\nu_t-\mu_t$ and assume $\int_\Omega v_0\,dx=0$.
+Let $C_P$ be the Poincar\'e constant for zero-mean functions.
+
+\medskip
+Assume perfect observation of the law: $\mu_t^{\text{obs}}=\mu_t$.
+
+\medskip
+Define the advection-instability coefficient:
+\[
+C_{\text{adv}} := B_{\text{model}} + \bar\rho\,L_\mu.
+\]
+
+Choose $h$ and $\lambda$ so that:
+\[
+\delta(h)\le \frac{\nu}{2\bar\rho},
+\qquad
+\lambda > \frac{2}{\nu}\left(\frac{C_{\text{adv}}^2 C_P}{\kappa}-\kappa\right),
+\]
+where $\kappa$ is the coercivity constant from diffusion.
+
+\medskip
+Then there exists $\alpha>0$ such that
+\[
+\frac{d}{dt}V(t)\le -\alpha V(t) + \frac{\bar\rho^2}{\kappa}\Delta^2,
+\qquad
+V(t)\le e^{-\alpha t}V(0)+\frac{\bar\rho^2}{\alpha\kappa}\Delta^2.
+\]
+% Interpretation: exponential contraction until reaching a \textbf{bias floor} $\propto \Delta^2$.
+\end{frame}
+
+% % =========================================================
+% \begin{frame}{Proof Sketch (Energy Estimate)}
+% Start with $V(t)=\frac12\|v_t\|^2$, so $V'(t)=\ip{v_t,\partial_t v_t}$.
+
+% \medskip
+% \textbf{Diffusion:}
+% \[
+% \ip{v_t,\grad\cdot(A\grad v_t)} \le -\kappa\|\grad v_t\|_2^2.
+% \]
+
+% \medskip
+% \textbf{Advection/model terms:}
+% bounded by $C_{\text{adv}}\|\grad v_t\|_2\|v_t\|_2$ plus bias contribution $\bar\rho \|\grad v_t\|_2\Delta$,
+% then use Young:
+% \[
+% C_{\text{adv}}\|\grad v_t\|_2\|v_t\|_2
+% \le \frac{\varepsilon}{2}\|\grad v_t\|_2^2 + \frac{C_{\text{adv}}^2}{2\varepsilon}\|v_t\|_2^2.
+% \]
+
+% \medskip
+% \textbf{Nudging term:} treat as perturbation of identity via smoothing error
+% $\|\grad v_t - \grad(\widetilde K_h*v_t)\|\le \delta(h)\|\grad v_t\|$:
+% \[
+% \text{nudging} \;\lesssim\; -\lambda(\nu-\bar\rho\,\delta(h))\|\grad v_t\|_2^2.
+% \]
+
+% \medskip
+% Finish with Poincar\'e: $\|\grad v_t\|_2^2 \ge C_P^{-1}\|v_t\|_2^2$ to get $V'(t)\le -\alpha V(t)+(\bar\rho^2/\kappa)\Delta^2$.
+% \end{frame}
+
+% =========================================================
+\section{Numerical Demonstration}
+
+\begin{frame}{Example: Fish Trajectory Data Assimilation}
+Dataset: trajectories of $\approx 1000$ animals (fish) in quasi-2D tank with occlusions / dropouts.
+
+\medskip
+Observation density (KDE at discrete times $t_n$):
+\[
+\mu^{\text{obs}}(x,t_n)=\frac1N\sum_{i=1}^N K_\sigma(x-X_i(t_n)).
+\]
+
+\medskip
+Pipeline idea:
+\begin{itemize}
+  \item Train baseline mean-field model drift from data (previous method).
+  \item Run the same model with nudging term using observed density.
+  \item Compare predicted trajectories/positions vs reference.
+\end{itemize}
+
+\medskip
+% (Insert your figure here if available.)
+\end{frame}
+
+\begin{frame}{Numerical result}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\linewidth]{figure/comparison_2x2_density.png}
+        \caption{Caption}
+        \label{fig:placeholder}
+    \end{figure}
+\end{frame}
+% =========================================================
+\section{Second Model in the Note: Vlasov--Fokker--Planck}
+
+\begin{frame}{From Vlasov to ODEs: the PIC Viewpoint}
+\textbf{Vlasov--Poisson} for $f(t,x,v)$ on phase space:
+\[
+\partial_t f + v\cdot\grad_x f + E(t,x)\cdot\grad_v f = 0,
+\qquad
+\grad_x\cdot E = 4\pi\rho,\quad \rho(t,x)=\!\int f(t,x,v)\,dv.
+\]
+
+\medskip
+\textbf{Method of characteristics.} $f$ is constant along curves $(X(t),V(t))$ solving the Hamiltonian ODEs
+\[
+\frac{dX}{dt}=V,\qquad \frac{dV}{dt}=E(t,X).
+\]
+
+\medskip
+\textbf{PIC dynamics.} Sample $f_0$ by $N$ macro-particles $\{(X^i_0,V^i_0,w_i)\}_{i=1}^N$ and evolve each by the ODE above:
+\[
+\dot X^i_t = V^i_t,\qquad
+\dot V^i_t = E(t,X^i_t),\qquad
+f^N_t \;=\; \sum_{i=1}^N w_i\,\delta_{(X^i_t,V^i_t)}.
+\]
+Field on a grid is reconstructed from particles: $\rho^N(t,x)=\sum_i w_i\,S(x-X^i_t)$, then solve $\grad_x\!\cdot E^N=4\pi\rho^N$ and interpolate $E^N$ back to particles.
+
+\medskip
+\textit{Bridge:} the Vlasov PDE $\Leftrightarrow$ the empirical measure of independent ODE trajectories; adding $\sigma\,dW_t$ to $dV_t$ recovers the SDE on the next slide.
+\end{frame}
+
+% =========================================================
+\begin{frame}{Vlasov--Fokker--Planck Setting}
+Consider phase-space PDE:
+\[
+\partial_t f + v\cdot \grad_x f + (E(x)+F(t,x))\cdot \grad_v f
+= \frac{\sigma^2}{2}\Delta_v f,
+\]
+with Poisson coupling
+\[
+\grad_x\cdot E(t,x)=4\pi \rho(t,x),\qquad \rho(t,x)=\int_{\Rd} f(t,x,v)\,dv.
+\]
+
+Associated SDE:
+\[
+dX_t = V_t\,dt,\qquad
+dV_t = (E(X_t)+F(t,X_t))\,dt + \sigma\, dW_t.
+\]
+
+In this section of the note: model is exact; discrepancy is from imperfect initialization; observation is macroscopic density $\rho(t,x)$.
+\end{frame}
+
+% =========================================================
+\begin{frame}{Nudged Copy Driven by Density Observation}
+Introduce nudged copy:
+\[
+dY_t = U_t\,dt - u_{\text{nud}}(Y_t,\tilde\rho_t,\rho_t)\,dt,
+\qquad
+dU_t = (E(Y_t)+F(t,Y_t))\,dt + \sigma\, dW_t,
+\]
+where $\tilde\rho_t$ is spatial density induced by $Y_t$.
+
+\medskip
+Nudging term:
+\[
+u_{\text{nud}}(t,x)=\lambda\,\grad_x\big(K_h*r(t,\cdot)\big)(x),
+\qquad r := K_h*(\tilde\rho-\rho).
+\]
+
+Let $\omega := \tilde f - f$ be the phase-space density difference; the note writes the corresponding PDE for $\omega$ including a nudging flux term.
+\end{frame}
+
+% =========================================================
+\section{Discussion}
+
+\begin{frame}{Takeaways and Open Questions}
+\textbf{Takeaways}
+\begin{itemize}
+  \item Nudging via Wasserstein gradient flow gives an explicit, interpretable feedback control.
+  \item Stability: exponential decay in $L^2$ up to a bias floor $\propto \Delta^2$ when $\lambda$ is large enough and $h$ small enough.
+  \item Particle implementation is straightforward: add interaction with observed particles / KDE field.
+\end{itemize}
+
+\medskip
+\textbf{Open questions for group discussion}
+\begin{itemize}
+  \item How to choose $\lambda$ and $h$ adaptively (bias-variance / stability tradeoff)?
+  \item Noisy / partial observations: what changes in the energy estimate?
+  \item Finite-$N$ effects: quantitative propagation-of-chaos / concentration for the nudged particle system?
+  \item Extensions: other observation operators, constraints, boundaries, and non-symmetric kernels.
+\end{itemize}
+\end{frame}
+
+% =========================================================
+\begin{frame}{References (from the note)}
+\small
+\begin{thebibliography}{9}
+\bibitem{Bessaih2015}
+H. Bessaih, E. Olson, and E. S. Titi,
+\newblock Continuous data assimilation with stochastically noisy data,
+\newblock \emph{Nonlinearity}, 28(3):729, 2015.
+
+\bibitem{WalterCouzin2021}
+T. Walter and I. D. Couzin,
+\newblock TRex: a fast multi-animal tracking system with markerless identification,
+\newblock \emph{eLife}, 10:e64000, 2021.
+\end{thebibliography}
+\end{frame}
+
+
+
+\end{document}

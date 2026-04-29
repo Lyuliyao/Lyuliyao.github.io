@@ -1,0 +1,153 @@
+
+\ProvidesPackage{beamerthemeUCLA}[2025/08/23 v1.0 UCLA Beamer Theme]
+\mode<presentation>
+
+% Basics
+\RequirePackage{etoolbox}
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+\RequirePackage{xcolor}
+\RequirePackage{ifthen}
+
+% UCLA brand-inspired colors (non-official)
+\definecolor{uclaBlue}{HTML}{2774AE}
+\definecolor{uclaGold}{HTML}{FFD100}
+\definecolor{uclaDarkBlue}{HTML}{005587}
+\definecolor{uclaGray}{HTML}{4D4F53}
+
+% Fonts (pdfLaTeX-friendly)
+\RequirePackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usefonttheme{professionalfonts}
+
+% Color setup
+\setbeamercolor{palette primary}{bg=uclaBlue, fg=white}
+\setbeamercolor{palette secondary}{bg=uclaDarkBlue, fg=white}
+\setbeamercolor{palette tertiary}{bg=uclaBlue, fg=white}
+\setbeamercolor{palette quaternary}{bg=uclaDarkBlue, fg=white}
+\setbeamercolor{structure}{fg=uclaBlue}
+\setbeamercolor{normal text}{fg=black, bg=white}
+\setbeamercolor{frametitle}{fg=white, bg=uclaBlue}
+\setbeamercolor{title}{fg=white, bg=uclaBlue}
+\setbeamercolor{subtitle}{fg=white}
+\setbeamercolor{block title}{bg=uclaBlue!10, fg=uclaDarkBlue}
+\setbeamercolor{block body}{bg=black!1, fg=black}
+\setbeamercolor{alerted text}{fg=uclaDarkBlue}
+\setbeamercolor{itemize item}{fg=uclaBlue}
+\setbeamercolor{itemize subitem}{fg=uclaDarkBlue}
+
+% ---- Title page font sizes ----
+\setbeamerfont{title}{size=\LARGE, series=\bfseries}
+\setbeamerfont{subtitle}{size=\Large, series=\mdseries}
+\setbeamerfont{author}{size=\Large}
+\setbeamerfont{institute}{size=\large}
+\setbeamerfont{date}{size=\large}
+
+
+% Item shapes
+\setbeamertemplate{itemize item}{\tikz\draw[fill=uclaBlue,draw=uclaBlue] (0,0) circle (1.2pt);}
+\setbeamertemplate{itemize subitem}{\tikz\draw[fill=uclaDarkBlue,draw=uclaDarkBlue] (0,0) circle (1.0pt);}
+
+% Title format
+\defbeamertemplate*{title page}{UCLA}[1][]{
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[uclaBlue] (current page.north west) rectangle ([yshift=-2.2cm]current page.north east);
+    \fill[uclaGold] ([yshift=-2.2cm]current page.north west) rectangle ([yshift=-2.35cm]current page.north east);
+  \end{tikzpicture}
+  \vspace*{1.1cm}
+  \begin{beamercolorbox}[wd=\paperwidth,sep=1.5ex,left]{title}
+    \usebeamerfont{title}\inserttitle\par
+  \end{beamercolorbox}
+  \ifx\insertsubtitle\@empty\else
+    \vspace{-0.4ex}
+    \begin{beamercolorbox}[wd=\paperwidth,sep=1ex,left]{subtitle}
+      \usebeamerfont{subtitle}\insertsubtitle
+    \end{beamercolorbox}
+  \fi
+  \vspace{0.1cm}
+    \begin{beamercolorbox}[wd=\paperwidth,sep=2.5ex,left]{normal text}
+    \centering
+    \usebeamerfont{author}\insertauthor\par
+    \usebeamerfont{institute}\insertinstitute\par
+    \vspace{0.5em}
+    {\bfseries Collaborators: } \insertcooperator\par
+    \vspace{0.5em}
+    \usebeamerfont{date}\insertdate
+  \end{beamercolorbox}
+  \vfill
+  \ifx\inserttitlegraphic\@empty\else
+    \begin{beamercolorbox}[wd=\paperwidth,sep=1ex,left]{normal text}
+      \inserttitlegraphic
+    \end{beamercolorbox}
+  \fi
+}
+
+\setbeamertemplate{title page}[UCLA]
+
+% Frame title with a slim gold bar
+\setbeamertemplate{frametitle}{
+  \nointerlineskip
+  \vskip-0.7ex
+  \begin{beamercolorbox}[wd=\paperwidth,ht=3.2ex,dp=1.2ex,left]{frametitle}
+    \hspace*{1ex}\insertframetitle
+  \end{beamercolorbox}
+  \begin{tikzpicture}
+    \fill[uclaGold] (0,0) rectangle (\paperwidth,0.18cm);
+  \end{tikzpicture}
+}
+
+% Section page
+\defbeamertemplate*{section page}{UCLA}{
+  \begin{frame}[plain,noframenumbering]
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[uclaBlue] (current page.north west) rectangle (current page.south east);
+      \fill[uclaGold] (current page.south west) rectangle ([yshift=0.25cm]current page.south east);
+    \end{tikzpicture}
+    \vspace{0.55\paperheight}
+    \begin{center}
+      {\usebeamerfont{section title}\color{white}\Huge\insertsection\par}
+    \end{center}
+  \end{frame}
+}
+\setbeamertemplate{section page}[UCLA]
+
+% Footline
+\defbeamertemplate*{footline}{UCLA}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.74\paperwidth,ht=2.5ex,dp=1.2ex,left]{author in head/foot}%
+      \hspace*{1ex}\insertshorttitle{} \textbullet{} \insertshortauthor
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.26\paperwidth,ht=2.5ex,dp=1.2ex,right]{date in head/foot}%
+      \insertframenumber{} / \inserttotalframenumber\hspace*{1.2ex}
+    \end{beamercolorbox}%
+  }%
+}
+\setbeamertemplate{footline}[UCLA]
+\setbeamertemplate{navigation symbols}{}
+
+% Block styling
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamerfont{block title}{series=\bfseries}
+
+% Optional progress bar based on sections
+\newcount\secnum
+\newcommand{\sectionprogress}{
+  \setcounter{secnumdepth}{0}%
+  \secnum=0\relax
+  \foreach \x in {1,...,\thesection}{\advance\secnum by 1}
+  \begin{tikzpicture}[baseline]
+    \def\nsec{\arabic{section}}
+    \draw[draw=uclaBlue!50] (0,0) rectangle (3,0.15);
+    \fill[uclaBlue] (0,0) rectangle ({3*min(\secnum,\inserttotalframenumber)/max(1,\inserttotalframenumber)},0.15);
+  \end{tikzpicture}
+}
+
+% Convenience: UCLA logo macro (optional)
+\newcommand{\uclalogo}[1][1cm]{%
+  \IfFileExists{ucla_logo_placeholder.pdf}{\includegraphics[height=#1]{ucla_logo_placeholder.pdf}}{}
+}
+\newcommand{\cooperator}[1]{\def\insertcooperator{#1}}
+\cooperator{} % 默认空
+
+% End of theme

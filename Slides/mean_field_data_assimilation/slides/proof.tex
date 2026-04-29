@@ -1,0 +1,346 @@
+
+\documentclass[aspectratio=169]{beamer}
+\usetheme{UCLA}
+
+% ---- Packages you may want ----
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage[backend=biber,style=authoryear,maxbibnames=99,doi=false,isbn=false,url=true]{biblatex}
+\usepackage{../v1/lyu}
+\addbibresource{references.bib}
+\DeclareCiteCommand{\footcite}[\mkbibfootnote]
+  {\usebibmacro{prenote}}
+  {\printnames[family-given]{labelname}%
+   \setunit{\addnbspace}
+   \printfield{journaltitle}%
+   \setunit{\addnbspace}
+   \printlabeldateextra}
+  {\addsemicolon\space}
+  {\usebibmacro{postnote}}
+\DeclareDelimFormat{multicitedelim}{\addsemicolon\space}
+\DeclareMultiCiteCommand{\footcites}[\mkbibfootnote]{\footcite}{\multicitedelim}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{xcolor}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{remark}[theorem]{Remark}
+
+\usepackage[normalem]{ulem}
+% Listings setup
+\lstdefinestyle{ucla}{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\bfseries\color{uclaBlue},
+  commentstyle=\itshape\color{uclaGray},
+  stringstyle=\color{uclaDarkBlue},
+  frame=single,
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=2
+}
+\lstset{style=ucla}
+
+% Metadata
+\title[Parti2Field]{Parti2Field:Data-Driven Approximation of Mean-Field Limits from Interacting Particle Systems}
+% \subtitle{Optional Subtitle}
+\author[L. Lyu]{Liyao Lyu}
+\cooperator{Hayden Schaeffer, Xinyue Yu}
+\institute[UCLA Mathematics]{Department of Mathematics \\ University of California, Los Angeles}
+\date{\today}
+
+% Optional logo on title page (replace file with the official UCLA logo if permitted)
+\titlegraphic{\hfill \includegraphics[height=1.2cm]{ucla_math_logo.png}}
+
+\begin{document}
+
+% Title
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% Outline
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+\begin{frame}{Proof}
+    The learned  SDE is given by 
+\begin{equation}\label{equ:N_particle}
+   \begin{aligned}
+    \intd \bX^{i,N}_t = \varphi_{\text{i}}\left(\bX^{i,N}_t,\int  \varphi_{\text{e}}(\bx ) \mu^N_t(\intd\bx)\right)\intd t + \sigma \intd \mathbf{B}^{i,N}_t,
+\end{aligned} 
+\end{equation}
+where $\mu_t^N = \frac{1}{N}\sum_{i=1}^N \delta_{\bX^{i,N}_t}$. At least, formally, we can write its mean field limit as 
+\begin{equation}\label{equ:mean_field}
+      \begin{aligned}
+    \intd \bar{\bX}_t = \varphi_{\text{i}}\left(\bar{\bX}_t,\int  \varphi_{\text{e}}(\bx ) f_t(\bx)\intd\bx\right)\intd t + \sigma \intd \mathbf{B}_t,
+\end{aligned} 
+\end{equation}
+where $f_t = \mathrm{Law}(\bar{\bX}_t)$ is the law of the random variable $\bX_t$ ar time t. By Fokker Planck equation, we can formally write the evolution of $f_t$ should satisfy 
+\begin{equation}\label{equ:weak_form_fk}
+\frac{\intd }{\intd t} \left\langle f_t,\psi \right\rangle = \left\langle f_t, \varphi_{\text{i}}\left(\bx,\int  \varphi_{\text{e}}(\bx ) f_t(\bx)\intd\bx\right)\cdot \nabla \psi + \frac{1}{2}\sigma^2 \Delta \psi\right\rangle.
+\end{equation}
+% \textcolor{red}{$\phi_i$ has two inputs. Is it Lipschitz in both or in one, uniformly in the second variable.}
+\end{frame}
+\begin{frame}{Proof}
+\begin{proposition}\label{prop:well-possness}
+    Let us assume that the functions $ \varphi_{\text{i}}$ and $\varphi_{\text{e}}$ are globally Lipschitz: there exist $C_i,C_e>0$, such that for all $\bx,\bx'\in \mathbb R^d , \by,\by'\in \mathbb R^{k}$, it holds that:
+    \[
+    |\varphi_{\text{e}}(\bx)-\varphi_{\text{e}}(\bx')|\leq C_e|\bx-\bx'|,\quad 
+    |\varphi_{\text{i}}(\bx,\by)-\varphi_{\text{i}}(\bx',\by')|\leq C_i\left(|\bx-\bx'|+|\by-\by'|\right),
+    \]
+    Assume that $f_0\in \mathcal P_2(\mathbb R^d)$. Then for any $T>0$ the SDE \eqref{equ:mean_field} has a unique strong solution on [0,T] and consequently, its law is the unique weak solution to the Fokker-Planck equation \eqref{equ:weak_form_fk}.
+\end{proposition} 
+\end{frame}
+\begin{frame}
+    \begin{proof}
+    The proof is based on Theorem 1.7 in \cite{carmona2016lectures}. Denote \[
+    \bb(\bx,\mu) := \varphi_{\text{i}}\left(\bx,\int  \varphi_{\text{e}}(\by ) \mu (\intd\by)\right).
+    \]We only need to show that for all $\bx,\bx'\in \mathbb R^d$ and $\mu,\mu'\in \mathcal P$, we have 
+    \[
+    |\bb(\bx,\mu) - \bb (\bx',\mu')|\leq C(|\bx-\bx'|+W_2(\mu,\mu')),
+    \]
+    where $W_2$ denotes the Wasserstein-2 distance. Notice that, by the triangle inequality, we have 
+    \[
+    |\bb(\bx,\mu) - \bb (\bx',\mu')| \leq \left|\bb(\bx,\mu) - \bb (\bx,\mu')\right| +|\bb(\bx,\mu') - \bb (\bx',\mu')|.
+    \]
+    By the Lipschitz continuity of $\varphi_i$, we have 
+    \[
+    \begin{aligned}
+    \left|\bb(\bx,\mu') - \bb (\bx',\mu')\right| 
+    \leq & C_i\left|\bx-\bx'\right|.
+    \end{aligned}
+    \]
+\end{proof}
+\end{frame}
+\begin{frame}
+\begin{proof}
+    For the first term, we have 
+    \[
+    \begin{aligned}
+       \left |\bb(\bx,\mu) - \bb (\bx,\mu')\right| =
+       \leq&  C_i\left| 
+       \int  \varphi_{\text{e}}(\by ) \mu (\intd\by) - \int  \varphi_{\text{e}}(\by ) \mu' (\intd\by)
+       \right|
+    \end{aligned}
+    \]
+
+For all $\pi$, we have
+\[
+\begin{aligned}
+    \left| 
+       \int  \varphi_{\text{e}}(\by ) \mu (\intd\by) - \int  \varphi_{\text{e}}(\by ) \mu' (\intd\by)
+       \right| 
+       \leq & C_e \left(\int\left(
+        \by -
+        \by' \right)^2\pi(\intd \by,\intd \by')\right)^{\frac{1}{2}}.
+\end{aligned}
+\]
+Take the $\pi$ that minimize the $\int\left|
+        \by -
+        \by' \right|^2\pi(\intd \by,\intd \by')$, we get
+\[
+\begin{aligned}
+    \left |\bb(\bx,\mu) - \bb (\bx,\mu')\right| \leq C_i C_e W_2(\mu,\mu').
+\end{aligned}
+\]
+In summary,
+  \[
+    |\bb(\bx,\mu) - \bb (\bx',\mu')|\leq C(|\bx-\bx'|+W_2(\mu,\mu')).
+    \]
+\end{proof}
+\end{frame}
+\begin{frame}
+
+\begin{proposition}\label{prop:propogation_of_chaos}
+    Let the assumptions of Proposition \ref{prop:well-possness} hold. Let $(X_t^{i,N})_{i=1}^N$ be the $N$-particle system solving \eqref{equ:N_particle} with $f_0$-chaotic initial data $X_0^{i,N} \sim f_0$. Let $f_t$ be the unique solution to the mean-field Fokker-Planck equation \eqref{equ:weak_form_fk}. Then, the $N$-particle system (1) converges to the mean-field model (2) as $N \to \infty$. That is, for any $T > 0$, the $N$-particle distribution $f_t^N = \text{Law}(X_t^{1,N}, \dots, X_t^{N,N})$ is $f_t$-chaotic, satisfying:\[
+    \lim_{N \to \infty}W_2\left(f^{1,N}_{[0,T]},f_{[0,T]}\right) =0
+\]
+where $f_t^{1,N}$ is the first marginal of $f_t^N$.
+\end{proposition}
+    
+\end{frame}
+\begin{frame}
+   \begin{proof}
+    Let us define N independent processes $\bar{\mathcal X}_t^N = \left(\bar \bX^1_t,\cdots, \bar \bX^N_t\right)$ defined as the solution of $N$ SDEs:
+    \[
+    \intd \bar{\bX}^i_t  =  \varphi_{\text{i}}\left(\bar{\bX}^i_t,\int  \varphi_{\text{e}}(\by ) f_t(\by)\intd\by\right)\intd t + \sigma \intd \mathbf{B}^i_t,
+    \]
+    for $i\in \{1,\cdots,N$ where $(\bB^i_t)$ is the same Brownian motion and where we call that $f_t= \mathrm{Law}(\bar{X}_t^i)$. Since the Brownian motions are independent, the law $f_t$ is independent of index $i$. We ought to prove that 
+    \[
+       \frac{1}{N}\sum_{i=1}^N \mathbb E\left[\sup_{t\leq T}\left|\bX^i_t-\bar{\bX}^i_t\right|^2\right] \leq \epsilon (N,T).
+    \]
+    \end{proof} 
+\end{frame}
+\begin{frame}
+   \begin{proof}
+    By the definition of Wasserstein distance and Jensen inequality, the bounds imply that  \[
+    \lim_{N \to \infty}W_2\left(f^{1,N}_{[0,T]},f_{[0,T]}\right) =0. 
+\]
+
+Using the Ito formula, and since the stochastic terms cancel due to the synchronous coupling ($e_0^i=0$):
+\[
+\left|\bX^i_t - \bar{\bX}^i_t\right|^2 = 2 \int_0^t \left\langle \bX^i_s - \bar{\bX}^i_s, \bb(\bX^i_s, \mu_s^N) - \bb(\bar{\bX}^i_s, f_s) \right\rangle \intd s
+\]
+where $e_s^i = \bX^i_s - \bar{\bX}^i_s$. Taking the supremum and then expectation:
+\[
+\begin{aligned}
+& \mathbb E\left[\sup_{t\leq T}\left|\bX^i_t-\bar{\bX}^i_t\right|^2\right]
+& \leq \int_0^T \mathbb E\left[\sup_{r\leq s}\left|\bX^i_r-\bar{\bX}^i_r\right|^2\right] \intd s + \int_0^T \mathbb E\left[ \left| \bb(\bX^i_s, \mu_s^N) - \bb(\bar{\bX}^i_s, f_s) \right|^2 \right] \intd s
+\end{aligned}
+\]
+    \end{proof} 
+\end{frame}
+\begin{frame}
+   \begin{proof}
+The drift term can be split into two terms as follows:
+\[
+\begin{aligned}
+     \mathbb E \left[ \left|\bb(\bX^i_s,\mu^N_s)-\bb(\bar{\bX}^i_s,f_s)  \right|^2\right]
+ \leq &2\mathbb E \left[ \left|\bb(\bX^i_s,\mu^N_s)-\bb(\bar{\bX}^i_s,\bar{\mu}^N_s)  \right|^2\right]\\
+ &+ 2\mathbb E \left[ \left|\bb(\bar{\bX}^i_s,\bar{\mu}^N_s)-\bb(\bar{\bX}^i_s,f_s)  \right|^2\right].
+\end{aligned}
+\]
+For the first term 
+\[
+\begin{aligned}
+   \mathbb E \left[ \left|\bb(\bX^i_s,\mu^N_s)-\bb(\bar{\bX}^i_s,\bar{\mu}^N_s)  \right|^2\right] 
+   \leq & 2C_i^2(1+C_e^2)\mathbb E \left[|\bX^i_s - \bar{\bX}^i_s|^2 \right].
+\end{aligned}
+\]
+For the second term 
+$$\begin{aligned}
+    & \mathbb E \left[ \left|\bb(\bar{\bX}^i_s,\bar{\mu}^N_s)-\bb(\bar{\bX}^i_s,f_s)  \right|^2\right]
+    \leq & (C_i C_e)^2 \mathbb E \left[\left|  \frac{1}{N} \sum_{j=1}^N \varphi_e (\bar{\bX}^j_s ) - \mathbb E[\varphi_e (\bar{\bX}^j_s )] \right|^2  \right]
+\end{aligned}$$
+    \end{proof} 
+\end{frame}
+\begin{frame}
+   \begin{proof}
+Since the $\bar{\bX}^j_s$ are i.i.d. random variables with law $f_s$, the term inside the expectation is the squared error of a sample mean estimate. This is equal to the variance of the sample mean:
+$$ \mathbb E \left[ \left|\bb(\bar{\bX}^i_s,\bar{\mu}^N_s)-\bb(\bar{\bX}^i_s,f_s)  \right|^2\right] \leq\frac{C_i^2(1+C_e^2)}{N} \text{Var}\left( \varphi_e(\bar{\bX}^j_s) \right)$$Since $\varphi_e$ 
+is Lipschitz and $f_s$ has finite second moments (guaranteed by linear growth and Lipschitz continuous of $\bb$), the variance is finite and bounded by some constant $C_V$. Thus,$$ \mathbb E \left[ \left|\bb(\bar{\bX}^i_s,\bar{\mu}^N_s)-\bb(\bar{\bX}^i_s,f_s)  \right|^2\right] \leq \frac{(C_i C_e)^2 C_V}{N} .$$
+    \end{proof} 
+\end{frame}
+\begin{frame}
+   \begin{proof}
+Let $Y(t) = \mathbb E\left[\sup_{r\leq t}\left|\bX^i_r-\bar{\bX}^i_r\right|^2\right]$. From the Itô inequality, we have:
+$$ \begin{aligned} Y(T) &
+&\leq \frac{2 T C_B}{N} + \left(1 + 4 C_i^2 + 4 (C_i C_e)^2 \right) \int_0^T Y(s) \intd s.
+\end{aligned}$$
+Thus, we have
+\[
+\begin{aligned}
+    \mathbb E\left[\sup_{t\leq T}\left|\bX^i_t-\bar{\bX}^i_t\right|^2\right] \leq 2T\int_0^T C_i^2(1+C_e^2)  \mathbb E\left[\sup_{t\leq T}\left|\bX^i_s-\bar{\bX}^i_s\right|^2\right] + \frac{(C_i C_e)^2 C_V}{N}  
+    \intd s.
+\end{aligned}
+\]
+The conclusion follows by the Gronwall lemma.
+\end{proof} 
+\end{frame}
+\begin{frame}\small{
+\begin{theorem}
+    Assume that the empirical measure $\mu\in U \subset \mathcal P_2(\Omega)$ is supported in $\Omega=[-R,R]^d\subset \mathbb R^d$ for some $R>0$. We futher assume that the map $f:\Omega \times U \to \mathbb R $ is a Lipschitz continuous map in the sence that for any $\mu,\nu\in U $ and $\bx,\by\in \Omega$, there exist a constant $L_f$, such that 
+    \[
+    |f(\bx,\mu) -f(\by,\nu) | \leq L_f \left(\|\bx-\by\| +W_1(\mu,\nu)\right).
+    \]
+    There exist a constant $C$ depends on $d, R $ and $L_f$  and $C_\delta$ depends on $ L_f$ such that the following hold:
+    For any $\epsilon>0$, there exist $\delta = C_\delta \epsilon $ and let $\{\bc_m\}_{m=1}^{C_\Omega}\subset\Omega$ so that $\{B_\delta (\bc_m)\}_{m=0}^{C_\Omega}$ is a cover of $\Omega$ for some $C_\Omega >0$. Let $H=CC_\Omega + d^{C_\Omega +d }\epsilon^{-C_\Omega -d}$ and there are $C_\Omega$ partition of unity and  $H$ deep ReLU neural networks $\{q_k\}_{k=1}^H$ with depth in $O( (C_\Omega+d)^2 + (C_\omega +d)\log(\epsilon^{-1}))$ and width $O(1)$ such that 
+    \[
+    \sup_{\mu\in U ,\bx\in \Omega }\left|f(\bx,\mu)- \sum_{k=1}^H a_k q_k(\bx,\bu) \right|,
+    \]
+    where 
+    \(\bu=\left(\left\langle \omega_1,\mu\right\rangle, \cdots , \left\langle \omega_{C_\Omega},\mu\right\rangle\right)
+    \) and $a_k$ depends on $f$.
+\end{theorem}
+    }
+\end{frame}
+\begin{frame}
+\begin{proof}
+    We let \(\{\mathcal B_\delta (\mathbf c_m)\}_{m=1}^{C_\Omega}\) be a finite cover of \(\Omega\) by $C$ Euclidean balls. There exists a partition of unity $\{\omega_m(\bx)\}_{m=1}^{C_\Omega}$ subordinate to the cover \(\{\mathcal B_\delta (\mathbf c_m)\}_{m=1}^{C_\Omega}\) such that $0< \omega_m\in C^\infty (\Omega)$ and $\sum_{m=1}^{C_\Omega}\omega(\bx)=1$ for all $\bx\in \Omega$.
+    For any $\mu\in U$, we define 
+   \(\bu=\left(\left\langle \omega_1,\mu\right\rangle, \cdots , \left\langle \omega_{C_\Omega},\mu\right\rangle\right)
+    \). We notice that 
+    \[\sum_{m=1}^{C_\Omega} \bu_m = \int_\Omega \sum_{m=1}^{C_\Omega} \omega_m(\bx)\mu(\intd \bx)=1.\]
+    and $\bu_m\geq0$ for all $m$.
+    Therefore, we construct the approximate measure 
+    \[
+    \mu_\omega = \sum_{m=1}^{C_\Omega} \bu_m \delta_{\bc_m}(\intd \bx),
+    \]
+    \end{proof}
+\end{frame}
+\begin{frame}
+\begin{proof}
+    The $W_2$ error estimation of the approximation is given by 
+    \[
+    \begin{aligned}
+    W^2_2(\mu,\mu_\omega ) =& \inf_{\pi\in \Pi(\mu,\mu_\Omega)}\int_{\Omega\times\Omega} |\bx-\by|^2 \intd \pi(\bx,\by)\\
+        \leq & \int_{\Omega\times\Omega} |\bx-\by|^2 \intd \pi^*(\bx,\by) \quad \left( \intd \pi^*(\bx,\by) = \left(\sum_{m=1}^{C_\Omega}\omega_m(\bx)\delta_{\bc_m}(\intd y )\right)\intd \mu(\bx)  \right)\\
+        = & \sum_{m=1}^{C_\Omega}\int_{\Omega\times\Omega} |\bx-\bc_m|^2 \omega_m(\bx)\intd \mu(\bx)\\
+        = & \sum_{m:\|\bx-\bc_m\|_2\leq \delta}\int_{\Omega\times\Omega} |\bx-\bc_m|^2 \omega_m(\bx)\intd \mu(\bx)\\
+        \leq & \sum_{m:\|\bx-\bc_m\|_2\leq \delta} \delta ^2 \bu_m  \leq \delta ^2
+    \end{aligned}
+    \]
+    \end{proof}
+\end{frame}
+\begin{frame}
+\begin{proof}
+    Setting $\delta = \frac{\epsilon}{2L_f}$ and using the Lipschitz property of $f$, we have 
+    \[
+    \begin{aligned}
+    |f(\bx , \mu)- f(\bx,\mu_\omega) |\leq & L_f  W_1(\mu,\mu_\omega)
+    \leq& \frac{\epsilon}{2}
+    \end{aligned}
+    \]
+    We next define a function $g:\mathbb R^d\times \mathbb R^{C_\Omega}\to \mathbb R$ such that $g(\bx,\bu) = f(\bx,\mu_\omega)$. We claim that $g$ is Lipschitz in the following sense: for any $\bx,\by\in \mathbb R^d$, and for any $\mu,\nu\in \mathcal P_2(\Omega)$, define $\mu_\omega$ and $\nu_\omega$ as before with coefficients $\bu$ and $\bv$ respectively. we have
+    \[
+    \begin{aligned}
+        |g(\bx,\bu)-g(\by,\bv)| =&  |f(\bx,\mu_\omega)-f(\by,\nu_\omega)|\\
+        \leq & L_f\left(|\bx-\by|_2 + W_1(\mu_\omega,\nu_\omega )  \right)
+     \end{aligned}
+    \]
+    \end{proof}
+\end{frame}
+\begin{frame}
+\begin{proof}
+    \[
+    \begin{aligned}
+        W_1(\mu_\omega, \nu_\omega) \leq & \sup_{\mathrm{Lip}(t) \le 1} \left\{ \sum_{m=1}^{C_\Omega}  t_{\max} \bw^+_m-t_{\min} \bw^-_m\right\}\\
+    \leq &  M (t_{\max}-t_{\min})\leq 2MR\sqrt{d}= 2R\sqrt{d}|\bu-\bv|_1\leq 2R\sqrt{{C_\Omega}d}|\bu-\bv|_2 .
+    \end{aligned}
+    \]
+Therefore, we have 
+\[
+\begin{aligned}
+|g(\bx,\bu)-g(\by,\bv)| \leq &  L_f\left(|\bx-\by|_2 + 2R\sqrt{{C_\Omega}d}\|\bu-\bv\|_2   \right)\\
+\leq & 2R\sqrt{{C_\Omega}d}L_f \sqrt{|\bx-\by|_2^2 +|\bu-\bv|^2_2 }
+\end{aligned}
+\]
+    \end{proof}
+\end{frame}
+\begin{frame}
+\begin{proof}
+Therefore, by Theorem 5 in \cite{liu2024neural}, for $\epsilon>0$, we set $H=C{C_\Omega+d}^{C_\Omega+d}\epsilon^{-{C_\Omega-d}}$ for some $C$ depending on $d,R,L_f$, then there exist $H$ neural networks $\{q_k\}_{k=1}^H$ with depth $L = O( (C_\Omega+d)^2 + (C_\omega +d)\log(\epsilon^{-1}))$ and  width $O(1)$ such that 
+\[
+\sup_{\mu\in U ,\bx\in \Omega }\left|g(\bx,\bu)-\sum_{k}^H a_k q_k(\bx,\bu)\right|\leq \frac{\epsilon}{2},
+\]
+where $a_k$ are constant dependent on $f$. We have for any $\mu\in \mathcal P_2(\Omega)$ 
+\[
+\begin{aligned}
+    \sup_{\mu\in U ,\bx\in \Omega }\left|f(\bx,\mu) - \sum_{k}^H a_k q_k(\bx,\bu)\right|\leq &\sup_{\mu\in U ,\bx\in \Omega }\left|f(\bx,\mu) - g(\bx,\bu)\right|+ \sup_{\mu\in U ,\bx\in \Omega }\left|g(\bx,\bu)-\sum_{k}^H a_k q_k(\bx,\bu)\right|\\
+= & \sup_{\mu}\left|f(\bx,\mu) - f(\bx,\mu_\omega)\right|+ \sup_{\mu}\left|g(\bx,\bu)-\sum_{k}^H a_k q_k(\bx,\bu)\right|\\
+= & \epsilon
+\end{aligned}
+\]
+\end{proof}
+    
+\end{frame}
+\begin{frame}[allowframebreaks]
+\printbibliography
+\end{frame}
+\end{document}

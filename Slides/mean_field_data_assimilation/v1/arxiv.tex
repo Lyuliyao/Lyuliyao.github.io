@@ -1,0 +1,108 @@
+\documentclass{article}
+
+
+\usepackage{arxiv}
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{fancyhdr}       % header
+\usepackage{graphicx}       % graphics
+\usepackage{amsmath}
+\usepackage{lyu}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{bbm}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+
+%\pagestyle{fancy}
+\thispagestyle{empty}
+% \rhead{ \textit{ }} 
+
+% Update your Headers here
+% \fancyhead[LO]{}
+% 
+% \fancyhead[RE]{Firstauthor and Secondauthor} % Firstauthor et al. if more than 2 - must use \documentclass[twoside]{article}
+
+
+% Update your Headers here
+\fancyhead[LO]{Multiscale Nudge}
+
+
+
+
+  
+\title{
+Multiscale Nudge: Cross-scale Data Assimilation from Macroscopic Observations to Microscopic Dynamics
+}
+
+\author{
+  Liyao Lyu\\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{lyuliyao@math.ucla.edu} \\
+  \AND
+   Xinyue Yu \\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{tracy@math.ucla.edu} \\
+  \AND
+   Hayden Schaeffer  \\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{hayden@math.ucla.edu} \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+}
+
+
+\begin{document}
+\maketitle
+
+
+\input{abstract.tex}
+
+
+
+% keywords can be removed
+\keywords{mean field approximation\and interacting particle models \and data assimilation}
+
+\input{main.tex}
+\section*{Acknowledgments}
+ This work used Anvil at Purdue through allocation MTH260007 from the Advanced Cyberinfrastructure Coordination Ecosystem: Services \& Support (ACCESS) program\cite{boerner2023access}, which is supported by U.S. National Science Foundation grants \#2138259, \#2138286, \#2138307, \#2137603, and \#2138296.
+%Bibliography
+\bibliographystyle{unsrt}  
+\bibliography{main}  
+
+\appendix
+\input{appendix}
+\end{document}

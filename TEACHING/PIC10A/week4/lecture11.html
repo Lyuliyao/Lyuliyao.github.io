@@ -26,6 +26,7 @@
           <span class="pill">declarations</span>
           <span class="pill">definitions</span>
           <span class="pill">parameters</span>
+          <span class="pill">common errors</span>
         </div>
       </section>
 
@@ -53,14 +54,24 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Interface</span>
-            <strong>declaration</strong>
-            <span>Tell the compiler that a function exists.</span>
+            <span class="kicker">First</span>
+            <strong>declarations</strong>
+            <span>Tell the compiler which helper functions exist.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Implementation</span>
-            <strong>definition</strong>
-            <span>Give the function body that actually runs.</span>
+            <span class="kicker">Then</span>
+            <strong>definitions and calls</strong>
+            <span>Give function bodies and use them from calling code.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Next</span>
+            <strong>common errors</strong>
+            <span>Missing declarations, missing definitions, repeated definitions.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Finally</span>
+            <strong>return rules</strong>
+            <span><code>void</code>, returned values, and missing-return undefined behavior.</span>
           </article>
         </div>
       </section>
@@ -70,8 +81,12 @@
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int my_max(int a, int b);
-void print_line(string text);
+int my_max(int i, int j);
+void print(double d);
+
+// Parameter names may be omitted in declarations:
+int my_max(int, int);
+void print(double);
             </code>
           </pre>
           <article class="card">
@@ -89,19 +104,19 @@ void print_line(string text);
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int my_max(int a, int b) {
-    if (a &gt; b) {
-        return a;
+int my_max(int i, int j) {
+    if (i &gt; j) {
+        return i;
     }
-    return b;
+    return j;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
               <li>A definition includes the body in braces.</li>
-              <li>A definition also counts as a declaration.</li>
-              <li>The body runs only when the function is called.</li>
+              <li>Parameter names are needed when the body uses them.</li>
+              <li>Only the code path reached by the call actually executes.</li>
             </ul>
           </article>
         </div>
@@ -112,38 +127,170 @@ int my_max(int a, int b) {
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int bigger = my_max(7, 4);
-print_line(&quot;done&quot;);
+int c = my_max(a, b);
+int k = my_max(j, i);
+print(1.01);
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
               <li>Calling means using the function.</li>
-              <li>Arguments are the values supplied at the call site.</li>
-              <li>The returned value can be stored or used in a larger expression.</li>
+              <li>Arguments are supplied at the call site.</li>
+              <li>A non-void returned value can be assigned or used in a larger expression.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Parameters vs Arguments</h2>
+        <h2>Build Error: Call Before Declaration</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int square(int n) {
-    return n * n;
+int main() {
+    cout &lt;&lt; triple(4) &lt;&lt; endl;  // build error
 }
 
-int x = 5;
-int y = square(x);
+int triple(int n) {
+    return 3 * n;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The compiler reads the file from top to bottom.</li>
+              <li>At the call, it has not seen any declaration for <code>triple</code>.</li>
+              <li>Fix it by declaring <code>triple</code> before <code>main</code>, or defining it before <code>main</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Build Error: Declared But Not Defined</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int add(int a, int b);
+
+int main() {
+    cout &lt;&lt; add(2, 5) &lt;&lt; endl;
+}
+
+// No definition of add appears anywhere.
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The compiler can understand the call from the declaration.</li>
+              <li>The build still fails because no body exists to run.</li>
+              <li>More specifically, this is a linker error.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Repeated Declarations and Definitions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Legal</h3>
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int add(int a, int b);
+int add(int a, int b);  // legal repeated declaration
+
+int add(int a, int b) {
+    return a + b;
+}
+            </code>
+          </pre>
+          </article>
+          <article class="card secondary">
+            <h3>Build error</h3>
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int add(int a, int b) {
+    return a + b;
+}
+
+int add(int x, int y) {  // build error
+    return x + y;
+}
+            </code>
+          </pre>
+          </article>
+        </div>
+        <div class="callout cool">A non-inline function may be declared multiple times, but it may be defined only once in a program.</div>
+      </section>
+
+      <section>
+        <h2>Parameters</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int i, int j) {
+    if (i &gt; j) {
+        return i;
+    }
+    return j;
+}
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><code>n</code> is a parameter.</li>
-              <li><code>x</code> is an argument.</li>
-              <li>At the start of the call, the argument value is copied into the parameter.</li>
+              <li><code>i</code> and <code>j</code> are parameters.</li>
+              <li>Parameters exist to be used inside the function definition.</li>
+              <li>Each function call gets its own parameter variables.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Arguments</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a = 3;
+int b = 7;
+int c = my_max(a, b);
+
+int i = 5;
+int j = 4;
+int k = my_max(j, i);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>a</code>, <code>b</code>, <code>j</code>, and <code>i</code> are arguments.</li>
+              <li>Arguments are provided when the function is called.</li>
+              <li>Match arguments to parameters by position, not by name.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Name Conflicts Are Resolved by Position</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int my_max(int i, int j);
+
+int i = 5;
+int j = 4;
+
+int k = my_max(j, i);
+// first argument j initializes parameter i
+// second argument i initializes parameter j
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The parameter names belong to the function.</li>
+              <li>The argument names belong to the caller.</li>
+              <li>The first argument goes to the first parameter, and so on.</li>
             </ul>
           </article>
         </div>
@@ -154,72 +301,92 @@ int y = square(x);
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-double average(int total, int count);
-void print_score(string name, int score);
+int my_max(int i, int j);
+void print(double d);
+
+// Same signatures:
+int my_max(int, int);
+void print(double);
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A signature is the name plus the parameter types.</li>
-              <li>Return type is important, but it does not distinguish overloads later.</li>
-              <li>Signatures are how declarations and calls are matched.</li>
+              <li>A signature includes the function name.</li>
+              <li>It includes the number and types of parameters.</li>
+              <li>The textbook also lists the return type as part of the signature description here.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Declarations and Calls Together</h2>
+        <h2><code>void</code> Return Type</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int my_max(int i, int j);
-void print(double d);
+void print(double d) {
+    cout &lt;&lt; "printing... " &lt;&lt; d &lt;&lt; endl;
+    // return;  // optional at the end
+}
 
-int main() {
-    int a = 3;
-    int b = 7;
+// void x;  // build error
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>void</code> has no values.</li>
+              <li>A return type of <code>void</code> means no value is returned.</li>
+              <li>A <code>void</code> function may still use plain <code>return;</code> to end the call.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
 
-    int c = my_max(a, b);
-    cout &lt;&lt; c &lt;&lt; endl;
+      <section>
+        <h2>Undefined Behavior: Missing Return</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int abs_val(int i) {
+    if (i &gt; 0) {
+        return i;
+    }
+    if (i &lt; 0) {
+        return -i;
+    }
+}
 
-    print(1.01);
-    return 0;
+int v = abs_val(0);  // undefined behavior
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>abs_val</code> has return type <code>int</code>.</li>
+              <li>When <code>i == 0</code>, the body reaches the closing brace without returning.</li>
+              <li>Using the missing return value is undefined behavior.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Fix: Return on Every Path</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int abs_val(int i) {
+    if (i &gt;= 0) {
+        return i;
+    }
+    return -i;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The declarations let <code>main</code> call the functions before their definitions appear.</li>
-              <li><code>a</code>, <code>b</code>, and <code>1.01</code> are arguments.</li>
-              <li>The declarations are a compact map of the helper functions used by <code>main</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Definitions After <code>main</code></h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int my_max(int i, int j) {
-    if (i &gt; j) {
-        return i;
-    }
-    return j;
-}
-
-void print(double d) {
-    cout &lt;&lt; "value: " &lt;&lt; d &lt;&lt; endl;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>The definition gives the body that runs during a function call.</li>
-              <li>Parameter names such as <code>i</code>, <code>j</code>, and <code>d</code> belong to their function definitions.</li>
-              <li>The return type controls whether the function call produces a usable value.</li>
+              <li>For a non-void function, ask: does every possible path return?</li>
+              <li>Warnings about missing return are serious even when the program builds.</li>
+              <li>Do not rely on whatever value seems to appear during one test run.</li>
             </ul>
           </article>
         </div>
@@ -234,7 +401,15 @@ void print(double d) {
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">In <code>int y = square(x);</code>, which name is the argument?</p>
+            <p class="meta">In <code>int c = my_max(a, b);</code>, which names are the arguments?</p>
+          </article>
+          <article class="card">
+            <h3>Exercise 3</h3>
+            <p class="meta">Is it legal to declare the same function twice if the declarations match?</p>
+          </article>
+          <article class="card secondary">
+            <h3>Exercise 4</h3>
+            <p class="meta">What happens if a non-void function reaches the end without returning a value?</p>
           </article>
         </div>
       </section>
@@ -248,15 +423,17 @@ void print(double d) {
               <li>Function declarations announce functions before they are used.</li>
               <li>Function definitions provide the executable body.</li>
               <li>Arguments are provided by calls; parameters live inside the function call.</li>
-              <li>Function signatures document the name and parameter types.</li>
+              <li>Function signatures document the return type, name, and parameter types.</li>
+              <li>Repeated matching declarations are legal, but repeated non-inline definitions are not.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Programming habits</h3>
+            <h3>Error habits</h3>
             <ul class="tight">
               <li>Put declarations before calls.</li>
+              <li>Make sure every declared function that is called has exactly one definition.</li>
+              <li>For non-void functions, make every path return a value.</li>
               <li>Use names that describe the purpose of the function.</li>
-              <li>Keep one function focused on one job.</li>
             </ul>
           </article>
         </div>
@@ -276,19 +453,23 @@ void print(double d) {
               <li class="answer-line"><strong>Answer:</strong> An instruction to run the function.</li>
               <li><strong>Q4.</strong> What is a parameter?</li>
               <li class="answer-line"><strong>Answer:</strong> A variable listed in the function definition/declaration.</li>
+              <li><strong>Q5.</strong> Is it legal to declare a function multiple times?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes, if the declarations match.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is an argument?</li>
+              <li><strong>Q6.</strong> What is an argument?</li>
               <li class="answer-line"><strong>Answer:</strong> A value supplied in a function call.</li>
-              <li><strong>Q6.</strong> Can a function be declared before it is defined?</li>
+              <li><strong>Q7.</strong> Can a function be declared before it is defined?</li>
               <li class="answer-line"><strong>Answer:</strong> Yes.</li>
-              <li><strong>Q7.</strong> Why are function names useful?</li>
-              <li class="answer-line"><strong>Answer:</strong> They give a reusable idea a readable name.</li>
               <li><strong>Q8.</strong> What should you check when a call does not build?</li>
               <li class="answer-line"><strong>Answer:</strong> Whether a matching declaration is visible before the call.</li>
+              <li><strong>Q9.</strong> What if a called function was declared but never defined?</li>
+              <li class="answer-line"><strong>Answer:</strong> The build fails because there is no function body to connect to the call.</li>
+              <li><strong>Q10.</strong> What if a non-void function reaches the end without returning?</li>
+              <li class="answer-line"><strong>Answer:</strong> Using the missing return value is undefined behavior.</li>
             </ul>
           </article>
         </div>
@@ -318,22 +499,23 @@ int triple(int n) {
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Parameter names</h3>
+            <h3>Missing return</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What value is printed?
+                <strong>Q2.</strong> What is wrong with this function?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 int f(int x) {
-    return x + 1;
+    if (x &gt; 0) {
+        return x + 1;
+    }
 }
 
-int x = 10;
-cout &lt;&lt; f(3) &lt;&lt; endl;
+int y = f(0);
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It prints <code>4</code>. The parameter <code>x</code> inside <code>f</code> is separate from the outer <code>x</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> It builds on some compilers, but <code>f(0)</code> reaches the end without returning an <code>int</code>, so using the result is undefined behavior.</li>
             </ul>
           </article>
         </div>

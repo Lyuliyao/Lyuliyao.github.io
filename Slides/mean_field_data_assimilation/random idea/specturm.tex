@@ -1,0 +1,370 @@
+\documentclass{article}
+
+
+\usepackage{arxiv}
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{fancyhdr}       % header
+\usepackage{graphicx}       % graphics
+\usepackage{amsmath}
+\usepackage{lyu}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+
+\pagestyle{fancy}
+\thispagestyle{empty}
+% \rhead{ \textit{ }} 
+
+% Update your Headers here
+% \fancyhead[LO]{}
+% 
+% \fancyhead[RE]{Firstauthor and Secondauthor} % Firstauthor et al. if more than 2 - must use \documentclass[twoside]{article}
+
+
+% Update your Headers here
+\fancyhead[LO]{Multiscale Nudge}
+
+
+
+
+  
+\title{
+Multiscale Nudge: Cross-scale Data Assimilation from Macroscopic Observations to Microscopic Dynamics
+}
+
+\author{
+  Liyao Lyu\\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{lyuliyao@math.ucla.edu} \\
+  \AND
+   Xinyue Yu \\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{tracy@math.ucla.edu} \\
+  \AND
+   Hayden Schaeffer  \\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{hayden@math.ucla.edu} \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+}
+
+
+\begin{document}
+\maketitle
+\section{specturm wasserstein flow}
+Consider the 
+\[
+J_{\mathrm{nud}}(\nu,\mu^{\mathrm{obs}}) = \frac{1}{2}\int_{\mathbb{R}^d} \left| \nu(\bz) - \mu^{\mathrm{obs}}(\bz) \right|^2 \intd \bz,
+\]
+with 
+\[
+ \frac{\delta J_{\mathrm{nud}}}{\delta \nu}(\bz)  = \nu-\mu^\mathrm{obs}.
+\]
+Then the associated force field is 
+\[
+g_\nud = \nabla_\bz (\nu-\mu^\obs).
+\]
+However, this force field $g$ only determines the descent direction. The actual nudging velocity is further determined by the underlying geometry. Under the classical $W_2$ geometry, the corresponding duality map is defined by
+\[
+J_\nu(g)
+\in
+\operatorname*{arg\,min}_{v}
+\left\{
+\int_{\mathbb{R}^d} g(\bz)\cdot v(\bz)\, d\nu(\bz)
++
+\frac12
+\int_{\mathbb{R}^d} |v(\bz)|^2\, d\nu(\bz)
+\right\}.
+\]
+The minimizer is given pointwise by
+\[
+J_\nu(g)(\bz)=-g(\bz).
+\]
+Hence the induced nudging velocity field is
+\[
+v_{\mathrm{nud}}(\bz)
+=
+-g(\bz)
+=
+-\nabla_{\bz}\bigl(\nu(\bz)-\mu^{\mathrm{obs}}(\bz)\bigr).
+\]
+
+Equivalently, from the Jordan--Kinderlehrer--Otto (JKO) perspective, the same $W_2$-gradient flow may be characterized as the minimizing movement scheme
+\[
+\rho_{k+1}
+=
+\operatorname*{arg\,min}_{\rho}
+\left\{
+J_{\mathrm{nud}}(\rho,\mu^{\mathrm{obs}})
++
+\frac{1}{2\tau}W_2^2(\rho,\rho_k)
+\right\}.
+\]
+Formally, as $\tau\to 0$, this implicit variational update converges to the continuity equation
+\[
+\partial_t \rho + \nabla\cdot\bigl(\rho\,v_{\mathrm{nud}}\bigr)=0,
+\qquad
+v_{\mathrm{nud}}=-\nabla\frac{\delta J_{\mathrm{nud}}}{\delta \rho}.
+\]
+For the present choice
+\[
+\frac{\delta J_{\mathrm{nud}}}{\delta \rho}
+=
+\rho-\mu^{\mathrm{obs}},
+\]
+this yields
+\[
+v_{\mathrm{nud}}(\bz)
+=
+-\nabla_{\bz}\bigl(\rho(\bz)-\mu^{\mathrm{obs}}(\bz)\bigr).
+\]
+By analogy, we define the spectral Wasserstein cost by
+\[
+W_\gamma(\nu,\mu)^2
+:=
+\inf_{\pi\in\Pi(\nu,\mu)}
+\gamma\!\left(
+\int_{\mathbb R^d\times\mathbb R^d}
+(\by-\bx)(\by-\bx)^\top\,d\pi(\bx,\by)
+\right),
+\]
+where $\gamma$ is a norm on the cone $S_d^+$ of positive semidefinite matrices. The corresponding local kinetic cost at $\nu$ is then given by
+\[
+N_\nu(v)^2
+:=
+\gamma\!\left(
+\int_{\mathbb R^d} v(\bz)v(\bz)^\top\,d\nu(\bz)
+\right).
+\]
+Accordingly, the duality map associated with the spectral geometry is defined by
+\[
+J_\nu^\gamma(g)
+\in
+\operatorname*{arg\,min}_{v}
+\left\{
+\int_{\mathbb R^d} g(\bz)\cdot v(\bz)\,d\nu(\bz)
++
+\frac12\,N_\nu(v)^2
+\right\}.
+\]
+If $\gamma(S)=\|S\|_{S_1}$, then, since $S$ is positive semidefinite,
+\[
+\gamma(S)=\operatorname{tr}(S).
+\]
+Consequently,
+\[
+W_\gamma(\nu,\mu)^2
+=
+\inf_{\pi\in\Pi(\nu,\mu)}
+\operatorname{tr}\!\left(
+\int (\by-\bx)(\by-\bx)^\top\,d\pi(\bx,\by)
+\right)
+=
+\inf_{\pi\in\Pi(\nu,\mu)}
+\int |\by-\bx|^2\,d\pi(\bx,\by)
+=
+W_2(\nu,\mu)^2.
+\]
+Thus, the choice $\gamma(S)=\|S\|_{S_1}$ recovers the classical quadratic Wasserstein geometry.
+If $\gamma(S)=\|S\|_{S_p}$ for some $1<p<\infty$, then
+\[
+W_\gamma(\nu,\mu)^2
+:=
+\inf_{\pi\in\Pi(\nu,\mu)}
+\left\|
+\int_{\mathbb R^d\times\mathbb R^d}
+(\by-\bx)(\by-\bx)^\top\,d\pi(\bx,\by)
+\right\|_{S_p}.
+\]
+This defines an intermediate spectral Wasserstein geometry, interpolating between the classical quadratic Wasserstein distance ($p=1$) and the operator-norm geometry ($p=\infty$). The associated local tangent cost is
+\[
+N_\nu(v)^2
+=
+\left\|
+\int_{\mathbb R^d} v(\bz)v(\bz)^\top\,d\nu(\bz)
+\right\|_{S_p},
+\]
+which depends on the global covariance structure of the velocity field and is therefore no longer pointwise separable.
+
+The duality map associated with this spectral geometry is defined by
+\begin{equation}\label{equ:Lduap_J}
+    \begin{aligned}
+  J_\nu^{(p)}(g)
+\in
+\operatorname*{arg\,min}_{v}
+\left\{
+\int_{\mathbb R^d} g(\bz)\cdot v(\bz)\,d\nu(\bz)
++
+\frac12
+\left\|
+\int_{\mathbb R^d} v(\bz)v(\bz)^\top\,d\nu(\bz)
+\right\|_{S_p}
+\right\}.  
+\end{aligned}
+\end{equation}
+For $1<p<\infty$, the Schatten-$p$ norm admits the support-function representation
+\[
+\|S\|_{S_p}
+=
+\max_{Q\succeq 0,\ \|Q\|_{S_q}\le 1}\operatorname{tr}(QS),
+\qquad q=\frac{p}{p-1}.
+\]
+Accordingly, setting
+\[
+K_{\gamma_p}
+:=
+\{Q\succeq 0:\|Q\|_{S_q}\le 1\},
+\]
+we may rewrite the kinetic term as
+\[
+\left\|
+\int_{\mathbb R^d} v(\bz)v(\bz)^\top\,d\nu(\bz)
+\right\|_{S_p}
+=
+\max_{Q\in K_{\gamma_p}}
+\operatorname{tr}\!\left(
+Q\int_{\mathbb R^d} v(\bz)v(\bz)^\top\,d\nu(\bz)
+\right)
+=
+\max_{Q\in K_{\gamma_p}}
+\int_{\mathbb R^d} v(\bz)^\top Q\,v(\bz)\,d\nu(\bz).
+\]
+Thus, the Schatten-$p$ geometry may be viewed as selecting, among all admissible quadratic forms $Q\in K_{\gamma_p}$, the one that is most relevant to the current second-order structure of the field.
+
+Now define the force covariance
+\[
+S_\nu(g)
+:=
+\int_{\mathbb R^d} g(\bz)g(\bz)^\top\,d\nu(\bz).
+\]
+If an active matrix $Q_\nu^*$ exists, namely
+\[
+Q_\nu^*
+\in
+\operatorname*{arg\,max}_{Q\in K_{\gamma_p}}
+\operatorname{tr}\!\bigl(QS_\nu(g)\bigr),
+\]
+and if $Q_\nu^*$ is invertible, then the duality map admits the representation
+\[
+J_\nu^{(p)}(g)(\bz)=-(Q_\nu^*)^{-1}g(\bz).
+\]
+For the endpoint case $p=\infty$, we have
+\[
+\gamma_\infty(S)=\|S\|_{S_\infty}=\lambda_{\max}(S),
+\]
+and the corresponding representing set is
+\[
+K_{\gamma_\infty}
+=
+\{Q\succeq 0:\|Q\|_{S_1}\le 1\}
+=
+\{Q\succeq 0:\operatorname{tr}(Q)\le 1\}.
+\]
+Hence
+\[
+\|S\|_{S_\infty}
+=
+\max_{Q\in K_{\gamma_\infty}}\operatorname{tr}(QS).
+\]
+Approximating \eqref{equ:Lduap_J} by an empirical measure with $n$ particles, the duality-map minimization reduces to the finite-dimensional problem
+\[
+\min_{V\in\mathbb R^{n\times d}}
+\left\{
+\frac1n \langle G,V\rangle
++
+\frac12
+\left\|
+\frac1n V^\top V
+\right\|_{S_p}
+\right\},
+\]
+where
+\[
+G=
+\begin{bmatrix}
+g(\bZ^1)^\to1p\\
+\vdots\\
+g(\bZ^n)^\top
+\end{bmatrix}\in\mathbb R^{n\times d},
+\qquad
+g(\bZ)=\nabla_{\bz}\frac{\delta J_{\mathrm{nud}}}{\delta \nu}(\bZ),
+\]
+and $V\in\mathbb R^{n\times d}$ is the particle velocity matrix.
+If $G$ admits the singular value decomposition
+\[
+G=U\operatorname{diag}(\sigma_i)W^\top,
+\]
+then the minimizer is given by
+\[
+V=\Xi_p(G)
+=
+-\|G\|_{S_q}^{\,2-q}\,
+U\operatorname{diag}(\sigma_i^{\,q-1})W^\top,
+\]
+where
+\[
+r=2p,\qquad q=\frac{r}{r-1}=\frac{2p}{2p-1}.
+\]
+
+In particular, if $p=1$, then $r=2$ and $q=2$, so
+\[
+V
+=
+-U\operatorname{diag}(\sigma_i)W^\top
+=
+-G.
+\]
+
+If $p=2$, then $r=4$ and $q=\frac43$, and hence
+\[
+V
+=
+-\|G\|_{S_{4/3}}^{2/3}\,
+U\operatorname{diag}(\sigma_i^{1/3})W^\top.
+\]
+
+Finally, if $p=\infty$, then $q=1$, and the formula reduces to
+\[
+V
+=
+-\|G\|_{S_1}UW^\top.
+\]
+Since $\|G\|_{S_1}$ is a scalar, it only sets the overall step size. The update direction is therefore determined by $UW^\top$, which is precisely the Muon-type normalized direction.
+\bibliographystyle{unsrt}  
+
+\appendix
+\end{document}

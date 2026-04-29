@@ -1,0 +1,148 @@
+\documentclass{article}
+
+
+\usepackage{arxiv}
+\usepackage{enumitem}
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{fancyhdr}       % header
+\usepackage{graphicx}       % graphics
+\usepackage{amsmath}
+\usepackage{lyu}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+
+\pagestyle{fancy}
+\thispagestyle{empty}
+% \rhead{ \textit{ }} 
+
+% Update your Headers here
+% \fancyhead[LO]{}
+% 
+% \fancyhead[RE]{Firstauthor and Secondauthor} % Firstauthor et al. if more than 2 - must use \documentclass[twoside]{article}
+
+
+% Update your Headers here
+\fancyhead[LO]{Multiscale Nudge}
+
+
+
+
+  
+\title{
+Multiscale Nudge: Cross-scale Data Assimilation from Macroscopic Observations to Microscopic Dynamics
+}
+
+\author{
+  Liyao Lyu\\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{lyuliyao@math.ucla.edu} \\
+  \AND
+   Xinyue Yu \\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{tracy@math.ucla.edu} \\
+  \AND
+   Hayden Schaeffer  \\
+  Department of Mathematics \\
+  University of California, Los Angeles \\
+  Los Angeles, CA 90024, USA\\
+  \texttt{hayden@math.ucla.edu} \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+  %% \And
+  %% Coauthor \\
+  %% Affiliation \\
+  %% Address \\
+  %% \texttt{email} \\
+}
+
+
+\begin{document}
+
+Consider the Vlasov--Poisson system in characteristic form,
+\begin{align}
+    \mathrm{d} X_t^i &= V_t^i\,\mathrm{d} t,\\
+    \mathrm{d} V_t^i &= E(X_t^i,t)\,\mathrm{d} t,
+\end{align}
+with self-consistent electric field $E(x,t) = -\nabla_x\phi(x,t)$, where the potential solves the Poisson equation
+\begin{equation}\label{equ:poisson}
+    -\Delta_x\phi(x,t) = \rho(x,t) - 1, 
+    \qquad 
+    \rho(x,t) = \int f(x,v,t)\,\mathrm{d} v.
+\end{equation}
+
+
+Suppose we only observe the potential, $y(x,t) := \phi(x,t)$, and wish to reconstruct the full phase-space density $f(x,v,t)$. This inverse problem is severely ill-posed: $\phi$ depends on $f$ only through its spatial marginal $\rho$, so infinitely many distributions produce the same observation. To extract velocity information, we use multiple historical snapshots and nudge the state through the cost functional
+\begin{equation}
+    J_k(g) = \frac{1}{2}\int_0^{T_w} K(s)\,\bigl\|H(B_s g) - y_k(s)\bigr\|^2\,\mathrm{d} s,
+\end{equation}
+where
+\begin{itemize}
+    \item $H : f \mapsto \phi[f]$ is the (linear) observation operator, defined by solving \eqref{equ:poisson};
+    \item $B_s$ is the \emph{backward evolution operator}, $B_s g := f_g(s)$, with $f_g$ solving
+    \begin{equation}\label{equ:bk_operator}
+        \partial_s f_g - v\cdot\nabla_x f_g - E[f_g]\cdot\nabla_v f_g = 0, 
+        \qquad 
+        f_g(0) = g;
+    \end{equation}
+    \item $K(s)$ is a temporal weight and $y_k(s)$ is the $k$-th observed snapshot.
+\end{itemize}
+
+
+A formal variational calculation gives
+\begin{equation}
+    \delta J_k(g)[\eta] 
+    = \int_0^{T_w} K(s)\, B_s'(g)^{*}\, H^{*}\bigl(H(B_s g) - y_k(s)\bigr)\,\mathrm{d} s,
+\end{equation}
+where $B_s'(g)^{*}$ and $H^{*}$ are the adjoints of the linearized backward operator and the observation operator, respectively. Since $H$ is linear, $H'(f) = H$; the starred operators are the adjoints used to push the residual back onto the initial-condition space.
+
+
+To identify $B_s'(g)$, perturb the initial datum and set
+\begin{equation}
+    h(s) := \left.\frac{\mathrm{d}}{\mathrm{d}\epsilon}\, f_{g+\epsilon\eta}(s)\right|_{\epsilon=0} 
+    = B_s'(g)\,\eta.
+\end{equation}
+Differentiating \eqref{equ:bk_operator} in $\epsilon$ yields the linearized Vlasov equation
+\begin{equation}
+    \partial_s h - v\cdot\nabla_x h - E[f_g]\cdot\nabla_v h - \delta E[h]\cdot\nabla_v f_g = 0, 
+    \qquad 
+    h(0) = \eta,
+\end{equation}
+where the field perturbation $\delta E[h] = -\nabla_x\delta\phi[h]$ is determined by
+\begin{equation}
+    -\Delta_x\delta\phi[h] = \rho_h, 
+    \qquad 
+    \rho_h(x,s) = \int h(x,v,s)\,\mathrm{d} v.
+\end{equation}
+The additional term $\delta E[h]\cdot\nabla_v f_g$ reflects the self-consistent nature of the field: a perturbation of $f$ perturbs $\rho$, hence $\phi$, hence the transport field itself.
+
+\bibliographystyle{unsrt}  
+
+\appendix
+\end{document}

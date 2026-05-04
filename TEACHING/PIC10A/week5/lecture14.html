@@ -19,13 +19,13 @@
         <div class="eyebrow">PIC 10A • Lecture 14</div>
         <h1>References II</h1>
         <p class="lead">
-          References can avoid copies and can allow mutation. <code>const</code> references give read-only access, which is essential for safe and efficient function parameters.
+          We finish references by writing <code>good_swap</code>, then meet <code>const T&amp;</code> &mdash; an arrow that promises not to write.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 10.5 and Chapter 12 intro</span>
-          <span class="pill">const references</span>
-          <span class="pill">parameter choices</span>
-          <span class="pill">mutation</span>
+          <span class="pill">Chapter 10.4&ndash;10.5</span>
+          <span class="pill">good_swap</span>
+          <span class="pill">reference parameters</span>
+          <span class="pill">const T&amp;</span>
         </div>
       </section>
 
@@ -33,17 +33,19 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>References I</h3>
+            <h3>From last time</h3>
             <ul class="tight">
-              <li>A non-const reference parameter can modify the caller variable.</li>
-              <li>This is useful but should be intentional.</li>
+              <li><code>int&amp; r = i;</code> creates an arrow from <code>r</code> to <code>i</code>'s box.</li>
+              <li>The arrow never moves; <code>r = j</code> means <code>i = j</code>.</li>
+              <li>A reference must be initialized to a real storage location.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Today</h3>
             <ul class="tight">
-              <li>Use <code>const</code> references for read-only access.</li>
-              <li>Choose parameter types based on size and mutation.</li>
+              <li>Reference <em>parameters</em>: arrows across scopes.</li>
+              <li>Walk through <code>good_swap</code> step by step.</li>
+              <li>Add <code>const</code> to the arrow.</li>
             </ul>
           </article>
         </div>
@@ -53,171 +55,257 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Read-only</span>
-            <strong><code>const T&amp;</code></strong>
-            <span>Avoid a copy while promising not to mutate.</span>
+            <span class="kicker">10.4</span>
+            <strong>good_swap</strong>
+            <span>Two ampersands fix the function.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Mutable</span>
-            <strong><code>T&amp;</code></strong>
-            <span>Use only when the function should change the argument.</span>
+            <span class="kicker">10.5</span>
+            <strong>const T&amp;</strong>
+            <span>Read-only arrows.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Why</span>
+            <strong>contracts</strong>
+            <span>The build errors that protect you.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Reference to Const</h2>
+        <h2>From <code>bad_swap</code> to <code>good_swap</code></h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print_name(const string&amp; name) {
-    cout &lt;&lt; name &lt;&lt; endl;
-    // name += &quot;!&quot;;  // build error
+void good_swap(int&amp; a, int&amp; b) {
+    int c = a;
+    a = b;
+    b = c;
+}
+
+int main() {
+    int i = 0;
+    int j = 1;
+    cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl;   // 0 1
+    good_swap(i, j);
+    cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl;   // 1 0
 }
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The parameter can read the string.</li>
-              <li>The function cannot modify it through the reference.</li>
-              <li>This avoids copying large objects.</li>
+              <li>The body is identical to <code>bad_swap</code>.</li>
+              <li>Only the parameter types changed: <code>int</code> &rarr; <code>int&amp;</code>.</li>
+              <li>Now the call actually swaps <code>i</code> and <code>j</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Choosing Parameter Types</h2>
+        <h2>What the Call Does</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int square(int n);
-void print(const string&amp; s);
-void increment(int&amp; n);
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Small fundamental types are usually passed by value.</li>
-              <li>Large read-only objects are often passed by <code>const</code> reference.</li>
-              <li>Use non-const reference only for intentional mutation.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
+// good_swap(i, j) is, conceptually:
+{
+    int&amp; a = i;     // arrow from a to i
+    int&amp; b = j;     // arrow from b to j
 
-      <section>
-        <h2>Output Parameters</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void divide(int a, int b, int&amp; q, int&amp; r) {
-    q = a / b;
-    r = a % b;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>A non-const reference can be an output parameter.</li>
-              <li>Use this sparingly because it hides outputs in arguments.</li>
-              <li>Name output parameters clearly.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Const Arguments</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print(const string&amp; s);
-
-const string course = &quot;PIC 10A&quot;;
-print(course);
-print(&quot;hello&quot;);
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>A <code>const</code> reference can bind to const objects.</li>
-              <li>It can also bind to temporary values in many useful cases.</li>
-              <li>This makes printing and read-only helpers flexible.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Parameter Decision Table</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// wants a copy:        T x
-// wants read-only:    const T&amp; x
-// wants to mutate:    T&amp; x
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Ask whether the function needs to change the argument.</li>
-              <li>Ask whether copying is cheap or expensive.</li>
-              <li>Make the signature communicate the answer.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Printing Without Copying</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print(const string&amp; s) {
-    for (size_t i = 0; i &lt; s.length(); ++i) {
-        cout &lt;&lt; s[i];
-    }
-    cout &lt;&lt; endl;
+    int c = a;      // c gets value at a's arrow target
+    a = b;
+    b = c;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The function only reads the string, so mutation should be forbidden.</li>
-              <li>The reference avoids copying every character into a new string object.</li>
-              <li>This same idea becomes very important for vectors.</li>
+              <li>Argument-to-parameter assignment for a reference parameter <em>does not copy</em>.</li>
+              <li>It tells the parameter what location to refer to.</li>
+              <li>Now <code>a</code> and <code>b</code> are arrows into <code>main</code>'s scope.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Choose the Parameter Type</h2>
+        <h2>Trace <code>good_swap(i, j)</code></h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Read-only helper</h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-bool starts_with_a(const string&amp; s) {
-    return s.length() &gt; 0 &amp;&amp; s[0] == 'a';
-}
-              </code>
-            </pre>
+            <h3>Setup</h3>
+            <ul class="tight">
+              <li><code>i = 0</code>, <code>j = 1</code> in <code>main</code>.</li>
+              <li><code>a</code> references <code>i</code>; <code>b</code> references <code>j</code>.</li>
+            </ul>
           </article>
           <article class="card secondary">
-            <h3>Mutating helper</h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-void make_zero(int&amp; n) {
-    n = 0;
-}
-              </code>
-            </pre>
+            <h3>Execute the body</h3>
+            <ul class="tight">
+              <li><code>c = a</code>: follow <code>a</code> &rArr; <code>c = 0</code>.</li>
+              <li><code>a = b</code>: follow both &rArr; <code>i = j</code> &rArr; <code>i</code> becomes <code>1</code>.</li>
+              <li><code>b = c</code>: follow <code>b</code> &rArr; <code>j = 0</code>.</li>
+              <li>End of scope: <code>a</code>, <code>b</code>, <code>c</code> vanish; <code>i</code> and <code>j</code> are swapped.</li>
+            </ul>
           </article>
         </div>
+      </section>
+
+      <section>
+        <h2>Why It Works</h2>
         <div class="callout cool">
-          The signature should tell the reader whether the function copies, reads, or mutates its argument.
+          For a reference parameter, the argument-to-parameter assignment installs an arrow into the caller's scope. Every operation on the parameter is &mdash; by following the arrow &mdash; an operation on the caller's variable.
+        </div>
+      </section>
+
+      <section>
+        <h2>Mutation Is Now a Choice</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void by_value(int x) { x = 100; }     // cannot affect caller
+void by_ref  (int&amp; x) { x = 100; }    // does affect caller
+
+int n = 3;
+by_value(n);  cout &lt;&lt; n &lt;&lt; endl;       // 3
+by_ref  (n);  cout &lt;&lt; n &lt;&lt; endl;       // 100
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>int x</code>: copy in, no caller effect.</li>
+              <li><code>int&amp; x</code>: arrow in, mutation reaches the caller.</li>
+              <li>The signature tells the reader which kind of call this is.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>References to <code>const</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int main() {
+    int        i = 0;
+    const int  ci = 1;
+
+    int&amp;        r1 = i;        // OK
+    const int&amp; rc1 = ci;       // OK
+    const int&amp; rc2 = i;        // OK -- read-only view of i
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const T&amp;</code> is "reference to const <code>T</code>".</li>
+              <li>It can refer to a non-const variable.</li>
+              <li>While referring, it treats the location as if it were const.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Build Error 10.5.2: No Writing</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int        i = 0;
+const int&amp; rc = i;
+
+// rc = 3;        // build error: cannot assign through ref-to-const
+
+i = 5;            // OK -- i is not const
+cout &lt;&lt; rc &lt;&lt; endl;   // 5  (rc still sees changes)
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>You may not assign <em>through</em> <code>rc</code>.</li>
+              <li>The underlying variable can still change by other means.</li>
+              <li><code>rc</code> sees those changes; it just refuses to make them.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Build Error 10.5.3: No Loophole</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int ci = 1;
+
+int&amp; r = ci;     // build error: non-const ref to const variable
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>If this were allowed, <code>r = 99</code> would change a <code>const</code> variable.</li>
+              <li>That would break the contract <code>ci</code> made when declared <code>const</code>.</li>
+              <li>The compiler refuses to let us punch a hole in <code>const</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Two Rules Side by Side</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3><code>T&amp;</code></h3>
+            <ul class="tight">
+              <li>May refer to non-const variables only.</li>
+              <li>May write through.</li>
+              <li>Cannot bind to a const target.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3><code>const T&amp;</code></h3>
+            <ul class="tight">
+              <li>May refer to const or non-const variables.</li>
+              <li>May not write through.</li>
+              <li>The polite arrow.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Long Trace (Textbook Example 10.5.4)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int        i = 0;
+const int  ci = 1;
+
+int&amp;        r1  = i;
+const int&amp; rc1 = ci;
+const int&amp; rc2 = i;
+
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r1 &lt;&lt; ' ' &lt;&lt; rc2 &lt;&lt; endl;   // 0 0 0
+
+i = 5;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r1 &lt;&lt; ' ' &lt;&lt; rc2 &lt;&lt; endl;   // 5 5 5
+
+r1 = 6;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r1 &lt;&lt; ' ' &lt;&lt; rc2 &lt;&lt; endl;   // 6 6 6
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>r1</code> and <code>rc2</code> both point at <code>i</code>.</li>
+              <li>Updates to <code>i</code> are visible through both arrows.</li>
+              <li><code>rc2</code> cannot itself perform an update; <code>r1</code> can.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>References Are Already Const</h2>
+        <div class="callout cool">
+          Even an ordinary <code>T&amp;</code> is "const" in one sense: the arrow itself never moves. The word <code>const</code> in <code>const T&amp;</code> refers to the <em>target</em> &mdash; you cannot write through the arrow.
         </div>
       </section>
 
@@ -226,11 +314,11 @@ void make_zero(int&amp; n) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Why is <code>const string&amp;</code> useful for a print function?</p>
+            <p class="meta">Trace: what does <code>good_swap</code> do, line by line, in terms of arrows?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">When should a parameter be a non-const reference?</p>
+            <p class="meta">Why is <code>int&amp; r = ci;</code> a build error when <code>ci</code> is <code>const int</code>?</p>
           </article>
         </div>
       </section>
@@ -241,18 +329,18 @@ void make_zero(int&amp; n) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>const T&amp;</code> gives read-only access without copying.</li>
-              <li><code>T&amp;</code> communicates intentional mutation.</li>
-              <li>Small values can usually be passed by value.</li>
-              <li>Parameter types are part of function design.</li>
+              <li>A reference parameter installs an arrow into the caller's scope.</li>
+              <li>That is what lets <code>good_swap</code> actually swap.</li>
+              <li><code>const T&amp;</code> is a read-only arrow.</li>
+              <li>Two build errors enforce const: cannot write through, cannot bypass with a non-const arrow.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Do not use non-const references just to avoid typing.</li>
-              <li>Let the signature reveal whether mutation can happen.</li>
-              <li>Prefer simple return values when there is only one output.</li>
+              <li>Use a reference parameter only when mutation is intended.</li>
+              <li>Use <code>const T&amp;</code> when you want a no-copy view that promises not to write.</li>
+              <li>When tracing, draw the arrows across scopes.</li>
             </ul>
           </article>
         </div>
@@ -264,27 +352,27 @@ void make_zero(int&amp; n) {
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What does <code>const string&amp; s</code> promise?</li>
-              <li class="answer-line"><strong>Answer:</strong> The function will not modify <code>s</code> through that reference.</li>
-              <li><strong>Q2.</strong> Why avoid copying large objects?</li>
-              <li class="answer-line"><strong>Answer:</strong> Copying can waste time and memory.</li>
-              <li><strong>Q3.</strong> When is <code>int n</code> fine?</li>
-              <li class="answer-line"><strong>Answer:</strong> When the function only needs a small copied value.</li>
-              <li><strong>Q4.</strong> When is <code>int&amp; n</code> appropriate?</li>
-              <li class="answer-line"><strong>Answer:</strong> When the function should modify the caller variable.</li>
+              <li><strong>Q1.</strong> What does <code>int&amp; a</code> mean as a parameter?</li>
+              <li class="answer-line"><strong>Answer:</strong> An arrow installed to the argument's storage; no copy is made.</li>
+              <li><strong>Q2.</strong> Why does <code>good_swap</code> succeed where <code>bad_swap</code> failed?</li>
+              <li class="answer-line"><strong>Answer:</strong> Operations on <code>a</code>, <code>b</code> are operations on the caller's <code>i</code>, <code>j</code>.</li>
+              <li><strong>Q3.</strong> What does <code>const int&amp; rc</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> A read-only arrow to an <code>int</code>; you may not assign through <code>rc</code>.</li>
+              <li><strong>Q4.</strong> Can <code>const int&amp; rc = i;</code> when <code>i</code> is non-const?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes; <code>rc</code> just promises not to write.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> Can a non-const reference bind to a const object?</li>
-              <li class="answer-line"><strong>Answer:</strong> No.</li>
-              <li><strong>Q6.</strong> What is an output parameter?</li>
-              <li class="answer-line"><strong>Answer:</strong> A reference parameter used to send a value back by mutation.</li>
-              <li><strong>Q7.</strong> What should signatures communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> Whether arguments are copied, read, or mutated.</li>
-              <li><strong>Q8.</strong> Which is clearer for one computed result: return or output parameter?</li>
-              <li class="answer-line"><strong>Answer:</strong> Usually return.</li>
+              <li><strong>Q5.</strong> Why is <code>int&amp; r = ci;</code> a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> It would let you write to <code>ci</code> through <code>r</code>, breaking <code>const</code>.</li>
+              <li><strong>Q6.</strong> If <code>i</code> changes, does <code>const int&amp; rc = i</code> see the change?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes &mdash; const blocks writing, not reading.</li>
+              <li><strong>Q7.</strong> Does <code>good_swap(i, j)</code> copy any ints?</li>
+              <li class="answer-line"><strong>Answer:</strong> Only the local <code>c</code> inside the body; the parameters are arrows.</li>
+              <li><strong>Q8.</strong> What does the <code>const</code> in <code>const T&amp;</code> qualify?</li>
+              <li class="answer-line"><strong>Answer:</strong> The target of the arrow, not the arrow itself.</li>
             </ul>
           </article>
         </div>
@@ -294,34 +382,42 @@ void make_zero(int&amp; n) {
         <h2>Lecture 14 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Const violation</h3>
+            <h3>Trace through the call</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> Why does this fail?
+                <strong>Q1.</strong> What does this print?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void shout(const string&amp; s) {
-    s += &quot;!&quot;;
+void f(int&amp; a, int b) {
+    a = a + b;
+    b = b + 1;
 }
+int x = 10, y = 3;
+f(x, y);
+cout &lt;&lt; x &lt;&lt; ' ' &lt;&lt; y &lt;&lt; endl;
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The function promised read-only access with <code>const string&amp;</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>13 3</code>. <code>a</code> is an arrow to <code>x</code>, so <code>x</code> becomes <code>13</code>; <code>b</code> is a copy of <code>y</code>, so <code>y</code> is unchanged.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Parameter choice</h3>
+            <h3>Spot the const error</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> Which parameter type is better for read-only vector printing?
+                <strong>Q2.</strong> Which lines fail to compile?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print(vector&lt;int&gt; v);
-void print(const vector&lt;int&gt;&amp; v);
+const int ci = 7;
+      int  i  = 8;
+
+int&amp;        a = ci;   // (a)
+const int&amp; b = ci;   // (b)
+const int&amp; c = i;    // (c)
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>const vector&lt;int&gt;&amp;</code> avoids copying and prevents mutation.</li>
+              <li class="answer-line"><strong>Answer:</strong> Only (a) fails &mdash; a non-const reference cannot bind to a const variable. (b) and (c) are fine.</li>
             </ul>
           </article>
         </div>
@@ -329,9 +425,9 @@ void print(const vector&lt;int&gt;&amp; v);
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Review and Catch-Up</h2>
+        <h2>Vectors</h2>
         <p class="lead center-copy">
-          Next time we pause to review loops, scope, functions, and references before moving into vectors.
+          Next time we meet <code>std::vector&lt;T&gt;</code>, a container that grows and shrinks &mdash; and we will see why <code>const T&amp;</code> matters even more there.
         </p>
       </section>
     </div>

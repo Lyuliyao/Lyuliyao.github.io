@@ -17,15 +17,15 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 18</div>
-        <h1>Vector Functions and Parameter Types</h1>
+        <h1>Function Overloading</h1>
         <p class="lead">
-          Now we choose parameter types deliberately for vector functions: copy, read-only reference, or mutable reference.
+          C++ lets several functions share a name as long as their parameter lists differ. The compiler picks the best match for each call.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 12</span>
-          <span class="pill">parameter choices</span>
-          <span class="pill">const ref</span>
-          <span class="pill">mutation</span>
+          <span class="pill">Chapter 14</span>
+          <span class="pill">overloading</span>
+          <span class="pill">overload resolution</span>
+          <span class="pill">implicit casts</span>
         </div>
       </section>
 
@@ -33,17 +33,18 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>So far</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li>One name, one function.</li>
+              <li>We chose between <code>T</code>, <code>T&amp;</code>, <code>const T&amp;</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>Multiple functions can share a name.</li>
+              <li>The compiler picks one based on argument types.</li>
+              <li>Sometimes nothing is the "best" match: build error.</li>
             </ul>
           </article>
         </div>
@@ -53,158 +54,193 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>parameter choices</strong>
-            <span>Today centers on parameter choices.</span>
+            <span class="kicker">Allowed</span>
+            <strong>different parameters</strong>
+            <span>Same name, different parameter types is fine.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>const ref</strong>
-            <span>We use examples and code review to make const ref concrete.</span>
+            <span class="kicker">Not allowed</span>
+            <strong>only return type differs</strong>
+            <span>Same name and parameters, different return: build error.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Resolution</span>
+            <strong>best viable match</strong>
+            <span>Compiler scores candidates position by position.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Read-Only Vector Parameter</h2>
+        <h2>Return Type Alone Is Not Enough</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-double average_or_zero(const vector&lt;int&gt;&amp; v) {
-    if (v.empty()) {
-        return 0.0;
-    }
-
-    int total = 0;
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        total += v[i];
-    }
-    return static_cast&lt;double&gt;(total) / v.size();
-}
+int    f() { return 0;   }
+double f() { return 0.0; }   // build error
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Read-only vector functions should usually use <code>const T&amp;</code>.</li>
-              <li>Avoid copying the whole vector.</li>
-              <li>Do not mutate what you only need to inspect.</li>
+              <li>Same name, same (empty) parameter list, different return type.</li>
+              <li>The compiler cannot tell the two apart at a call site.</li>
+              <li>Parameter types must differ for overloading.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Mutating Vector Parameter</h2>
+        <h2>Order Matters</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void add_one(vector&lt;int&gt;&amp; v) {
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        ++v[i];
-    }
-}
+int    f(char c, bool b) { return 0;   }
+double f(bool l, char r) { return 0.0; }   // OK
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Use non-const reference when mutation is the point.</li>
-              <li>The caller sees the changed vector.</li>
-              <li>Make mutation obvious in the function name.</li>
+              <li>The two parameter <em>lists</em> are different.</li>
+              <li><code>(char, bool)</code> is not the same as <code>(bool, char)</code>.</li>
+              <li>This is legal function overloading.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Returning a Vector</h2>
+        <h2>Definition</h2>
+        <div class="callout cool">
+          It is legal to define functions with the same name and different parameter types. Doing so is called <strong>function overloading</strong>.
+        </div>
+      </section>
+
+      <section>
+        <h2>A Useful Example</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;int&gt; first_n_squares(int n) {
-    vector&lt;int&gt; result;
-    for (int i = 1; i &lt;= n; ++i) {
-        result.push_back(i * i);
-    }
-    return result;
-}
+void print(const vector&lt;int&gt;&amp;    v);    // { 1, 2 }
+void print(const vector&lt;double&gt;&amp; v);    // (1.1 2.2)
+void print(const vector&lt;char&gt;&amp;   v);    // "12"
+
+vector&lt;int&gt;    vi{1, 2};       print(vi);
+vector&lt;double&gt; vd{1.1, 2.2};   print(vd);
+vector&lt;char&gt;   vc{'1','2'};    print(vc);
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Returning a vector is clear for newly created data.</li>
-              <li>Build the result locally.</li>
-              <li>Let the call site store the returned vector.</li>
+              <li>One name, three implementations.</li>
+              <li>Each call resolves to the matching overload.</li>
+              <li>The reader sees a consistent interface.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
+        <h2>Overload Resolution, Informally</h2>
+        <div class="callout cool">
+          The overload whose parameters match the arguments most closely is the one that is called.
+        </div>
+      </section>
+
+      <section>
+        <h2>Casting Can Step In</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int    int_f(int    i) { return i; }
+double dbl_f(double d) { return d + 0.5; }
+
+int_f(2.3);   // 2.3 cast to int 2
+dbl_f(4);     // 4   cast to double 4.0
+            </code>
+          </pre>
           <article class="card">
-            <h3>Before writing code</h3>
             <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
+              <li>When only one overload exists, casting glues the call together.</li>
+              <li><code>int</code> &harr; <code>double</code> conversions are implicit.</li>
+              <li>This will matter when multiple overloads are candidates.</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Best Match Position by Position</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void f(int    a, int    b, double c);   // "i i d"
+void f(int    a, double b, double c);   // "i d d"
+
+f(1, 3,   5.6);   // i i d   -- exact in pos 2
+f(1, 3.4, 5.6);   // i d d   -- exact in pos 2
+f(1, 3,   5);     // i i d   -- best in pos 2 (no cast)
+f(1.2, 3.4, 5.6); // i d d   -- best in pos 2 (no cast)
+            </code>
+          </pre>
           <article class="card secondary">
-            <h3>Before debugging</h3>
             <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
+              <li>One position must be strictly better, others no worse.</li>
+              <li>Position 1 ties; position 3 ties; position 2 decides.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Parameter Choice: Search</h2>
+        <h2>When There Is No Best</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-bool contains(const vector&lt;double&gt;&amp; v, double target) {
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        if (v[i] == target) {
-            return true;
-        }
-    }
-    return false;
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The vector is read-only, so <code>const vector&lt;double&gt;&amp;</code> is appropriate.</li>
-              <li>The target is a small fundamental type, so passing by value is fine.</li>
-              <li>Returning <code>bool</code> is clearer than using an output parameter.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
+void g(int    a, int    b);   // "i i"
+void g(double a, double b);   // "d d"
 
-      <section>
-        <h2>Parameter Choice: Sort-Like Mutation</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void clamp_nonnegative(vector&lt;int&gt;&amp; v) {
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        if (v[i] &lt; 0) {
-            v[i] = 0;
-        }
-    }
-}
+g(1, 3);       // i i, OK
+g(1.2, 3.4);   // d d, OK
+
+g(1, 3.4);     // build error
+g(1.2, 3);     // build error
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The function intentionally changes the caller's vector.</li>
-              <li>That is why the parameter is <code>vector&lt;int&gt;&amp;</code>, not <code>const vector&lt;int&gt;&amp;</code>.</li>
-              <li>The function name should make the mutation unsurprising.</li>
+              <li><code>g(1, 3.4)</code>: <code>(int,int)</code> casts pos 2; <code>(double,double)</code> casts pos 1.</li>
+              <li>Each is worse than the other in some position.</li>
+              <li>No best match &rArr; build error.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Tie-Break Rule</h2>
+        <div class="callout cool">
+          To regard one overload as <em>better</em> than another, it must be equal-or-better in every position and strictly better in at least one position. Otherwise the call is ambiguous and gives a build error.
+        </div>
+      </section>
+
+      <section>
+        <h2>References and const</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void j(      vector&lt;int&gt;&amp; p);   //       vector&lt;int&gt;&amp;
+void j(const vector&lt;int&gt;&amp; p);   // const vector&lt;int&gt;&amp;
+
+      vector&lt;int&gt; v;    j(v);    // picks      vector&lt;int&gt;&amp;
+const vector&lt;int&gt; cv;   j(cv);   // picks const vector&lt;int&gt;&amp;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>For <code>v</code>, both overloads are viable; the non-const reference is the better match.</li>
+              <li>For <code>cv</code>, only the <code>const</code> overload is viable.</li>
+              <li>This explains why <code>print(w)</code> needs <code>const vector&lt;int&gt;&amp;</code> when <code>w</code> is const.</li>
             </ul>
           </article>
         </div>
@@ -215,11 +251,11 @@ void clamp_nonnegative(vector&lt;int&gt;&amp; v) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">Why is <code>int f();</code> and <code>double f();</code> a build error, but <code>int f(int);</code> and <code>int f(double);</code> is fine?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">Given <code>void f(int)</code> and <code>void f(double)</code>, what does the compiler do with <code>f('A')</code>?</p>
           </article>
         </div>
       </section>
@@ -230,18 +266,18 @@ void clamp_nonnegative(vector&lt;int&gt;&amp; v) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops vector functions and parameter types.</li>
-              <li>Key chapter: 12.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li>Overloads must differ in parameter types.</li>
+              <li>The compiler picks the best viable match.</li>
+              <li>"Best" means equal-or-better everywhere, strictly better somewhere.</li>
+              <li>No best &rArr; build error.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Overload only when the operations are conceptually the same.</li>
+              <li>Avoid overloads that differ only by implicit conversions.</li>
+              <li>Make const overloads available for const data.</li>
             </ul>
           </article>
         </div>
@@ -251,29 +287,29 @@ void clamp_nonnegative(vector&lt;int&gt;&amp; v) {
         <h2>Lecture 18 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Vector Functions and Parameter Types?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is parameter choices connected to const ref.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> Can two overloads differ only by return type?</li>
+              <li class="answer-line"><strong>Answer:</strong> No, that is a build error.</li>
+              <li><strong>Q2.</strong> Are <code>(char,bool)</code> and <code>(bool,char)</code> different parameter lists?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes; order matters.</li>
+              <li><strong>Q3.</strong> What does the compiler do for an overloaded call?</li>
+              <li class="answer-line"><strong>Answer:</strong> Picks the best viable match by comparing parameter positions.</li>
+              <li><strong>Q4.</strong> What happens when no candidate is best?</li>
+              <li class="answer-line"><strong>Answer:</strong> Ambiguous call; build error.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q5.</strong> Why does <code>g(1, 3.4)</code> fail with <code>g(int,int)</code> and <code>g(double,double)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Each candidate casts in a different position; neither is strictly better.</li>
+              <li><strong>Q6.</strong> When both <code>j(vector&amp;)</code> and <code>j(const vector&amp;)</code> exist, which is picked for a non-const argument?</li>
+              <li class="answer-line"><strong>Answer:</strong> The non-const reference overload (better match).</li>
+              <li><strong>Q7.</strong> What if the argument is const?</li>
+              <li class="answer-line"><strong>Answer:</strong> Only the <code>const</code> overload is viable.</li>
+              <li><strong>Q8.</strong> Why might <code>f(int)</code> and <code>f(double)</code> still work for <code>f('X')</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>char</code> converts more readily to <code>int</code> than to <code>double</code>, so <code>f(int)</code> wins.</li>
             </ul>
           </article>
         </div>
@@ -283,43 +319,41 @@ void clamp_nonnegative(vector&lt;int&gt;&amp; v) {
         <h2>Lecture 18 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>Trace the call</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> What prints?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-double average(const vector&lt;int&gt;&amp; v) {
-    int total = 0;
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        total += v[i];
-    }
-    return static_cast&lt;double&gt;(total) / v.size();
-}
+void f()                  { cout &lt;&lt; '1' &lt;&lt; endl; }
+void f(char c)            { cout &lt;&lt; '2' &lt;&lt; c &lt;&lt; endl; }
+void f(bool b, char c)    { cout &lt;&lt; '3' &lt;&lt; b &lt;&lt; endl; }
+
+f('c', false);
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Trace the empty case separately from the non-empty loop case.</li>
+              <li class="answer-line"><strong>Answer:</strong> Build error: no overload takes <code>(char, bool)</code>; only <code>(bool, char)</code> exists, and the conversions in the wrong positions are not a unique best match.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Fix the design</h3>
+            <h3>Const overloads</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q2.</strong> What prints?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void append_total(vector&lt;int&gt;&amp; v) {
-    int total = 0;
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        total += v[i];
-    }
-    v.push_back(total);
-}
+void g(      string&amp; s) { cout &lt;&lt; '2' &lt;&lt; endl; }
+void g(const string&amp; s) { cout &lt;&lt; '3' &lt;&lt; endl; }
+
+      string s;
+const string cs;
+g(s);    // ?
+g(cs);   // ?
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The vector must be non-const because the function appends a new element.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>2</code> then <code>3</code>. The non-const reference wins for <code>s</code>; only the const overload is viable for <code>cs</code>.</li>
             </ul>
           </article>
         </div>
@@ -327,9 +361,9 @@ void append_total(vector&lt;int&gt;&amp; v) {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Header and CPP Organization</h2>
+        <h2>Classes</h2>
         <p class="lead center-copy">
-          Next time we organize declarations and definitions across header and cpp files.
+          Next time we group related data and functions into our own types using <code>struct</code> and member functions.
         </p>
       </section>
     </div>

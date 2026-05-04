@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pdfinfo /Users/liyaolyu/Documents/github/Lyuliyao.github.io/TEACHING/PIC10A/10A_textbook.pdf)"
+    ]
+  }
+}

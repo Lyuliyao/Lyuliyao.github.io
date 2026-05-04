@@ -19,13 +19,13 @@
         <div class="eyebrow">PIC 10A • Lecture 13</div>
         <h1>References I</h1>
         <p class="lead">
-          References let a parameter refer to an existing variable instead of receiving a copy. We use swap to see why this matters.
+          A reference does not store its own data. It is another name for a storage location someone else owns. We motivate it by trying, and failing, to write our own <code>swap</code>.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 10.1-10.4</span>
-          <span class="pill">pass-by-value</span>
-          <span class="pill">aliases</span>
-          <span class="pill">swap</span>
+          <span class="pill">Chapter 10.1&ndash;10.3</span>
+          <span class="pill">bad_swap</span>
+          <span class="pill">int&amp;</span>
+          <span class="pill">arrows</span>
         </div>
       </section>
 
@@ -33,17 +33,19 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Function calls</h3>
+            <h3>Function calls so far</h3>
             <ul class="tight">
-              <li>Arguments are assigned to parameters at the start of a call.</li>
-              <li>So far those assignments copied values.</li>
+              <li>Each call introduces a function scope.</li>
+              <li>Arguments are <em>copied</em> into parameters at the start.</li>
+              <li>The body works with those copies.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Problem</h3>
+            <h3>The new question</h3>
             <ul class="tight">
-              <li>Some functions need to modify caller variables.</li>
-              <li>Pass-by-value cannot do that.</li>
+              <li><code>std::swap(i, j)</code> changes the caller's <code>i</code> and <code>j</code>.</li>
+              <li>How does that even work, given pass-by-value?</li>
+              <li>We need a parameter that <em>is</em> the argument, not a copy.</li>
             </ul>
           </article>
         </div>
@@ -53,180 +55,267 @@
         <h2>Roadmap</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Copy</span>
-            <strong>pass by value</strong>
-            <span>The function receives its own local parameter.</span>
+            <span class="kicker">10.1</span>
+            <strong>Motivate</strong>
+            <span>Write <code>bad_swap</code> and watch it fail.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Alias</span>
-            <strong>reference parameter</strong>
-            <span>The parameter becomes another name for the argument variable.</span>
+            <span class="kicker">10.2</span>
+            <strong>Introduce</strong>
+            <span>The type <code>int&amp;</code> and arrow pictures.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">10.3</span>
+            <strong>Initialize and assign</strong>
+            <span>Rules and a long traced example.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Bad Swap</h2>
+        <h2>Attempt: <code>bad_swap</code></h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 void bad_swap(int a, int b) {
-    int temp = a;
+    int c = a;
     a = b;
-    b = temp;
+    b = c;
 }
 
-int x = 5, y = 10;
-bad_swap(x, y);
+int main() {
+    int i = 0;
+    int j = 1;
+    cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl;   // 0 1
+    bad_swap(i, j);
+    cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl;   // 0 1
+}
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>a</code> and <code>b</code> are copies.</li>
-              <li>The copies swap successfully.</li>
-              <li><code>x</code> and <code>y</code> do not change.</li>
+              <li>The body looks correct.</li>
+              <li>Yet <code>i</code> and <code>j</code> in <code>main</code> are unchanged.</li>
+              <li>Why? Because <code>a</code> and <code>b</code> are copies.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Reference Alias</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int x = 5;
-int&amp; r = x;
-
-r = 8;
-cout &lt;&lt; x &lt;&lt; endl;   // 8
-            </code>
-          </pre>
+        <h2>Why <code>bad_swap</code> Fails</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>What happens</h3>
+            <ul class="tight">
+              <li>Argument-to-parameter assignment <em>copies</em> the values.</li>
+              <li>The body swaps <code>a</code> and <code>b</code> &mdash; the copies.</li>
+              <li>Call ends: copies are destroyed; <code>i</code> and <code>j</code> were never touched.</li>
+            </ul>
+          </article>
           <article class="card secondary">
+            <h3>What we need</h3>
             <ul class="tight">
-              <li>A reference is an alias for an existing variable.</li>
-              <li>Using the reference means using the original variable.</li>
-              <li>A reference must be initialized.</li>
+              <li>A parameter that <em>is</em> the argument, not a copy.</li>
+              <li>Operations on the parameter must reach <code>main</code>'s storage.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Good Swap</h2>
+        <h2>The Fix We Need</h2>
+        <div class="callout cool">
+          We need a kind of parameter whose creation does <em>not</em> copy. Instead, it should become another name for the argument variable. C++ calls this a <strong>reference</strong>.
+        </div>
+      </section>
+
+      <section>
+        <h2>Introducing <code>int&amp;</code></h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void good_swap(int&amp; a, int&amp; b) {
-    int temp = a;
-    a = b;
-    b = temp;
-}
+int main() {
+    int i = 0;
+    int&amp; r = i;     // r has type int&amp;: "reference to int"
 
-int x = 5, y = 10;
-good_swap(x, y);
+    return 0;
+}
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>a</code> references <code>x</code>.</li>
-              <li><code>b</code> references <code>y</code>.</li>
-              <li>Assignments through <code>a</code> and <code>b</code> update the originals.</li>
+              <li><code>int&amp;</code> is read aloud as "int ref".</li>
+              <li><code>r</code> does <em>not</em> get its own storage.</li>
+              <li><code>r</code> refers to the storage that <code>i</code> labels.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Assignments Through References</h2>
+        <h2>Definition</h2>
+        <div class="callout cool">
+          A <strong>reference</strong> does not store its own data. Instead it refers to already-existing data. Once initialized, it always refers to the same storage location &mdash; the arrow never moves.
+        </div>
+      </section>
+
+      <section>
+        <h2>Two Build Errors</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int i = 1;
+int main() {
+    int&amp; r1;          // build error: must be initialized
+    int&amp; r2 = 4;      // build error: cannot bind to a literal
+
+    int i = 0;
+    int&amp; r3 = i;      // OK
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A reference must be initialized at its declaration.</li>
+              <li>It must refer to a real storage location, not a literal.</li>
+              <li>Literals like <code>4</code>, <code>3.2</code>, <code>'a'</code>, <code>false</code> have no address you can take.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reading Through a Reference</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int  i = 0;
 int&amp; r = i;
+
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; endl;   // 0 0
+
+i = 1;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; endl;   // 1 1
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Printing <code>r</code> means: follow the arrow, print the box's value.</li>
+              <li>Updating <code>i</code> updates the box, so <code>r</code> "sees" it.</li>
+              <li><code>i</code> and <code>r</code> are two names for the same data.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Writing Through a Reference</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int  i = 1;
+int&amp; r = i;
+
+r = 2;                // same effect as i = 2
+cout &lt;&lt; i &lt;&lt; endl;    // 2
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>r = 2</code> follows the arrow and assigns to <code>i</code>'s box.</li>
+              <li>Assigning <em>to</em> a reference changes the referenced data.</li>
+              <li>It does <em>not</em> redirect the arrow.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Tempting Mistake: <code>r = j</code></h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int  i = 2;
+int&amp; r = i;
+int  j = 3;
+
+r = j;                          // does NOT redirect r
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl; // 3 3, but r still points at i
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Read this as: "follow <code>r</code>'s arrow, store the value of <code>j</code> there."</li>
+              <li>It is the same as writing <code>i = j</code>.</li>
+              <li><code>r</code> still references <code>i</code> &mdash; the arrow never moved.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Long Trace (Textbook Example 10.3.4)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int  i = 0;
+int&amp; r = i;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; endl;            // 0 0
+
+i = 1;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; endl;            // 1 1
+
 r = 2;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; endl;            // 2 2
 
-int j = 9;
-r = j;   // assigns 9 to i
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The reference does not rebind to <code>j</code>.</li>
-              <li>The assignment changes the value being referenced.</li>
-              <li>Draw arrows to avoid confusion.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
+int j = 3;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl; // 2 2 3
 
-      <section>
-        <h2>Reference Rules</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int&amp; good = i;
-// int&amp; bad;        // build error
-// int&amp; also_bad = 4; // not for now
+r = j;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl; // 3 3 3
+
+i = 4;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl; // 4 4 3
+
+j = r;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl; // 4 4 4
+
+j = 5;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; ' ' &lt;&lt; j &lt;&lt; endl; // 4 4 5
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A non-const reference must start by referencing a variable.</li>
-              <li>It cannot be left uninitialized.</li>
-              <li>It stays attached to the same storage location.</li>
+              <li>Every line involving <code>r</code> behaves as if you had written <code>i</code>.</li>
+              <li>Lines that only touch <code>j</code> never affect <code>i</code> or <code>r</code>.</li>
+              <li>Whenever you are unsure: <strong>follow the arrow</strong>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Trace: Why <code>bad_swap</code> Fails</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void bad_swap(int a, int b) {
-    int c = a;
-    a = b;
-    b = c;
-}
-
-int i = 0;
-int j = 1;
-bad_swap(i, j);
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The call creates a function scope containing copies <code>a</code> and <code>b</code>.</li>
-              <li>The body swaps the copies correctly.</li>
-              <li>When the call ends, the copies disappear and <code>i</code>, <code>j</code> are unchanged.</li>
-            </ul>
-          </article>
+        <h2>The Rule of Thumb</h2>
+        <div class="callout cool">
+          After <code>int&amp; r = i;</code>, every later line involving <code>r</code> behaves as if you had written <code>i</code> instead.
         </div>
       </section>
 
       <section>
-        <h2>Trace: Why <code>good_swap</code> Works</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void good_swap(int&amp; a, int&amp; b) {
-    int c = a;
-    a = b;
-    b = c;
-}
-
-int i = 0;
-int j = 1;
-good_swap(i, j);
-            </code>
-          </pre>
+        <h2>What a Reference Is Not</h2>
+        <div class="grid-2">
           <article class="card">
+            <h3>Not a copy</h3>
             <ul class="tight">
-              <li><code>a</code> references <code>i</code>; <code>b</code> references <code>j</code>.</li>
-              <li>Assignments through <code>a</code> and <code>b</code> update the original variables.</li>
-              <li>The function still has local variable <code>c</code>, which disappears after the call.</li>
+              <li>Creating <code>int&amp; r = i</code> does not allocate a new int.</li>
+              <li>There is one box, with two names.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Not reseatable</h3>
+            <ul class="tight">
+              <li>The arrow is fixed when you write <code>= i</code>.</li>
+              <li>Later <code>r = j</code> assigns through the arrow, never moves it.</li>
             </ul>
           </article>
         </div>
@@ -237,11 +326,11 @@ good_swap(i, j);
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Why does <code>bad_swap</code> fail to change the caller variables?</p>
+            <p class="meta">Why does <code>int&amp; r = 4;</code> fail to compile?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What does <code>int&amp; r = x;</code> mean?</p>
+            <p class="meta">After <code>int i = 5; int&amp; r = i; int j = 9; r = j;</code>, what is <code>i</code>? What does <code>r</code> reference?</p>
           </article>
         </div>
       </section>
@@ -252,18 +341,18 @@ good_swap(i, j);
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>Pass-by-value copies arguments into parameters.</li>
-              <li>A reference is an alias for an existing variable.</li>
-              <li>Reference parameters can modify caller variables.</li>
-              <li>Assignments through a reference affect the referred-to variable.</li>
+              <li>Pass-by-value copies, so <code>bad_swap</code> cannot reach the caller's variables.</li>
+              <li><code>int&amp;</code> is a reference: an arrow to an existing box.</li>
+              <li>A reference must be initialized and cannot bind to a literal.</li>
+              <li>Once initialized, the arrow never moves.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Use reference parameters only when mutation is intended.</li>
-              <li>Draw arrows for reference examples.</li>
-              <li>Use distinct names while learning function calls.</li>
+              <li>When in doubt, draw the boxes and arrows.</li>
+              <li>Read <code>r = j</code> as "follow <code>r</code>'s arrow, store <code>j</code>'s value there."</li>
+              <li>Use distinct names while learning so the picture is clear.</li>
             </ul>
           </article>
         </div>
@@ -275,27 +364,27 @@ good_swap(i, j);
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is pass-by-value?</li>
-              <li class="answer-line"><strong>Answer:</strong> Copying the argument value into the parameter.</li>
-              <li><strong>Q2.</strong> Why does <code>bad_swap</code> not work?</li>
-              <li class="answer-line"><strong>Answer:</strong> It swaps only local copies.</li>
-              <li><strong>Q3.</strong> What is a reference?</li>
-              <li class="answer-line"><strong>Answer:</strong> An alias for an existing variable.</li>
-              <li><strong>Q4.</strong> What does <code>int&amp; a</code> mean in a parameter list?</li>
-              <li class="answer-line"><strong>Answer:</strong> The parameter is a reference to an int.</li>
+              <li><strong>Q1.</strong> What does <code>int&amp;</code> mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> The type "reference to <code>int</code>"; it refers to an existing <code>int</code>'s storage.</li>
+              <li><strong>Q2.</strong> Does a reference have its own storage?</li>
+              <li class="answer-line"><strong>Answer:</strong> No. It is another name for someone else's storage.</li>
+              <li><strong>Q3.</strong> Can a reference be left uninitialized?</li>
+              <li class="answer-line"><strong>Answer:</strong> No &mdash; build error.</li>
+              <li><strong>Q4.</strong> Why is <code>int&amp; r = 4;</code> a build error?</li>
+              <li class="answer-line"><strong>Answer:</strong> A literal has no storage location to refer to.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> Can a reference be uninitialized?</li>
-              <li class="answer-line"><strong>Answer:</strong> No.</li>
-              <li><strong>Q6.</strong> Does assigning to a reference rebind it?</li>
-              <li class="answer-line"><strong>Answer:</strong> No, it assigns to the referred-to variable.</li>
-              <li><strong>Q7.</strong> Why does <code>good_swap</code> work?</li>
-              <li class="answer-line"><strong>Answer:</strong> Its parameters reference the caller variables.</li>
-              <li><strong>Q8.</strong> What visual model helps with references?</li>
-              <li class="answer-line"><strong>Answer:</strong> Arrows from references to variables.</li>
+              <li><strong>Q5.</strong> Why does <code>bad_swap</code> fail?</li>
+              <li class="answer-line"><strong>Answer:</strong> Its parameters are copies of <code>i</code> and <code>j</code>.</li>
+              <li><strong>Q6.</strong> Does <code>r = j</code> rebind <code>r</code> to <code>j</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> No, it assigns <code>j</code>'s value into the box <code>r</code> already references.</li>
+              <li><strong>Q7.</strong> After <code>int&amp; r = i; r = 2;</code>, what is <code>i</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>2</code>.</li>
+              <li><strong>Q8.</strong> What does "follow the arrow" mean?</li>
+              <li class="answer-line"><strong>Answer:</strong> Replace the reference with the variable it refers to before reasoning about the line.</li>
             </ul>
           </article>
         </div>
@@ -305,43 +394,38 @@ good_swap(i, j);
         <h2>Lecture 13 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Copy problem</h3>
+            <h3>Trace</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What prints after this call?
+                <strong>Q1.</strong> What is printed?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void f(int x) {
-    x = 100;
-}
-
-int n = 3;
-f(n);
-cout &lt;&lt; n &lt;&lt; endl;
+int  i = 10;
+int&amp; r = i;
+r = r + 1;
+i = i * 2;
+cout &lt;&lt; i &lt;&lt; ' ' &lt;&lt; r &lt;&lt; endl;
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It prints <code>3</code>; <code>f</code> changed only its copy.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>22 22</code>. <code>r = r + 1</code> means <code>i = i + 1</code> &rArr; 11; <code>i = i * 2</code> &rArr; 22; <code>r</code> still points at <code>i</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Reference update</h3>
+            <h3>Spot the error</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What prints here?
+                <strong>Q2.</strong> Which lines fail to compile, and why?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void f(int&amp; x) {
-    x = 100;
-}
-
-int n = 3;
-f(n);
-cout &lt;&lt; n &lt;&lt; endl;
+int  i = 0;
+int&amp; r1;            // (a)
+int&amp; r2 = 7;        // (b)
+int&amp; r3 = i;        // (c)
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It prints <code>100</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> (a) uninitialized reference; (b) literal has no storage. (c) is fine.</li>
             </ul>
           </article>
         </div>
@@ -351,7 +435,7 @@ cout &lt;&lt; n &lt;&lt; endl;
         <div class="eyebrow">Next Lecture</div>
         <h2>References II</h2>
         <p class="lead center-copy">
-          Next time we add <code>const</code> references and decide how parameter types should be chosen.
+          Next time we use a reference parameter to fix <code>bad_swap</code> and meet the read-only cousin: <code>const T&amp;</code>.
         </p>
       </section>
     </div>

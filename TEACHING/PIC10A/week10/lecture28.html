@@ -19,13 +19,13 @@
         <div class="eyebrow">PIC 10A • Lecture 28</div>
         <h1>C-style Arrays I</h1>
         <p class="lead">
-          C-style arrays are lower-level fixed-size sequences. They connect indexing to pointer arithmetic.
+          Before <code>std::vector</code> there were raw arrays: a fixed block of elements laid out back to back in memory, with a size fixed at compile time and no safety net.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 18.1-18.2</span>
-          <span class="pill">arrays</span>
           <span class="pill">fixed size</span>
-          <span class="pill">pointer arithmetic</span>
+          <span class="pill">no bounds check</span>
+          <span class="pill">indexing</span>
+          <span class="pill">vs vector</span>
         </div>
       </section>
 
@@ -33,165 +33,266 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>Lecture 27 — Pointers II</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li>A pointer holds an address.</li>
+              <li><code>*p</code> dereferences; <code>&amp;x</code> takes an address.</li>
+              <li>Pointers and references both give indirect access.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>Declaring and initializing raw arrays.</li>
+              <li>Indexing, traversal, and the fixed-size rule.</li>
+              <li>Why overrunning an array is undefined behavior.</li>
+              <li>Arrays vs <code>std::vector</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
+        <h2>Declaring a Raw Array</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5];          // 5 ints, values uninitialized
+double scores[3];  // 3 doubles
+char grade[1];     // 1 char
+
+a[0] = 10;
+a[1] = 20;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>T name[N]</code> reserves room for exactly <code>N</code> elements.</li>
+              <li>The <code>N</code> must be a constant known at compile time.</li>
+              <li>Without an initializer the elements hold garbage.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Initializing an Array</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {1, 2, 3, 4, 5};   // all five set
+int b[5] = {1, 2};            // b = {1,2,0,0,0}
+int c[5] = {};                // all zeros
+int d[]  = {7, 8, 9};         // size deduced: 3
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A brace list initializes element by element.</li>
+              <li>Missing trailing values are zero-initialized.</li>
+              <li>Omitting the size lets the compiler count the list.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Indexing Starts at Zero</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {10, 20, 30, 40, 50};
+
+a[0];   // 10  — first element
+a[4];   // 50  — last valid element
+a[2] = 99;     // a = {10,20,99,40,50}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Valid indices for <code>a[5]</code> are <code>0</code> through <code>4</code>.</li>
+              <li>The last element is at index <code>N - 1</code>, never <code>N</code>.</li>
+              <li>Element <code>i</code> sits <code>i</code> slots past the start.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>No Bounds Checking</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {1, 2, 3, 4, 5};
+
+a[5]  = 100;   // out of range — UNDEFINED BEHAVIOR
+a[-1] = 7;     // out of range — UNDEFINED BEHAVIOR
+int x = a[99]; // reads some unrelated memory
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>C++ does <em>not</em> check that the index is in range.</li>
+              <li>An out-of-range access is undefined behavior.</li>
+              <li>It may crash, corrupt data, or appear to "work".</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Undefined Behavior, Stated Plainly</h2>
+        <div class="callout cool">
+          Writing past the end of a raw array does not throw and does not warn. The program may keep running with silently corrupted memory — the worst kind of bug to chase.
+        </div>
+      </section>
+
+      <section>
+        <h2>The Size Is Fixed Forever</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int n = 5;
+int a[n];          // not standard C++ (size must be constant)
+
+const int N = 5;
+int b[N];          // OK — N is a compile-time constant
+
+// b cannot grow: there is no b.push_back(...)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The size is baked in when the array is created.</li>
+              <li>You cannot resize, append, or shrink it.</li>
+              <li>The size must be a compile-time constant.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Traversing With a Size Variable</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int N = 5;
+int a[N] = {3, 1, 4, 1, 5};
+
+int sum = 0;
+for (int i = 0; i &lt; N; ++i) {
+    sum += a[i];
+}
+cout &lt;&lt; sum &lt;&lt; endl;   // 14
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>An array does not know its own length.</li>
+              <li>You must carry the size <code>N</code> alongside it.</li>
+              <li>The loop condition is <code>i &lt; N</code>, never <code>i &lt;= N</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Classic Off-by-One</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int N = 5;
+int a[N] = {1, 2, 3, 4, 5};
+
+for (int i = 0; i &lt;= N; ++i) {   // BUG: i == 5 is out of range
+    cout &lt;&lt; a[i] &lt;&lt; ' ';
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>i &lt;= N</code> reaches <code>a[5]</code>, which does not exist.</li>
+              <li>That last read is undefined behavior.</li>
+              <li>Always loop while <code>i &lt; N</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Arrays vs std::vector</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>arrays</strong>
-            <span>Today centers on arrays.</span>
+            <span class="kicker">Size</span>
+            <strong>fixed vs dynamic</strong>
+            <span>Array size is locked; a vector can grow and shrink.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>fixed size</strong>
-            <span>We use examples and code review to make fixed size concrete.</span>
+            <span class="kicker">Length</span>
+            <strong>tracked or not</strong>
+            <span>A vector knows <code>.size()</code>; an array does not.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Safety</span>
+            <strong>.at() vs nothing</strong>
+            <span><code>v.at(i)</code> can range-check; <code>a[i]</code> never does.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>C-Style Array</h2>
+        <h2>Prefer vector by Default</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a[4] = {10, 20, 30, 40};
-cout &lt;&lt; a[0] &lt;&lt; endl;
-cout &lt;&lt; a[3] &lt;&lt; endl;
+// Raw array: size and data travel separately
+int a[5] = {1, 2, 3, 4, 5};
+
+// vector: size travels with the data, can grow
+std::vector&lt;int&gt; v = {1, 2, 3, 4, 5};
+v.push_back(6);
+cout &lt;&lt; v.size() &lt;&lt; endl;   // 6
             </code>
           </pre>
-          <article class="card">
+          <article class="card secondary">
             <ul class="tight">
-              <li>C-style arrays have fixed size.</li>
-              <li>Indices still start at zero.</li>
-              <li>There is no bounds checking.</li>
+              <li><code>vector</code> carries its own length and resizes.</li>
+              <li>It copies cleanly and can be returned from a function.</li>
+              <li>Use raw arrays only when an interface forces them.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Looping Over an Array</h2>
+        <h2>Passing an Array to a Function</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a[4] = {10, 20, 30, 40};
-
-for (int i = 0; i &lt; 4; ++i) {
-    cout &lt;&lt; a[i] &lt;&lt; endl;
+int sum(int a[], int n) {       // a is really int*
+    int s = 0;
+    for (int i = 0; i &lt; n; ++i) s += a[i];
+    return s;
 }
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>You must know or store the size.</li>
-              <li>The loop condition uses the array length.</li>
-              <li><code>i &lt; 4</code> avoids one-past-the-end access.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
 
-      <section>
-        <h2>Pointer Arithmetic</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a[4] = {10, 20, 30, 40};
-int* p = a;
-
-cout &lt;&lt; *p &lt;&lt; endl;
-cout &lt;&lt; *(p + 1) &lt;&lt; endl;
+int data[4] = {2, 4, 6, 8};
+cout &lt;&lt; sum(data, 4) &lt;&lt; endl;    // 20 — size passed by hand
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>An array name often behaves like a pointer to its first element.</li>
-              <li><code>p + 1</code> moves to the next int.</li>
-              <li>Indexing and pointer arithmetic are connected.</li>
+              <li>An array argument "decays" to a pointer to its first element.</li>
+              <li>The function never receives the length.</li>
+              <li>So you must pass the size as a separate parameter.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Bounds Bug: One Past the End</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a[3] = {4, 5, 6};
-
-for (int i = 0; i &lt;= 3; ++i) {
-    cout &lt;&lt; a[i] &lt;&lt; endl;  // bug when i is 3
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Valid indices are <code>0</code>, <code>1</code>, and <code>2</code>.</li>
-              <li><code>i &lt;= 3</code> eventually accesses <code>a[3]</code>.</li>
-              <li>C-style arrays do not stop you from reading invalid memory.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Pointer Arithmetic Trace</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a[4] = {10, 20, 30, 40};
-
-cout &lt;&lt; *(a + 0) &lt;&lt; endl;  // a[0]
-cout &lt;&lt; *(a + 2) &lt;&lt; endl;  // a[2]
-cout &lt;&lt; 3[a] &lt;&lt; endl;      // legal, but do not write this
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li><code>a[i]</code> is defined in terms of <code>*(a + i)</code>.</li>
-              <li>Pointer arithmetic moves by elements, not raw bytes in your source code.</li>
-              <li>The strange <code>3[a]</code> example explains the rule; it is not good style.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
+        <h2>Decay Loses the Size</h2>
+        <div class="callout cool">
+          Inside the function, the parameter is a pointer — not an array. <code>sizeof</code> on it gives the size of a pointer, not the array. The length only survives if you pass it yourself. (Detail next lecture.)
         </div>
       </section>
 
@@ -200,11 +301,11 @@ cout &lt;&lt; 3[a] &lt;&lt; endl;      // legal, but do not write this
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">For <code>double d[8];</code>, what is the largest valid index, and what happens if you write to <code>d[8]</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">Why must a traversal loop carry a separate size variable instead of asking the array for its length?</p>
           </article>
         </div>
       </section>
@@ -215,18 +316,18 @@ cout &lt;&lt; 3[a] &lt;&lt; endl;      // legal, but do not write this
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops c-style arrays i.</li>
-              <li>Key chapters: 18.1-18.2.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li><code>T a[N]</code> is a fixed block of <code>N</code> elements.</li>
+              <li>Indices run <code>0</code> to <code>N-1</code>; no bounds checking.</li>
+              <li>Out-of-range access is undefined behavior.</li>
+              <li>The size is a compile-time constant and cannot change.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Loop while <code>i &lt; N</code>, never <code>i &lt;= N</code>.</li>
+              <li>Pass the size alongside the array to functions.</li>
+              <li>Reach for <code>std::vector</code> unless an interface forbids it.</li>
             </ul>
           </article>
         </div>
@@ -236,29 +337,25 @@ cout &lt;&lt; 3[a] &lt;&lt; endl;      // legal, but do not write this
         <h2>Lecture 28 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of C-style Arrays I?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is arrays connected to fixed size.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> What are the valid indices of <code>int a[6];</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>0</code> through <code>5</code>.</li>
+              <li><strong>Q2.</strong> What does <code>int b[5] = {1, 2};</code> store?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>{1, 2, 0, 0, 0}</code> — missing values are zero.</li>
+              <li><strong>Q3.</strong> Can a raw array grow at runtime?</li>
+              <li class="answer-line"><strong>Answer:</strong> No; its size is fixed at compile time.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> What happens when you read <code>a[N]</code> for <code>int a[N]</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Undefined behavior — out of range, no diagnostic.</li>
+              <li><strong>Q5.</strong> Why pass a size parameter to <code>sum(int a[], int n)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> The array decays to a pointer and loses its length.</li>
+              <li><strong>Q6.</strong> Why is <code>std::vector</code> usually preferred?</li>
+              <li class="answer-line"><strong>Answer:</strong> It tracks its own size, resizes, and copies safely.</li>
             </ul>
           </article>
         </div>
@@ -268,39 +365,36 @@ cout &lt;&lt; 3[a] &lt;&lt; endl;      // legal, but do not write this
         <h2>Lecture 28 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-int a[5] = {};
-a[0] = 7;
-a[4] = 9;
-
-cout &lt;&lt; a[0] + a[4] &lt;&lt; endl;
-            </code>
-          </pre>
-              </li>
-              <li class="answer-line"><strong>Answer:</strong> Trace which indices are explicitly changed and which remain zero-initialized.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Fix the design</h3>
-            <ul class="tight qa-list">
-              <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q1.</strong> What is wrong here?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 int a[3] = {1, 2, 3};
-int* p = a + 1;
-
-cout &lt;&lt; *p &lt;&lt; endl;
-cout &lt;&lt; *(p + 1) &lt;&lt; endl;
+for (int i = 1; i &lt;= 3; ++i)
+    cout &lt;&lt; a[i] &lt;&lt; ' ';
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>p</code> starts at <code>a[1]</code>, so <code>*(p + 1)</code> reads <code>a[2]</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> It skips <code>a[0]</code> and reads <code>a[3]</code> (out of range). Use <code>for (int i = 0; i &lt; 3; ++i)</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>What prints?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Output?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {4};
+int s = 0;
+for (int i = 0; i &lt; 5; ++i) s += a[i];
+cout &lt;&lt; s &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>4</code>. Only <code>a[0]</code> is 4; the rest are zero-initialized.</li>
             </ul>
           </article>
         </div>
@@ -310,7 +404,7 @@ cout &lt;&lt; *(p + 1) &lt;&lt; endl;
         <div class="eyebrow">Next Lecture</div>
         <h2>C-style Arrays II</h2>
         <p class="lead center-copy">
-          Next time we pass arrays to functions and discuss decay, size parameters, and C strings.
+          Next time we open up array-to-pointer decay: why <code>int a[]</code> is really <code>int*</code>, and how <code>a[i]</code> is just <code>*(a + i)</code>.
         </p>
       </section>
     </div>

@@ -19,13 +19,13 @@
         <div class="eyebrow">PIC 10A • Lecture 29</div>
         <h1>C-style Arrays II</h1>
         <p class="lead">
-          Arrays behave differently when passed to functions. We study decay, size parameters, and C strings.
+          An array name is almost a pointer. Once you see that <code>a[i]</code> is just <code>*(a + i)</code>, decay, pointer arithmetic, and C-strings all fall into place.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 18.3-18.4</span>
-          <span class="pill">array parameters</span>
-          <span class="pill">decay</span>
-          <span class="pill">C strings</span>
+          <span class="pill">array decay</span>
+          <span class="pill">pointer arithmetic</span>
+          <span class="pill">C-strings</span>
+          <span class="pill">off-by-one</span>
         </div>
       </section>
 
@@ -33,172 +33,219 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>Lecture 28 — C-style Arrays I</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li>Fixed-size block, indices <code>0 .. N-1</code>.</li>
+              <li>No bounds checking; overrun is undefined behavior.</li>
+              <li>Passing to a function loses the length.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>Why <code>int a[]</code> as a parameter <em>is</em> <code>int*</code>.</li>
+              <li><code>a[i]</code> equals <code>*(a + i)</code>.</li>
+              <li>Walking an array with pointer arithmetic.</li>
+              <li>C-strings and out-of-range bugs.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>array parameters</strong>
-            <span>Today centers on array parameters.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>decay</strong>
-            <span>We use examples and code review to make decay concrete.</span>
+        <h2>The Array Name Is an Address</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {10, 20, 30, 40};
+
+int* p = a;        // a converts to &amp;a[0]
+cout &lt;&lt; *p &lt;&lt; endl;        // 10
+cout &lt;&lt; *(a) &lt;&lt; endl;      // 10
+cout &lt;&lt; (a == &amp;a[0]);     // 1 (true)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>In most expressions, <code>a</code> decays to a pointer to <code>a[0]</code>.</li>
+              <li><code>int* p = a;</code> copies that address into <code>p</code>.</li>
+              <li>Dereferencing the array name yields the first element.</li>
+            </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Array Parameter</h2>
+        <h2>Array-to-Pointer Decay</h2>
+        <div class="callout cool">
+          Array-to-pointer <strong>decay</strong>: in nearly every context, an array of <code>T</code> automatically converts to a <code>T*</code> pointing at its first element. The length is left behind.
+        </div>
+      </section>
+
+      <section>
+        <h2>int a[] Is Really int*</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print(const int* a, int size) {
-    for (int i = 0; i &lt; size; ++i) {
-        cout &lt;&lt; a[i] &lt;&lt; &quot; &quot;;
-    }
+void f(int a[]) { /* a is int* here */ }
+void g(int* a)  { /* identical to f  */ }
+
+void h(int a[100]) { /* the 100 is ignored */ }
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A parameter written <code>int a[]</code> is exactly <code>int* a</code>.</li>
+              <li>A size inside the brackets, like <code>[100]</code>, is ignored.</li>
+              <li>All three signatures above are the same function type.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why You Must Pass the Size</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void print(int a[]) {
+    int n = sizeof(a) / sizeof(a[0]);   // BUG: sizeof a pointer!
+    for (int i = 0; i &lt; n; ++i) cout &lt;&lt; a[i];
+}
+
+void print(int a[], int n) {            // correct: size given
+    for (int i = 0; i &lt; n; ++i) cout &lt;&lt; a[i] &lt;&lt; ' ';
 }
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Array parameters usually need a separate size.</li>
-              <li>The function receives a pointer to the first element.</li>
-              <li>The size is not automatically known.</li>
+              <li>Inside the function, <code>sizeof(a)</code> is the pointer size.</li>
+              <li>The <code>sizeof</code> trick only works on a real array.</li>
+              <li>The caller knows the length; pass it explicitly.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Decay Trap</h2>
+        <h2>a[i] Is *(a + i)</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void f(int a[]) {
-    cout &lt;&lt; sizeof(a) &lt;&lt; endl;
-}
+int a[4] = {5, 6, 7, 8};
 
-int data[5];
-cout &lt;&lt; sizeof(data) &lt;&lt; endl;
-f(data);
+a[2];        // 7
+*(a + 2);    // 7  — same thing
+*(2 + a);    // 7  — and so is 2[a] (please never write that)
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>In the caller, <code>data</code> is an array.</li>
-              <li>In the function, <code>a</code> is a pointer.</li>
-              <li>Do not use <code>sizeof</code> on a parameter to find array length.</li>
+              <li>Subscripting is defined as <code>a[i] == *(a + i)</code>.</li>
+              <li><code>a + i</code> is the address of element <code>i</code>.</li>
+              <li>This identity is the whole secret of arrays.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>C Strings</h2>
+        <h2>Pointer Arithmetic Counts Elements</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-char word[] = &quot;hi&quot;;
-cout &lt;&lt; word &lt;&lt; endl;
-cout &lt;&lt; word[0] &lt;&lt; endl;
+int a[4] = {5, 6, 7, 8};
+int* p = a;     // points at a[0]
+
+p + 1;          // address of a[1], not "one byte later"
+*(p + 3);       // 8
+++p;            // now p points at a[1]
+cout &lt;&lt; *p;     // 6
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A C string is a char array ending with <code>\0</code>.</li>
-              <li>String literals provide null-terminated character data.</li>
-              <li>Prefer <code>std::string</code> in normal PIC 10A code.</li>
+              <li><code>p + k</code> advances by <code>k</code> elements, scaled by <code>sizeof(int)</code>.</li>
+              <li>Incrementing a pointer moves it to the next element.</li>
+              <li>The compiler handles the byte math for you.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Worked Example: Sum Array Parameter</h2>
+        <h2>Walking an Array With a Pointer</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int sum(const int* a, int size) {
-    int total = 0;
-    for (int i = 0; i &lt; size; ++i) {
-        total += a[i];
-    }
-    return total;
+int a[5] = {1, 2, 3, 4, 5};
+int sum = 0;
+
+for (int* p = a; p &lt; a + 5; ++p) {
+    sum += *p;
 }
-
-int values[4] = {2, 4, 6, 8};
-cout &lt;&lt; sum(values, 4) &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>The pointer tells the function where the first element is.</li>
-              <li>The size tells the function when to stop.</li>
-              <li><code>const int*</code> says the function will not change the elements.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Worked Example: Walk a C String</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-char word[] = "cat";
-int i = 0;
-
-while (word[i] != '\0') {
-    cout &lt;&lt; word[i] &lt;&lt; endl;
-    ++i;
-}
+cout &lt;&lt; sum &lt;&lt; endl;   // 15
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The loop stops at the null terminator.</li>
-              <li>The terminator is stored in the array but is not printed as a normal letter.</li>
-              <li>For everyday string work, <code>std::string</code> is safer and easier.</li>
+              <li><code>a + 5</code> is the "one-past-the-end" address.</li>
+              <li>Loop while <code>p &lt; a + 5</code> — never dereference that end.</li>
+              <li>This is exactly how iterators feel later in 10B.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
+        <h2>C-strings Are char Arrays</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+char s[6] = "hello";   // {'h','e','l','l','o','\0'}
+
+for (int i = 0; s[i] != '\0'; ++i)
+    cout &lt;&lt; s[i];        // hello
+
+cout &lt;&lt; sizeof(s);      // 6: 5 letters + terminator
+            </code>
+          </pre>
           <article class="card">
-            <h3>Before writing code</h3>
             <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
+              <li>A C-string is a <code>char</code> array ending in <code>'\0'</code>.</li>
+              <li>The terminator marks where the text stops.</li>
+              <li>Always reserve one extra slot for <code>'\0'</code>.</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Terminator Is Easy to Forget</h2>
+        <div class="callout cool">
+          A C-string without its <code>'\0'</code> has no end. Code that scans "until <code>'\0'</code>" will run off the array into unrelated memory — a classic source of undefined behavior. Prefer <code>std::string</code> when you can.
+        </div>
+      </section>
+
+      <section>
+        <h2>Off-by-One and Out-of-Range</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {1, 2, 3, 4, 5};
+
+a[5];                 // out of range (valid: 0..4)
+for (int i = 0; i &lt;= 5; ++i) a[i] = 0;   // writes a[5] — UB
+int* p = a + 5;       // OK to form
+cout &lt;&lt; *p;           // NOT OK to dereference
+            </code>
+          </pre>
           <article class="card secondary">
-            <h3>Before debugging</h3>
             <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
+              <li>You may compute the one-past-end address, not read it.</li>
+              <li><code>i &lt;= N</code> is the single most common array bug.</li>
+              <li>No diagnostic — the program just misbehaves.</li>
             </ul>
           </article>
         </div>
@@ -209,11 +256,11 @@ while (word[i] != '\0') {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">Given <code>int a[10];</code> and <code>int* p = a;</code>, what element does <code>*(p + 4)</code> name, and how many bytes is that past <code>p</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">How many <code>char</code> slots are needed to store the C-string <code>"PIC10A"</code>, and why?</p>
           </article>
         </div>
       </section>
@@ -224,18 +271,18 @@ while (word[i] != '\0') {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops c-style arrays ii.</li>
-              <li>Key chapters: 18.3-18.4.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li>Arrays decay to a pointer to their first element.</li>
+              <li>A parameter <code>int a[]</code> is just <code>int*</code>.</li>
+              <li><code>a[i]</code> is defined as <code>*(a + i)</code>.</li>
+              <li>Pointer arithmetic moves by whole elements.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Always pass the size next to the array.</li>
+              <li>Stop loops at <code>i &lt; N</code> / <code>p &lt; a + N</code>.</li>
+              <li>Leave room for <code>'\0'</code>; prefer <code>std::string</code>.</li>
             </ul>
           </article>
         </div>
@@ -245,29 +292,25 @@ while (word[i] != '\0') {
         <h2>Lecture 29 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of C-style Arrays II?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is array parameters connected to decay.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> What does the array name <code>a</code> decay to?</li>
+              <li class="answer-line"><strong>Answer:</strong> A pointer to its first element, <code>&amp;a[0]</code>.</li>
+              <li><strong>Q2.</strong> Rewrite <code>a[3]</code> using a pointer.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>*(a + 3)</code>.</li>
+              <li><strong>Q3.</strong> What type is the parameter in <code>void f(int a[]);</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>int*</code> — the brackets are cosmetic.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> Why does <code>sizeof(a)/sizeof(a[0])</code> fail inside a function?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>a</code> is a pointer there, so <code>sizeof(a)</code> is the pointer size.</li>
+              <li><strong>Q5.</strong> If <code>p</code> is <code>int*</code>, how far is <code>p + 2</code> from <code>p</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Two elements — <code>2 * sizeof(int)</code> bytes.</li>
+              <li><strong>Q6.</strong> What marks the end of a C-string?</li>
+              <li class="answer-line"><strong>Answer:</strong> The null terminator <code>'\0'</code>.</li>
             </ul>
           </article>
         </div>
@@ -277,42 +320,34 @@ while (word[i] != '\0') {
         <h2>Lecture 29 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>What prints?</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> Output?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int max_value(const int* a, int size) {
-    int best = a[0];
-    for (int i = 1; i &lt; size; ++i) {
-        if (a[i] &gt; best) {
-            best = a[i];
-        }
-    }
-    return best;
-}
+int a[4] = {2, 4, 6, 8};
+int* p = a + 1;
+cout &lt;&lt; p[0] &lt;&lt; ' ' &lt;&lt; *(p + 2) &lt;&lt; endl;
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The function still needs <code>size</code>; the pointer alone is not enough.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>4 8</code>. <code>p</code> points at <code>a[1]</code>, so <code>p[0]==a[1]==4</code> and <code>*(p+2)==a[3]==8</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Fix the design</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q2.</strong> What is wrong?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-char greeting[] = "hi";
-
-cout &lt;&lt; greeting[0] &lt;&lt; endl;
-cout &lt;&lt; (greeting[2] == '\0') &lt;&lt; endl;
+char s[5] = {'h','e','l','l','o'};
+cout &lt;&lt; s;   // print as a C-string
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The null terminator is stored after the visible characters.</li>
+              <li class="answer-line"><strong>Answer:</strong> No <code>'\0'</code> terminator, so <code>cout &lt;&lt; s</code> runs past the array — undefined behavior. Need <code>char s[6]</code> ending in <code>'\0'</code>.</li>
             </ul>
           </article>
         </div>
@@ -320,9 +355,9 @@ cout &lt;&lt; (greeting[2] == '\0') &lt;&lt; endl;
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Final Review</h2>
+        <h2>Final Review &amp; PIC 10B Preview</h2>
         <p class="lead center-copy">
-          Next time we close the course with a final synthesis and PIC 10B preview.
+          Next time we tie the whole quarter together — functions through arrays — flag the common exam pitfalls, and peek ahead to PIC 10B.
         </p>
       </section>
     </div>

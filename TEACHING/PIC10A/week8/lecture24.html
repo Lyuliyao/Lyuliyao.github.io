@@ -17,200 +17,351 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 24</div>
-        <h1>Constructors II and Encapsulation</h1>
+        <h1>Classes, Encapsulation, and Code Organization</h1>
         <p class="lead">
-          We finish the class core with initializer lists, access control, and organizing member definitions.
+          We finally introduce the <code>class</code> keyword and <code>public</code>/<code>private</code> access control, use them to protect a class invariant, and then organize a class across a header and a <code>.cpp</code>.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 15.6-15.10</span>
-          <span class="pill">initializer lists</span>
-          <span class="pill">public/private</span>
-          <span class="pill">organization</span>
+          <span class="pill">Chapter 15</span>
+          <span class="pill">class</span>
+          <span class="pill">public / private</span>
+          <span class="pill">encapsulation</span>
         </div>
       </section>
 
       <section>
-        <h2>Review</h2>
+        <h2>Recap: Lecture 23</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>Constructors &amp; init lists</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li><code>Time(int h, int m) : hour(h), minute(m) { }</code></li>
+              <li>Member initializer lists initialize directly, in declaration order.</li>
+              <li>Everything so far has been a <code>struct</code> &mdash; all members public.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>The <code>class</code> keyword and <code>public</code>/<code>private</code>.</li>
+              <li>Encapsulation and enforcing a class invariant.</li>
+              <li>Then: organizing a class across <code>.hpp</code> and <code>.cpp</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>initializer lists</strong>
-            <span>Today centers on initializer lists.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>public/private</strong>
-            <span>We use examples and code review to make public/private concrete.</span>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Initializer List</h2>
+        <h2>Motivation: A struct's Invariant Can Be Broken</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Pair {
-    int first;
-    int second;
-
-    Pair(int a, int b)
-        : first(a), second(b) {}
+struct Time {
+    int hour;     // intended: 0 &lt;= hour &lt; 24
+    int minute;   // intended: 0 &lt;= minute &lt; 60
 };
+
+Time t;
+t.hour = 99;      // nothing stops this
+t.minute = -7;    // the object is now nonsense
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Initializer lists initialize members directly.</li>
-              <li>They are the preferred constructor style.</li>
-              <li>They become essential for const members and references.</li>
+              <li>With a <code>struct</code>, every member is writable by anyone.</li>
+              <li>External code can set values that violate our intent.</li>
+              <li>We need a way to <em>hide</em> the data and guard every change.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Public and Private</h2>
+        <h2>The class Keyword + public / private</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Counter {
-private:
-    int value;
-public:
-    Counter() : value(0) {}
-    void bump() { ++value; }
-    int get() const { return value; }
+class Time {
+private:                 // reachable only inside Time
+    int hour;
+    int minute;
+public:                  // reachable from any code
+    Time(int h, int m) : hour(h), minute(m) { }
+    int getHour() const { return hour; }
 };
+
+Time t(9, 5);
+t.getHour();    // OK: public
+t.hour = 20;    // ERROR: hour is private
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Private data protects representation.</li>
-              <li>Public functions form the interface.</li>
-              <li>Users should not depend on implementation details.</li>
+              <li><code>class</code> introduces a new type, like <code>struct</code>.</li>
+              <li><code>private</code> members are reachable only from class members.</li>
+              <li><code>public</code> members form the interface for outside code.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Outside Definitions</h2>
+        <h2>struct vs class Default Access</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point {
-    double x;
-    double y;
-    double radius() const;
+struct S { int x; };   // x is PUBLIC by default
+class  C { int x; };   // x is PRIVATE by default
+
+S s;  s.x = 1;         // OK
+C c;  c.x = 1;         // ERROR: x is private
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>struct</code> members default to <code>public</code>.</li>
+              <li><code>class</code> members default to <code>private</code>.</li>
+              <li>Otherwise the machinery is identical &mdash; only the default differs.</li>
+              <li>Use <code>class</code> when you want encapsulation by default.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Encapsulation</h2>
+        <div class="callout cool">
+          <strong>Encapsulation:</strong> make member variables <code>private</code> and expose a small <code>public</code> interface. Because every change goes through code you wrote, the object can be kept valid &mdash; outside code can never reach in and corrupt it.
+        </div>
+      </section>
+
+      <section>
+        <h2>The Class Invariant</h2>
+        <div class="callout cool">
+          A <strong>class invariant</strong> is a condition every object of the class must always satisfy. For <code>Time</code>: <code>0 &lt;= hour &lt; 24</code> and <code>0 &lt;= minute &lt; 60</code>. Encapsulation is what makes the invariant <em>enforceable</em>: private data + a guarded interface.
+        </div>
+      </section>
+
+      <section>
+        <h2>Enforcing the Invariant in the Constructor</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Time {
+private:
+    int hour;
+    int minute;
+public:
+    Time(int h, int m) {
+        if (h &lt; 0 || h &gt;= 24) h = 0;
+        if (m &lt; 0 || m &gt;= 60) m = 0;
+        hour = h;
+        minute = m;
+    }
 };
 
-double Point::radius() const {
-    return sqrt(x * x + y * y);
+Time bad(99, -7);   // becomes 00:00, still valid
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The constructor establishes the invariant on creation.</li>
+              <li>Because <code>hour</code> is private, no object can skip this check.</li>
+              <li>Bad input is corrected, not stored.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Accessors (Getters)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Time {
+private:
+    int hour, minute;
+public:
+    Time(int h, int m);
+    int getHour()   const { return hour; }
+    int getMinute() const { return minute; }
+};
+
+Time t(9, 5);
+std::cout &lt;&lt; t.getHour();    // 9, read-only access
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Getters give controlled read access to private data.</li>
+              <li>They are <code>const</code>: reading never modifies the object.</li>
+              <li>Callers see the value but cannot bypass validation.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Mutators (Setters) with Validation</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Time {
+private:
+    int hour, minute;
+public:
+    bool setHour(int h) {
+        if (h &lt; 0 || h &gt;= 24) return false;  // reject
+        hour = h;
+        return true;
+    }
+};
+
+Time t(0, 0);
+t.setHour(25);   // returns false, hour unchanged
+t.setHour(14);   // returns true,  hour == 14
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A setter is the only way to change a private member.</li>
+              <li>It rejects values that would break the invariant.</li>
+              <li>Returning <code>bool</code> tells the caller if it worked.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Defining Members Outside the Class</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Time {
+private:
+    int hour, minute;
+public:
+    Time(int h, int m);          // declared only
+    int getHour() const;         // declared only
+};
+
+Time::Time(int h, int m) : hour(h), minute(m) { }
+int  Time::getHour() const { return hour; }
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Now we have a real class, the body can hold only declarations.</li>
+              <li><code>Time::</code> says "this function belongs to <code>Time</code>".</li>
+              <li>Inside <code>Time::getHour</code> we can name <code>hour</code> directly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Scope Resolution, Precisely</h2>
+        <div class="callout cool">
+          <code>ClassName::member</code> is the <strong>scope resolution operator</strong>. It connects an out-of-class definition to its declaration inside the class body. The return type still comes first: <code>int Time::getHour() const</code> &mdash; <code>int</code> is the return type, <code>Time::</code> names the owning class.
+        </div>
+      </section>
+
+      <section>
+        <h2>The Header File (.hpp)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// time.hpp
+#ifndef TIME_HPP
+#define TIME_HPP
+
+class Time {
+private:
+    int hour;
+    int minute;
+public:
+    Time(int h, int m);
+    int getHour() const;
+    bool setHour(int h);
+};
+
+#endif
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The header holds the class definition + member declarations.</li>
+              <li>The include guard stops double-inclusion errors.</li>
+              <li>Anyone who <code>#include "time.hpp"</code> sees the interface.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Source File (.cpp)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// time.cpp
+#include "time.hpp"
+
+Time::Time(int h, int m) : hour(h), minute(m) { }
+
+int Time::getHour() const { return hour; }
+
+bool Time::setHour(int h) {
+    if (h &lt; 0 || h &gt;= 24) return false;
+    hour = h;
+    return true;
 }
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Declarations can live in the interface.</li>
-              <li>Definitions can be placed later or in cpp files.</li>
-              <li>Use <code>ClassName::</code> to define member functions outside.</li>
+              <li>The <code>.cpp</code> holds member <em>definitions</em>, each with <code>Time::</code>.</li>
+              <li>It includes its own header so declarations match.</li>
+              <li>Interface (header) and implementation (cpp) are separated.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Class Interface</h2>
+        <h2>Worked Example: A Validated BankAccount</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
+// account.hpp
 class BankAccount {
 private:
-    double balance;
-
+    double balance;          // invariant: balance &gt;= 0
 public:
-    BankAccount(double initial)
-        : balance(initial) {}
-
-    void deposit(double amount);
-    double get_balance() const;
+    BankAccount(double b);
+    double getBalance() const;
+    bool withdraw(double amt);
+    void deposit(double amt);
 };
+
+// account.cpp
+BankAccount::BankAccount(double b)
+    : balance(b &lt; 0 ? 0 : b) { }
+double BankAccount::getBalance() const { return balance; }
+bool BankAccount::withdraw(double amt) {
+    if (amt &lt; 0 || amt &gt; balance) return false;
+    balance -= amt;
+    return true;
+}
+void BankAccount::deposit(double amt) {
+    if (amt &gt; 0) balance += amt;
+}
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Private data prevents outside code from corrupting representation.</li>
-              <li>Public member functions define the allowed operations.</li>
-              <li>The constructor initializer list gives <code>balance</code> its starting value.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Definitions Outside the Class</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void BankAccount::deposit(double amount) {
-    if (amount &gt; 0) {
-        balance += amount;
-    }
-}
-
-double BankAccount::get_balance() const {
-    return balance;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>BankAccount::</code> says which class the function belongs to.</li>
-              <li>Member definitions can access private member variables.</li>
-              <li>The <code>const</code> on <code>get_balance</code> must match the declaration.</li>
+              <li>Private <code>balance</code>; public interface = the only access.</li>
+              <li>Invariant <code>balance &gt;= 0</code> established at construction.</li>
+              <li>Header = interface; cpp = <code>BankAccount::</code> definitions.</li>
             </ul>
           </article>
         </div>
@@ -221,11 +372,11 @@ double BankAccount::get_balance() const {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">In the motivating <code>struct Time</code>, why can external code set <code>hour = 99</code>, and what one change to the type makes that line fail to compile?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">Why does making <code>balance</code> private make the <code>balance &gt;= 0</code> invariant enforceable, and what would <code>BankAccount::</code> mean in <code>account.cpp</code>?</p>
           </article>
         </div>
       </section>
@@ -236,18 +387,18 @@ double BankAccount::get_balance() const {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops constructors ii and encapsulation.</li>
-              <li>Key chapters: 15.6-15.10.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li><code>class</code> introduces a type with <code>public</code>/<code>private</code> access.</li>
+              <li><code>class</code> defaults to private; <code>struct</code> to public.</li>
+              <li>Encapsulation = private data + a guarded public interface.</li>
+              <li>That is what makes a class invariant enforceable.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Validate in constructors and setters, not at call sites.</li>
+              <li>Const getters in, validating mutators out.</li>
+              <li>Define members with <code>ClassName::</code>; keep the interface in the header, the work in the cpp.</li>
             </ul>
           </article>
         </div>
@@ -257,29 +408,25 @@ double BankAccount::get_balance() const {
         <h2>Lecture 24 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Constructors II and Encapsulation?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is initializer lists connected to public/private.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> Default access for <code>class</code> vs <code>struct</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>class</code> is private by default, <code>struct</code> public; otherwise identical.</li>
+              <li><strong>Q2.</strong> What is encapsulation?</li>
+              <li class="answer-line"><strong>Answer:</strong> Private data behind a small, controlled public interface.</li>
+              <li><strong>Q3.</strong> What does <code>Time::</code> mean in <code>int Time::getHour() const</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Scope resolution &mdash; this defines <code>Time</code>'s declared <code>getHour</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> Why validate in the constructor?</li>
+              <li class="answer-line"><strong>Answer:</strong> So no object can ever begin life in an invalid state.</li>
+              <li><strong>Q5.</strong> Why make <code>balance</code> private?</li>
+              <li class="answer-line"><strong>Answer:</strong> So all changes pass through validating functions; the invariant can't be bypassed.</li>
+              <li><strong>Q6.</strong> What goes in the <code>.hpp</code> vs the <code>.cpp</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Class definition + declarations + guard in the header; member definitions in the cpp.</li>
             </ul>
           </article>
         </div>
@@ -289,44 +436,36 @@ double BankAccount::get_balance() const {
         <h2>Lecture 24 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>Find the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> Why won't this link/compile cleanly?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point {
-    double x;
-    double y;
-
-    Point(double x_in, double y_in)
-        : x(x_in), y(y_in) {}
-};
+// time.cpp
+#include "time.hpp"
+int getHour() const { return hour; }
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The initializer list initializes each member before the constructor body runs.</li>
+              <li class="answer-line"><strong>Answer:</strong> Missing <code>Time::</code>. This defines a free function, not <code>Time::getHour</code>; <code>hour</code> is out of scope and <code>const</code> is invalid on a non-member. Write <code>int Time::getHour() const</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Fix the design</h3>
+            <h3>Trace the result</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q2.</strong> What is the final balance?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Stopwatch {
-private:
-    int seconds;
-public:
-    Stopwatch() : seconds(0) {}
-    void tick() { ++seconds; }
-    int elapsed() const { return seconds; }
-};
+BankAccount a(-100);   // ctor: b &lt; 0 ? 0 : b
+a.deposit(40);
+a.withdraw(200);       // amt &gt; balance: refused
+std::cout &lt;&lt; a.getBalance();
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The data is private, so users interact through the public interface.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>40</code>. The constructor clamps -100 to 0, deposit adds 40, the over-limit withdraw is rejected.</li>
             </ul>
           </article>
         </div>
@@ -334,9 +473,9 @@ public:
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Review: Vectors to Classes</h2>
+        <h2>Classes Review and Default Arguments</h2>
         <p class="lead center-copy">
-          Next time we pause for a review of vectors, functions, references, and classes.
+          Next time we design a complete small class end to end, then learn Chapter 16 <strong>default arguments</strong> and the ambiguity they can cause with overloads.
         </p>
       </section>
     </div>

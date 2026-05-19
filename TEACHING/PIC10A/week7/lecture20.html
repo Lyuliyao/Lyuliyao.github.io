@@ -17,189 +17,291 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 20</div>
-        <h1>Overloading and Default Arguments</h1>
+        <h1>Member Functions</h1>
         <p class="lead">
-          C++ can choose among functions with the same name when parameter lists differ. Default arguments add another way to simplify calls.
+          A <code>struct</code> can do more than hold data. We put the functions that act on a value <em>inside</em> the type, so behavior lives next to the data it uses.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 14 and 16</span>
-          <span class="pill">overloading</span>
-          <span class="pill">resolution</span>
-          <span class="pill">defaults</span>
+          <span class="pill">Chapter 15</span>
+          <span class="pill">member functions</span>
+          <span class="pill">the implicit object</span>
+          <span class="pill">dot operator</span>
         </div>
       </section>
 
       <section>
-        <h2>Review</h2>
+        <h2>Recap of Lecture 19</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>What we had</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li><code>struct Time</code> with member variables <code>hour</code>, <code>minute</code>, <code>second</code>.</li>
+              <li>Objects, brace init, the dot operator.</li>
+              <li>The type only <em>held</em> data.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today (Ch 15.2)</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>Give the type <em>behavior</em>: member functions.</li>
+              <li>How a member function sees the object's own members.</li>
+              <li>Reading vs modifying members; <code>struct</code> vs <code>class</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>overloading</strong>
-            <span>Today centers on overloading.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>resolution</strong>
-            <span>We use examples and code review to make resolution concrete.</span>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Legal Overloading</h2>
+        <h2>Behavior Outside the Type</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int add(int a, int b);
-double add(double a, double b);
+struct Time { int hour; int minute; int second; };
+
+// logic about a Time, but living far away from it:
+int total_seconds(const Time&amp; t) {
+    return t.hour * 3600 + t.minute * 60 + t.second;
+}
+
+Time a{1, 0, 0};
+std::cout &lt;&lt; total_seconds(a) &lt;&lt; "\n";   // 3600
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Same name is allowed if parameter lists differ.</li>
-              <li>The compiler chooses the best matching signature.</li>
-              <li>This is function overloading.</li>
+              <li>The function and the data are separate.</li>
+              <li>Every access needs <code>t.</code> and an argument.</li>
+              <li>We can move this logic <em>into</em> the type.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Not Distinguished by Return</h2>
+        <h2>Adding a Member Function</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int f(int x);
-double f(int x);   // error
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Return type alone cannot distinguish overloads.</li>
-              <li>The call <code>f(3)</code> would be ambiguous.</li>
-              <li>Change the parameter list or the name.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
+struct Time {
+    int hour;
+    int minute;
+    int second;
 
-      <section>
-        <h2>Default Arguments</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void greet(string name = &quot;friend&quot;) {
-    cout &lt;&lt; &quot;Hello, &quot; &lt;&lt; name &lt;&lt; endl;
-}
-
-greet(&quot;Ada&quot;);
-greet();
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>A default argument is used when the caller omits an argument.</li>
-              <li>Defaults should appear in the declaration.</li>
-              <li>Parameters after a default usually need defaults too.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Overload Resolution Examples</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print(int n) {
-    cout &lt;&lt; "int: " &lt;&lt; n &lt;&lt; endl;
-}
-
-void print(double x) {
-    cout &lt;&lt; "double: " &lt;&lt; x &lt;&lt; endl;
-}
-
-print(3);
-print(3.5);
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The compiler chooses the overload with the best parameter match.</li>
-              <li><code>print(3)</code> matches <code>int</code> exactly.</li>
-              <li><code>print(3.5)</code> matches <code>double</code> exactly.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Default Argument Rules</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void print(const vector&lt;int&gt;&amp; v, size_t up_to = 0);
-
-// Better meaning:
-// up_to == 0 means print the whole vector.
-
-void print(const vector&lt;int&gt;&amp; v, size_t up_to) {
-    if (up_to == 0 || up_to &gt; v.size()) {
-        up_to = v.size();
+    int total_seconds() {
+        return hour * 3600 + minute * 60 + second;
     }
-    for (size_t i = 0; i &lt; up_to; ++i) {
-        cout &lt;&lt; v[i] &lt;&lt; " ";
-    }
-}
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A <strong>member function</strong> is defined inside the struct.</li>
+              <li>It uses <code>hour</code>, <code>minute</code>, <code>second</code> with no <code>t.</code> prefix.</li>
+              <li>It takes no <code>Time</code> parameter &mdash; the object is implicit.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Definition</h2>
+        <div class="callout cool">
+          A <strong>member function</strong> is a function declared inside a type. It is always called <strong>on an object</strong> using the dot operator, and inside its body it can use that object's member variables by name.
+        </div>
+      </section>
+
+      <section>
+        <h2>Calling on an Object</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time a{1, 0, 0};   // 3600
+Time b{0, 1, 30};  //   90
+
+std::cout &lt;&lt; a.total_seconds() &lt;&lt; "\n";   // 3600
+std::cout &lt;&lt; b.total_seconds() &lt;&lt; "\n";   //   90
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Default arguments let a call omit less-common options.</li>
-              <li>The default belongs with the declaration students see first.</li>
-              <li>Use defaults only when the omitted behavior is obvious.</li>
+              <li><code>object.function()</code> mirrors <code>object.member</code>.</li>
+              <li>Same code, different object &rArr; different result.</li>
+              <li>No <code>Time</code> argument: the object is passed implicitly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Implicit Object</h2>
+        <div class="callout cool">
+          In <code>a.total_seconds()</code>, the object <code>a</code> is the <strong>implicit object</strong>. An unqualified <code>hour</code> inside the body means <em>that object's</em> <code>hour</code> &mdash; <code>a.hour</code> for this call, <code>b.hour</code> for the next.
+        </div>
+      </section>
+
+      <section>
+        <h2>Which Object's Members?</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute, second;
+    int minutes_past() { return hour * 60 + minute; }
+};
+
+Time morning{9, 30, 0};
+Time evening{18, 45, 0};
+
+std::cout &lt;&lt; morning.minutes_past() &lt;&lt; "\n"; // 570  (9*60+30)
+std::cout &lt;&lt; evening.minutes_past() &lt;&lt; "\n"; // 1125 (18*60+45)
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>hour</code> resolves to the object before the dot.</li>
+              <li>One function body serves every <code>Time</code> object.</li>
+              <li>The implicit object selects which members are read.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Functions That Read</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute, second;
+
+    bool is_midnight() {                 // only reads members
+        return hour == 0 &amp;&amp; minute == 0 &amp;&amp; second == 0;
+    }
+};
+
+Time t{0, 0, 0};
+std::cout &lt;&lt; t.is_midnight() &lt;&lt; "\n";   // 1 (true)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A reading member function only inspects members.</li>
+              <li>It leaves every member of the object unchanged.</li>
+              <li>It can return a computed answer about the object.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Functions That Modify</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute, second;
+
+    void add_minutes(int m) {            // changes members
+        int total = total_seconds() + m * 60;
+        hour   = (total / 3600) % 24;
+        minute = (total / 60) % 60;
+        second =  total % 60;
+    }
+    int total_seconds() {
+        return hour * 3600 + minute * 60 + second;
+    }
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A modifying member function assigns to members.</li>
+              <li>It writes the implicit object's own members.</li>
+              <li>It may call sibling member functions directly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Modifying in Action</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time t{9, 30, 0};
+t.add_minutes(45);
+
+std::cout &lt;&lt; t.hour   &lt;&lt; "\n";   // 10
+std::cout &lt;&lt; t.minute &lt;&lt; "\n";   // 15
+std::cout &lt;&lt; t.second &lt;&lt; "\n";   //  0
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>t.add_minutes(45)</code> rewrites <code>t</code>'s members.</li>
+              <li>The change persists after the call returns.</li>
+              <li>Logic about a time now lives <em>with</em> the time.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Building on Point</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Point {
+    double x;
+    double y;
+
+    double distance_to(const Point&amp; p) {     // reads
+        double dx = x - p.x;
+        double dy = y - p.y;
+        return std::sqrt(dx * dx + dy * dy);
+    }
+    void translate(double dx, double dy) {   // modifies
+        x = x + dx;
+        y = y + dy;
+    }
+};
+
+Point origin{0, 0};
+Point q{3, 4};
+std::cout &lt;&lt; origin.distance_to(q) &lt;&lt; "\n"; // 5
+q.translate(1, 1);                           // q is now (4, 5)
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>x</code>, <code>y</code> are the implicit object's; <code>p.x</code>, <code>p.y</code> are the argument's.</li>
+              <li>One type carries both data and the behavior on it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Function vs Free Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// Free function: data passed in explicitly
+int total_seconds(const Time&amp; t) {
+    return t.hour * 3600 + t.minute * 60 + t.second;
+}
+int s1 = total_seconds(a);
+
+// Member function: called ON the object
+int s2 = a.total_seconds();
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Both compute the same thing.</li>
+              <li>The free function takes the object as a parameter.</li>
+              <li>The member function lives inside the type and is called with the dot.</li>
+              <li>Keeping behavior next to its data makes the type easier to use.</li>
             </ul>
           </article>
         </div>
@@ -210,11 +312,11 @@ void print(const vector&lt;int&gt;&amp; v, size_t up_to) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">In <code>a.total_seconds()</code>, what does the bare name <code>hour</code> inside the body refer to?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">Rewrite the free function <code>total_seconds(const Time&amp;)</code> as a member function. What goes away from the parameter list?</p>
           </article>
         </div>
       </section>
@@ -225,18 +327,18 @@ void print(const vector&lt;int&gt;&amp; v, size_t up_to) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops overloading and default arguments.</li>
-              <li>Key chapters: 14 and 16.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li>Member functions put behavior inside the type.</li>
+              <li>They are called on an object with the dot operator.</li>
+              <li>Bare member names mean the implicit object's members.</li>
+              <li>A member function is just a free function moved inside the type.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Keep behavior next to the data it uses.</li>
+              <li>Let modifying functions write the implicit object.</li>
+              <li>Reuse sibling member functions instead of repeating logic.</li>
             </ul>
           </article>
         </div>
@@ -246,29 +348,25 @@ void print(const vector&lt;int&gt;&amp; v, size_t up_to) {
         <h2>Lecture 20 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Overloading and Default Arguments?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is overloading connected to resolution.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> How do you call a member function?</li>
+              <li class="answer-line"><strong>Answer:</strong> On an object with the dot: <code>object.function()</code>.</li>
+              <li><strong>Q2.</strong> What is the implicit object?</li>
+              <li class="answer-line"><strong>Answer:</strong> The object before the dot; its members are used by bare name.</li>
+              <li><strong>Q3.</strong> In <code>a.total_seconds()</code>, whose <code>hour</code> is used?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>a</code>'s &mdash; <code>a</code> is the implicit object.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> Can a member function change the object's members?</li>
+              <li class="answer-line"><strong>Answer:</strong> Yes; it can assign to the implicit object's members, e.g. <code>add_minutes</code>.</li>
+              <li><strong>Q5.</strong> What does a member function gain over a free function that takes the object?</li>
+              <li class="answer-line"><strong>Answer:</strong> It is called with the dot and refers to the object's members by bare name &mdash; behavior stays next to its data.</li>
+              <li><strong>Q6.</strong> In <code>distance_to(const Point&amp; p)</code>, what is <code>p.x</code> vs bare <code>x</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>p.x</code> is the argument's; bare <code>x</code> is the implicit object's.</li>
             </ul>
           </article>
         </div>
@@ -278,33 +376,46 @@ void print(const vector&lt;int&gt;&amp; v, size_t up_to) {
         <h2>Lecture 20 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>What prints?</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> Output?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int add(int a, int b);
-double add(double a, double b);
+struct Counter {
+    int n;
+    void bump() { n = n + 1; }
+};
+Counter a{0}, b{0};
+a.bump(); a.bump();
+b.bump();
+std::cout &lt;&lt; a.n &lt;&lt; " " &lt;&lt; b.n &lt;&lt; "\n";
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Trace the variables that change and identify the condition or call that controls progress.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>2 1</code> &mdash; each object has its own <code>n</code>; <code>bump()</code> modifies the implicit object only.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Fix the design</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q2.</strong> What does this print?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-int f(int x);
-double f(int x);   // error
+struct Time {
+    int hour, minute, second;
+    int total() { return hour * 3600 + minute * 60 + second; }
+    void add_minutes(int m) { minute = minute + m; }
+};
+
+Time t{9, 30, 0};
+t.add_minutes(15);
+std::cout &lt;&lt; t.total() &lt;&lt; "\n";
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Decide whether the code needs copying, read-only access, mutation, or bounds information.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>34500</code>. <code>add_minutes(15)</code> writes the implicit object's <code>minute</code> (now 45), then <code>total()</code> computes 9&times;3600 + 45&times;60 + 0.</li>
             </ul>
           </article>
         </div>
@@ -312,9 +423,9 @@ double f(int x);   // error
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Structs and Classes I</h2>
+        <h2>Constructors I</h2>
         <p class="lead center-copy">
-          Next time we begin structs and classes by grouping data with member functions.
+          Next time we give types a <code>constructor</code> so objects start in a valid state instead of holding uninitialized members.
         </p>
       </section>
     </div>

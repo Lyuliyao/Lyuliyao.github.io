@@ -17,212 +17,250 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 19</div>
-        <h1>Header and CPP Organization</h1>
+        <h1>Classes: Structs and Member Variables</h1>
         <p class="lead">
-          Large programs split declarations and definitions across files. This lecture explains what belongs in headers and what belongs in cpp files.
+          Built-in types model single numbers and characters. To model a <em>point</em> or a <em>time</em>, we bundle the related values into one user-defined type.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 13</span>
-          <span class="pill">headers</span>
-          <span class="pill">declarations</span>
-          <span class="pill">linking</span>
+          <span class="pill">Chapter 15</span>
+          <span class="pill">struct</span>
+          <span class="pill">member variables</span>
+          <span class="pill">objects</span>
         </div>
       </section>
 
       <section>
-        <h2>Review</h2>
+        <h2>Where We Are</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>Last time (L18, Ch 14)</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li>Function overloading: one name, many parameter lists.</li>
+              <li>The compiler picks the best viable match.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today (Ch 15.1)</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>We have run out of built-in types that fit the problem.</li>
+              <li>We build our <em>own</em> type with <code>struct</code>.</li>
+              <li>Member variables, objects, the dot operator.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>headers</strong>
-            <span>Today centers on headers.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>declarations</strong>
-            <span>We use examples and code review to make declarations concrete.</span>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Header File</h2>
+        <h2>The Problem: Loose Variables</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// temperature.hpp
-#ifndef TEMPERATURE_HPP
-#define TEMPERATURE_HPP
+int hour   = 9;
+int minute = 30;
+int second = 0;
 
-double celsius_to_fahrenheit(double c);
-
-#endif
+// To pass "a time" around, every function needs three parameters:
+void print_time(int h, int m, int s);
+print_time(minute, hour, second);   // compiles, but wrong order!
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Headers contain declarations.</li>
-              <li>Function comments usually belong with declarations.</li>
-              <li>Include guards prevent accidental repeated inclusion.</li>
+              <li>Three variables that always travel together.</li>
+              <li>Nothing stops you from swapping the order at a call.</li>
+              <li>We want <em>one</em> value that <em>is</em> a time.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>CPP File</h2>
+        <h2>Declaring a struct</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// math_tools.cpp
-#include &quot;math_tools.hpp&quot;
-
-int square(int n) {
-    return n * n;
-}
+struct Time {
+    int hour;
+    int minute;
+    int second;
+};   // &lt;-- semicolon is required
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>CPP files contain definitions.</li>
-              <li>They include their own header.</li>
-              <li>The compiler checks that declarations and definitions agree.</li>
+              <li><code>Time</code> is now a type, usable like <code>int</code>.</li>
+              <li><code>hour</code>, <code>minute</code>, <code>second</code> are <strong>member variables</strong>.</li>
+              <li>The closing brace must be followed by a semicolon.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Main File</h2>
+        <h2>Definition</h2>
+        <div class="callout cool">
+          A <strong>struct</strong> is a user-defined type that groups several <strong>member variables</strong> under one name. A variable of that type is called an <strong>object</strong>; each object has its own copy of every member.
+        </div>
+      </section>
+
+      <section>
+        <h2>Creating Objects</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// main.cpp
-#include &quot;math_tools.hpp&quot;
+Time t1;        // an object; its three int members are uninitialized
+Time t2;        // a second, independent object
 
-int main() {
-    cout &lt;&lt; square(5) &lt;&lt; endl;
-}
+// t1 and t2 are separate: 6 ints total, 3 per object
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Main includes the header, not the cpp file.</li>
-              <li>The project build compiles cpp files separately.</li>
-              <li>The linker connects calls to definitions.</li>
+              <li><code>Time t1;</code> declares an object the same way <code>int n;</code> does.</li>
+              <li>Each object bundles all three members in one variable.</li>
+              <li>Members of built-in type start <em>uninitialized</em> here.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>File Layout Example</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3><code>functions.hpp</code></h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-#ifndef FUNCTIONS_HPP
-#define FUNCTIONS_HPP
-
-#include &lt;vector&gt;
-
-int sum(const std::vector&lt;int&gt;&amp; v);
-void print(const std::vector&lt;int&gt;&amp; v);
-
-#endif
-              </code>
-            </pre>
-          </article>
-          <article class="card secondary">
-            <h3><code>functions.cpp</code></h3>
-            <pre>
-              <code data-trim data-line-numbers contenteditable class="language-cpp">
-#include "functions.hpp"
-#include &lt;iostream&gt;
-
-using namespace std;
-
-int sum(const vector&lt;int&gt;&amp; v) {
-    int total = 0;
-    for (size_t i = 0; i &lt; v.size(); ++i) {
-        total += v[i];
-    }
-    return total;
-}
-              </code>
-            </pre>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>How the Build Connects Files</h2>
+        <h2>Initializing by Assignment</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// main.cpp
-#include "functions.hpp"
-#include &lt;vector&gt;
+Time t2;
+t2.hour   = 14;
+t2.minute = 5;
+t2.second = 45;
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>object.member</code> names one member of that object.</li>
+              <li>Each member is assigned like an ordinary <code>int</code>.</li>
+              <li>This works, but takes one statement per member.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
 
-using namespace std;
-
-int main() {
-    vector&lt;int&gt; v = {1, 2, 3};
-    print(v);
-    return sum(v);
-}
+      <section>
+        <h2>Initializing with Braces</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time t1{9, 30, 0};      // hour=9, minute=30, second=0
+Time noon{12, 0, 0};    // members filled in declared order
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>main.cpp</code> sees declarations through the header.</li>
-              <li><code>functions.cpp</code> provides definitions.</li>
-              <li>The linker connects the compiled call to the compiled definition.</li>
+              <li>Brace init fills members in the order they were declared.</li>
+              <li><code>{9, 30, 0}</code> &rarr; <code>hour</code>=9, <code>minute</code>=30, <code>second</code>=0.</li>
+              <li>One concise line creates a fully set-up object.</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Dot Operator</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time t{9, 30, 0};
+
+std::cout &lt;&lt; t.hour &lt;&lt; ":" &lt;&lt; t.minute &lt;&lt; "\n";   // read: 9:30
+t.minute = t.minute + 15;                          // write
+std::cout &lt;&lt; t.minute &lt;&lt; "\n";                      // 45
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>t.hour</code> reaches into one member of object <code>t</code>.</li>
+              <li>Members are read and written like normal variables.</li>
+              <li>Writing <code>t.minute</code> changes only <code>t</code>'s copy.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Each Object Is Independent</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time a{1, 0, 0};
+Time b{0, 1, 30};
+
+a.hour = 5;                  // changes a only
+std::cout &lt;&lt; a.hour &lt;&lt; "\n"; // 5
+std::cout &lt;&lt; b.hour &lt;&lt; "\n"; // 0  (unaffected)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Two objects of the same type hold separate members.</li>
+              <li>Modifying <code>a</code> never touches <code>b</code>.</li>
+              <li>This is just like two separate <code>int</code> variables.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Passing a struct by Value</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void show(Time t) {                      // a copy of the object
+    std::cout &lt;&lt; t.hour &lt;&lt; ":" &lt;&lt; t.minute
+              &lt;&lt; ":" &lt;&lt; t.second &lt;&lt; "\n";
+}
+
+Time now{12, 0, 0};
+show(now);   // ONE argument carries the whole time
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>One parameter replaces three loose <code>int</code>s.</li>
+              <li>By value copies all members into the parameter.</li>
+              <li>Changes inside <code>show</code> would not affect <code>now</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Passing by const Reference</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void show(const Time&amp; t) {     // no copy; cannot modify t
+    std::cout &lt;&lt; t.hour &lt;&lt; ":" &lt;&lt; t.minute
+              &lt;&lt; ":" &lt;&lt; t.second &lt;&lt; "\n";
+}
+
+Time now{12, 0, 0};
+show(now);
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const Time&amp;</code> avoids copying the whole object.</li>
+              <li><code>const</code> guarantees <code>show</code> will not change <code>now</code>.</li>
+              <li>This reuses the reference rules from earlier lectures.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Data, Not Yet Behavior</h2>
+        <div class="callout cool">
+          So far a <code>struct</code> only <em>holds</em> data. The logic about a time &mdash; like converting to total seconds &mdash; still lives in free functions. Next lecture we move that behavior <em>inside</em> the type.
         </div>
       </section>
 
@@ -231,11 +269,11 @@ int main() {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">Why does <code>struct Point { double x; double y; }</code> need a semicolon after the closing brace?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">Given <code>Time t{9, 30, 0};</code>, which member does the <code>30</code> initialize, and why?</p>
           </article>
         </div>
       </section>
@@ -246,18 +284,18 @@ int main() {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops header and cpp organization.</li>
-              <li>Key chapter: 13.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li><code>struct</code> bundles related member variables into one type.</li>
+              <li>An object is one variable holding all members.</li>
+              <li>Brace init fills members in declared order.</li>
+              <li>The dot operator reads and writes one member.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Never forget the semicolon after the closing brace.</li>
+              <li>Group values that always travel together.</li>
+              <li>Pass big objects by <code>const&amp;</code> to avoid copies.</li>
             </ul>
           </article>
         </div>
@@ -267,29 +305,25 @@ int main() {
         <h2>Lecture 19 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Header and CPP Organization?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is headers connected to declarations.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> What is a member variable?</li>
+              <li class="answer-line"><strong>Answer:</strong> A variable that belongs to each object of the struct type.</li>
+              <li><strong>Q2.</strong> How do you reach one member of an object?</li>
+              <li class="answer-line"><strong>Answer:</strong> The dot operator: <code>object.member</code>.</li>
+              <li><strong>Q3.</strong> In <code>Time t{9, 30, 0};</code>, what is <code>t.second</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>0</code>; brace init fills members in declared order.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> If <code>a</code> and <code>b</code> are both <code>Time</code>, does <code>a.hour = 5;</code> change <code>b</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> No; each object has its own independent members.</li>
+              <li><strong>Q5.</strong> Why pass <code>const Time&amp;</code> instead of <code>Time</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> It avoids copying the object and guarantees it is not modified.</li>
+              <li><strong>Q6.</strong> Does a plain <code>struct</code> contain any behavior yet?</li>
+              <li class="answer-line"><strong>Answer:</strong> No; it only holds data &mdash; member functions come next.</li>
             </ul>
           </article>
         </div>
@@ -299,43 +333,42 @@ int main() {
         <h2>Lecture 19 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>What prints?</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> Output?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// math_tools.hpp
-#ifndef MATH_TOOLS_HPP
-#define MATH_TOOLS_HPP
+struct Point { double x; double y; };
 
-int square(int n);
-void print_line(string text);
-
-#endif
+Point p{3, 4};
+Point q = p;        // copies both members
+q.x = 99;
+std::cout &lt;&lt; p.x &lt;&lt; " " &lt;&lt; q.x &lt;&lt; "\n";
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The header declares the function so other files can call it.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>3 99</code> &mdash; <code>q</code> is a separate copy, so changing <code>q.x</code> leaves <code>p.x</code> untouched.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Fix the design</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q2.</strong> Why won't this compile?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// temperature.cpp
-#include "temperature.hpp"
-
-double celsius_to_fahrenheit(double c) {
-    return 9.0 / 5.0 * c + 32;
+struct Time {
+    int hour;
+    int minute;
+    int second
 }
+
+Time t{9, 30, 0};
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The source file includes the matching header and provides the definition.</li>
+              <li class="answer-line"><strong>Answer:</strong> Two bugs: <code>int second</code> is missing its semicolon, and the <code>struct</code> definition is missing the required semicolon after its closing brace.</li>
             </ul>
           </article>
         </div>
@@ -343,9 +376,9 @@ double celsius_to_fahrenheit(double c) {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Overloading and Default Arguments</h2>
+        <h2>Member Functions</h2>
         <p class="lead center-copy">
-          Next time we study function overloading and default arguments.
+          Next time we give our <code>struct</code> behavior by putting functions <em>inside</em> the type so they act on the object's own members.
         </p>
       </section>
     </div>

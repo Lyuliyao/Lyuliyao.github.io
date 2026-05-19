@@ -17,15 +17,15 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 22</div>
-        <h1>Constructors I</h1>
+        <h1>const Instances and const Member Functions</h1>
         <p class="lead">
-          Constructors control how objects begin life. We introduce default and parameterized constructors.
+          A <code>const</code> object promises never to change. To honor that promise, C++ only lets it call member functions that are themselves marked <code>const</code>.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 15.3</span>
-          <span class="pill">constructors</span>
-          <span class="pill">initialization</span>
-          <span class="pill">objects</span>
+          <span class="pill">Chapter 15</span>
+          <span class="pill">const</span>
+          <span class="pill">const member functions</span>
+          <span class="pill">const-correctness</span>
         </div>
       </section>
 
@@ -33,181 +33,262 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>Lecture 21</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li>Constructors give an object a valid initial state.</li>
+              <li>After construction, members hold meaningful values.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>Protect objects that must not change after creation.</li>
+              <li>Mark reading member functions <code>const</code>.</li>
+              <li>Pass objects by <code>const</code> reference safely.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>constructors</strong>
-            <span>Today centers on constructors.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>initialization</strong>
-            <span>We use examples and code review to make initialization concrete.</span>
+        <h2>A const Instance</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    Time(int h, int m) { hour = h; minute = m; }
+    int getHour() { return hour; }
+    void setHour(int h) { hour = h; }
+};
+
+const Time noon(12, 0);   // a const instance
+noon.setHour(13);         // ERROR: would modify noon
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const Time noon</code> may never change after construction.</li>
+              <li>The constructor still runs &mdash; that is initialization, not modification.</li>
+              <li><code>setHour</code> would change it, so the compiler forbids the call.</li>
+            </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Default Constructor</h2>
+        <h2>The Surprise: Even Getters Are Rejected</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Timer {
-    int seconds;
+const Time noon(12, 0);
+int h = noon.getHour();   // ERROR, even though it only reads
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>getHour</code> only reads, but the compiler does not know that.</li>
+              <li>From its declaration, <code>getHour</code> <em>could</em> modify the object.</li>
+              <li>On a <code>const</code> object, only functions that <em>promise</em> not to modify are allowed.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
 
-    Timer() {
-        seconds = 0;
+      <section>
+        <h2>The Rule</h2>
+        <div class="callout cool">
+          A <code>const</code> object may call <strong>only</strong> member functions that are themselves marked <code>const</code>. A member function makes that promise by writing <code>const</code> after its parameter list.
+        </div>
+      </section>
+
+      <section>
+        <h2>Marking a Member Function const</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    Time(int h, int m) { hour = h; minute = m; }
+
+    int getHour() const { return hour; }     // trailing const
+    int getMinute() const { return minute; }
+    void setHour(int h) { hour = h; }        // not const
+};
+
+const Time noon(12, 0);
+cout &lt;&lt; noon.getHour();   // OK now: getHour is const
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The trailing <code>const</code> applies to the implicit object.</li>
+              <li>It promises: "this function will not modify the object."</li>
+              <li><code>const</code> objects may call <code>getHour</code> and <code>getMinute</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Where the const Goes</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    Time(int h, int m) { hour = h; minute = m; }
+
+    int  getHour() const { return hour; }   // reader: const
+    void setHour(int h)  { hour = h;     }   // writer: no const
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The <code>const</code> sits <em>after</em> the parameter list, before the body.</li>
+              <li>It is part of the function's signature, not a return-type detail.</li>
+              <li>Mark every member function that only reads as <code>const</code>; leave writers non-<code>const</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What a const Member Function May Not Do</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    void show() const {
+        hour = 0;          // ERROR: modifies a member
+        setHour(9);        // ERROR: calls a non-const member
+        cout &lt;&lt; hour &lt;&lt; ":" &lt;&lt; minute;   // reading is fine
     }
+    void setHour(int h) { hour = h; }
 };
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A constructor runs when an object is created.</li>
-              <li>A default constructor takes no arguments.</li>
-              <li>It should establish a valid starting state.</li>
+              <li>It must not modify any member variable.</li>
+              <li>It must not call a non-const member function.</li>
+              <li>It may freely <em>read</em> members and print them.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Parameterized Constructor</h2>
+        <h2>Inside a const Member, this Is const</h2>
+        <div class="callout cool">
+          Within a <code>const</code> member function the implicit object is treated as <code>const</code>. Any attempt to modify a member, or to call a non-const member function, is a compile error &mdash; the promise is enforced, not just documented.
+        </div>
+      </section>
+
+      <section>
+        <h2>const-Correct Getters and Setters</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point {
-    double x;
-    double y;
+struct BankAccount {
+    double balance;
 
-    Point(double x_in, double y_in) {
-        x = x_in;
-        y = y_in;
-    }
+    BankAccount(double b) { balance = b; }
+
+    double getBalance() const { return balance; }  // reads
+    void deposit(double a) { balance += a; }        // writes
 };
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Constructor parameters initialize member variables.</li>
-              <li>The call provides the starting data.</li>
-              <li>Use meaningful parameter names.</li>
+              <li>A getter that only reads should be <code>const</code>.</li>
+              <li>A setter that modifies the object must <em>not</em> be <code>const</code>.</li>
+              <li>This split lets read-only code use the object without risk.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Constructor Calls</h2>
+        <h2>Passing Objects by const Reference</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-Point origin(0, 0);
-Point p(3, 4);
-Counter c;
+void printAccount(const BankAccount&amp; a) {
+    cout &lt;&lt; a.getBalance();   // OK: getBalance is const
+    a.deposit(10.0);          // ERROR: deposit is not const
+}
+
+BankAccount acct(500.0);
+printAccount(acct);           // no copy, cannot modify acct
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Objects are constructed before they are used.</li>
-              <li>Different constructors support different creation patterns.</li>
-              <li>The declaration determines which constructor is called.</li>
+              <li><code>const BankAccount&amp;</code> avoids a copy and forbids changes.</li>
+              <li>Inside, <code>a</code> behaves like a <code>const</code> object.</li>
+              <li>Only <code>const</code> member functions may be called on it.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Constructor Trace</h2>
+        <h2>The Classic Compile Error</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Rectangle {
-    double width;
-    double height;
+struct BankAccount {
+    double balance;
 
-    Rectangle(double w, double h) {
-        width = w;
-        height = h;
-    }
+    BankAccount(double b) { balance = b; }
+    double getBalance() { return balance; }   // NOT const
 };
 
-Rectangle r(3, 4);
+void report(const BankAccount&amp; a) {
+    cout &lt;&lt; a.getBalance();   // error here
+}
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Object storage is created first.</li>
-              <li>Constructor parameters <code>w</code> and <code>h</code> receive the arguments.</li>
-              <li>The constructor body assigns member variables into a valid state.</li>
+              <li><strong>"passing 'const BankAccount' as 'this' argument discards qualifiers"</strong></li>
+              <li>Or: <em>no matching member function for call to <code>getBalance</code></em>.</li>
+              <li><code>a</code> is const, but <code>getBalance</code> does not promise const.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Default Constructor Motivation</h2>
+        <h2>The Fix: Mark the Reader const</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Student {
-    string name;
-    int score;
+struct BankAccount {
+    double balance;
 
-    Student() {
-        name = "unknown";
-        score = 0;
-    }
+    BankAccount(double b) { balance = b; }
+    double getBalance() const { return balance; }   // fixed
 };
 
-Student s;
+void report(const BankAccount&amp; a) {
+    cout &lt;&lt; a.getBalance();   // compiles now
+}
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A default constructor makes no-argument construction meaningful.</li>
-              <li>It prevents objects from starting in an unclear state.</li>
-              <li>Every constructor should establish class invariants.</li>
+              <li>The cure is almost always to add the missing <code>const</code>.</li>
+              <li>Do not remove <code>const</code> from the parameter &mdash; that loses the protection.</li>
+              <li>Make every read-only member function <code>const</code> from the start.</li>
             </ul>
           </article>
         </div>
@@ -218,11 +299,11 @@ Student s;
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">Why can a <code>const Time</code> call <code>getHour() const</code> but not <code>setHour(int)</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">A function takes <code>const BankAccount&amp;</code> and calls <code>getBalance()</code>, which is not <code>const</code>. What error, and how do you fix it?</p>
           </article>
         </div>
       </section>
@@ -233,18 +314,18 @@ Student s;
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops constructors i.</li>
-              <li>Key chapter: 15.3.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li>A <code>const</code> object only calls <code>const</code> member functions.</li>
+              <li>Trailing <code>const</code> goes in declaration and definition.</li>
+              <li>A <code>const</code> member must not modify members or call non-const members.</li>
+              <li><code>const T&amp;</code> parameters behave like <code>const</code> objects.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Mark every read-only member function <code>const</code>.</li>
+              <li>Pass big objects by <code>const</code> reference.</li>
+              <li>Fix qualifier errors by adding <code>const</code>, not removing it.</li>
             </ul>
           </article>
         </div>
@@ -254,29 +335,25 @@ Student s;
         <h2>Lecture 22 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Constructors I?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is constructors connected to initialization.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> Which member functions may a <code>const</code> object call?</li>
+              <li class="answer-line"><strong>Answer:</strong> Only those marked <code>const</code>.</li>
+              <li><strong>Q2.</strong> Where does the keyword <code>const</code> go on a member function?</li>
+              <li class="answer-line"><strong>Answer:</strong> After the parameter list, in both declaration and definition.</li>
+              <li><strong>Q3.</strong> May a <code>const</code> member function modify a member?</li>
+              <li class="answer-line"><strong>Answer:</strong> No; it may only read members and call other <code>const</code> members.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> Why is a non-const getter rejected on a <code>const</code> object?</li>
+              <li class="answer-line"><strong>Answer:</strong> Its signature does not promise const, so it could modify the object.</li>
+              <li><strong>Q5.</strong> What does <code>const BankAccount&amp; a</code> allow you to call on <code>a</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Only <code>const</code> member functions; <code>a</code> acts like a <code>const</code> object.</li>
+              <li><strong>Q6.</strong> How do you fix "discards qualifiers" on <code>a.getBalance()</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Mark <code>getBalance</code> as <code>const</code>.</li>
             </ul>
           </article>
         </div>
@@ -286,45 +363,48 @@ Student s;
         <h2>Lecture 22 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>Find the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> Why won't this compile?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Counter {
-    int value;
+struct Time {
+    int hour, minute;
 
-    Counter() {
-        value = 0;
+    Time(int h, int m) { hour = h; minute = m; }
+    int getHour() const {
+        hour = hour;       // ??
+        return hour;
     }
 };
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The default constructor makes a newly created timer start at zero.</li>
+              <li class="answer-line"><strong>Answer:</strong> A <code>const</code> member function may not assign to a member. <code>hour = hour;</code> modifies the object; remove it and just <code>return hour;</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Fix the design</h3>
+            <h3>Make it const-correct</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What design question matters here?
+                <strong>Q2.</strong> What is the error, and the fix?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Student {
-    string name;
-    int id;
+struct Time {
+    int hour, minute;
 
-    Student(string n, int i) {
-        name = n;
-        id = i;
-    }
+    Time(int h, int m) { hour = h; minute = m; }
+    int getMinute() { return minute; }
 };
+
+void show(const Time&amp; t) {
+    cout &lt;&lt; t.getMinute();
+}
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> The constructor parameters provide the information needed to initialize the object.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>t</code> is <code>const</code> but <code>getMinute</code> is not; the call discards qualifiers. Fix: declare <code>int getMinute() const</code>.</li>
             </ul>
           </article>
         </div>
@@ -332,9 +412,9 @@ struct Student {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Const Member Functions</h2>
+        <h2>More on Constructors and Member Initializer Lists</h2>
         <p class="lead center-copy">
-          Next time const member functions make read-only object behavior part of the interface.
+          We can build and protect objects. Next time we go deeper into constructors: member initializer lists, multiple constructors, and the implicit default constructor.
         </p>
       </section>
     </div>

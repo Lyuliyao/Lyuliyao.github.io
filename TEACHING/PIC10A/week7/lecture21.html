@@ -17,15 +17,15 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 21</div>
-        <h1>Structs and Classes I</h1>
+        <h1>Constructors I</h1>
         <p class="lead">
-          Structs and classes bundle data and behavior. We start with member variables and member functions.
+          A constructor is a special member function that runs the moment an object is created. Its one job: leave the object in a valid, fully initialized state.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 15.1-15.2</span>
-          <span class="pill">structs</span>
-          <span class="pill">members</span>
-          <span class="pill">methods</span>
+          <span class="pill">Chapter 15</span>
+          <span class="pill">constructors</span>
+          <span class="pill">initialization</span>
+          <span class="pill">default constructor</span>
         </div>
       </section>
 
@@ -33,185 +33,279 @@
         <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Previous topic</h3>
+            <h3>Lecture 20</h3>
             <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
+              <li>We gave our types <em>behavior</em> with member functions.</li>
+              <li>An <code>advance()</code> on <code>Time</code> acts on the implicit object.</li>
+              <li>But objects still start with <strong>garbage data</strong>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Why this matters</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
+              <li>Make construction itself set up the object.</li>
+              <li>The default (no-argument) constructor.</li>
+              <li>Parameterized constructors; building objects several ways.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Roadmap</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>structs</strong>
-            <span>Today centers on structs.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>members</strong>
-            <span>We use examples and code review to make members concrete.</span>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>A Simple Struct</h2>
+        <h2>The Problem: Uninitialized Objects</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Book {
-    string title;
-    int pages;
+struct Time {
+    int hour;
+    int minute;
 };
 
-Book b;
-b.title = "C++";
-b.pages = 300;
+Time t;             // hour, minute are GARBAGE
+cout &lt;&lt; t.hour;     // undefined behavior
+t.hour = 25;        // nothing stops an invalid time
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A struct groups related values.</li>
-              <li>Each instance has its own member variables.</li>
-              <li>Use the dot operator to access members.</li>
+              <li>Nothing forces <code>t</code> into a sensible state.</li>
+              <li>Reading <code>t.hour</code> before setting it is undefined behavior.</li>
+              <li>We want every <code>Time</code> to start out valid.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Member Function</h2>
+        <h2>Hand-Initialization Does Not Scale</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point {
-    double x;
-    double y;
+Time t;
+t.hour = 9;         // every caller must remember
+t.minute = 30;      // every field, every time
 
-    double radius() const {
-        return sqrt(x * x + y * y);
-    }
-};
+Time other;         // forgot to set minute -> bug
+cout &lt;&lt; other.minute;   // garbage
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>A member function belongs to the struct/class.</li>
-              <li>It can use member variables directly.</li>
-              <li>The call looks like <code>p.radius()</code>.</li>
+              <li>Setup is repeated at every creation site.</li>
+              <li>One forgotten line is a silent, hard-to-find defect.</li>
+              <li>The type should initialize <em>itself</em>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Free vs Member</h2>
+        <h2>What a Constructor Is</h2>
+        <div class="callout cool">
+          A <strong>constructor</strong> is a member function with the <em>same name as the type</em> and <em>no return type</em>. It runs automatically when an object is created and is responsible for initializing the members.
+        </div>
+      </section>
+
+      <section>
+        <h2>A Default Constructor</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-double radius(Point p);
+struct Time {
+    int hour;
+    int minute;
 
-Point p;
-radius(p);
-p.radius();
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>A free function receives the object as an explicit argument.</li>
-              <li>A member function is called through an object.</li>
-              <li>Choose the style that makes the interface clear.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Rectangle Example</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Rectangle {
-    double width;
-    double height;
-};
-
-double area(Rectangle r) {
-    return r.width * r.height;
-}
-
-Rectangle box;
-box.width = 3;
-box.height = 4;
-cout &lt;&lt; area(box) &lt;&lt; endl;
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>A struct groups related member variables into one type.</li>
-              <li>The free function receives a rectangle as an explicit argument.</li>
-              <li>This is the first step toward objects with behavior.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Move Behavior Into the Type</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Rectangle {
-    double width;
-    double height;
-
-    double area() const {
-        return width * height;
+    Time() {            // takes no arguments
+        hour = 0;
+        minute = 0;
     }
 };
 
-Rectangle box{3, 4};
-cout &lt;&lt; box.area() &lt;&lt; endl;
+Time t;             // calls Time(): t is 00:00
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A member function is called through an object.</li>
-              <li>Inside the member function, member variables can be used directly.</li>
-              <li>The interface now reads like “ask this rectangle for its area.”</li>
+              <li>No return type; name matches the type exactly.</li>
+              <li>A constructor that takes no arguments is the <strong>default constructor</strong>.</li>
+              <li><code>Time t;</code> now produces a valid object, automatically.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>When the Constructor Runs</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    Time() {
+        cout &lt;&lt; "Time built" &lt;&lt; endl;
+        hour = 0; minute = 0;
+    }
+};
+
+Time a;             // prints "Time built"
+Time b;             // prints "Time built" again
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>You never call the constructor by name.</li>
+              <li>It fires once per object, at the point of creation.</li>
+              <li>Two objects &rArr; two constructor runs.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameterized Constructors</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour;
+    int minute;
+
+    Time() { hour = 0; minute = 0; }
+
+    Time(int h, int m) {        // parameterized
+        hour = h;
+        minute = m;
+    }
+};
+
+Time start;            // 00:00  -> default
+Time lunch(12, 30);    // 12:30  -> parameterized
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Constructors can be overloaded like any function.</li>
+              <li>The compiler picks one by the construction arguments.</li>
+              <li>One type, several ways to build it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Constructor's Job: A Valid Initial State</h2>
+        <div class="callout cool">
+          A constructor should leave the object in a state where <em>every</em> member function can be called safely. After <code>Time lunch(12, 30);</code>, both <code>hour</code> and <code>minute</code> hold meaningful values &mdash; never garbage.
+        </div>
+      </section>
+
+      <section>
+        <h2>Constructing Objects Several Ways</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time a;             // default ctor    -> 00:00
+Time b(9, 15);      // (int,int) ctor  -> 09:15
+Time c{9, 15};      // brace form      -> 09:15
+Time d = Time(9,15);// build temp, then copy
+
+Time e();           // NOT an object: declares a function
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Each line selects a constructor by its arguments.</li>
+              <li><code>Time e();</code> is the classic "most vexing parse" trap.</li>
+              <li>Use <code>Time e;</code> (no parentheses) for the default ctor.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Constructors and Containers</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    Time() { hour = 0; minute = 0; }
+    Time(int h, int m) { hour = h; minute = m; }
+};
+
+vector&lt;Time&gt; day(3);          // 3 elements, each Time()
+day[0] = Time(8, 0);          // overwrite element 0
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>vector&lt;Time&gt; day(3);</code> calls the default constructor once per slot.</li>
+              <li>So a type stored in a container usually needs a default constructor.</li>
+              <li>Each element is valid the instant the vector exists.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Running Example: BankAccount</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct BankAccount {
+    double balance;
+
+    BankAccount() {
+        balance = 0.0;
+    }
+    BankAccount(double initial) {
+        balance = initial;
+    }
+    void deposit(double amt) { balance += amt; }
+    double get() { return balance; }
+};
+
+BankAccount empty;             // 0.00
+BankAccount savings(500.0);    // 500.00
+savings.deposit(50.0);         // 550.00
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Every account starts with a defined balance.</li>
+              <li>No caller can forget to initialize <code>balance</code>.</li>
+              <li>Construction guarantees a valid balance from line one.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Constructor Sees the Members Directly</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct BankAccount {
+    double balance;
+
+    BankAccount(double initial) {
+        if (initial &lt; 0.0)
+            balance = 0.0;      // refuse a bad start
+        else
+            balance = initial;
+    }
+};
+
+BankAccount a(-40.0);   // balance becomes 0.00, not -40
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The body is ordinary code that runs at creation.</li>
+              <li>It can reject bad input and still produce a valid object.</li>
+              <li>That is the whole point: a guaranteed sane starting state.</li>
             </ul>
           </article>
         </div>
@@ -222,11 +316,11 @@ cout &lt;&lt; box.area() &lt;&lt; endl;
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
+            <p class="meta">Write a default constructor for <code>Time</code> that starts every object at <code>12:00</code>.</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
+            <p class="meta">Why does <code>Time e();</code> not create a <code>Time</code> object, while <code>Time e;</code> does?</p>
           </article>
         </div>
       </section>
@@ -237,18 +331,18 @@ cout &lt;&lt; box.area() &lt;&lt; endl;
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>This lecture develops structs and classes i.</li>
-              <li>Key chapters: 15.1-15.2.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
+              <li>A constructor has the type's name and no return type.</li>
+              <li>It runs automatically when an object is created.</li>
+              <li>The default constructor takes no arguments.</li>
+              <li>Constructors can be overloaded; arguments pick one.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
+              <li>Initialize every member; never leave garbage.</li>
+              <li>A constructor must leave a valid initial state.</li>
+              <li>Provide a default constructor for types kept in containers.</li>
             </ul>
           </article>
         </div>
@@ -258,29 +352,25 @@ cout &lt;&lt; box.area() &lt;&lt; endl;
         <h2>Lecture 21 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Concepts</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Structs and Classes I?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is structs connected to members.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
+              <li><strong>Q1.</strong> What return type does a constructor have?</li>
+              <li class="answer-line"><strong>Answer:</strong> None at all, not even <code>void</code>.</li>
+              <li><strong>Q2.</strong> What is the default constructor?</li>
+              <li class="answer-line"><strong>Answer:</strong> The constructor that can be called with no arguments.</li>
+              <li><strong>Q3.</strong> When does a constructor run?</li>
+              <li class="answer-line"><strong>Answer:</strong> Automatically, once, when the object is created.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Practice</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
+              <li><strong>Q4.</strong> Which constructor does <code>Time lunch(12, 30);</code> call?</li>
+              <li class="answer-line"><strong>Answer:</strong> The parameterized <code>Time(int, int)</code>, chosen by overload resolution.</li>
+              <li><strong>Q5.</strong> Why does <code>vector&lt;Time&gt; v(3);</code> need a default constructor?</li>
+              <li class="answer-line"><strong>Answer:</strong> It builds three elements, calling <code>Time()</code> once for each.</li>
+              <li><strong>Q6.</strong> What is a constructor's responsibility?</li>
+              <li class="answer-line"><strong>Answer:</strong> To leave the object in a valid, fully initialized state.</li>
             </ul>
           </article>
         </div>
@@ -290,44 +380,48 @@ cout &lt;&lt; box.area() &lt;&lt; endl;
         <h2>Lecture 21 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Trace it</h3>
+            <h3>Find the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What should you trace first?
+                <strong>Q1.</strong> What is wrong here?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point {
-    double x;
-    double y;
-};
+struct Time {
+    int hour, minute;
 
-Point p;
-p.x = 3;
-p.y = 4;
-            </code>
-          </pre>
-              </li>
-              <li class="answer-line"><strong>Answer:</strong> Trace each member separately: <code>title</code> and <code>pages</code>.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Fix the design</h3>
-            <ul class="tight qa-list">
-              <li>
-                <strong>Q2.</strong> What design question matters here?
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Circle {
-    double radius;
-
-    double area() const {
-        return 3.14159 * radius * radius;
+    void Time() {           // ??
+        hour = 0; minute = 0;
     }
 };
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>area</code> belongs in the type because it uses the circle's own state.</li>
+              <li class="answer-line"><strong>Answer:</strong> A constructor has no return type. Writing <code>void</code> makes it an ordinary member function named <code>Time</code>, not a constructor; remove <code>void</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Trace the value</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> What is the final balance?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct BankAccount {
+    double balance;
+
+    BankAccount() { balance = 0.0; }
+    BankAccount(double b) { balance = b; }
+    void deposit(double a) { balance += a; }
+    double get() { return balance; }
+};
+
+BankAccount acct(100.0);
+acct.deposit(25.0);
+cout &lt;&lt; acct.get();
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>125</code>. The <code>(double)</code> constructor sets 100.0, then <code>deposit</code> adds 25.0.</li>
             </ul>
           </article>
         </div>
@@ -335,9 +429,9 @@ struct Circle {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Constructors I</h2>
+        <h2>const Instances and const Member Functions</h2>
         <p class="lead center-copy">
-          Next time constructors explain how objects are initialized.
+          Constructors give an object a valid start. Next time we protect objects that should not change, using <code>const</code> instances and <code>const</code> member functions.
         </p>
       </section>
     </div>

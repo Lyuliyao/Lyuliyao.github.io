@@ -17,91 +17,293 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 30</div>
-        <h1>Final Review and PIC 10B Preview</h1>
+        <h1>Final Review &amp; PIC 10B Preview</h1>
         <p class="lead">
-          We close by connecting the course themes: state, control flow, functions, references, containers, classes, pointers, and arrays.
+          One last pass over the arc of the quarter — functions to classes to pointers to arrays — the pitfalls that bite on exams, and a teaser of where 10B goes next.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 1-18</span>
-          <span class="pill">review</span>
-          <span class="pill">debugging</span>
-          <span class="pill">next steps</span>
+          <span class="pill">capstone</span>
+          <span class="pill">exam pitfalls</span>
+          <span class="pill">10B preview</span>
+          <span class="pill">course complete</span>
         </div>
       </section>
 
       <section>
-        <h2>Review</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Previous topic</h3>
-            <ul class="tight">
-              <li>Use the previous abstraction instead of starting from scratch.</li>
-              <li>Keep tracing concrete state.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Why this matters</h3>
-            <ul class="tight">
-              <li>The next topic removes a limitation from the previous one.</li>
-              <li>Syntax is useful only when connected to behavior.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Roadmap</h2>
+        <h2>The Course Arc</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Core idea</span>
-            <strong>review</strong>
-            <span>Today centers on review.</span>
+            <span class="kicker">Functions</span>
+            <strong>abstraction</strong>
+            <span>Parameters, return, overloading.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Practice</span>
-            <strong>debugging</strong>
-            <span>We use examples and code review to make debugging concrete.</span>
+            <span class="kicker">Types</span>
+            <strong>your own</strong>
+            <span>Structs, classes, encapsulation.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Memory</span>
+            <strong>indirection</strong>
+            <span>References, pointers, arrays.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Course Map</h2>
+        <h2>Functions &amp; Overloading</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// data: variables, strings, vectors, classes
-// control: if, while, for
-// abstraction: functions, references, methods
-// memory: pointers, arrays
+int    area(int s)            { return s * s; }
+double area(double w, double h) { return w * h; }
+
+area(4);          // calls int overload  -> 16
+area(2.0, 3.0);   // calls double overload -> 6.0
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Most topics are combinations of state and control.</li>
-              <li>Functions and classes package ideas.</li>
-              <li>Pointers and arrays expose lower-level memory details.</li>
+              <li>Overloads must differ in parameter types, not just return.</li>
+              <li>The compiler picks the best viable match.</li>
+              <li><strong>Takeaway:</strong> same idea, same name; different data, different signature.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Debugging Checklist</h2>
+        <h2>References &amp; const</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// 1. Does it build?
-// 2. Does it run safely?
-// 3. Does it produce the intended result?
-// 4. Can you trace why?
+void grow(int&amp; n)            { n *= 2; }       // modifies caller
+int  sum(const vector&lt;int&gt;&amp; v) {              // no copy, read-only
+    int s = 0; for (int x : v) s += x; return s;
+}
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Separate build errors from runtime errors and logic errors.</li>
-              <li>Trace small examples before guessing.</li>
-              <li>Use types and signatures as documentation.</li>
+              <li><code>T&amp;</code> aliases the caller's object.</li>
+              <li><code>const T&amp;</code> avoids a copy and forbids changes.</li>
+              <li><strong>Takeaway:</strong> pass big objects by <code>const&amp;</code> by default.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Headers &amp; Separate Compilation</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// shape.h  — declarations only
+#ifndef SHAPE_H
+#define SHAPE_H
+double area(double r);
+#endif
+
+// shape.cpp — one definition
+#include "shape.h"
+double area(double r) { return 3.14159 * r * r; }
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Headers declare; <code>.cpp</code> files define.</li>
+              <li>Include guards stop double inclusion.</li>
+              <li><strong>Takeaway:</strong> one definition rule — declare often, define once.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Structs, Classes &amp; Constructors</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Point {
+public:
+    Point(double x, double y) : x_(x), y_(y) {}
+    double getX() const { return x_; }
+private:
+    double x_, y_;
+};
+
+Point p(1.0, 2.0);   // constructor runs
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A class bundles data with the functions on it.</li>
+              <li>Constructors initialize via the member initializer list.</li>
+              <li><strong>Takeaway:</strong> an object is never left half-built.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>const Members &amp; Encapsulation</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Account {
+public:
+    double balance() const { return bal_; }   // promises no change
+    void deposit(double d) { bal_ += d; }
+private:
+    double bal_ = 0.0;                          // hidden state
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const</code> member functions cannot modify the object.</li>
+              <li><code>private</code> data is reached only through the interface.</li>
+              <li><strong>Takeaway:</strong> invariants stay safe behind a small public API.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pointers</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int x = 7;
+int* p = &amp;x;     // p holds the address of x
+*p = 9;           // x is now 9
+cout &lt;&lt; *p &lt;&lt; endl;   // 9
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>&amp;</code> takes an address; <code>*</code> dereferences.</li>
+              <li>A pointer can be reseated; a reference cannot.</li>
+              <li><strong>Takeaway:</strong> pointers give explicit, rebindable indirection.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>C-style Arrays</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {1, 2, 3, 4};
+int* p = a;            // decay to &amp;a[0]
+a[2] == *(a + 2);      // true — both name 8... err, 3
+
+void f(int a[], int n);   // size must travel separately
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Fixed size, indices <code>0..N-1</code>, no bounds checks.</li>
+              <li>Arrays decay to pointers; <code>a[i] == *(a + i)</code>.</li>
+              <li><strong>Takeaway:</strong> prefer <code>std::vector</code> unless forced otherwise.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Common Exam Pitfalls</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Easy points lost</h3>
+            <ul class="tight">
+              <li>Overloads that differ only by return type.</li>
+              <li>Returning a reference to a local variable.</li>
+              <li>Forgetting <code>const</code> on a read-only member.</li>
+              <li>Missing include guards.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Memory traps</h3>
+            <ul class="tight">
+              <li><code>i &lt;= N</code> loops walking off the array.</li>
+              <li><code>sizeof</code> on a decayed array parameter.</li>
+              <li>C-string with no <code>'\0'</code>.</li>
+              <li>Dereferencing the one-past-end pointer.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Final Review Questions</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Concepts</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q1.</strong> Why pass a <code>vector</code> as <code>const&amp;</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Avoids a copy and guarantees the function won't modify it.</li>
+              <li><strong>Q2.</strong> What does a <code>const</code> member function promise?</li>
+              <li class="answer-line"><strong>Answer:</strong> It will not modify the object's data members.</li>
+              <li><strong>Q3.</strong> Where does the one definition rule put a function body?</li>
+              <li class="answer-line"><strong>Answer:</strong> In exactly one <code>.cpp</code> file; the header only declares it.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Memory</h3>
+            <ul class="tight qa-list">
+              <li><strong>Q4.</strong> What is <code>a[i]</code> in pointer form?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>*(a + i)</code>.</li>
+              <li><strong>Q5.</strong> Why pass the size with a raw array?</li>
+              <li class="answer-line"><strong>Answer:</strong> It decays to a pointer and loses its length.</li>
+              <li><strong>Q6.</strong> Difference between a pointer and a reference?</li>
+              <li class="answer-line"><strong>Answer:</strong> A pointer can be null and reseated; a reference is a fixed alias.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Final Code Review</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Spot the bug</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q1.</strong> What is wrong?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int&amp; first(int a[], int n) {
+    int x = a[0];
+    return x;          // returning ref to a local
+}
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>x</code> dies when the function returns; the reference dangles. Return <code>a[0]</code> by value, or <code>return a[0];</code> as <code>int&amp;</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>What prints?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Output?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class C {
+public:
+    C(int v) : v_(v) {}
+    int get() const { return v_; }
+private:
+    int v_;
+};
+C c(5);
+cout &lt;&lt; c.get() &lt;&lt; endl;
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> <code>5</code>. The constructor sets <code>v_</code>; the <code>const</code> getter reads it.</li>
             </ul>
           </article>
         </div>
@@ -109,233 +311,69 @@
 
       <section>
         <h2>PIC 10B Preview</h2>
+        <div class="callout cool">
+          10A gave you the language. 10B uses it to build real data structures and reusable, generic code — the foundation of modern C++.
+        </div>
+      </section>
+
+      <section>
+        <h2>What's Next in 10B</h2>
+        <div class="grid-2">
+          <article class="card">
+            <h3>Dynamic memory</h3>
+            <ul class="tight">
+              <li><code>new</code> / <code>delete</code> allocate at runtime.</li>
+              <li>Destructors and the rule of three.</li>
+            </ul>
+            <h3>Classes in depth</h3>
+            <ul class="tight">
+              <li>Copy semantics, operators, inheritance.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Recursion</h3>
+            <ul class="tight">
+              <li>Functions defined in terms of themselves.</li>
+            </ul>
+            <h3>Templates &amp; the STL</h3>
+            <ul class="tight">
+              <li>Write code once for any type.</li>
+              <li><code>vector</code>, <code>map</code>, algorithms, iterators.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Taste of 10B</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// deeper classes
-// dynamic memory
-// templates
-// data structures
-// larger projects
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>PIC 10A gives the foundation.</li>
-              <li>PIC 10B builds larger abstractions.</li>
-              <li>The habits from tracing and debugging carry forward.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Integrated Example: Grade Book</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-class GradeBook {
-public:
-    void add(int score) {
-        scores.push_back(score);
-    }
-
-    double average() const {
-        if (scores.empty()) {
-            return 0.0;
-        }
-
-        int total = 0;
-        for (size_t i = 0; i &lt; scores.size(); ++i) {
-            total += scores[i];
-        }
-        return static_cast&lt;double&gt;(total) / scores.size();
-    }
-
-private:
-    vector&lt;int&gt; scores;
-};
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>The vector stores changing state.</li>
-              <li>The loop computes an accumulator.</li>
-              <li>The const member function promises not to change the object.</li>
-              <li>The empty case prevents division by zero.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Final Debugging Table</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Error categories</h3>
-            <ul class="tight">
-              <li><strong>Build:</strong> missing declaration, signature mismatch, wrong header.</li>
-              <li><strong>Runtime:</strong> out-of-bounds access, null dereference, division by zero.</li>
-              <li><strong>Logic:</strong> off-by-one loop, wrong accumulator update, wrong branch condition.</li>
-              <li><strong>Design:</strong> unnecessary copy, missing <code>const</code>, public data that should be private.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>What to do first</h3>
-            <ul class="tight">
-              <li>Reduce the input to the smallest case that still shows the bug.</li>
-              <li>Write down variable values after each statement.</li>
-              <li>Check function signatures before changing function bodies.</li>
-              <li>Check bounds before changing loop logic.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Design Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Before writing code</h3>
-            <ul class="tight">
-              <li>What data changes over time?</li>
-              <li>What function owns each task?</li>
-              <li>What type communicates the intent?</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Before debugging</h3>
-            <ul class="tight">
-              <li>What should happen on a tiny input?</li>
-              <li>Where can scope or lifetime end?</li>
-              <li>Which operation may access invalid memory?</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Quick Checks</h2>
-        <div class="check-grid">
-          <article class="card">
-            <h3>Exercise 1</h3>
-            <p class="meta">What part of the example controls state?</p>
-          </article>
-          <article class="card secondary">
-            <h3>Exercise 2</h3>
-            <p class="meta">What is the first bug you would check for in this topic?</p>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Lecture 30 Summary</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Main ideas</h3>
-            <ul class="tight">
-              <li>This lecture develops final review and pic 10b preview.</li>
-              <li>Key chapters: 1-18.</li>
-              <li>Examples should be traced using small values.</li>
-              <li>Function signatures and types communicate intent.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Programming habits</h3>
-            <ul class="tight">
-              <li>Prefer explicit names and simple examples.</li>
-              <li>Trace before guessing.</li>
-              <li>Use const and references to communicate design when appropriate.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Lecture 30 Review Questions</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Concepts</h3>
-            <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is the central idea of Final Review and PIC 10B Preview?</li>
-              <li class="answer-line"><strong>Answer:</strong> The central idea is review connected to debugging.</li>
-              <li><strong>Q2.</strong> Why do we trace examples?</li>
-              <li class="answer-line"><strong>Answer:</strong> Tracing exposes state changes and invalid assumptions.</li>
-              <li><strong>Q3.</strong> What should types communicate?</li>
-              <li class="answer-line"><strong>Answer:</strong> How values are used and whether mutation is possible.</li>
-              <li><strong>Q4.</strong> What should a small test case do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Exercise the simplest meaningful behavior.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Practice</h3>
-            <ul class="tight qa-list">
-              <li><strong>Q5.</strong> What is the first thing to check for a build error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The relevant declaration, type, or signature.</li>
-              <li><strong>Q6.</strong> What is the first thing to check for a logic error?</li>
-              <li class="answer-line"><strong>Answer:</strong> The trace of state on a small input.</li>
-              <li><strong>Q7.</strong> Why keep examples small?</li>
-              <li class="answer-line"><strong>Answer:</strong> Small examples make incorrect reasoning visible.</li>
-              <li><strong>Q8.</strong> What should code review focus on?</li>
-              <li class="answer-line"><strong>Answer:</strong> Bugs, undefined behavior, unclear ownership, and bad assumptions.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Lecture 30 Code Review</h2>
-        <div class="grid-2">
-          <article class="card">
-            <h3>Trace it</h3>
-            <ul class="tight qa-list">
-              <li>
-                <strong>Q1.</strong> What should you trace first?
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-vector&lt;int&gt; readings = {4, 7, 9};
-int count = 0;
-
-for (size_t i = 0; i &lt; readings.size(); ++i) {
-    if (readings[i] &gt; 5) {
-        ++count;
-    }
+template &lt;typename T&gt;
+T maxOf(const T&amp; a, const T&amp; b) {
+    return (a &lt; b) ? b : a;
 }
-            </code>
-          </pre>
-              </li>
-              <li class="answer-line"><strong>Answer:</strong> Trace <code>i</code> and <code>count</code>; only values greater than 5 increment the count.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Fix the design</h3>
-            <ul class="tight qa-list">
-              <li>
-                <strong>Q2.</strong> What design question matters here?
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Door {
-public:
-    void open() { is_open = true; }
-    bool open_status() const { return is_open; }
 
-private:
-    bool is_open = false;
-};
+maxOf(3, 7);          // 7
+maxOf(2.5, 1.5);      // 2.5
+maxOf(std::string("ant"), std::string("bee"));  // "bee"
             </code>
           </pre>
-              </li>
-              <li class="answer-line"><strong>Answer:</strong> The mutator changes private state; the const observer reports it.</li>
+          <article class="card">
+            <ul class="tight">
+              <li>One template serves every comparable type.</li>
+              <li>This is how the STL containers are built.</li>
+              <li>You already have every prerequisite to read this.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section class="transition-slide center-copy">
-        <div class="eyebrow">Next Lecture</div>
+        <div class="eyebrow">Thank You</div>
         <h2>Course Complete</h2>
         <p class="lead center-copy">
-          The planned lecture sequence is complete.
+          From your first <code>int main()</code> to templates on the horizon — you can now read, write, and reason about real C++. Good luck on the final, and welcome to 10B.
         </p>
       </section>
     </div>

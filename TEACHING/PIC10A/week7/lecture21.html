@@ -17,295 +17,351 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 21</div>
-        <h1>Constructors I</h1>
+        <h1>Classes, Encapsulation, and Code Organization</h1>
         <p class="lead">
-          A constructor is a special member function that runs the moment an object is created. Its one job: leave the object in a valid, fully initialized state.
+          We introduce the <code>class</code> keyword and <code>public</code>/<code>private</code> access control, use them to protect a class invariant, and then organize a class across a header and a <code>.cpp</code>.
         </p>
         <div class="pill-row">
           <span class="pill">Chapter 15</span>
-          <span class="pill">constructors</span>
-          <span class="pill">initialization</span>
-          <span class="pill">default constructor</span>
+          <span class="pill">class</span>
+          <span class="pill">public / private</span>
+          <span class="pill">encapsulation</span>
         </div>
       </section>
 
       <section>
-        <h2>Review</h2>
+        <h2>Recap: Lecture 20</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Lecture 20</h3>
+            <h3>Constructors &amp; init lists</h3>
             <ul class="tight">
-              <li>We gave our types <em>behavior</em> with member functions.</li>
-              <li>An <code>advance()</code> on <code>Time</code> acts on the implicit object.</li>
-              <li>But objects still start with <strong>garbage data</strong>.</li>
+              <li><code>Time(int h, int m) : hour(h), minute(m) { }</code></li>
+              <li>Member initializer lists initialize directly, in declaration order.</li>
+              <li>Everything so far has been a <code>struct</code> &mdash; all members public.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Today</h3>
             <ul class="tight">
-              <li>Make construction itself set up the object.</li>
-              <li>The default (no-argument) constructor.</li>
-              <li>Parameterized constructors; building objects several ways.</li>
+              <li>The <code>class</code> keyword and <code>public</code>/<code>private</code>.</li>
+              <li>Encapsulation and enforcing a class invariant.</li>
+              <li>Then: organizing a class across <code>.hpp</code> and <code>.cpp</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Problem: Uninitialized Objects</h2>
+        <h2>Motivation: A struct's Invariant Can Be Broken</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 struct Time {
-    int hour;
-    int minute;
+    int hour;     // intended: 0 &lt;= hour &lt; 24
+    int minute;   // intended: 0 &lt;= minute &lt; 60
 };
 
-Time t;             // hour, minute are GARBAGE
-cout &lt;&lt; t.hour;     // undefined behavior
-t.hour = 25;        // nothing stops an invalid time
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Nothing forces <code>t</code> into a sensible state.</li>
-              <li>Reading <code>t.hour</code> before setting it is undefined behavior.</li>
-              <li>We want every <code>Time</code> to start out valid.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Hand-Initialization Does Not Scale</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
 Time t;
-t.hour = 9;         // every caller must remember
-t.minute = 30;      // every field, every time
-
-Time other;         // forgot to set minute -> bug
-cout &lt;&lt; other.minute;   // garbage
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Setup is repeated at every creation site.</li>
-              <li>One forgotten line is a silent, hard-to-find defect.</li>
-              <li>The type should initialize <em>itself</em>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>What a Constructor Is</h2>
-        <div class="callout cool">
-          A <strong>constructor</strong> is a member function with the <em>same name as the type</em> and <em>no return type</em>. It runs automatically when an object is created and is responsible for initializing the members.
-        </div>
-      </section>
-
-      <section>
-        <h2>A Default Constructor</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour;
-    int minute;
-
-    Time() {            // takes no arguments
-        hour = 0;
-        minute = 0;
-    }
-};
-
-Time t;             // calls Time(): t is 00:00
+t.hour = 99;      // nothing stops this
+t.minute = -7;    // the instance is now nonsense
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>No return type; name matches the type exactly.</li>
-              <li>A constructor that takes no arguments is the <strong>default constructor</strong>.</li>
-              <li><code>Time t;</code> now produces a valid object, automatically.</li>
+              <li>With a <code>struct</code>, every member is writable by anyone.</li>
+              <li>External code can set values that violate our intent.</li>
+              <li>We need a way to <em>hide</em> the data and guard every change.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>When the Constructor Runs</h2>
+        <h2>The class Keyword + public / private</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
-
-    Time() {
-        cout &lt;&lt; "Time built" &lt;&lt; endl;
-        hour = 0; minute = 0;
-    }
+class Time {
+private:                 // reachable only inside Time
+    int hour;
+    int minute;
+public:                  // reachable from any code
+    Time(int h, int m) : hour(h), minute(m) { }
+    int getHour() const { return hour; }
 };
 
-Time a;             // prints "Time built"
-Time b;             // prints "Time built" again
+Time t(9, 5);
+t.getHour();    // OK: public
+t.hour = 20;    // ERROR: hour is private
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>You never call the constructor by name.</li>
-              <li>It fires once per object, at the point of creation.</li>
-              <li>Two objects &rArr; two constructor runs.</li>
+              <li><code>class</code> introduces a new type, like <code>struct</code>.</li>
+              <li><code>private</code> members are reachable only from class members.</li>
+              <li><code>public</code> members form the interface for outside code.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Parameterized Constructors</h2>
+        <h2>struct vs class Default Access</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
+struct S { int x; };   // x is PUBLIC by default
+class  C { int x; };   // x is PRIVATE by default
+
+S s;  s.x = 1;         // OK
+C c;  c.x = 1;         // ERROR: x is private
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>struct</code> members default to <code>public</code>.</li>
+              <li><code>class</code> members default to <code>private</code>.</li>
+              <li>Otherwise the machinery is identical &mdash; only the default differs.</li>
+              <li>Use <code>class</code> when you want encapsulation by default.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Encapsulation</h2>
+        <div class="callout cool">
+          <strong>Encapsulation:</strong> make member variables <code>private</code> and expose a small <code>public</code> interface. Because every change goes through code you wrote, the instance can be kept valid &mdash; outside code can never reach in and corrupt it.
+        </div>
+      </section>
+
+      <section>
+        <h2>The Class Invariant</h2>
+        <div class="callout cool">
+          A <strong>class invariant</strong> is a condition every instance of the class must always satisfy. For <code>Time</code>: <code>0 &lt;= hour &lt; 24</code> and <code>0 &lt;= minute &lt; 60</code>. Encapsulation is what makes the invariant <em>enforceable</em>: private data + a guarded interface.
+        </div>
+      </section>
+
+      <section>
+        <h2>Enforcing the Invariant in the Constructor</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+class Time {
+private:
     int hour;
     int minute;
-
-    Time() { hour = 0; minute = 0; }
-
-    Time(int h, int m) {        // parameterized
+public:
+    Time(int h, int m) {
+        if (h &lt; 0 || h &gt;= 24) h = 0;
+        if (m &lt; 0 || m &gt;= 60) m = 0;
         hour = h;
         minute = m;
     }
 };
 
-Time start;            // 00:00  -> default
-Time lunch(12, 30);    // 12:30  -> parameterized
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Constructors can be overloaded like any function.</li>
-              <li>The compiler picks one by the construction arguments.</li>
-              <li>One type, several ways to build it.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>A Constructor's Job: A Valid Initial State</h2>
-        <div class="callout cool">
-          A constructor should leave the object in a state where <em>every</em> member function can be called safely. After <code>Time lunch(12, 30);</code>, both <code>hour</code> and <code>minute</code> hold meaningful values &mdash; never garbage.
-        </div>
-      </section>
-
-      <section>
-        <h2>Constructing Objects Several Ways</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-Time a;             // default ctor    -> 00:00
-Time b(9, 15);      // (int,int) ctor  -> 09:15
-Time c{9, 15};      // brace form      -> 09:15
-Time d = Time(9,15);// build temp, then copy
-
-Time e();           // NOT an object: declares a function
+Time bad(99, -7);   // becomes 00:00, still valid
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Each line selects a constructor by its arguments.</li>
-              <li><code>Time e();</code> is the classic "most vexing parse" trap.</li>
-              <li>Use <code>Time e;</code> (no parentheses) for the default ctor.</li>
+              <li>The constructor establishes the invariant on creation.</li>
+              <li>Because <code>hour</code> is private, no instance can skip this check.</li>
+              <li>Bad input is corrected, not stored.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Constructors and Containers</h2>
+        <h2>Accessors (Getters)</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
+class Time {
+private:
     int hour, minute;
-
-    Time() { hour = 0; minute = 0; }
-    Time(int h, int m) { hour = h; minute = m; }
+public:
+    Time(int h, int m);
+    int getHour()   const { return hour; }
+    int getMinute() const { return minute; }
 };
 
-vector&lt;Time&gt; day(3);          // 3 elements, each Time()
-day[0] = Time(8, 0);          // overwrite element 0
+Time t(9, 5);
+std::cout &lt;&lt; t.getHour();    // 9, read-only access
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>vector&lt;Time&gt; day(3);</code> calls the default constructor once per slot.</li>
-              <li>So a type stored in a container usually needs a default constructor.</li>
-              <li>Each element is valid the instant the vector exists.</li>
+              <li>Getters give controlled read access to private data.</li>
+              <li>They are <code>const</code>: reading never modifies the instance.</li>
+              <li>Callers see the value but cannot bypass validation.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>A Running Example: BankAccount</h2>
+        <h2>Mutators (Setters) with Validation</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct BankAccount {
-    double balance;
-
-    BankAccount() {
-        balance = 0.0;
+class Time {
+private:
+    int hour, minute;
+public:
+    bool setHour(int h) {
+        if (h &lt; 0 || h &gt;= 24) return false;  // reject
+        hour = h;
+        return true;
     }
-    BankAccount(double initial) {
-        balance = initial;
-    }
-    void deposit(double amt) { balance += amt; }
-    double get() { return balance; }
 };
 
-BankAccount empty;             // 0.00
-BankAccount savings(500.0);    // 500.00
-savings.deposit(50.0);         // 550.00
+Time t(0, 0);
+t.setHour(25);   // returns false, hour unchanged
+t.setHour(14);   // returns true,  hour == 14
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Every account starts with a defined balance.</li>
-              <li>No caller can forget to initialize <code>balance</code>.</li>
-              <li>Construction guarantees a valid balance from line one.</li>
+              <li>A setter is the only way to change a private member.</li>
+              <li>It rejects values that would break the invariant.</li>
+              <li>Returning <code>bool</code> tells the caller if it worked.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Constructor Sees the Members Directly</h2>
+        <h2>Defining Members Outside the Class</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct BankAccount {
-    double balance;
-
-    BankAccount(double initial) {
-        if (initial &lt; 0.0)
-            balance = 0.0;      // refuse a bad start
-        else
-            balance = initial;
-    }
+class Time {
+private:
+    int hour, minute;
+public:
+    Time(int h, int m);          // declared only
+    int getHour() const;         // declared only
 };
 
-BankAccount a(-40.0);   // balance becomes 0.00, not -40
+Time::Time(int h, int m) : hour(h), minute(m) { }
+int  Time::getHour() const { return hour; }
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The body is ordinary code that runs at creation.</li>
-              <li>It can reject bad input and still produce a valid object.</li>
-              <li>That is the whole point: a guaranteed sane starting state.</li>
+              <li>The class body can hold only declarations.</li>
+              <li><code>Time::</code> says "this function belongs to <code>Time</code>".</li>
+              <li>Inside <code>Time::getHour</code> we can name <code>hour</code> directly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Scope Resolution, Precisely</h2>
+        <div class="callout cool">
+          <code>ClassName::member</code> is the <strong>scope resolution operator</strong>. It connects an out-of-class definition to its declaration inside the class body. The return type still comes first: <code>int Time::getHour() const</code> &mdash; <code>int</code> is the return type, <code>Time::</code> names the owning class.
+        </div>
+      </section>
+
+      <section>
+        <h2>The Header File (.hpp)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// time.hpp
+#ifndef TIME_HPP
+#define TIME_HPP
+
+class Time {
+private:
+    int hour;
+    int minute;
+public:
+    Time(int h, int m);
+    int getHour() const;
+    bool setHour(int h);
+};
+
+#endif
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The header holds the class definition + member declarations.</li>
+              <li>The include guard stops double-inclusion errors.</li>
+              <li>Anyone who <code>#include "time.hpp"</code> sees the interface.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Source File (.cpp)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// time.cpp
+#include "time.hpp"
+
+Time::Time(int h, int m) : hour(h), minute(m) { }
+
+int Time::getHour() const { return hour; }
+
+bool Time::setHour(int h) {
+    if (h &lt; 0 || h &gt;= 24) return false;
+    hour = h;
+    return true;
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The <code>.cpp</code> holds member <em>definitions</em>, each with <code>Time::</code>.</li>
+              <li>It includes its own header so declarations match.</li>
+              <li>Interface (header) and implementation (cpp) are separated.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Worked Example: A Validated BankAccount</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// account.hpp
+class BankAccount {
+private:
+    double balance;          // invariant: balance &gt;= 0
+public:
+    BankAccount(double b);
+    double getBalance() const;
+    bool withdraw(double amt);
+    void deposit(double amt);
+};
+
+// account.cpp
+BankAccount::BankAccount(double b)
+    : balance(b &lt; 0 ? 0 : b) { }
+double BankAccount::getBalance() const { return balance; }
+bool BankAccount::withdraw(double amt) {
+    if (amt &lt; 0 || amt &gt; balance) return false;
+    balance -= amt;
+    return true;
+}
+void BankAccount::deposit(double amt) {
+    if (amt &gt; 0) balance += amt;
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Private <code>balance</code>; public interface = the only access.</li>
+              <li>Invariant <code>balance &gt;= 0</code> established at construction.</li>
+              <li>Header = interface; cpp = <code>BankAccount::</code> definitions.</li>
             </ul>
           </article>
         </div>
@@ -316,11 +372,11 @@ BankAccount a(-40.0);   // balance becomes 0.00, not -40
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Write a default constructor for <code>Time</code> that starts every object at <code>12:00</code>.</p>
+            <p class="meta">In the motivating <code>struct Time</code>, why can external code set <code>hour = 99</code>, and what one change to the type makes that line fail to compile?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Why does <code>Time e();</code> not create a <code>Time</code> object, while <code>Time e;</code> does?</p>
+            <p class="meta">Why does making <code>balance</code> private make the <code>balance &gt;= 0</code> invariant enforceable, and what would <code>BankAccount::</code> mean in <code>account.cpp</code>?</p>
           </article>
         </div>
       </section>
@@ -331,18 +387,18 @@ BankAccount a(-40.0);   // balance becomes 0.00, not -40
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>A constructor has the type's name and no return type.</li>
-              <li>It runs automatically when an object is created.</li>
-              <li>The default constructor takes no arguments.</li>
-              <li>Constructors can be overloaded; arguments pick one.</li>
+              <li><code>class</code> introduces a type with <code>public</code>/<code>private</code> access.</li>
+              <li><code>class</code> defaults to private; <code>struct</code> to public.</li>
+              <li>Encapsulation = private data + a guarded public interface.</li>
+              <li>That is what makes a class invariant enforceable.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Initialize every member; never leave garbage.</li>
-              <li>A constructor must leave a valid initial state.</li>
-              <li>Provide a default constructor for types kept in containers.</li>
+              <li>Validate in constructors and setters, not at call sites.</li>
+              <li>Const getters in, validating mutators out.</li>
+              <li>Define members with <code>ClassName::</code>; keep the interface in the header, the work in the cpp.</li>
             </ul>
           </article>
         </div>
@@ -354,23 +410,23 @@ BankAccount a(-40.0);   // balance becomes 0.00, not -40
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What return type does a constructor have?</li>
-              <li class="answer-line"><strong>Answer:</strong> None at all, not even <code>void</code>.</li>
-              <li><strong>Q2.</strong> What is the default constructor?</li>
-              <li class="answer-line"><strong>Answer:</strong> The constructor that can be called with no arguments.</li>
-              <li><strong>Q3.</strong> When does a constructor run?</li>
-              <li class="answer-line"><strong>Answer:</strong> Automatically, once, when the object is created.</li>
+              <li><strong>Q1.</strong> Default access for <code>class</code> vs <code>struct</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>class</code> is private by default, <code>struct</code> public; otherwise identical.</li>
+              <li><strong>Q2.</strong> What is encapsulation?</li>
+              <li class="answer-line"><strong>Answer:</strong> Private data behind a small, controlled public interface.</li>
+              <li><strong>Q3.</strong> What does <code>Time::</code> mean in <code>int Time::getHour() const</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Scope resolution &mdash; this defines <code>Time</code>'s declared <code>getHour</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q4.</strong> Which constructor does <code>Time lunch(12, 30);</code> call?</li>
-              <li class="answer-line"><strong>Answer:</strong> The parameterized <code>Time(int, int)</code>, chosen by overload resolution.</li>
-              <li><strong>Q5.</strong> Why does <code>vector&lt;Time&gt; v(3);</code> need a default constructor?</li>
-              <li class="answer-line"><strong>Answer:</strong> It builds three elements, calling <code>Time()</code> once for each.</li>
-              <li><strong>Q6.</strong> What is a constructor's responsibility?</li>
-              <li class="answer-line"><strong>Answer:</strong> To leave the object in a valid, fully initialized state.</li>
+              <li><strong>Q4.</strong> Why validate in the constructor?</li>
+              <li class="answer-line"><strong>Answer:</strong> So no instance can ever begin life in an invalid state.</li>
+              <li><strong>Q5.</strong> Why make <code>balance</code> private?</li>
+              <li class="answer-line"><strong>Answer:</strong> So all changes pass through validating functions; the invariant can't be bypassed.</li>
+              <li><strong>Q6.</strong> What goes in the <code>.hpp</code> vs the <code>.cpp</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Class definition + declarations + guard in the header; member definitions in the cpp.</li>
             </ul>
           </article>
         </div>
@@ -383,45 +439,33 @@ BankAccount a(-40.0);   // balance becomes 0.00, not -40
             <h3>Find the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What is wrong here?
+                <strong>Q1.</strong> Why won't this link/compile cleanly?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
-
-    void Time() {           // ??
-        hour = 0; minute = 0;
-    }
-};
+// time.cpp
+#include "time.hpp"
+int getHour() const { return hour; }
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> A constructor has no return type. Writing <code>void</code> makes it an ordinary member function named <code>Time</code>, not a constructor; remove <code>void</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> Missing <code>Time::</code>. This defines a free function, not <code>Time::getHour</code>; <code>hour</code> is out of scope and <code>const</code> is invalid on a non-member. Write <code>int Time::getHour() const</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Trace the value</h3>
+            <h3>Trace the result</h3>
             <ul class="tight qa-list">
               <li>
                 <strong>Q2.</strong> What is the final balance?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct BankAccount {
-    double balance;
-
-    BankAccount() { balance = 0.0; }
-    BankAccount(double b) { balance = b; }
-    void deposit(double a) { balance += a; }
-    double get() { return balance; }
-};
-
-BankAccount acct(100.0);
-acct.deposit(25.0);
-cout &lt;&lt; acct.get();
+BankAccount a(-100);   // ctor: b &lt; 0 ? 0 : b
+a.deposit(40);
+a.withdraw(200);       // amt &gt; balance: refused
+std::cout &lt;&lt; a.getBalance();
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>125</code>. The <code>(double)</code> constructor sets 100.0, then <code>deposit</code> adds 25.0.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>40</code>. The constructor clamps -100 to 0, deposit adds 40, the over-limit withdraw is rejected.</li>
             </ul>
           </article>
         </div>
@@ -429,9 +473,9 @@ cout &lt;&lt; acct.get();
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>const Instances and const Member Functions</h2>
+        <h2>Classes Review and Default Arguments</h2>
         <p class="lead center-copy">
-          Constructors give an object a valid start. Next time we protect objects that should not change, using <code>const</code> instances and <code>const</code> member functions.
+          Next time we design a complete small class end to end, then learn Chapter 16 <strong>default arguments</strong> and the ambiguity they can cause with overloads.
         </p>
       </section>
     </div>

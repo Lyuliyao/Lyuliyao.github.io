@@ -17,15 +17,15 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 19</div>
-        <h1>Classes: Structs and Member Variables</h1>
+        <h1>Structs, Member Functions, and const</h1>
         <p class="lead">
-          Built-in types model single numbers and characters. To model a <em>point</em> or a <em>time</em>, we bundle the related values into one user-defined type.
+          We build our own type with <code>struct</code>, give it behavior with member functions, and protect read-only instances with <code>const</code>.
         </p>
         <div class="pill-row">
           <span class="pill">Chapter 15</span>
           <span class="pill">struct</span>
-          <span class="pill">member variables</span>
-          <span class="pill">objects</span>
+          <span class="pill">member functions</span>
+          <span class="pill">const</span>
         </div>
       </section>
 
@@ -33,21 +33,28 @@
         <h2>Where We Are</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Last time (L18, Ch 14)</h3>
+            <h3>Last time (Ch 14)</h3>
             <ul class="tight">
               <li>Function overloading: one name, many parameter lists.</li>
               <li>The compiler picks the best viable match.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Today (Ch 15.1)</h3>
+            <h3>Today (Ch 15)</h3>
             <ul class="tight">
-              <li>We have run out of built-in types that fit the problem.</li>
-              <li>We build our <em>own</em> type with <code>struct</code>.</li>
-              <li>Member variables, objects, the dot operator.</li>
+              <li><code>struct</code>: bundle data into a new type.</li>
+              <li>Member functions: put behavior inside the type.</li>
+              <li><code>const</code> instances and <code>const</code> member functions.</li>
             </ul>
           </article>
         </div>
+      </section>
+
+      <!-- ============ PART 1: STRUCT & MEMBER VARIABLES ============ -->
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part 1</div>
+        <h2>Structs and Member Variables</h2>
       </section>
 
       <section>
@@ -99,25 +106,25 @@ struct Time {
       <section>
         <h2>Definition</h2>
         <div class="callout cool">
-          A <strong>struct</strong> is a user-defined type that groups several <strong>member variables</strong> under one name. A variable of that type is called an <strong>object</strong>; each object has its own copy of every member.
+          A <strong>struct</strong> is a user-defined type that groups several <strong>member variables</strong> under one name. A variable of that type is called an <strong>instance</strong>; each instance has its own copy of every member.
         </div>
       </section>
 
       <section>
-        <h2>Creating Objects</h2>
+        <h2>Creating Instances</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-Time t1;        // an object; its three int members are uninitialized
-Time t2;        // a second, independent object
+Time t1;        // an instance; its three int members are uninitialized
+Time t2;        // a second, independent instance
 
-// t1 and t2 are separate: 6 ints total, 3 per object
+// t1 and t2 are separate: 6 ints total, 3 per instance
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>Time t1;</code> declares an object the same way <code>int n;</code> does.</li>
-              <li>Each object bundles all three members in one variable.</li>
+              <li><code>Time t1;</code> declares an instance the same way <code>int n;</code> does.</li>
+              <li>Each instance bundles all three members in one variable.</li>
               <li>Members of built-in type start <em>uninitialized</em> here.</li>
             </ul>
           </article>
@@ -137,7 +144,7 @@ t2.second = 45;
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><code>object.member</code> names one member of that object.</li>
+              <li><code>instance.member</code> names one member of that instance.</li>
               <li>Each member is assigned like an ordinary <code>int</code>.</li>
               <li>This works, but takes one statement per member.</li>
             </ul>
@@ -158,7 +165,7 @@ Time noon{12, 0, 0};    // members filled in declared order
             <ul class="tight">
               <li>Brace init fills members in the order they were declared.</li>
               <li><code>{9, 30, 0}</code> &rarr; <code>hour</code>=9, <code>minute</code>=30, <code>second</code>=0.</li>
-              <li>One concise line creates a fully set-up object.</li>
+              <li>One concise line creates a fully set-up instance.</li>
             </ul>
           </article>
         </div>
@@ -178,7 +185,7 @@ std::cout &lt;&lt; t.minute &lt;&lt; "\n";                      // 45
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><code>t.hour</code> reaches into one member of object <code>t</code>.</li>
+              <li><code>t.hour</code> reaches into one member of instance <code>t</code>.</li>
               <li>Members are read and written like normal variables.</li>
               <li>Writing <code>t.minute</code> changes only <code>t</code>'s copy.</li>
             </ul>
@@ -187,7 +194,7 @@ std::cout &lt;&lt; t.minute &lt;&lt; "\n";                      // 45
       </section>
 
       <section>
-        <h2>Each Object Is Independent</h2>
+        <h2>Each Instance Is Independent</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
@@ -201,7 +208,7 @@ std::cout &lt;&lt; b.hour &lt;&lt; "\n"; // 0  (unaffected)
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>Two objects of the same type hold separate members.</li>
+              <li>Two instances of the same type hold separate members.</li>
               <li>Modifying <code>a</code> never touches <code>b</code>.</li>
               <li>This is just like two separate <code>int</code> variables.</li>
             </ul>
@@ -214,7 +221,7 @@ std::cout &lt;&lt; b.hour &lt;&lt; "\n"; // 0  (unaffected)
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void show(Time t) {                      // a copy of the object
+void show(Time t) {                      // a copy of the instance
     std::cout &lt;&lt; t.hour &lt;&lt; ":" &lt;&lt; t.minute
               &lt;&lt; ":" &lt;&lt; t.second &lt;&lt; "\n";
 }
@@ -233,104 +240,476 @@ show(now);   // ONE argument carries the whole time
         </div>
       </section>
 
+      <!-- ============ PART 2: MEMBER FUNCTIONS ============ -->
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part 2</div>
+        <h2>Member Functions</h2>
+        <p class="lead center-copy">
+          So far a <code>struct</code> only <em>holds</em> data. Now we put the behavior <em>inside</em> the type.
+        </p>
+      </section>
+
       <section>
-        <h2>Passing by const Reference</h2>
+        <h2>Behavior Outside the Type</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void show(const Time&amp; t) {     // no copy; cannot modify t
-    std::cout &lt;&lt; t.hour &lt;&lt; ":" &lt;&lt; t.minute
-              &lt;&lt; ":" &lt;&lt; t.second &lt;&lt; "\n";
+struct Time { int hour; int minute; int second; };
+
+// logic about a Time, but living far away from it:
+int total_seconds(const Time&amp; t) {
+    return t.hour * 3600 + t.minute * 60 + t.second;
 }
 
-Time now{12, 0, 0};
-show(now);
+Time a{1, 0, 0};
+std::cout &lt;&lt; total_seconds(a) &lt;&lt; "\n";   // 3600
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>const Time&amp;</code> avoids copying the whole object.</li>
-              <li><code>const</code> guarantees <code>show</code> will not change <code>now</code>.</li>
-              <li>This reuses the reference rules from earlier lectures.</li>
+              <li>The function and the data are separate.</li>
+              <li>Every access needs <code>t.</code> and an argument.</li>
+              <li>We can move this logic <em>into</em> the type.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Data, Not Yet Behavior</h2>
-        <div class="callout cool">
-          So far a <code>struct</code> only <em>holds</em> data. The logic about a time &mdash; like converting to total seconds &mdash; still lives in free functions. Next lecture we move that behavior <em>inside</em> the type.
+        <h2>Adding a Member Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour;
+    int minute;
+    int second;
+
+    int total_seconds() {
+        return hour * 3600 + minute * 60 + second;
+    }
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A <strong>member function</strong> is defined inside the struct.</li>
+              <li>It uses <code>hour</code>, <code>minute</code>, <code>second</code> with no <code>t.</code> prefix.</li>
+              <li>It takes no <code>Time</code> parameter &mdash; the instance is implicit.</li>
+            </ul>
+          </article>
         </div>
       </section>
+
+      <section>
+        <h2>Definition</h2>
+        <div class="callout cool">
+          A <strong>member function</strong> is a function declared inside a type. It is always called <strong>on an instance</strong> using the dot operator, and inside its body it can use that instance's member variables by name.
+        </div>
+      </section>
+
+      <section>
+        <h2>Calling on an Instance</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time a{1, 0, 0};   // 3600
+Time b{0, 1, 30};  //   90
+
+std::cout &lt;&lt; a.total_seconds() &lt;&lt; "\n";   // 3600
+std::cout &lt;&lt; b.total_seconds() &lt;&lt; "\n";   //   90
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>instance.function()</code> mirrors <code>instance.member</code>.</li>
+              <li>Same code, different instance &rArr; different result.</li>
+              <li>No <code>Time</code> argument: the instance is passed implicitly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Implicit Instance</h2>
+        <div class="callout cool">
+          In <code>a.total_seconds()</code>, the instance <code>a</code> is the <strong>implicit instance</strong>. An unqualified <code>hour</code> inside the body means <em>that instance's</em> <code>hour</code> &mdash; <code>a.hour</code> for this call, <code>b.hour</code> for the next.
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Functions That Read</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute, second;
+
+    bool is_midnight() {                 // only reads members
+        return hour == 0 &amp;&amp; minute == 0 &amp;&amp; second == 0;
+    }
+};
+
+Time t{0, 0, 0};
+std::cout &lt;&lt; t.is_midnight() &lt;&lt; "\n";   // 1 (true)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A reading member function only inspects members.</li>
+              <li>It leaves every member of the instance unchanged.</li>
+              <li>It can return a computed answer about the instance.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Functions That Modify</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute, second;
+
+    void add_minutes(int m) {            // changes members
+        int total = total_seconds() + m * 60;
+        hour   = (total / 3600) % 24;
+        minute = (total / 60) % 60;
+        second =  total % 60;
+    }
+    int total_seconds() {
+        return hour * 3600 + minute * 60 + second;
+    }
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A modifying member function assigns to members.</li>
+              <li>It writes the implicit instance's own members.</li>
+              <li>It may call sibling member functions directly.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Modifying in Action</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time t{9, 30, 0};
+t.add_minutes(45);
+
+std::cout &lt;&lt; t.hour   &lt;&lt; "\n";   // 10
+std::cout &lt;&lt; t.minute &lt;&lt; "\n";   // 15
+std::cout &lt;&lt; t.second &lt;&lt; "\n";   //  0
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>t.add_minutes(45)</code> rewrites <code>t</code>'s members.</li>
+              <li>The change persists after the call returns.</li>
+              <li>Logic about a time now lives <em>with</em> the time.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Member Function vs Free Function</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// Free function: data passed in explicitly
+int total_seconds(const Time&amp; t) {
+    return t.hour * 3600 + t.minute * 60 + t.second;
+}
+int s1 = total_seconds(a);
+
+// Member function: called ON the instance
+int s2 = a.total_seconds();
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Both compute the same thing.</li>
+              <li>The free function takes the instance as a parameter.</li>
+              <li>The member function lives inside the type and is called with the dot.</li>
+              <li>Keeping behavior next to its data makes the type easier to use.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ PART 3: CONST OBJECTS AND CONST MEMBER FUNCTIONS ============ -->
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part 3</div>
+        <h2>const Instances and const Member Functions</h2>
+        <p class="lead center-copy">
+          Some instances should never change after creation. We use <code>const</code> to make that promise &mdash; and the compiler enforces it.
+        </p>
+      </section>
+
+      <section>
+        <h2>A const Instance</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    int getHour() { return hour; }
+    void setHour(int h) { hour = h; }
+};
+
+const Time noon{12, 0};   // a const instance
+noon.setHour(13);         // ERROR: would modify noon
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>const Time noon</code> may never change after creation.</li>
+              <li>Brace init still runs &mdash; that is initialization, not modification.</li>
+              <li><code>setHour</code> would change it, so the compiler forbids the call.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Surprise: Even Getters Are Rejected</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const Time noon{12, 0};
+int h = noon.getHour();   // ERROR, even though it only reads
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>getHour</code> only reads, but the compiler does not know that.</li>
+              <li>From its declaration, <code>getHour</code> <em>could</em> modify the instance.</li>
+              <li>On a <code>const</code> instance, only functions that <em>promise</em> not to modify are allowed.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Rule</h2>
+        <div class="callout cool">
+          A <code>const</code> instance may call <strong>only</strong> member functions that are themselves marked <code>const</code>. A member function makes that promise by writing <code>const</code> after its parameter list.
+        </div>
+      </section>
+
+      <section>
+        <h2>Marking a Member Function const</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    int getHour() const { return hour; }     // trailing const
+    int getMinute() const { return minute; }
+    void setHour(int h) { hour = h; }        // not const
+};
+
+const Time noon{12, 0};
+std::cout &lt;&lt; noon.getHour();   // OK now: getHour is const
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The trailing <code>const</code> applies to the implicit instance.</li>
+              <li>It promises: "this function will not modify the instance."</li>
+              <li><code>const</code> instances may call <code>getHour</code> and <code>getMinute</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Where the const Goes</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    int  getHour() const { return hour; }   // reader: const
+    void setHour(int h)  { hour = h;     }   // writer: no const
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>The <code>const</code> sits <em>after</em> the parameter list, before the body.</li>
+              <li>It is part of the function's signature, not a return-type detail.</li>
+              <li>Mark every member function that only reads as <code>const</code>; leave writers non-<code>const</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What a const Member Function May Not Do</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    void show() const {
+        hour = 0;          // ERROR: modifies a member
+        setHour(9);        // ERROR: calls a non-const member
+        std::cout &lt;&lt; hour &lt;&lt; ":" &lt;&lt; minute;   // reading is fine
+    }
+    void setHour(int h) { hour = h; }
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>It must not modify any member variable.</li>
+              <li>It must not call a non-const member function.</li>
+              <li>It may freely <em>read</em> members and print them.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Inside a const Member, the Instance Is const</h2>
+        <div class="callout cool">
+          Within a <code>const</code> member function the implicit instance is treated as <code>const</code>. Any attempt to modify a member, or to call a non-const member function, is a compile error &mdash; the promise is enforced, not just documented.
+        </div>
+      </section>
+
+      <section>
+        <h2>Passing Instances by const Reference</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void show(const Time&amp; t) {
+    std::cout &lt;&lt; t.getHour();   // OK: getHour is const
+    t.setHour(10);              // ERROR: setHour is not const
+}
+
+Time now{12, 0};
+show(now);          // no copy, cannot modify now
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>const Time&amp;</code> avoids a copy and forbids changes.</li>
+              <li>Inside, <code>t</code> behaves like a <code>const</code> instance.</li>
+              <li>Only <code>const</code> member functions may be called on it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Classic Compile Error</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+    int getHour() { return hour; }   // NOT const
+};
+
+void report(const Time&amp; t) {
+    std::cout &lt;&lt; t.getHour();   // error here
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><strong>"passing 'const Time' as 'this' argument discards qualifiers"</strong></li>
+              <li><code>t</code> is const, but <code>getHour</code> does not promise const.</li>
+              <li>Fix: mark <code>getHour() const</code>. Never remove <code>const</code> from the parameter.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ WRAP-UP ============ -->
 
       <section>
         <h2>Quick Checks</h2>
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Why does <code>struct Point { double x; double y; }</code> need a semicolon after the closing brace?</p>
+            <p class="meta">In <code>a.total_seconds()</code>, what does the bare name <code>hour</code> inside the body refer to?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Given <code>Time t{9, 30, 0};</code>, which member does the <code>30</code> initialize, and why?</p>
+            <p class="meta">Why can a <code>const Time</code> call <code>getHour() const</code> but not <code>setHour(int)</code>?</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 19 Summary</h2>
+        <h2>Lecture Summary</h2>
         <div class="grid-2">
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
               <li><code>struct</code> bundles related member variables into one type.</li>
-              <li>An object is one variable holding all members.</li>
-              <li>Brace init fills members in declared order.</li>
-              <li>The dot operator reads and writes one member.</li>
+              <li>Member functions put behavior inside the type; called with the dot.</li>
+              <li>Bare member names mean the implicit instance's members.</li>
+              <li>A <code>const</code> instance may call only <code>const</code> member functions.</li>
+              <li>Trailing <code>const</code> promises the function will not modify the instance.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Never forget the semicolon after the closing brace.</li>
-              <li>Group values that always travel together.</li>
-              <li>Pass big objects by <code>const&amp;</code> to avoid copies.</li>
+              <li>Never forget the semicolon after the closing brace of a struct.</li>
+              <li>Keep behavior next to the data it uses.</li>
+              <li>Mark every read-only member function <code>const</code>.</li>
+              <li>Pass big instances by <code>const T&amp;</code> to avoid copies and protect them.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 19 Review Questions</h2>
+        <h2>Review Questions</h2>
         <div class="grid-2">
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is a member variable?</li>
-              <li class="answer-line"><strong>Answer:</strong> A variable that belongs to each object of the struct type.</li>
-              <li><strong>Q2.</strong> How do you reach one member of an object?</li>
-              <li class="answer-line"><strong>Answer:</strong> The dot operator: <code>object.member</code>.</li>
-              <li><strong>Q3.</strong> In <code>Time t{9, 30, 0};</code>, what is <code>t.second</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>0</code>; brace init fills members in declared order.</li>
+              <li><strong>Q1.</strong> How do you reach one member of an instance?</li>
+              <li class="answer-line"><strong>Answer:</strong> The dot operator: <code>instance.member</code>.</li>
+              <li><strong>Q2.</strong> What is the implicit instance inside a member function?</li>
+              <li class="answer-line"><strong>Answer:</strong> The instance before the dot; its members are used by bare name.</li>
+              <li><strong>Q3.</strong> Which member functions may a <code>const</code> instance call?</li>
+              <li class="answer-line"><strong>Answer:</strong> Only those marked <code>const</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q4.</strong> If <code>a</code> and <code>b</code> are both <code>Time</code>, does <code>a.hour = 5;</code> change <code>b</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> No; each object has its own independent members.</li>
-              <li><strong>Q5.</strong> Why pass <code>const Time&amp;</code> instead of <code>Time</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> It avoids copying the object and guarantees it is not modified.</li>
-              <li><strong>Q6.</strong> Does a plain <code>struct</code> contain any behavior yet?</li>
-              <li class="answer-line"><strong>Answer:</strong> No; it only holds data &mdash; member functions come next.</li>
+              <li><strong>Q4.</strong> Why pass <code>const Time&amp;</code> instead of <code>Time</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Avoids copying the instance and guarantees it is not modified.</li>
+              <li><strong>Q5.</strong> Where does the keyword <code>const</code> go on a member function?</li>
+              <li class="answer-line"><strong>Answer:</strong> After the parameter list, before the body.</li>
+              <li><strong>Q6.</strong> May a <code>const</code> member function modify a member?</li>
+              <li class="answer-line"><strong>Answer:</strong> No; it may only read members and call other <code>const</code> members.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 19 Code Review</h2>
+        <h2>Code Review</h2>
         <div class="grid-2">
           <article class="card">
             <h3>What prints?</h3>
@@ -339,36 +718,39 @@ show(now);
                 <strong>Q1.</strong> Output?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point { double x; double y; };
-
-Point p{3, 4};
-Point q = p;        // copies both members
-q.x = 99;
-std::cout &lt;&lt; p.x &lt;&lt; " " &lt;&lt; q.x &lt;&lt; "\n";
+struct Counter {
+    int n;
+    void bump() { n = n + 1; }
+};
+Counter a{0}, b{0};
+a.bump(); a.bump();
+b.bump();
+std::cout &lt;&lt; a.n &lt;&lt; " " &lt;&lt; b.n &lt;&lt; "\n";
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>3 99</code> &mdash; <code>q</code> is a separate copy, so changing <code>q.x</code> leaves <code>p.x</code> untouched.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>2 1</code> &mdash; each instance has its own <code>n</code>; <code>bump()</code> modifies the implicit instance only.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> Why won't this compile?
+                <strong>Q2.</strong> What is the error, and the fix?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 struct Time {
-    int hour;
-    int minute;
-    int second
-}
+    int hour, minute;
+    int getMinute() { return minute; }
+};
 
-Time t{9, 30, 0};
+void show(const Time&amp; t) {
+    std::cout &lt;&lt; t.getMinute();
+}
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Two bugs: <code>int second</code> is missing its semicolon, and the <code>struct</code> definition is missing the required semicolon after its closing brace.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>t</code> is <code>const</code> but <code>getMinute</code> is not; the call discards qualifiers. Fix: declare <code>int getMinute() const</code>.</li>
             </ul>
           </article>
         </div>
@@ -376,9 +758,9 @@ Time t{9, 30, 0};
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Member Functions</h2>
+        <h2>Constructors</h2>
         <p class="lead center-copy">
-          Next time we give our <code>struct</code> behavior by putting functions <em>inside</em> the type so they act on the object's own members.
+          We can build a type, give it behavior, and protect it with <code>const</code>. Next time we give it a <strong>constructor</strong> so every instance starts in a valid state.
         </p>
       </section>
     </div>

@@ -17,351 +17,236 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 24</div>
-        <h1>Classes, Encapsulation, and Code Organization</h1>
+        <h1>Pointers II</h1>
         <p class="lead">
-          We finally introduce the <code>class</code> keyword and <code>public</code>/<code>private</code> access control, use them to protect a class invariant, and then organize a class across a header and a <code>.cpp</code>.
+          Now we put pointers to work: passing them to functions, mixing them with <code>const</code>, reaching members through a pointer with <code>-&gt;</code>, and recognizing the dangling-pointer bugs that crash programs.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 15</span>
-          <span class="pill">class</span>
-          <span class="pill">public / private</span>
-          <span class="pill">encapsulation</span>
+          <span class="pill">pointers + functions</span>
+          <span class="pill">const pointers</span>
+          <span class="pill">the -&gt; operator</span>
+          <span class="pill">dangling pointers</span>
         </div>
       </section>
 
       <section>
-        <h2>Recap: Lecture 23</h2>
+        <h2>Where We Are</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Constructors &amp; init lists</h3>
+            <h3>L23 left us with</h3>
             <ul class="tight">
-              <li><code>Time(int h, int m) : hour(h), minute(m) { }</code></li>
-              <li>Member initializer lists initialize directly, in declaration order.</li>
-              <li>Everything so far has been a <code>struct</code> &mdash; all members public.</li>
+              <li><code>&amp;x</code> takes an address; <code>*p</code> dereferences.</li>
+              <li><code>nullptr</code> means "points at nothing."</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Today</h3>
             <ul class="tight">
-              <li>The <code>class</code> keyword and <code>public</code>/<code>private</code>.</li>
-              <li>Encapsulation and enforcing a class invariant.</li>
-              <li>Then: organizing a class across <code>.hpp</code> and <code>.cpp</code>.</li>
+              <li>Functions can modify a caller's variable via a pointer.</li>
+              <li><code>const</code> can protect the pointee or the pointer.</li>
+              <li>Reach an instance's members through a pointer with <code>-&gt;</code>.</li>
+              <li>Lifetime bugs: dangling pointers.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Motivation: A struct's Invariant Can Be Broken</h2>
+        <h2>Passing a Pointer to a Function</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour;     // intended: 0 &lt;= hour &lt; 24
-    int minute;   // intended: 0 &lt;= minute &lt; 60
-};
+void add_ten(int* p) {
+    *p += 10;             // modifies the caller's variable
+}
 
-Time t;
-t.hour = 99;      // nothing stops this
-t.minute = -7;    // the object is now nonsense
+int main() {
+    int score = 50;
+    add_ten(&amp;score);      // pass the address
+    std::cout &lt;&lt; score;   // 60
+}
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>With a <code>struct</code>, every member is writable by anyone.</li>
-              <li>External code can set values that violate our intent.</li>
-              <li>We need a way to <em>hide</em> the data and guard every change.</li>
+              <li>The function receives a copy of the <em>address</em>, not the value.</li>
+              <li>Through <code>*p</code> it reaches the caller's <code>score</code>.</li>
+              <li>The caller writes <code>&amp;score</code> at the call site.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The class Keyword + public / private</h2>
+        <h2>Pointer vs Reference Parameter</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Time {
-private:                 // reachable only inside Time
-    int hour;
-    int minute;
-public:                  // reachable from any code
-    Time(int h, int m) : hour(h), minute(m) { }
-    int getHour() const { return hour; }
-};
+void by_ptr(int* p) { *p += 1; }
+void by_ref(int&amp; r) {  r += 1; }
 
-Time t(9, 5);
-t.getHour();    // OK: public
-t.hour = 20;    // ERROR: hour is private
+int n = 0;
+by_ptr(&amp;n);   // explicit &amp; at call, * inside
+by_ref(n);    // clean call, no * inside
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><code>class</code> introduces a new type, like <code>struct</code>.</li>
-              <li><code>private</code> members are reachable only from class members.</li>
-              <li><code>public</code> members form the interface for outside code.</li>
+              <li>Both let the function modify the caller's variable.</li>
+              <li>Reference: cleaner syntax, never null.</li>
+              <li>Pointer: can be null, so callers can pass "no instance."</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>struct vs class Default Access</h2>
+        <h2>const With Pointers: Two Choices</h2>
+        <div class="callout cool">
+          <code>const int* p</code> &rarr; pointer to const: you cannot change <em>what it points to</em>. <code>int* const p</code> &rarr; const pointer: you cannot <em>reseat it</em>. Read right to left from the variable name.
+        </div>
+      </section>
+
+      <section>
+        <h2>Pointer to const</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct S { int x; };   // x is PUBLIC by default
-class  C { int x; };   // x is PRIVATE by default
+int x = 1, y = 2;
+const int* p = &amp;x;   // pointer to const int
 
-S s;  s.x = 1;         // OK
-C c;  c.x = 1;         // ERROR: x is private
+std::cout &lt;&lt; *p;      // OK: read through p
+*p = 5;               // ERROR: cannot write the pointee
+p = &amp;y;               // OK: p itself may be reseated
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>struct</code> members default to <code>public</code>.</li>
-              <li><code>class</code> members default to <code>private</code>.</li>
-              <li>Otherwise the machinery is identical &mdash; only the default differs.</li>
-              <li>Use <code>class</code> when you want encapsulation by default.</li>
+              <li>Use for a function that reads but must not modify the pointee.</li>
+              <li><code>void print(const int* p)</code> promises "I won't change it."</li>
+              <li>The pointer variable is still free to point elsewhere.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Encapsulation</h2>
-        <div class="callout cool">
-          <strong>Encapsulation:</strong> make member variables <code>private</code> and expose a small <code>public</code> interface. Because every change goes through code you wrote, the object can be kept valid &mdash; outside code can never reach in and corrupt it.
-        </div>
-      </section>
-
-      <section>
-        <h2>The Class Invariant</h2>
-        <div class="callout cool">
-          A <strong>class invariant</strong> is a condition every object of the class must always satisfy. For <code>Time</code>: <code>0 &lt;= hour &lt; 24</code> and <code>0 &lt;= minute &lt; 60</code>. Encapsulation is what makes the invariant <em>enforceable</em>: private data + a guarded interface.
-        </div>
-      </section>
-
-      <section>
-        <h2>Enforcing the Invariant in the Constructor</h2>
+        <h2>const Pointer</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Time {
-private:
-    int hour;
-    int minute;
-public:
-    Time(int h, int m) {
-        if (h &lt; 0 || h &gt;= 24) h = 0;
-        if (m &lt; 0 || m &gt;= 60) m = 0;
-        hour = h;
-        minute = m;
+int x = 1, y = 2;
+int* const p = &amp;x;   // const pointer to int
+
+*p = 9;               // OK: change the pointee
+std::cout &lt;&lt; x;       // 9
+p = &amp;y;               // ERROR: cannot reseat p
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>p</code> is locked to <code>x</code> for its whole life.</li>
+              <li>You may still modify <code>x</code> through <code>*p</code>.</li>
+              <li><code>const int* const p</code> locks both pointer and pointee.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Reaching Members: the -&gt; Operator</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Point { int x; int y; };
+
+Point pt{3, 4};
+Point* p = &amp;pt;
+
+std::cout &lt;&lt; (*p).x;   // dereference, then .x
+std::cout &lt;&lt; p-&gt;y;     // same thing, cleaner
+
+p-&gt;x = 10;             // writes pt.x through the pointer
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A pointer can point at an instance of a class/struct type.</li>
+              <li><code>p-&gt;member</code> is shorthand for <code>(*p).member</code>.</li>
+              <li>Use <code>-&gt;</code> whenever you have a pointer to an instance.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Dangling Pointers</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int* make() {
+    int local = 7;
+    return &amp;local;     // BUG: local dies on return
+}
+
+int* p = make();
+std::cout &lt;&lt; *p;       // dangling: undefined behavior
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>local</code> is destroyed when <code>make</code> returns.</li>
+              <li><code>p</code> still holds its old address &mdash; a dangling pointer.</li>
+              <li>Never return the address of a local variable.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Out-of-Scope Locals</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int* p = nullptr;
+{
+    int temp = 42;
+    p = &amp;temp;         // valid only inside this block
+}
+std::cout &lt;&lt; *p;       // BUG: temp is gone here
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>temp</code> dies at the closing brace of its block.</li>
+              <li><code>p</code> outlives <code>temp</code> &rarr; dangles.</li>
+              <li>A pointer must not outlive what it points to.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Check Before You Dereference</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// Point defined earlier: struct Point { int x; int y; };
+
+void print_point(const Point* p) {
+    if (p == nullptr) {                 // guard first
+        std::cout &lt;&lt; "no point\n";
+        return;
     }
-};
-
-Time bad(99, -7);   // becomes 00:00, still valid
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The constructor establishes the invariant on creation.</li>
-              <li>Because <code>hour</code> is private, no object can skip this check.</li>
-              <li>Bad input is corrected, not stored.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Accessors (Getters)</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Time {
-private:
-    int hour, minute;
-public:
-    Time(int h, int m);
-    int getHour()   const { return hour; }
-    int getMinute() const { return minute; }
-};
-
-Time t(9, 5);
-std::cout &lt;&lt; t.getHour();    // 9, read-only access
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Getters give controlled read access to private data.</li>
-              <li>They are <code>const</code>: reading never modifies the object.</li>
-              <li>Callers see the value but cannot bypass validation.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Mutators (Setters) with Validation</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Time {
-private:
-    int hour, minute;
-public:
-    bool setHour(int h) {
-        if (h &lt; 0 || h &gt;= 24) return false;  // reject
-        hour = h;
-        return true;
-    }
-};
-
-Time t(0, 0);
-t.setHour(25);   // returns false, hour unchanged
-t.setHour(14);   // returns true,  hour == 14
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>A setter is the only way to change a private member.</li>
-              <li>It rejects values that would break the invariant.</li>
-              <li>Returning <code>bool</code> tells the caller if it worked.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Defining Members Outside the Class</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-class Time {
-private:
-    int hour, minute;
-public:
-    Time(int h, int m);          // declared only
-    int getHour() const;         // declared only
-};
-
-Time::Time(int h, int m) : hour(h), minute(m) { }
-int  Time::getHour() const { return hour; }
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Now we have a real class, the body can hold only declarations.</li>
-              <li><code>Time::</code> says "this function belongs to <code>Time</code>".</li>
-              <li>Inside <code>Time::getHour</code> we can name <code>hour</code> directly.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Scope Resolution, Precisely</h2>
-        <div class="callout cool">
-          <code>ClassName::member</code> is the <strong>scope resolution operator</strong>. It connects an out-of-class definition to its declaration inside the class body. The return type still comes first: <code>int Time::getHour() const</code> &mdash; <code>int</code> is the return type, <code>Time::</code> names the owning class.
-        </div>
-      </section>
-
-      <section>
-        <h2>The Header File (.hpp)</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// time.hpp
-#ifndef TIME_HPP
-#define TIME_HPP
-
-class Time {
-private:
-    int hour;
-    int minute;
-public:
-    Time(int h, int m);
-    int getHour() const;
-    bool setHour(int h);
-};
-
-#endif
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The header holds the class definition + member declarations.</li>
-              <li>The include guard stops double-inclusion errors.</li>
-              <li>Anyone who <code>#include "time.hpp"</code> sees the interface.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>The Source File (.cpp)</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// time.cpp
-#include "time.hpp"
-
-Time::Time(int h, int m) : hour(h), minute(m) { }
-
-int Time::getHour() const { return hour; }
-
-bool Time::setHour(int h) {
-    if (h &lt; 0 || h &gt;= 24) return false;
-    hour = h;
-    return true;
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>The <code>.cpp</code> holds member <em>definitions</em>, each with <code>Time::</code>.</li>
-              <li>It includes its own header so declarations match.</li>
-              <li>Interface (header) and implementation (cpp) are separated.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Worked Example: A Validated BankAccount</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// account.hpp
-class BankAccount {
-private:
-    double balance;          // invariant: balance &gt;= 0
-public:
-    BankAccount(double b);
-    double getBalance() const;
-    bool withdraw(double amt);
-    void deposit(double amt);
-};
-
-// account.cpp
-BankAccount::BankAccount(double b)
-    : balance(b &lt; 0 ? 0 : b) { }
-double BankAccount::getBalance() const { return balance; }
-bool BankAccount::withdraw(double amt) {
-    if (amt &lt; 0 || amt &gt; balance) return false;
-    balance -= amt;
-    return true;
-}
-void BankAccount::deposit(double amt) {
-    if (amt &gt; 0) balance += amt;
+    std::cout &lt;&lt; p-&gt;x &lt;&lt; ", " &lt;&lt; p-&gt;y &lt;&lt; "\n";   // safe now
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Private <code>balance</code>; public interface = the only access.</li>
-              <li>Invariant <code>balance &gt;= 0</code> established at construction.</li>
-              <li>Header = interface; cpp = <code>BankAccount::</code> definitions.</li>
+              <li>Check for <code>nullptr</code> before any <code>*p</code> or <code>p-&gt;</code>.</li>
+              <li>Dereferencing a null pointer is undefined behavior &mdash; usually a crash.</li>
+              <li><code>const Point*</code> documents that the instance is only read.</li>
             </ul>
           </article>
         </div>
@@ -372,11 +257,11 @@ void BankAccount::deposit(double amt) {
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">In the motivating <code>struct Time</code>, why can external code set <code>hour = 99</code>, and what one change to the type makes that line fail to compile?</p>
+            <p class="meta">What is the difference between <code>const int* p</code> and <code>int* const p</code>? Which assignments does each forbid?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Why does making <code>balance</code> private make the <code>balance &gt;= 0</code> invariant enforceable, and what would <code>BankAccount::</code> mean in <code>account.cpp</code>?</p>
+            <p class="meta">Why is returning <code>&amp;local</code> from a function a bug, and what should the function return or take instead?</p>
           </article>
         </div>
       </section>
@@ -387,18 +272,18 @@ void BankAccount::deposit(double amt) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li><code>class</code> introduces a type with <code>public</code>/<code>private</code> access.</li>
-              <li><code>class</code> defaults to private; <code>struct</code> to public.</li>
-              <li>Encapsulation = private data + a guarded public interface.</li>
-              <li>That is what makes a class invariant enforceable.</li>
+              <li>A pointer parameter lets a function modify the caller's variable.</li>
+              <li><code>const int*</code> protects the pointee; <code>int* const</code> locks the pointer.</li>
+              <li><code>p-&gt;m</code> is <code>(*p).m</code> &mdash; reach members through a pointer.</li>
+              <li>A pointer must not outlive its target.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Programming habits</h3>
+            <h3>Habits</h3>
             <ul class="tight">
-              <li>Validate in constructors and setters, not at call sites.</li>
-              <li>Const getters in, validating mutators out.</li>
-              <li>Define members with <code>ClassName::</code>; keep the interface in the header, the work in the cpp.</li>
+              <li>Use <code>const T*</code> for read-only pointer parameters.</li>
+              <li>Never return or keep the address of a local.</li>
+              <li>Guard <code>nullptr</code> before every dereference.</li>
             </ul>
           </article>
         </div>
@@ -410,23 +295,23 @@ void BankAccount::deposit(double amt) {
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> Default access for <code>class</code> vs <code>struct</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>class</code> is private by default, <code>struct</code> public; otherwise identical.</li>
-              <li><strong>Q2.</strong> What is encapsulation?</li>
-              <li class="answer-line"><strong>Answer:</strong> Private data behind a small, controlled public interface.</li>
-              <li><strong>Q3.</strong> What does <code>Time::</code> mean in <code>int Time::getHour() const</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> Scope resolution &mdash; this defines <code>Time</code>'s declared <code>getHour</code>.</li>
+              <li><strong>Q1.</strong> How does <code>void f(int* p)</code> change a caller's variable?</li>
+              <li class="answer-line"><strong>Answer:</strong> The caller passes <code>&amp;var</code>; <code>f</code> writes through <code>*p</code>.</li>
+              <li><strong>Q2.</strong> What does <code>const int* p</code> forbid?</li>
+              <li class="answer-line"><strong>Answer:</strong> Writing through <code>p</code> (<code>*p = ...</code>); reseating <code>p</code> is allowed.</li>
+              <li><strong>Q3.</strong> What does <code>int* const p</code> forbid?</li>
+              <li class="answer-line"><strong>Answer:</strong> Reseating <code>p</code>; modifying <code>*p</code> is allowed.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q4.</strong> Why validate in the constructor?</li>
-              <li class="answer-line"><strong>Answer:</strong> So no object can ever begin life in an invalid state.</li>
-              <li><strong>Q5.</strong> Why make <code>balance</code> private?</li>
-              <li class="answer-line"><strong>Answer:</strong> So all changes pass through validating functions; the invariant can't be bypassed.</li>
-              <li><strong>Q6.</strong> What goes in the <code>.hpp</code> vs the <code>.cpp</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> Class definition + declarations + guard in the header; member definitions in the cpp.</li>
+              <li><strong>Q4.</strong> Given <code>Point* p</code>, what is <code>p-&gt;x</code> equivalent to?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>(*p).x</code> &mdash; dereference, then access the member.</li>
+              <li><strong>Q5.</strong> Why is a pointer to an out-of-scope local dangerous?</li>
+              <li class="answer-line"><strong>Answer:</strong> The variable is destroyed; dereferencing is undefined behavior.</li>
+              <li><strong>Q6.</strong> What check belongs before <code>*p</code> in a function?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>if (p != nullptr)</code> before any <code>*p</code> or <code>p-&gt;</code>.</li>
             </ul>
           </article>
         </div>
@@ -436,36 +321,39 @@ void BankAccount::deposit(double amt) {
         <h2>Lecture 24 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Find the bug</h3>
+            <h3>Trace the output</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> Why won't this link/compile cleanly?
+                <strong>Q1.</strong> What prints?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// time.cpp
-#include "time.hpp"
-int getHour() const { return hour; }
+void swap(int* a, int* b) {
+    int t = *a; *a = *b; *b = t;
+}
+int x = 3, y = 8;
+swap(&amp;x, &amp;y);
+std::cout &lt;&lt; x &lt;&lt; ' ' &lt;&lt; y;
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Missing <code>Time::</code>. This defines a free function, not <code>Time::getHour</code>; <code>hour</code> is out of scope and <code>const</code> is invalid on a non-member. Write <code>int Time::getHour() const</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>8 3</code>. The function swaps through the addresses, so the caller's <code>x</code> and <code>y</code> are exchanged.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Trace the result</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What is the final balance?
+                <strong>Q2.</strong> Why does this not compile?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-BankAccount a(-100);   // ctor: b &lt; 0 ? 0 : b
-a.deposit(40);
-a.withdraw(200);       // amt &gt; balance: refused
-std::cout &lt;&lt; a.getBalance();
+int x = 1, y = 2;
+const int* p = &amp;x;
+*p = 10;          // line A
+p  = &amp;y;          // line B
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>40</code>. The constructor clamps -100 to 0, deposit adds 40, the over-limit withdraw is rejected.</li>
+              <li class="answer-line"><strong>Answer:</strong> Line A fails: <code>p</code> is a pointer to const, so the pointee cannot be written. Line B is fine &mdash; the pointer itself may be reseated.</li>
             </ul>
           </article>
         </div>
@@ -473,9 +361,9 @@ std::cout &lt;&lt; a.getBalance();
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Classes Review and Default Arguments</h2>
+        <h2>C-style Arrays I</h2>
         <p class="lead center-copy">
-          Next time we design a complete small class end to end, then learn Chapter 16 <strong>default arguments</strong> and the ambiguity they can cause with overloads.
+          Next time we meet raw arrays &mdash; how they decay to pointers, how indexing is really pointer arithmetic, and why they have no built-in <code>size()</code>.
         </p>
       </section>
     </div>

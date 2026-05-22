@@ -17,293 +17,352 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 22</div>
-        <h1>const Instances and const Member Functions</h1>
+        <h1>Classes Review and Default Arguments</h1>
         <p class="lead">
-          A <code>const</code> object promises never to change. To honor that promise, C++ only lets it call member functions that are themselves marked <code>const</code>.
+          First we design one small class end to end. Then we meet Chapter 16 <strong>default arguments</strong> &mdash; and the ambiguity they cause with overloading.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 15</span>
-          <span class="pill">const</span>
-          <span class="pill">const member functions</span>
-          <span class="pill">const-correctness</span>
+          <span class="pill">Chapters 15-16</span>
+          <span class="pill">review</span>
+          <span class="pill">default arguments</span>
         </div>
       </section>
 
       <section>
-        <h2>Review</h2>
+        <h2>Recap: Lecture 21</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Lecture 21</h3>
+            <h3>Organization &amp; encapsulation</h3>
             <ul class="tight">
-              <li>Constructors give an object a valid initial state.</li>
-              <li>After construction, members hold meaningful values.</li>
+              <li>Members defined with <code>ClassName::</code>; header/cpp split.</li>
+              <li>Private data + public interface defends the invariant.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Today</h3>
             <ul class="tight">
-              <li>Protect objects that must not change after creation.</li>
-              <li>Mark reading member functions <code>const</code>.</li>
-              <li>Pass objects by <code>const</code> reference safely.</li>
+              <li>Part A: design a full class (Gradebook) end to end.</li>
+              <li>Part B: default arguments, the trailing rule, ambiguity.</li>
             </ul>
           </article>
         </div>
       </section>
 
-      <section>
-        <h2>A const Instance</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
+      <!-- ============ PART A: CLASSES REVIEW ============ -->
 
-    Time(int h, int m) { hour = h; minute = m; }
-    int getHour() { return hour; }
-    void setHour(int h) { hour = h; }
-};
-
-const Time noon(12, 0);   // a const instance
-noon.setHour(13);         // ERROR: would modify noon
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>const Time noon</code> may never change after construction.</li>
-              <li>The constructor still runs &mdash; that is initialization, not modification.</li>
-              <li><code>setHour</code> would change it, so the compiler forbids the call.</li>
-            </ul>
-          </article>
-        </div>
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part A</div>
+        <h2>Designing a Class End to End</h2>
       </section>
 
       <section>
-        <h2>The Surprise: Even Getters Are Rejected</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-const Time noon(12, 0);
-int h = noon.getHour();   // ERROR, even though it only reads
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li><code>getHour</code> only reads, but the compiler does not know that.</li>
-              <li>From its declaration, <code>getHour</code> <em>could</em> modify the object.</li>
-              <li>On a <code>const</code> object, only functions that <em>promise</em> not to modify are allowed.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>The Rule</h2>
+        <h2>Design Goal</h2>
         <div class="callout cool">
-          A <code>const</code> object may call <strong>only</strong> member functions that are themselves marked <code>const</code>. A member function makes that promise by writing <code>const</code> after its parameter list.
+          Build a <code>Gradebook</code> that owns a <code>std::vector&lt;int&gt;</code> of scores. The class invariant: every stored score is in <code>0..100</code>. We will pick members, design the interface, write constructors with init lists, and split into <code>.hpp</code>/<code>.cpp</code>.
         </div>
       </section>
 
       <section>
-        <h2>Marking a Member Function const</h2>
+        <h2>Step 1: Design Decisions</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <span class="kicker">Data members</span>
+            <strong>one vector</strong>
+            <span>A <code>std::vector&lt;int&gt;</code> holds the scores.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">const?</span>
+            <strong>readers are const</strong>
+            <span><code>size</code>, <code>at</code>, <code>average</code> never modify state.</span>
+          </article>
+          <article class="stat">
+            <span class="kicker">Invariant</span>
+            <strong>scores in 0..100</strong>
+            <span>The class rejects values outside the range.</span>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Step 2: The Header (Interface)</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
+// gradebook.hpp
+#ifndef GRADEBOOK_HPP
+#define GRADEBOOK_HPP
+#include &lt;vector&gt;
 
-    Time(int h, int m) { hour = h; minute = m; }
-
-    int getHour() const { return hour; }     // trailing const
-    int getMinute() const { return minute; }
-    void setHour(int h) { hour = h; }        // not const
+class Gradebook {
+public:
+    Gradebook();                 // start empty
+    void add(int score);         // append, enforce 0..100
+    int  size() const;           // how many scores
+    int  at(int i) const;        // read score i
+    double average() const;      // mean of all scores
+private:
+    std::vector&lt;int&gt; scores;     // the managed data
 };
-
-const Time noon(12, 0);
-cout &lt;&lt; noon.getHour();   // OK now: getHour is const
+#endif
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The trailing <code>const</code> applies to the implicit object.</li>
-              <li>It promises: "this function will not modify the object."</li>
-              <li><code>const</code> objects may call <code>getHour</code> and <code>getMinute</code>.</li>
+              <li><code>scores</code> is <code>private</code>: callers cannot touch it.</li>
+              <li>Three of four functions are <code>const</code> &mdash; readers only.</li>
+              <li><code>add</code> is the one door for new data, so it enforces the rule.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Where the const Goes</h2>
+        <h2>Step 3: The Implementation (.cpp)</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
+#include "gradebook.hpp"
 
-    Time(int h, int m) { hour = h; minute = m; }
+Gradebook::Gradebook() : scores() { }   // empty vector
 
-    int  getHour() const { return hour; }   // reader: const
-    void setHour(int h)  { hour = h;     }   // writer: no const
-};
+void Gradebook::add(int score) {
+    if (score &lt; 0)   score = 0;
+    if (score &gt; 100) score = 100;
+    scores.push_back(score);            // invariant kept
+}
+int Gradebook::size() const { return scores.size(); }
+int Gradebook::at(int i) const { return scores[i]; }
+double Gradebook::average() const {
+    if (scores.size() == 0) return 0.0;
+    int sum = 0;
+    for (int i = 0; i &lt; scores.size(); ++i) sum += scores[i];
+    return static_cast&lt;double&gt;(sum) / scores.size();
+}
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The <code>const</code> sits <em>after</em> the parameter list, before the body.</li>
-              <li>It is part of the function's signature, not a return-type detail.</li>
-              <li>Mark every member function that only reads as <code>const</code>; leave writers non-<code>const</code>.</li>
+              <li>The constructor uses an init list (<code>scores()</code> = empty).</li>
+              <li><code>add</code> clamps before <code>push_back</code> &mdash; invariant held.</li>
+              <li><code>const</code> members read <code>scores</code> but never modify it.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>What a const Member Function May Not Do</h2>
+        <h2>Step 4: Trace It</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
-
-    void show() const {
-        hour = 0;          // ERROR: modifies a member
-        setHour(9);        // ERROR: calls a non-const member
-        cout &lt;&lt; hour &lt;&lt; ":" &lt;&lt; minute;   // reading is fine
-    }
-    void setHour(int h) { hour = h; }
-};
+Gradebook g;
+g.add(80);
+g.add(120);          // clamped to 100
+g.add(-5);           // clamped to 0
+std::cout &lt;&lt; g.size()    &lt;&lt; '\n';   // ?
+std::cout &lt;&lt; g.at(1)     &lt;&lt; '\n';   // ?
+std::cout &lt;&lt; g.average() &lt;&lt; '\n';   // ?
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>It must not modify any member variable.</li>
-              <li>It must not call a non-const member function.</li>
-              <li>It may freely <em>read</em> members and print them.</li>
+              <li><code>size()</code> &rarr; <code>3</code> (three calls to <code>add</code>).</li>
+              <li><code>at(1)</code> &rarr; <code>100</code> (the clamped <code>120</code>).</li>
+              <li><code>average()</code> &rarr; <code>(80+100+0)/3 = 60</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Inside a const Member, this Is const</h2>
+        <h2>Step 5: const Instances Need const Members</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void report(const Gradebook&amp; gb) {
+    std::cout &lt;&lt; gb.size();      // OK: size() is const
+    std::cout &lt;&lt; gb.average();   // OK: average() is const
+    gb.add(50);                  // ERROR: add() is non-const
+}
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A <code>const Gradebook&amp;</code> can only call <code>const</code> members.</li>
+              <li>This is why we marked the readers <code>const</code>.</li>
+              <li>The design choices from Step 1 pay off here.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ PART B: DEFAULT ARGUMENTS ============ -->
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part B</div>
+        <h2>Default Arguments</h2>
+        <p class="lead center-copy">
+          One function, two ways to call it &mdash; with or without trailing arguments.
+        </p>
+      </section>
+
+      <section>
+        <h2>What a Default Argument Is</h2>
         <div class="callout cool">
-          Within a <code>const</code> member function the implicit object is treated as <code>const</code>. Any attempt to modify a member, or to call a non-const member function, is a compile error &mdash; the promise is enforced, not just documented.
+          A <strong>default argument</strong> supplies a value the caller may omit. One function then serves the common case and the customized case &mdash; Chapter 16.
         </div>
       </section>
 
       <section>
-        <h2>const-Correct Getters and Setters</h2>
+        <h2>Default Argument Syntax</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct BankAccount {
-    double balance;
-
-    BankAccount(double b) { balance = b; }
-
-    double getBalance() const { return balance; }  // reads
-    void deposit(double a) { balance += a; }        // writes
-};
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>A getter that only reads should be <code>const</code>.</li>
-              <li>A setter that modifies the object must <em>not</em> be <code>const</code>.</li>
-              <li>This split lets read-only code use the object without risk.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Passing Objects by const Reference</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void printAccount(const BankAccount&amp; a) {
-    cout &lt;&lt; a.getBalance();   // OK: getBalance is const
-    a.deposit(10.0);          // ERROR: deposit is not const
+void greet(std::string name, std::string punct = "!") {
+    std::cout &lt;&lt; "Hello, " &lt;&lt; name &lt;&lt; punct &lt;&lt; "\n";
 }
 
-BankAccount acct(500.0);
-printAccount(acct);           // no copy, cannot modify acct
+greet("Ada");          // Hello, Ada!
+greet("Ada", ".");     // Hello, Ada.
+greet("Ada", "?");     // Hello, Ada?
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>const BankAccount&amp;</code> avoids a copy and forbids changes.</li>
-              <li>Inside, <code>a</code> behaves like a <code>const</code> object.</li>
-              <li>Only <code>const</code> member functions may be called on it.</li>
+              <li><code>= "!"</code> is the default for <code>punct</code>.</li>
+              <li>Omitting it uses the default.</li>
+              <li>Supplying it overrides the default.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Classic Compile Error</h2>
+        <h2>Defaults Go in the Declaration</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct BankAccount {
-    double balance;
+// log.hpp
+void log(std::string msg, int level = 1);   // default HERE
 
-    BankAccount(double b) { balance = b; }
-    double getBalance() { return balance; }   // NOT const
-};
-
-void report(const BankAccount&amp; a) {
-    cout &lt;&lt; a.getBalance();   // error here
+// log.cpp
+#include "log.hpp"
+void log(std::string msg, int level) {      // NO default here
+    std::cout &lt;&lt; "[" &lt;&lt; level &lt;&lt; "] " &lt;&lt; msg &lt;&lt; "\n";
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><strong>"passing 'const BankAccount' as 'this' argument discards qualifiers"</strong></li>
-              <li>Or: <em>no matching member function for call to <code>getBalance</code></em>.</li>
-              <li><code>a</code> is const, but <code>getBalance</code> does not promise const.</li>
+              <li>The default lives where callers see it &mdash; the header.</li>
+              <li>Repeating it in the definition is an error.</li>
+              <li>If there is no header, put it on the single declaration.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Fix: Mark the Reader const</h2>
+        <h2>The Trailing-Parameter Rule</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct BankAccount {
-    double balance;
-
-    BankAccount(double b) { balance = b; }
-    double getBalance() const { return balance; }   // fixed
-};
-
-void report(const BankAccount&amp; a) {
-    cout &lt;&lt; a.getBalance();   // compiles now
-}
+void box(int w, int h = 1, int d = 1);   // OK
+void bad(int w = 1, int h);              // error: h has no default
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>The cure is almost always to add the missing <code>const</code>.</li>
-              <li>Do not remove <code>const</code> from the parameter &mdash; that loses the protection.</li>
-              <li>Make every read-only member function <code>const</code> from the start.</li>
+              <li>Once a parameter has a default, <em>all</em> after it must too.</li>
+              <li>Defaults are filled from the right end leftward.</li>
+              <li><code>bad</code> could never omit <code>w</code> while passing <code>h</code>.</li>
             </ul>
           </article>
         </div>
       </section>
+
+      <section>
+        <h2>Omitting Only Trailing Arguments</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void box(int w, int h = 1, int d = 1);
+
+box(5);          // w=5, h=1, d=1
+box(5, 2);       // w=5, h=2, d=1
+box(5, 2, 3);    // w=5, h=2, d=3
+box(5, , 3);     // ERROR: cannot skip the middle one
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>You may only drop arguments from the right.</li>
+              <li>There is no syntax to skip a middle argument.</li>
+              <li>To set <code>d</code> you must also pass <code>h</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Ambiguity Trap</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void f(int a);                 // candidate A
+void f(int a, int b = 0);      // candidate B
+
+f(3, 4);   // calls B, fine
+f(3);      // AMBIGUOUS: A matches, B matches via default
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>f(3)</code> fits <code>f(int)</code> exactly.</li>
+              <li>It also fits <code>f(int, int=0)</code> with the default.</li>
+              <li>Two equally good matches &rArr; build error.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Avoiding the Trap</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+// Pick ONE strategy for the arity choice.
+
+// Strategy 1: defaults only
+void f(int a, int b = 0);
+
+// Strategy 2: overloads only
+void g(int a);
+void g(int a, int b);
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Use defaults <em>or</em> overloads, not both for the same call.</li>
+              <li>Do not let an overload shadow a defaulted call.</li>
+              <li>Clear interfaces compile without surprises.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ WRAP-UP ============ -->
 
       <section>
         <h2>Quick Checks</h2>
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Why can a <code>const Time</code> call <code>getHour() const</code> but not <code>setHour(int)</code>?</p>
+            <p class="meta">In <code>Gradebook</code>, why can <code>add</code> guarantee every stored score is in <code>0..100</code> while a public <code>vector</code> could not?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">A function takes <code>const BankAccount&amp;</code> and calls <code>getBalance()</code>, which is not <code>const</code>. What error, and how do you fix it?</p>
+            <p class="meta">Given <code>void q(double);</code> and <code>void q(double, int = 0);</code>, what happens with <code>q(2.0)</code>?</p>
           </article>
         </div>
       </section>
@@ -314,18 +373,18 @@ void report(const BankAccount&amp; a) {
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>A <code>const</code> object only calls <code>const</code> member functions.</li>
-              <li>Trailing <code>const</code> goes in declaration and definition.</li>
-              <li>A <code>const</code> member must not modify members or call non-const members.</li>
-              <li><code>const T&amp;</code> parameters behave like <code>const</code> objects.</li>
+              <li>Design: pick data members, then the operations they need.</li>
+              <li>State the invariant; defend it in the constructor and <code>add</code>.</li>
+              <li>Defaults go in the declaration only.</li>
+              <li>Every parameter after a defaulted one must be defaulted.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Mark every read-only member function <code>const</code>.</li>
-              <li>Pass big objects by <code>const</code> reference.</li>
-              <li>Fix qualifier errors by adding <code>const</code>, not removing it.</li>
+              <li>Make every reader <code>const</code> so const instances stay usable.</li>
+              <li>Prefer one defaulted function over near-duplicate overloads.</li>
+              <li>Do not mix an overload with a default that covers it.</li>
             </ul>
           </article>
         </div>
@@ -335,25 +394,25 @@ void report(const BankAccount&amp; a) {
         <h2>Lecture 22 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Core ideas</h3>
+            <h3>Classes review</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> Which member functions may a <code>const</code> object call?</li>
-              <li class="answer-line"><strong>Answer:</strong> Only those marked <code>const</code>.</li>
-              <li><strong>Q2.</strong> Where does the keyword <code>const</code> go on a member function?</li>
-              <li class="answer-line"><strong>Answer:</strong> After the parameter list, in both declaration and definition.</li>
-              <li><strong>Q3.</strong> May a <code>const</code> member function modify a member?</li>
-              <li class="answer-line"><strong>Answer:</strong> No; it may only read members and call other <code>const</code> members.</li>
+              <li><strong>Q1.</strong> Why make <code>scores</code> private?</li>
+              <li class="answer-line"><strong>Answer:</strong> So callers cannot bypass <code>add</code> and store an out-of-range value.</li>
+              <li><strong>Q2.</strong> Why is <code>size()</code> marked <code>const</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> It only reads <code>scores</code>, and const instances must be able to call it.</li>
+              <li><strong>Q3.</strong> Why does <code>average()</code> check <code>size() == 0</code> first?</li>
+              <li class="answer-line"><strong>Answer:</strong> To avoid dividing by zero on an empty gradebook.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Reasoning</h3>
+            <h3>Default arguments</h3>
             <ul class="tight qa-list">
-              <li><strong>Q4.</strong> Why is a non-const getter rejected on a <code>const</code> object?</li>
-              <li class="answer-line"><strong>Answer:</strong> Its signature does not promise const, so it could modify the object.</li>
-              <li><strong>Q5.</strong> What does <code>const BankAccount&amp; a</code> allow you to call on <code>a</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> Only <code>const</code> member functions; <code>a</code> acts like a <code>const</code> object.</li>
-              <li><strong>Q6.</strong> How do you fix "discards qualifiers" on <code>a.getBalance()</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> Mark <code>getBalance</code> as <code>const</code>.</li>
+              <li><strong>Q4.</strong> Where does a default argument go?</li>
+              <li class="answer-line"><strong>Answer:</strong> In the declaration (header), not repeated in the definition.</li>
+              <li><strong>Q5.</strong> Is <code>void p(int a = 1, int b);</code> legal?</li>
+              <li class="answer-line"><strong>Answer:</strong> No &mdash; all parameters after a defaulted one must be defaulted.</li>
+              <li><strong>Q6.</strong> Why is <code>f(3)</code> ambiguous with <code>f(int)</code> and <code>f(int,int=0)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Both are viable for one argument and neither is strictly better.</li>
             </ul>
           </article>
         </div>
@@ -363,48 +422,39 @@ void report(const BankAccount&amp; a) {
         <h2>Lecture 22 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Find the bug</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> Why won't this compile?
+                <strong>Q1.</strong> Why is this loop wrong?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
-
-    Time(int h, int m) { hour = h; minute = m; }
-    int getHour() const {
-        hour = hour;       // ??
-        return hour;
-    }
-};
-            </code>
-          </pre>
-              </li>
-              <li class="answer-line"><strong>Answer:</strong> A <code>const</code> member function may not assign to a member. <code>hour = hour;</code> modifies the object; remove it and just <code>return hour;</code>.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
-            <h3>Make it const-correct</h3>
-            <ul class="tight qa-list">
-              <li>
-                <strong>Q2.</strong> What is the error, and the fix?
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
-
-    Time(int h, int m) { hour = h; minute = m; }
-    int getMinute() { return minute; }
-};
-
-void show(const Time&amp; t) {
-    cout &lt;&lt; t.getMinute();
+double Gradebook::average() const {
+    int sum = 0;
+    for (int i = 1; i &lt;= scores.size(); ++i)
+        sum += scores[i];
+    return (double)sum / scores.size();
 }
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>t</code> is <code>const</code> but <code>getMinute</code> is not; the call discards qualifiers. Fix: declare <code>int getMinute() const</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> It starts at <code>1</code> (skips <code>scores[0]</code>) and uses <code>&lt;=</code> (reads <code>scores[size()]</code>, out of range). Use <code>i = 0; i &lt; scores.size()</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Does it compile?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Build result?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+void scale(int v);
+void scale(int v, double k = 2.0);
+
+int main() { scale(10); }
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Build error: <code>scale(10)</code> matches <code>scale(int)</code> exactly and <code>scale(int,double=2.0)</code> via the default &mdash; ambiguous.</li>
             </ul>
           </article>
         </div>
@@ -412,9 +462,9 @@ void show(const Time&amp; t) {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>More on Constructors and Member Initializer Lists</h2>
+        <h2>Pointers I</h2>
         <p class="lead center-copy">
-          We can build and protect objects. Next time we go deeper into constructors: member initializer lists, multiple constructors, and the implicit default constructor.
+          Next time we meet a variable that holds an <em>address</em>: introducing pointers, the address-of operator <code>&amp;</code>, and the dereference operator <code>*</code>.
         </p>
       </section>
     </div>

@@ -17,320 +17,282 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 25</div>
-        <h1>Classes Review and Default Arguments</h1>
+        <h1>C-style Arrays I</h1>
         <p class="lead">
-          First we design one small class end to end. Then we meet Chapter 16 <strong>default arguments</strong> &mdash; and the ambiguity they cause with overloading.
+          Before <code>std::vector</code> there were raw arrays: a fixed block of elements laid out back to back in memory, with a size fixed at compile time and no safety net.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapters 15-16</span>
-          <span class="pill">review</span>
-          <span class="pill">default arguments</span>
+          <span class="pill">fixed size</span>
+          <span class="pill">no bounds check</span>
+          <span class="pill">indexing</span>
+          <span class="pill">vs vector</span>
         </div>
       </section>
 
       <section>
-        <h2>Recap: Lecture 24</h2>
+        <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Organization &amp; encapsulation</h3>
+            <h3>Lecture 24 &mdash; Pointers II</h3>
             <ul class="tight">
-              <li>Members defined with <code>ClassName::</code>; header/cpp split.</li>
-              <li>Private data + public interface defends the invariant.</li>
+              <li>A pointer holds an address.</li>
+              <li><code>*p</code> dereferences; <code>&amp;x</code> takes an address.</li>
+              <li>Pointers and references both give indirect access.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Today</h3>
             <ul class="tight">
-              <li>Part A: design a full class (Gradebook) end to end.</li>
-              <li>Part B: default arguments, the trailing rule, ambiguity.</li>
+              <li>Declaring and initializing raw arrays.</li>
+              <li>Indexing, traversal, and the fixed-size rule.</li>
+              <li>Why overrunning an array is undefined behavior.</li>
+              <li>Arrays vs <code>std::vector</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Part A &mdash; Design Goal</h2>
-        <div class="callout cool">
-          Build a <code>Gradebook</code> that owns a <code>std::vector&lt;int&gt;</code> of scores. The class invariant: every stored score is in <code>0..100</code>. We will pick members, design the interface, write constructors with init lists, and split into <code>.hpp</code>/<code>.cpp</code>.
+        <h2>Declaring a Raw Array</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5];          // 5 ints, values uninitialized
+double scores[3];  // 3 doubles
+char grade[1];     // 1 char
+
+a[0] = 10;
+a[1] = 20;
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>T name[N]</code> reserves room for exactly <code>N</code> elements.</li>
+              <li>The <code>N</code> must be a constant known at compile time.</li>
+              <li>Without an initializer the elements hold garbage.</li>
+            </ul>
+          </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 1: Design Decisions</h2>
+        <h2>Initializing an Array</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {1, 2, 3, 4, 5};   // all five set
+int b[5] = {1, 2};            // b = {1,2,0,0,0}
+int c[5] = {};                // all zeros
+int d[]  = {7, 8, 9};         // size deduced: 3
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>A brace list initializes element by element.</li>
+              <li>Missing trailing values are zero-initialized.</li>
+              <li>Omitting the size lets the compiler count the list.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Indexing Starts at Zero</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {10, 20, 30, 40, 50};
+
+a[0];   // 10  -- first element
+a[4];   // 50  -- last valid element
+a[2] = 99;     // a = {10,20,99,40,50}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Valid indices for <code>a[5]</code> are <code>0</code> through <code>4</code>.</li>
+              <li>The last element is at index <code>N - 1</code>, never <code>N</code>.</li>
+              <li>Element <code>i</code> sits <code>i</code> slots past the start.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>No Bounds Checking</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {1, 2, 3, 4, 5};
+
+a[5]  = 100;   // out of range -- UNDEFINED BEHAVIOR
+a[-1] = 7;     // out of range -- UNDEFINED BEHAVIOR
+int x = a[99]; // reads some unrelated memory
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>C++ does <em>not</em> check that the index is in range.</li>
+              <li>An out-of-range access is undefined behavior.</li>
+              <li>It may crash, corrupt data, or appear to "work".</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Undefined Behavior, Stated Plainly</h2>
+        <div class="callout cool">
+          Writing past the end of a raw array does not throw and does not warn. The program may keep running with silently corrupted memory &mdash; the worst kind of bug to chase.
+        </div>
+      </section>
+
+      <section>
+        <h2>The Size Is Fixed Forever</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int n = 5;
+int a[n];          // not standard C++ (size must be constant)
+
+const int N = 5;
+int b[N];          // OK -- N is a compile-time constant
+
+// b cannot grow: there is no b.push_back(...)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>The size is baked in when the array is created.</li>
+              <li>You cannot resize, append, or shrink it.</li>
+              <li>The size must be a compile-time constant.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Traversing With a Size Variable</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int N = 5;
+int a[N] = {3, 1, 4, 1, 5};
+
+int sum = 0;
+for (int i = 0; i &lt; N; ++i) {
+    sum += a[i];
+}
+std::cout &lt;&lt; sum &lt;&lt; std::endl;   // 14
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>An array does not know its own length.</li>
+              <li>You must carry the size <code>N</code> alongside it.</li>
+              <li>The loop condition is <code>i &lt; N</code>, never <code>i &lt;= N</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Classic Off-by-One</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+const int N = 5;
+int a[N] = {1, 2, 3, 4, 5};
+
+for (int i = 0; i &lt;= N; ++i) {   // BUG: i == 5 is out of range
+    std::cout &lt;&lt; a[i] &lt;&lt; ' ';
+}
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>i &lt;= N</code> reaches <code>a[5]</code>, which does not exist.</li>
+              <li>That last read is undefined behavior.</li>
+              <li>Always loop while <code>i &lt; N</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Arrays vs std::vector</h2>
         <div class="stat-grid">
           <article class="stat">
-            <span class="kicker">Data members</span>
-            <strong>one vector</strong>
-            <span>A <code>std::vector&lt;int&gt;</code> holds the scores.</span>
+            <span class="kicker">Size</span>
+            <strong>fixed vs dynamic</strong>
+            <span>Array size is locked; a vector can grow and shrink.</span>
           </article>
           <article class="stat">
-            <span class="kicker">const?</span>
-            <strong>readers are const</strong>
-            <span><code>size</code>, <code>at</code>, <code>average</code> never modify state.</span>
+            <span class="kicker">Length</span>
+            <strong>tracked or not</strong>
+            <span>A vector knows <code>.size()</code>; an array does not.</span>
           </article>
           <article class="stat">
-            <span class="kicker">Invariant</span>
-            <strong>scores in 0..100</strong>
-            <span>The class rejects values outside the range.</span>
+            <span class="kicker">Safety</span>
+            <strong>.at() vs nothing</strong>
+            <span><code>v.at(i)</code> can range-check; <code>a[i]</code> never does.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 2: The Header (Interface)</h2>
+        <h2>Prefer vector by Default</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// gradebook.hpp
-#ifndef GRADEBOOK_HPP
-#define GRADEBOOK_HPP
-#include &lt;vector&gt;
+// Raw array: size and data travel separately
+int a[5] = {1, 2, 3, 4, 5};
 
-class Gradebook {
-public:
-    Gradebook();                 // start empty
-    void add(int score);         // append, enforce 0..100
-    int  size() const;           // how many scores
-    int  at(int i) const;        // read score i
-    double average() const;      // mean of all scores
-private:
-    std::vector&lt;int&gt; scores;     // the managed data
-};
-#endif
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>scores</code> is <code>private</code>: callers cannot touch it.</li>
-              <li>Three of four functions are <code>const</code> &mdash; readers only.</li>
-              <li><code>add</code> is the one door for new data, so it enforces the rule.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Step 3: The Implementation (.cpp)</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-#include "gradebook.hpp"
-
-Gradebook::Gradebook() : scores() { }   // empty vector
-
-void Gradebook::add(int score) {
-    if (score &lt; 0)   score = 0;
-    if (score &gt; 100) score = 100;
-    scores.push_back(score);            // invariant kept
-}
-int Gradebook::size() const { return scores.size(); }
-int Gradebook::at(int i) const { return scores[i]; }
-double Gradebook::average() const {
-    if (scores.size() == 0) return 0.0;
-    int sum = 0;
-    for (int i = 0; i &lt; scores.size(); ++i) sum += scores[i];
-    return static_cast&lt;double&gt;(sum) / scores.size();
-}
+// vector: size travels with the data, can grow
+std::vector&lt;int&gt; v = {1, 2, 3, 4, 5};
+v.push_back(6);
+std::cout &lt;&lt; v.size() &lt;&lt; std::endl;   // 6
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The constructor uses an init list (<code>scores()</code> = empty).</li>
-              <li><code>add</code> clamps before <code>push_back</code> &mdash; invariant held.</li>
-              <li><code>const</code> members read <code>scores</code> but never modify it.</li>
+              <li><code>vector</code> carries its own length and resizes.</li>
+              <li>It copies cleanly and can be returned from a function.</li>
+              <li>Use raw arrays only when an interface forces them.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 4: Trace It</h2>
+        <h2>Passing an Array to a Function</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-Gradebook g;
-g.add(80);
-g.add(120);          // clamped to 100
-g.add(-5);           // clamped to 0
-std::cout &lt;&lt; g.size()    &lt;&lt; '\n';   // ?
-std::cout &lt;&lt; g.at(1)     &lt;&lt; '\n';   // ?
-std::cout &lt;&lt; g.average() &lt;&lt; '\n';   // ?
+int sum(int a[], int n) {       // a is really int*
+    int s = 0;
+    for (int i = 0; i &lt; n; ++i) s += a[i];
+    return s;
+}
+
+int data[4] = {2, 4, 6, 8};
+std::cout &lt;&lt; sum(data, 4) &lt;&lt; std::endl;    // 20 -- size passed by hand
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>size()</code> &rarr; <code>3</code> (three calls to <code>add</code>).</li>
-              <li><code>at(1)</code> &rarr; <code>100</code> (the clamped <code>120</code>).</li>
-              <li><code>average()</code> &rarr; <code>(80+100+0)/3 = 60</code>.</li>
+              <li>An array argument "decays" to a pointer to its first element.</li>
+              <li>The function never receives the length.</li>
+              <li>So you must pass the size as a separate parameter.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 5: const Objects Need const Members</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void report(const Gradebook&amp; gb) {
-    std::cout &lt;&lt; gb.size();      // OK: size() is const
-    std::cout &lt;&lt; gb.average();   // OK: average() is const
-    gb.add(50);                  // ERROR: add() is non-const
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>A <code>const Gradebook&amp;</code> can only call <code>const</code> members.</li>
-              <li>This is why we marked the readers <code>const</code>.</li>
-              <li>The design choices from Step 1 pay off here.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Part B &mdash; Default Arguments</h2>
+        <h2>Decay Loses the Size</h2>
         <div class="callout cool">
-          A <strong>default argument</strong> supplies a value the caller may omit. One function then serves the common case and the customized case &mdash; Chapter 16.
-        </div>
-      </section>
-
-      <section>
-        <h2>Default Argument Syntax</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void greet(std::string name, std::string punct = "!") {
-    std::cout &lt;&lt; "Hello, " &lt;&lt; name &lt;&lt; punct &lt;&lt; "\n";
-}
-
-greet("Ada");          // Hello, Ada!
-greet("Ada", ".");     // Hello, Ada.
-greet("Ada", "?");     // Hello, Ada?
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>= "!"</code> is the default for <code>punct</code>.</li>
-              <li>Omitting it uses the default.</li>
-              <li>Supplying it overrides the default.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Defaults Go in the Declaration</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// log.hpp
-void log(std::string msg, int level = 1);   // default HERE
-
-// log.cpp
-#include "log.hpp"
-void log(std::string msg, int level) {      // NO default here
-    std::cout &lt;&lt; "[" &lt;&lt; level &lt;&lt; "] " &lt;&lt; msg &lt;&lt; "\n";
-}
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>The default lives where callers see it &mdash; the header.</li>
-              <li>Repeating it in the definition is an error.</li>
-              <li>If there is no header, put it on the single declaration.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>The Trailing-Parameter Rule</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void box(int w, int h = 1, int d = 1);   // OK
-void bad(int w = 1, int h);              // error: h has no default
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Once a parameter has a default, <em>all</em> after it must too.</li>
-              <li>Defaults are filled from the right end leftward.</li>
-              <li><code>bad</code> could never omit <code>w</code> while passing <code>h</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Omitting Only Trailing Arguments</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void box(int w, int h = 1, int d = 1);
-
-box(5);          // w=5, h=1, d=1
-box(5, 2);       // w=5, h=2, d=1
-box(5, 2, 3);    // w=5, h=2, d=3
-box(5, , 3);     // ERROR: cannot skip the middle one
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>You may only drop arguments from the right.</li>
-              <li>There is no syntax to skip a middle argument.</li>
-              <li>To set <code>d</code> you must also pass <code>h</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>The Ambiguity Trap</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-void f(int a);                 // candidate A
-void f(int a, int b = 0);      // candidate B
-
-f(3, 4);   // calls B, fine
-f(3);      // AMBIGUOUS: A matches, B matches via default
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>f(3)</code> fits <code>f(int)</code> exactly.</li>
-              <li>It also fits <code>f(int, int=0)</code> with the default.</li>
-              <li>Two equally good matches &rArr; build error.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Avoiding the Trap</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// Pick ONE strategy for the arity choice.
-
-// Strategy 1: defaults only
-void f(int a, int b = 0);
-
-// Strategy 2: overloads only
-void g(int a);
-void g(int a, int b);
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Use defaults <em>or</em> overloads, not both for the same call.</li>
-              <li>Do not let an overload shadow a defaulted call.</li>
-              <li>Clear interfaces compile without surprises.</li>
-            </ul>
-          </article>
+          Inside the function, the parameter is a pointer &mdash; not an array. <code>sizeof</code> on it gives the size of a pointer, not the array. The length only survives if you pass it yourself. (Detail next lecture.)
         </div>
       </section>
 
@@ -339,11 +301,11 @@ void g(int a, int b);
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">In <code>Gradebook</code>, why can <code>add</code> guarantee every stored score is in <code>0..100</code> while a public <code>vector</code> could not?</p>
+            <p class="meta">For <code>double d[8];</code>, what is the largest valid index, and what happens if you write to <code>d[8]</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Given <code>void q(double);</code> and <code>void q(double, int = 0);</code>, what happens with <code>q(2.0)</code>?</p>
+            <p class="meta">Why must a traversal loop carry a separate size variable instead of asking the array for its length?</p>
           </article>
         </div>
       </section>
@@ -354,18 +316,18 @@ void g(int a, int b);
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>Design: pick data members, then the operations they need.</li>
-              <li>State the invariant; defend it in the constructor and <code>add</code>.</li>
-              <li>Defaults go in the declaration only.</li>
-              <li>Every parameter after a defaulted one must be defaulted.</li>
+              <li><code>T a[N]</code> is a fixed block of <code>N</code> elements.</li>
+              <li>Indices run <code>0</code> to <code>N-1</code>; no bounds checking.</li>
+              <li>Out-of-range access is undefined behavior.</li>
+              <li>The size is a compile-time constant and cannot change.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Make every reader <code>const</code> so const objects stay usable.</li>
-              <li>Prefer one defaulted function over near-duplicate overloads.</li>
-              <li>Do not mix an overload with a default that covers it.</li>
+              <li>Loop while <code>i &lt; N</code>, never <code>i &lt;= N</code>.</li>
+              <li>Pass the size alongside the array to functions.</li>
+              <li>Reach for <code>std::vector</code> unless an interface forbids it.</li>
             </ul>
           </article>
         </div>
@@ -375,25 +337,25 @@ void g(int a, int b);
         <h2>Lecture 25 Review Questions</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Classes review</h3>
+            <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> Why make <code>scores</code> private?</li>
-              <li class="answer-line"><strong>Answer:</strong> So callers cannot bypass <code>add</code> and store an out-of-range value.</li>
-              <li><strong>Q2.</strong> Why is <code>size()</code> marked <code>const</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> It only reads <code>scores</code>, and const objects must be able to call it.</li>
-              <li><strong>Q3.</strong> Why does <code>average()</code> check <code>size() == 0</code> first?</li>
-              <li class="answer-line"><strong>Answer:</strong> To avoid dividing by zero on an empty gradebook.</li>
+              <li><strong>Q1.</strong> What are the valid indices of <code>int a[6];</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>0</code> through <code>5</code>.</li>
+              <li><strong>Q2.</strong> What does <code>int b[5] = {1, 2};</code> store?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>{1, 2, 0, 0, 0}</code> &mdash; missing values are zero.</li>
+              <li><strong>Q3.</strong> Can a raw array grow at runtime?</li>
+              <li class="answer-line"><strong>Answer:</strong> No; its size is fixed at compile time.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Default arguments</h3>
+            <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q4.</strong> Where does a default argument go?</li>
-              <li class="answer-line"><strong>Answer:</strong> In the declaration (header), not repeated in the definition.</li>
-              <li><strong>Q5.</strong> Is <code>void p(int a = 1, int b);</code> legal?</li>
-              <li class="answer-line"><strong>Answer:</strong> No &mdash; all parameters after a defaulted one must be defaulted.</li>
-              <li><strong>Q6.</strong> Why is <code>f(3)</code> ambiguous with <code>f(int)</code> and <code>f(int,int=0)</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> Both are viable for one argument and neither is strictly better.</li>
+              <li><strong>Q4.</strong> What happens when you read <code>a[N]</code> for <code>int a[N]</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Undefined behavior &mdash; out of range, no diagnostic.</li>
+              <li><strong>Q5.</strong> Why pass a size parameter to <code>sum(int a[], int n)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> The array decays to a pointer and loses its length.</li>
+              <li><strong>Q6.</strong> Why is <code>std::vector</code> usually preferred?</li>
+              <li class="answer-line"><strong>Answer:</strong> It tracks its own size, resizes, and copies safely.</li>
             </ul>
           </article>
         </div>
@@ -406,36 +368,33 @@ void g(int a, int b);
             <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> Why is this loop wrong?
+                <strong>Q1.</strong> What is wrong here?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-double Gradebook::average() const {
-    int sum = 0;
-    for (int i = 1; i &lt;= scores.size(); ++i)
-        sum += scores[i];
-    return (double)sum / scores.size();
-}
+int a[3] = {1, 2, 3};
+for (int i = 1; i &lt;= 3; ++i)
+    std::cout &lt;&lt; a[i] &lt;&lt; ' ';
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It starts at <code>1</code> (skips <code>scores[0]</code>) and uses <code>&lt;=</code> (reads <code>scores[size()]</code>, out of range). Use <code>i = 0; i &lt; scores.size()</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> It skips <code>a[0]</code> and reads <code>a[3]</code> (out of range). Use <code>for (int i = 0; i &lt; 3; ++i)</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Does it compile?</h3>
+            <h3>What prints?</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> Build result?
+                <strong>Q2.</strong> Output?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void scale(int v);
-void scale(int v, double k = 2.0);
-
-int main() { scale(10); }
+int a[5] = {4};
+int s = 0;
+for (int i = 0; i &lt; 5; ++i) s += a[i];
+std::cout &lt;&lt; s &lt;&lt; std::endl;
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Build error: <code>scale(10)</code> matches <code>scale(int)</code> exactly and <code>scale(int,double=2.0)</code> via the default &mdash; ambiguous.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>4</code>. Only <code>a[0]</code> is 4; the rest are zero-initialized.</li>
             </ul>
           </article>
         </div>
@@ -443,9 +402,9 @@ int main() { scale(10); }
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Pointers I</h2>
+        <h2>C-style Arrays II</h2>
         <p class="lead center-copy">
-          Next time we meet a variable that holds an <em>address</em>: introducing pointers, the address-of operator <code>&amp;</code>, and the dereference operator <code>*</code>.
+          Next time we open up array-to-pointer decay: why <code>int a[]</code> is really <code>int*</code>, and how <code>a[i]</code> is just <code>*(a + i)</code>.
         </p>
       </section>
     </div>

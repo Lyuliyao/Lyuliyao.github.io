@@ -17,405 +17,582 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 20</div>
-        <h1>Member Functions</h1>
+        <h1>Constructors</h1>
         <p class="lead">
-          A <code>struct</code> can do more than hold data. We put the functions that act on a value <em>inside</em> the type, so behavior lives next to the data it uses.
+          A constructor is a special member function that runs the moment an instance is created. Its one job: leave the instance in a valid, fully initialized state.
         </p>
         <div class="pill-row">
           <span class="pill">Chapter 15</span>
-          <span class="pill">member functions</span>
-          <span class="pill">the implicit object</span>
-          <span class="pill">dot operator</span>
+          <span class="pill">constructors</span>
+          <span class="pill">initializer list</span>
+          <span class="pill">delegating</span>
         </div>
       </section>
 
       <section>
-        <h2>Recap of Lecture 19</h2>
+        <h2>Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>What we had</h3>
+            <h3>Lecture 19</h3>
             <ul class="tight">
-              <li><code>struct Time</code> with member variables <code>hour</code>, <code>minute</code>, <code>second</code>.</li>
-              <li>Objects, brace init, the dot operator.</li>
-              <li>The type only <em>held</em> data.</li>
+              <li><code>struct</code> bundles member variables into a new type.</li>
+              <li>Member functions put behavior inside the type.</li>
+              <li><code>const</code> instances may call only <code>const</code> member functions.</li>
+              <li>But instances still start with <strong>garbage data</strong>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Today (Ch 15.2)</h3>
+            <h3>Today</h3>
             <ul class="tight">
-              <li>Give the type <em>behavior</em>: member functions.</li>
-              <li>How a member function sees the object's own members.</li>
-              <li>Reading vs modifying members; <code>struct</code> vs <code>class</code>.</li>
+              <li>Default and parameterized constructors.</li>
+              <li>The member initializer list.</li>
+              <li>Delegating constructors and default member initializers.</li>
+              <li>The implicit default constructor &mdash; and how to lose it.</li>
             </ul>
           </article>
         </div>
       </section>
 
-      <section>
-        <h2>Behavior Outside the Type</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time { int hour; int minute; int second; };
+      <!-- ============ PART 1: BASIC CONSTRUCTORS ============ -->
 
-// logic about a Time, but living far away from it:
-int total_seconds(const Time&amp; t) {
-    return t.hour * 3600 + t.minute * 60 + t.second;
-}
-
-Time a{1, 0, 0};
-std::cout &lt;&lt; total_seconds(a) &lt;&lt; "\n";   // 3600
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>The function and the data are separate.</li>
-              <li>Every access needs <code>t.</code> and an argument.</li>
-              <li>We can move this logic <em>into</em> the type.</li>
-            </ul>
-          </article>
-        </div>
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part 1</div>
+        <h2>Basic Constructors</h2>
       </section>
 
       <section>
-        <h2>Adding a Member Function</h2>
+        <h2>The Problem: Uninitialized Instances</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 struct Time {
     int hour;
     int minute;
-    int second;
-
-    int total_seconds() {
-        return hour * 3600 + minute * 60 + second;
-    }
 };
+
+Time t;             // hour, minute are GARBAGE
+std::cout &lt;&lt; t.hour;     // undefined behavior
+t.hour = 25;        // nothing stops an invalid time
             </code>
           </pre>
-          <article class="card secondary">
+          <article class="card">
             <ul class="tight">
-              <li>A <strong>member function</strong> is defined inside the struct.</li>
-              <li>It uses <code>hour</code>, <code>minute</code>, <code>second</code> with no <code>t.</code> prefix.</li>
-              <li>It takes no <code>Time</code> parameter &mdash; the object is implicit.</li>
+              <li>Nothing forces <code>t</code> into a sensible state.</li>
+              <li>Reading <code>t.hour</code> before setting it is undefined behavior.</li>
+              <li>We want every <code>Time</code> to start out valid.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Definition</h2>
+        <h2>Hand-Initialization Does Not Scale</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+Time t;
+t.hour = 9;         // every caller must remember
+t.minute = 30;      // every field, every time
+
+Time other;         // forgot to set minute -> bug
+std::cout &lt;&lt; other.minute;   // garbage
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Setup is repeated at every creation site.</li>
+              <li>One forgotten line is a silent, hard-to-find defect.</li>
+              <li>The type should initialize <em>itself</em>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>What a Constructor Is</h2>
         <div class="callout cool">
-          A <strong>member function</strong> is a function declared inside a type. It is always called <strong>on an object</strong> using the dot operator, and inside its body it can use that object's member variables by name.
+          A <strong>constructor</strong> is a member function with the <em>same name as the type</em> and <em>no return type</em>. It runs automatically when an instance is created and is responsible for initializing the members.
         </div>
       </section>
 
       <section>
-        <h2>Calling on an Object</h2>
+        <h2>A Default Constructor</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-Time a{1, 0, 0};   // 3600
-Time b{0, 1, 30};  //   90
+struct Time {
+    int hour;
+    int minute;
 
-std::cout &lt;&lt; a.total_seconds() &lt;&lt; "\n";   // 3600
-std::cout &lt;&lt; b.total_seconds() &lt;&lt; "\n";   //   90
+    Time() {            // takes no arguments
+        hour = 0;
+        minute = 0;
+    }
+};
+
+Time t;             // calls Time(): t is 00:00
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>object.function()</code> mirrors <code>object.member</code>.</li>
-              <li>Same code, different object &rArr; different result.</li>
-              <li>No <code>Time</code> argument: the object is passed implicitly.</li>
+              <li>No return type; name matches the type exactly.</li>
+              <li>A constructor that takes no arguments is the <strong>default constructor</strong>.</li>
+              <li><code>Time t;</code> now produces a valid instance, automatically.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Implicit Object</h2>
+        <h2>When the Constructor Runs</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour, minute;
+
+    Time() {
+        std::cout &lt;&lt; "Time built" &lt;&lt; std::endl;
+        hour = 0; minute = 0;
+    }
+};
+
+Time a;             // prints "Time built"
+Time b;             // prints "Time built" again
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>You never call the constructor by name.</li>
+              <li>It fires once per instance, at the point of creation.</li>
+              <li>Two instances &rArr; two constructor runs.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Parameterized Constructors</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour;
+    int minute;
+
+    Time() { hour = 0; minute = 0; }
+
+    Time(int h, int m) {        // parameterized
+        hour = h;
+        minute = m;
+    }
+};
+
+Time start;            // 00:00  -> default
+Time lunch(12, 30);    // 12:30  -> parameterized
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>Constructors can be overloaded like any function.</li>
+              <li>The compiler picks one by the construction arguments.</li>
+              <li>One type, several ways to build it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>A Constructor's Job: A Valid Initial State</h2>
         <div class="callout cool">
-          In <code>a.total_seconds()</code>, the object <code>a</code> is the <strong>implicit object</strong>. An unqualified <code>hour</code> inside the body means <em>that object's</em> <code>hour</code> &mdash; <code>a.hour</code> for this call, <code>b.hour</code> for the next.
+          A constructor should leave the instance in a state where <em>every</em> member function can be called safely. After <code>Time lunch(12, 30);</code>, both <code>hour</code> and <code>minute</code> hold meaningful values &mdash; never garbage.
         </div>
       </section>
 
       <section>
-        <h2>Which Object's Members?</h2>
+        <h2>Constructing Instances Several Ways</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute, second;
-    int minutes_past() { return hour * 60 + minute; }
-};
+Time a;             // default ctor    -> 00:00
+Time b(9, 15);      // (int,int) ctor  -> 09:15
+Time c{9, 15};      // brace form      -> 09:15
+Time d = Time(9,15);// build temp, then copy
 
-Time morning{9, 30, 0};
-Time evening{18, 45, 0};
-
-std::cout &lt;&lt; morning.minutes_past() &lt;&lt; "\n"; // 570  (9*60+30)
-std::cout &lt;&lt; evening.minutes_past() &lt;&lt; "\n"; // 1125 (18*60+45)
+Time e();           // NOT an instance: declares a function
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li><code>hour</code> resolves to the object before the dot.</li>
-              <li>One function body serves every <code>Time</code> object.</li>
-              <li>The implicit object selects which members are read.</li>
+              <li>Each line selects a constructor by its arguments.</li>
+              <li><code>Time e();</code> is the classic "most vexing parse" trap.</li>
+              <li>Use <code>Time e;</code> (no parentheses) for the default ctor.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Member Functions That Read</h2>
+        <h2>The Constructor Sees the Members Directly</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute, second;
+struct BankAccount {
+    double balance;
 
-    bool is_midnight() {                 // only reads members
-        return hour == 0 &amp;&amp; minute == 0 &amp;&amp; second == 0;
+    BankAccount(double initial) {
+        if (initial &lt; 0.0)
+            balance = 0.0;      // refuse a bad start
+        else
+            balance = initial;
     }
 };
 
-Time t{0, 0, 0};
-std::cout &lt;&lt; t.is_midnight() &lt;&lt; "\n";   // 1 (true)
+BankAccount a(-40.0);   // balance becomes 0.00, not -40
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A reading member function only inspects members.</li>
-              <li>It leaves every member of the object unchanged.</li>
-              <li>It can return a computed answer about the object.</li>
+              <li>The body is ordinary code that runs at creation.</li>
+              <li>It can reject bad input and still produce a valid instance.</li>
+              <li>That is the whole point: a guaranteed sane starting state.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============ PART 2: MORE ON CONSTRUCTORS ============ -->
+
+      <section class="transition-slide center-copy">
+        <div class="eyebrow">Part 2</div>
+        <h2>More on Constructors</h2>
+        <p class="lead center-copy">
+          The body works, but C++ gives us a more direct way to initialize members &mdash; and a few subtle rules to know about.
+        </p>
+      </section>
+
+      <section>
+        <h2>Assignment in the Body</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour;
+    int minute;
+
+    Time(int h, int m) {
+        hour = h;        // ASSIGNMENT, not initialization
+        minute = m;
+    }
+};
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>hour</code> and <code>minute</code> are first default-built.</li>
+              <li>Then the body <em>assigns</em> over them &mdash; two steps.</li>
+              <li>It works for <code>int</code>, but it is not the preferred style.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Member Functions That Modify</h2>
+        <h2>The Member Initializer List</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 struct Time {
-    int hour, minute, second;
+    int hour;
+    int minute;
 
-    void add_minutes(int m) {            // changes members
-        int total = total_seconds() + m * 60;
-        hour   = (total / 3600) % 24;
-        minute = (total / 60) % 60;
-        second =  total % 60;
-    }
-    int total_seconds() {
-        return hour * 3600 + minute * 60 + second;
-    }
+    Time(int h, int m) : hour(h), minute(m) { }
+    //                  ^ initializer list, before the {}
 };
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>A modifying member function assigns to members.</li>
-              <li>It writes the implicit object's own members.</li>
-              <li>It may call sibling member functions directly.</li>
+              <li>The list appears after <code>:</code> and before the body.</li>
+              <li><code>hour(h)</code> <em>initializes</em> <code>hour</code> directly &mdash; one step.</li>
+              <li>The body can be empty: all work is done in the list.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Modifying in Action</h2>
+        <h2>Initialization vs Assignment</h2>
+        <div class="callout cool">
+          A member in the initializer list is built <strong>once</strong>, with its final value. A member assigned in the body is built with a default value first, then overwritten. Initialization is the direct, preferred path.
+        </div>
+      </section>
+
+      <section>
+        <h2>const and Reference Members Force the List</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-Time t{9, 30, 0};
-t.add_minutes(45);
+struct Sensor {
+    const int id;     // const: cannot be assigned later
+    int&amp; logRef;       // reference: must bind on creation
 
-std::cout &lt;&lt; t.hour   &lt;&lt; "\n";   // 10
-std::cout &lt;&lt; t.minute &lt;&lt; "\n";   // 15
-std::cout &lt;&lt; t.second &lt;&lt; "\n";   //  0
+    Sensor(int identifier, int&amp; log)
+        : id(identifier), logRef(log) { }   // REQUIRED here
+};
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>t.add_minutes(45)</code> rewrites <code>t</code>'s members.</li>
-              <li>The change persists after the call returns.</li>
-              <li>Logic about a time now lives <em>with</em> the time.</li>
+              <li>A <code>const</code> member cannot be assigned in the body.</li>
+              <li>A reference member must be bound when it is created.</li>
+              <li>Both <em>must</em> appear in the initializer list.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Building on Point</h2>
+        <h2>Order Follows Declaration Order</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Range {
+    int lo;
+    int hi;
+    int span;
+
+    Range(int n) : lo(0), hi(n), span(hi - lo) { }
+    // members build in DECLARATION order:
+    // lo, then hi, then span
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Members initialize in the order they are declared.</li>
+              <li>The order you write the list in does not change that.</li>
+              <li>List members in declaration order to avoid confusion.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Default Values in the Class</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour = 0;     // default member initializer
+    int minute = 0;
+
+    Time() { }                       // uses the defaults
+    Time(int h) : hour(h) { }        // minute stays 0
+};
+
+Time a;        // 0:0
+Time b(9);     // 9:0
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>A default member initializer gives a fallback value.</li>
+              <li>The initializer list overrides it when present.</li>
+              <li><code>Time(int h)</code> sets <code>hour</code>; <code>minute</code> keeps its default <code>0</code>.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Delegating Constructors</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Time {
+    int hour;
+    int minute;
+
+    Time(int h, int m) : hour(h), minute(m) { }
+    Time(int h) : Time(h, 0) { }   // delegate to the 2-arg
+    Time()       : Time(0, 0) { }  // delegate again
+};
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>One constructor can call another in its initializer list.</li>
+              <li>Common construction logic lives in a single place.</li>
+              <li>No copy-pasted validation across three constructors.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Implicitly-Generated Default Constructor</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
 struct Point {
-    double x;
-    double y;
+    int x;
+    int y;
+};                       // no constructor written
 
-    double distance_to(const Point&amp; p) {     // reads
-        double dx = x - p.x;
-        double dy = y - p.y;
-        return std::sqrt(dx * dx + dy * dy);
-    }
-    void translate(double dx, double dy) {   // modifies
-        x = x + dx;
-        y = y + dy;
-    }
-};
-
-Point origin{0, 0};
-Point q{3, 4};
-std::cout &lt;&lt; origin.distance_to(q) &lt;&lt; "\n"; // 5
-q.translate(1, 1);                           // q is now (4, 5)
+Point p;                 // OK: compiler-generated Point()
+                         // x and y are uninitialized!
             </code>
           </pre>
-          <article class="card secondary">
+          <article class="card">
             <ul class="tight">
-              <li><code>x</code>, <code>y</code> are the implicit object's; <code>p.x</code>, <code>p.y</code> are the argument's.</li>
-              <li>One type carries both data and the behavior on it.</li>
+              <li>If you write <em>no</em> constructor, the compiler supplies one.</li>
+              <li>It default-builds each member &mdash; <code>int</code>s are left garbage.</li>
+              <li>Add default member initializers (<code>int x = 0;</code>) to be safe.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Member Function vs Free Function</h2>
+        <h2>Declaring Any Constructor Removes It</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// Free function: data passed in explicitly
-int total_seconds(const Time&amp; t) {
-    return t.hour * 3600 + t.minute * 60 + t.second;
-}
-int s1 = total_seconds(a);
+struct Time {
+    int hour, minute;
 
-// Member function: called ON the object
-int s2 = a.total_seconds();
+    Time(int h, int m) : hour(h), minute(m) { }
+};
+
+Time t;          // ERROR: no default constructor
+Time u(9, 30);   // OK
             </code>
           </pre>
-          <article class="card">
+          <article class="card secondary">
             <ul class="tight">
-              <li>Both compute the same thing.</li>
-              <li>The free function takes the object as a parameter.</li>
-              <li>The member function lives inside the type and is called with the dot.</li>
-              <li>Keeping behavior next to its data makes the type easier to use.</li>
+              <li>Writing <em>any</em> constructor suppresses the generated default.</li>
+              <li><code>Time t;</code> now fails to compile.</li>
+              <li>Add <code>Time() = default;</code> or write one to bring it back.</li>
             </ul>
           </article>
         </div>
       </section>
+
+      <!-- ============ WRAP-UP ============ -->
 
       <section>
         <h2>Quick Checks</h2>
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">In <code>a.total_seconds()</code>, what does the bare name <code>hour</code> inside the body refer to?</p>
+            <p class="meta">Write a default constructor for <code>Time</code> that starts every instance at <code>12:00</code> &mdash; once with body assignment, once with an initializer list.</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">Rewrite the free function <code>total_seconds(const Time&amp;)</code> as a member function. What goes away from the parameter list?</p>
+            <p class="meta">A type declares only <code>Time(int, int)</code>. Why does <code>Time t;</code> fail, and how do you fix it?</p>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 20 Summary</h2>
+        <h2>Lecture Summary</h2>
         <div class="grid-2">
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>Member functions put behavior inside the type.</li>
-              <li>They are called on an object with the dot operator.</li>
-              <li>Bare member names mean the implicit object's members.</li>
-              <li>A member function is just a free function moved inside the type.</li>
+              <li>A constructor has the type's name and no return type.</li>
+              <li>It runs automatically when an instance is created.</li>
+              <li>Constructors can be overloaded; arguments pick one.</li>
+              <li>Initializer lists initialize members directly (one step).</li>
+              <li>Members build in declaration order, not list order.</li>
+              <li><code>const</code> and reference members must be in the list.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Programming habits</h3>
             <ul class="tight">
-              <li>Keep behavior next to the data it uses.</li>
-              <li>Let modifying functions write the implicit object.</li>
-              <li>Reuse sibling member functions instead of repeating logic.</li>
+              <li>Initialize every member; never leave garbage.</li>
+              <li>Prefer the initializer list over body assignment.</li>
+              <li>Delegate shared logic to one constructor.</li>
+              <li>Give members default initializers so instances start valid.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 20 Review Questions</h2>
+        <h2>Review Questions</h2>
         <div class="grid-2">
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> How do you call a member function?</li>
-              <li class="answer-line"><strong>Answer:</strong> On an object with the dot: <code>object.function()</code>.</li>
-              <li><strong>Q2.</strong> What is the implicit object?</li>
-              <li class="answer-line"><strong>Answer:</strong> The object before the dot; its members are used by bare name.</li>
-              <li><strong>Q3.</strong> In <code>a.total_seconds()</code>, whose <code>hour</code> is used?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>a</code>'s &mdash; <code>a</code> is the implicit object.</li>
+              <li><strong>Q1.</strong> What return type does a constructor have?</li>
+              <li class="answer-line"><strong>Answer:</strong> None at all, not even <code>void</code>.</li>
+              <li><strong>Q2.</strong> What is the default constructor?</li>
+              <li class="answer-line"><strong>Answer:</strong> The constructor callable with no arguments.</li>
+              <li><strong>Q3.</strong> Where does the initializer list appear?</li>
+              <li class="answer-line"><strong>Answer:</strong> After the <code>:</code>, between the parameter list and the body.</li>
+              <li><strong>Q4.</strong> Which members <em>must</em> be in the list?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>const</code> members and reference members.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q4.</strong> Can a member function change the object's members?</li>
-              <li class="answer-line"><strong>Answer:</strong> Yes; it can assign to the implicit object's members, e.g. <code>add_minutes</code>.</li>
-              <li><strong>Q5.</strong> What does a member function gain over a free function that takes the object?</li>
-              <li class="answer-line"><strong>Answer:</strong> It is called with the dot and refers to the object's members by bare name &mdash; behavior stays next to its data.</li>
-              <li><strong>Q6.</strong> In <code>distance_to(const Point&amp; p)</code>, what is <code>p.x</code> vs bare <code>x</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>p.x</code> is the argument's; bare <code>x</code> is the implicit object's.</li>
+              <li><strong>Q5.</strong> In what order do members initialize?</li>
+              <li class="answer-line"><strong>Answer:</strong> Declaration order, regardless of the list's order.</li>
+              <li><strong>Q6.</strong> Why is the list preferred over body assignment?</li>
+              <li class="answer-line"><strong>Answer:</strong> It initializes once with the final value; assignment builds, then overwrites.</li>
+              <li><strong>Q7.</strong> What does a delegating constructor do?</li>
+              <li class="answer-line"><strong>Answer:</strong> Calls another constructor of the same type to share logic.</li>
+              <li><strong>Q8.</strong> Why does <code>Time t;</code> fail after writing <code>Time(int,int)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> Declaring any constructor removes the implicit default constructor.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Lecture 20 Code Review</h2>
+        <h2>Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>What prints?</h3>
-            <ul class="tight qa-list">
-              <li>
-                <strong>Q1.</strong> Output?
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Counter {
-    int n;
-    void bump() { n = n + 1; }
-};
-Counter a{0}, b{0};
-a.bump(); a.bump();
-b.bump();
-std::cout &lt;&lt; a.n &lt;&lt; " " &lt;&lt; b.n &lt;&lt; "\n";
-            </code>
-          </pre>
-              </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>2 1</code> &mdash; each object has its own <code>n</code>; <code>bump()</code> modifies the implicit object only.</li>
-            </ul>
-          </article>
-          <article class="card secondary">
             <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> What does this print?
+                <strong>Q1.</strong> What does <code>span</code> hold?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute, second;
-    int total() { return hour * 3600 + minute * 60 + second; }
-    void add_minutes(int m) { minute = minute + m; }
-};
+struct Range {
+    int span;
+    int lo;
+    int hi;
 
-Time t{9, 30, 0};
-t.add_minutes(15);
-std::cout &lt;&lt; t.total() &lt;&lt; "\n";
+    Range(int n) : span(hi - lo), lo(0), hi(n) { }
+};
+Range r(10);   // r.span == ?
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> <code>34500</code>. <code>add_minutes(15)</code> writes the implicit object's <code>minute</code> (now 45), then <code>total()</code> computes 9&times;3600 + 45&times;60 + 0.</li>
+              <li class="answer-line"><strong>Answer:</strong> Garbage. Members build in declaration order: <code>span</code> first, so <code>span(hi - lo)</code> reads <code>hi</code> and <code>lo</code> before they are initialized. List order does not help &mdash; declare <code>lo</code> and <code>hi</code> before <code>span</code>.</li>
+            </ul>
+          </article>
+          <article class="card secondary">
+            <h3>Does it compile?</h3>
+            <ul class="tight qa-list">
+              <li>
+                <strong>Q2.</strong> Build result?
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+struct Sensor {
+    const int id;
+
+    Sensor(int i) { id = i; }
+};
+            </code>
+          </pre>
+              </li>
+              <li class="answer-line"><strong>Answer:</strong> Build error: <code>id</code> is <code>const</code> and cannot be assigned in the body. Use <code>Sensor(int i) : id(i) { }</code>.</li>
             </ul>
           </article>
         </div>
@@ -423,9 +600,9 @@ std::cout &lt;&lt; t.total() &lt;&lt; "\n";
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Constructors I</h2>
+        <h2>Classes, Encapsulation, and Code Organization</h2>
         <p class="lead center-copy">
-          Next time we give types a <code>constructor</code> so objects start in a valid state instead of holding uninitialized members.
+          Next time we introduce the <code>class</code> keyword with <code>public</code>/<code>private</code> access control, use them to protect a class invariant, and split a class across a header and a <code>.cpp</code>.
         </p>
       </section>
     </div>

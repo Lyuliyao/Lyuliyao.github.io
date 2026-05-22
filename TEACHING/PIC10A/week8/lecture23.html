@@ -17,278 +17,211 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 23</div>
-        <h1>More on Constructors and Member Initializer Lists</h1>
+        <h1>Pointers I</h1>
         <p class="lead">
-          A type can have several constructors, and every constructor should build its members in an <strong>initializer list</strong> &mdash; initialization, not assignment.
+          A pointer is a variable whose value is a memory address. Today we learn how to take an address, store it, and use it to read or write the variable it points at.
         </p>
         <div class="pill-row">
-          <span class="pill">Chapter 15</span>
-          <span class="pill">constructors</span>
-          <span class="pill">initializer lists</span>
-          <span class="pill">default values</span>
+          <span class="pill">addresses</span>
+          <span class="pill">&amp; and *</span>
+          <span class="pill">nullptr</span>
+          <span class="pill">pointers vs references</span>
         </div>
       </section>
 
       <section>
-        <h2>Recap: Lecture 22</h2>
+        <h2>Where We Are</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>const objects &amp; const members</h3>
+            <h3>L22 left us with</h3>
             <ul class="tight">
-              <li>A <code>const Time t(9, 5);</code> may only call <code>const</code> members.</li>
-              <li><code>int getHour() const;</code> promises not to modify the object.</li>
+              <li>Classes that own and manage their data.</li>
+              <li>References for passing without copying.</li>
+              <li>Default arguments to simplify call sites.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Today</h3>
             <ul class="tight">
-              <li>Multiple constructors for one type.</li>
-              <li>Member initializer lists and why they beat body assignment.</li>
-              <li>What the compiler-generated default constructor does.</li>
+              <li>Every variable lives at an address in memory.</li>
+              <li>A pointer stores such an address.</li>
+              <li>Dereferencing reaches the variable behind the address.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>One Type, Several Constructors</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour;
-    int minute;
-
-    Time();                 // default: midnight
-    Time(int h);            // h:00
-    Time(int h, int m);     // h:m
-};
-
-Time a;            // calls Time()
-Time b(9);         // calls Time(int)
-Time c(9, 30);     // calls Time(int, int)
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>Constructors are overloaded by their parameter lists.</li>
-              <li>The compiler picks one from the constructor call.</li>
-              <li>Each builds a fully valid <code>Time</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Default vs Parameterized</h2>
+        <h2>Memory Is Numbered</h2>
         <div class="callout cool">
-          The <strong>default constructor</strong> takes no arguments: <code>Time()</code>. A <strong>parameterized constructor</strong> takes data the caller supplies: <code>Time(int h, int m)</code>. A type may have one of each, several of either, or none you wrote.
+          Think of memory as a long row of numbered boxes. Each variable occupies one or more boxes. The <strong>address</strong> of a variable is the number of its first box.
         </div>
       </section>
 
       <section>
-        <h2>Assignment in the Body</h2>
+        <h2>The Address-of Operator &amp;</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour;
-    int minute;
-
-    Time(int h, int m) {
-        hour = h;        // ASSIGNMENT, not initialization
-        minute = m;
-    }
-};
+int x = 42;
+std::cout &lt;&lt; x;     // 42       -- the value
+std::cout &lt;&lt; &amp;x;    // 0x7ffd.. -- the address of x
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>hour</code> and <code>minute</code> are first default-built.</li>
-              <li>Then the body <em>assigns</em> over them &mdash; two steps.</li>
-              <li>It works for <code>int</code>, but it is not the preferred style.</li>
+              <li><code>x</code> is the value stored in the box.</li>
+              <li><code>&amp;x</code> is "the address of <code>x</code>" &mdash; where the box is.</li>
+              <li>The exact number varies per run; only the idea matters.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>The Member Initializer List</h2>
+        <h2>Declaring a Pointer</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour;
-    int minute;
+int  x = 42;
+int* p = &amp;x;       // p holds the address of x
 
-    Time(int h, int m) : hour(h), minute(m) { }
-    //                  ^ initializer list, before the {}
-};
+// read it back:
+std::cout &lt;&lt; p;     // the address (same as &amp;x)
+std::cout &lt;&lt; &amp;x;    // the same address
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The list appears after <code>:</code> and before the body.</li>
-              <li><code>hour(h)</code> <em>initializes</em> <code>hour</code> directly &mdash; one step.</li>
-              <li>The body can be empty: all work is done in the list.</li>
+              <li><code>int*</code> means "pointer to an <code>int</code>."</li>
+              <li><code>p = &amp;x</code> stores the address of <code>x</code> in <code>p</code>.</li>
+              <li>The type of the pointee matters: <code>int*</code> &ne; <code>double*</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Initialization vs Assignment</h2>
+        <h2>A Picture in Text</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int  x = 42;
+int* p = &amp;x;
+
+//  name   addr        value
+//  x      1000        42
+//  p      1004        1000   (points at x)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>x</code> lives at address <code>1000</code> and stores <code>42</code>.</li>
+              <li><code>p</code> lives at <code>1004</code> and stores <code>1000</code>.</li>
+              <li>"<code>p</code> points at <code>x</code>" = <code>p</code>'s value is <code>x</code>'s address.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>The Dereference Operator *</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int  x = 42;
+int* p = &amp;x;
+
+std::cout &lt;&lt; *p;   // 42  -- follow p to x, read x
+*p = 99;           // follow p to x, write x
+std::cout &lt;&lt; x;    // 99  -- x changed through p
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>*p</code> means "the variable <code>p</code> points to."</li>
+              <li><code>*p</code> on the right reads; on the left it writes.</li>
+              <li>Writing <code>*p</code> changes <code>x</code> itself.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Two Meanings of *</h2>
         <div class="callout cool">
-          A member in the initializer list is built <strong>once</strong>, with its final value. A member assigned in the body is built with a default value first, then overwritten. Initialization is the direct, preferred path.
+          In a <em>declaration</em>, <code>int* p</code> means "<code>p</code> is a pointer." In an <em>expression</em>, <code>*p</code> means "dereference <code>p</code>." Same symbol, different jobs.
         </div>
       </section>
 
       <section>
-        <h2>const and Reference Members Force the List</h2>
+        <h2>Null Pointers</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Sensor {
-    const int id;     // const: cannot be assigned later
-    int&amp; logRef;       // reference: must bind on creation
+int* p = nullptr;       // points at nothing
 
-    Sensor(int identifier, int&amp; log)
-        : id(identifier), logRef(log) { }   // REQUIRED here
-};
+if (p != nullptr)
+    std::cout &lt;&lt; *p;     // safe: only deref when valid
+
+std::cout &lt;&lt; *p;         // CRASH: dereferencing nullptr
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A <code>const</code> member cannot be assigned in the body.</li>
-              <li>A reference member must be bound when it is created.</li>
-              <li>Both <em>must</em> appear in the initializer list.</li>
+              <li><code>nullptr</code> is the "points at nothing" value.</li>
+              <li>Dereferencing a null pointer is undefined behavior (a crash).</li>
+              <li>Check <code>p != nullptr</code> before <code>*p</code>.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Order Follows Declaration Order</h2>
+        <h2>Pointing at a Local Variable</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Range {
-    int lo;
-    int hi;
-    int span;
+int main() {
+    int score = 88;
+    int* p = &amp;score;
 
-    Range(int n) : lo(0), hi(n), span(hi - lo) { }
-    // members build in DECLARATION order:
-    // lo, then hi, then span
-};
+    *p += 10;                 // modify score via p
+    std::cout &lt;&lt; score;       // 98
+    std::cout &lt;&lt; *p;          // 98
+}
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>Members initialize in the order they are declared.</li>
-              <li>The order you write the list in does not change that.</li>
-              <li>List members in declaration order to avoid confusion.</li>
+              <li><code>p</code> aliases <code>score</code>: two names, one box.</li>
+              <li><code>*p</code> and <code>score</code> always agree while <code>p</code> points there.</li>
+              <li>Valid only while <code>score</code> is alive (more next lecture).</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Default Values in the Class</h2>
+        <h2>Pointers vs References</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour = 0;     // default member initializer
-    int minute = 0;
+int x = 1, y = 2;
 
-    Time() { }                       // uses the defaults
-    Time(int h) : hour(h) { }        // minute stays 0
-};
+int&amp; r = x;     // reference: bound to x forever
+r = y;          // x becomes 2 (NOT a rebind)
 
-Time a;        // 0:0
-Time b(9);     // 9:0
+int* p = &amp;x;    // pointer: can be reseated
+p = &amp;y;         // now p points at y instead
+*p = 5;         // y becomes 5
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li>A default member initializer gives a fallback value.</li>
-              <li>The initializer list overrides it when present.</li>
-              <li><code>Time(int h)</code> sets <code>hour</code>; <code>minute</code> keeps its default <code>0</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Delegating Constructors</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour;
-    int minute;
-
-    Time(int h, int m) : hour(h), minute(m) { }
-    Time(int h) : Time(h, 0) { }   // delegate to the 2-arg
-    Time()       : Time(0, 0) { }  // delegate again
-};
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>One constructor can call another in its initializer list.</li>
-              <li>Common construction logic lives in a single place.</li>
-              <li>No copy-pasted validation across three constructors.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>The Implicitly-Generated Default Constructor</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Point {
-    int x;
-    int y;
-};                       // no constructor written
-
-Point p;                 // OK: compiler-generated Point()
-                         // x and y are uninitialized!
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li>If you write <em>no</em> constructor, the compiler supplies one.</li>
-              <li>It default-builds each member &mdash; <code>int</code>s are left garbage.</li>
-              <li>Add default member initializers (<code>int x = 0;</code>) to be safe.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Declaring Any Constructor Removes It</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Time {
-    int hour, minute;
-
-    Time(int h, int m) : hour(h), minute(m) { }
-};
-
-Time t;          // ERROR: no default constructor
-Time u(9, 30);   // OK
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>Writing <em>any</em> constructor suppresses the generated default.</li>
-              <li><code>Time t;</code> now fails to compile.</li>
-              <li>Add <code>Time() = default;</code> or write one to bring it back.</li>
+              <li>A reference binds once and is never null.</li>
+              <li>A pointer can be reseated and can be <code>nullptr</code>.</li>
+              <li>A reference needs no <code>*</code>; a pointer needs <code>*</code> to reach the value.</li>
             </ul>
           </article>
         </div>
@@ -299,11 +232,11 @@ Time u(9, 30);   // OK
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">Why must a <code>const int id;</code> member be set in the initializer list rather than the constructor body?</p>
+            <p class="meta">Given <code>int a = 7; int* q = &amp;a;</code>, what is the difference between printing <code>q</code> and printing <code>*q</code>?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
-            <p class="meta">A type declares only <code>Time(int, int)</code>. Why does <code>Time t;</code> fail, and how do you fix it?</p>
+            <p class="meta">Why is <code>int* p = nullptr; *p = 3;</code> a bug, and what single check prevents it?</p>
           </article>
         </div>
       </section>
@@ -314,18 +247,18 @@ Time u(9, 30);   // OK
           <article class="card">
             <h3>Main ideas</h3>
             <ul class="tight">
-              <li>A type may have many constructors, overloaded by parameters.</li>
-              <li>Initializer lists initialize members directly (one step).</li>
-              <li>Members build in declaration order, not list order.</li>
-              <li><code>const</code> and reference members must be in the list.</li>
+              <li>A pointer holds an address; <code>int* p</code> declares one.</li>
+              <li><code>&amp;x</code> takes the address of <code>x</code>.</li>
+              <li><code>*p</code> reaches the variable <code>p</code> points to.</li>
+              <li><code>nullptr</code> means "points at nothing."</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Programming habits</h3>
+            <h3>Habits</h3>
             <ul class="tight">
-              <li>Prefer the initializer list over body assignment.</li>
-              <li>Delegate shared logic to one constructor.</li>
-              <li>Give members default initializers so objects start valid.</li>
+              <li>Initialize pointers (to an address or <code>nullptr</code>).</li>
+              <li>Never dereference a pointer you have not checked.</li>
+              <li>Prefer a reference when you never need null or reseating.</li>
             </ul>
           </article>
         </div>
@@ -337,27 +270,23 @@ Time u(9, 30);   // OK
           <article class="card">
             <h3>Core ideas</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> What is a default constructor?</li>
-              <li class="answer-line"><strong>Answer:</strong> A constructor callable with no arguments, e.g. <code>Time()</code>.</li>
-              <li><strong>Q2.</strong> Where does the initializer list appear?</li>
-              <li class="answer-line"><strong>Answer:</strong> After the <code>:</code>, between the parameter list and the body.</li>
-              <li><strong>Q3.</strong> In what order do members initialize?</li>
-              <li class="answer-line"><strong>Answer:</strong> In declaration order, regardless of the list's order.</li>
-              <li><strong>Q4.</strong> Which members must be in the list?</li>
-              <li class="answer-line"><strong>Answer:</strong> <code>const</code> members and reference members.</li>
+              <li><strong>Q1.</strong> What does a pointer variable store?</li>
+              <li class="answer-line"><strong>Answer:</strong> A memory address (the location of another variable).</li>
+              <li><strong>Q2.</strong> What does <code>&amp;x</code> evaluate to?</li>
+              <li class="answer-line"><strong>Answer:</strong> The address of <code>x</code>.</li>
+              <li><strong>Q3.</strong> What does <code>*p</code> mean in an expression?</li>
+              <li class="answer-line"><strong>Answer:</strong> The variable that <code>p</code> points to.</li>
             </ul>
           </article>
           <article class="card secondary">
             <h3>Reasoning</h3>
             <ul class="tight qa-list">
-              <li><strong>Q5.</strong> Why is the list preferred over body assignment?</li>
-              <li class="answer-line"><strong>Answer:</strong> It initializes once with the final value; assignment builds then overwrites.</li>
-              <li><strong>Q6.</strong> What does a delegating constructor do?</li>
-              <li class="answer-line"><strong>Answer:</strong> Calls another constructor of the same type to share logic.</li>
-              <li><strong>Q7.</strong> What does the implicit default constructor do to <code>int</code> members?</li>
-              <li class="answer-line"><strong>Answer:</strong> Leaves them uninitialized (garbage) unless they have default initializers.</li>
-              <li><strong>Q8.</strong> Why does <code>Time t;</code> fail after writing <code>Time(int,int)</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> Declaring any constructor removes the implicit default constructor.</li>
+              <li><strong>Q4.</strong> After <code>int x=5; int* p=&amp;x; *p=8;</code>, what is <code>x</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>8</code> &mdash; writing through <code>p</code> changes <code>x</code>.</li>
+              <li><strong>Q5.</strong> Name one thing a pointer can do that a reference cannot.</li>
+              <li class="answer-line"><strong>Answer:</strong> Be null, or be reseated to point elsewhere.</li>
+              <li><strong>Q6.</strong> Why crash on <code>*p</code> when <code>p == nullptr</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> There is no variable at the null address to read or write.</li>
             </ul>
           </article>
         </div>
@@ -367,42 +296,38 @@ Time u(9, 30);   // OK
         <h2>Lecture 23 Code Review</h2>
         <div class="grid-2">
           <article class="card">
-            <h3>Spot the bug</h3>
+            <h3>Trace the output</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> What does <code>span</code> hold?
+                <strong>Q1.</strong> What prints?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Range {
-    int span;
-    int lo;
-    int hi;
-
-    Range(int n) : span(hi - lo), lo(0), hi(n) { }
-};
-Range r(10);   // r.span == ?
+int a = 10;
+int b = 20;
+int* p = &amp;a;
+*p = 15;
+p = &amp;b;
+*p = 25;
+std::cout &lt;&lt; a &lt;&lt; ' ' &lt;&lt; b;
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Garbage. Members build in declaration order: <code>span</code> first, so <code>span(hi - lo)</code> reads <code>hi</code> and <code>lo</code> before they are initialized. List order does not help &mdash; declare <code>lo</code> and <code>hi</code> before <code>span</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>15 25</code>. <code>*p=15</code> changes <code>a</code>; then <code>p</code> is reseated to <code>b</code>, and <code>*p=25</code> changes <code>b</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
-            <h3>Does it compile?</h3>
+            <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q2.</strong> Build result?
+                <strong>Q2.</strong> What is wrong here?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-struct Sensor {
-    const int id;
-
-    Sensor(int i) { id = i; }
-};
+int* p;            // uninitialized
+std::cout &lt;&lt; *p;   // ?
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> Build error: <code>id</code> is <code>const</code> and cannot be assigned in the body. Use <code>Sensor(int i) : id(i) { }</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>p</code> holds a garbage address; dereferencing it is undefined behavior. Initialize: <code>int* p = nullptr;</code> or to a real address.</li>
             </ul>
           </article>
         </div>
@@ -410,9 +335,9 @@ struct Sensor {
 
       <section class="transition-slide center-copy">
         <div class="eyebrow">Next Lecture</div>
-        <h2>Classes, Encapsulation, and Code Organization</h2>
+        <h2>Pointers II</h2>
         <p class="lead center-copy">
-          Next time we finally introduce the <code>class</code> keyword and <code>public</code>/<code>private</code> access control, use them to protect a class invariant, then organize the class across a header and a <code>.cpp</code>.
+          Next time: passing pointers to functions, <code>const</code> with pointers, reaching members with <code>-&gt;</code>, and the dangling-pointer bugs to avoid.
         </p>
       </section>
     </div>

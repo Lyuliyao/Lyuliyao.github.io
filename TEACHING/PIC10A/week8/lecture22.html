@@ -56,9 +56,9 @@
       </section>
 
       <section>
-        <h2>Design Goal</h2>
+        <h2>Design Goal (Example 15.9.4)</h2>
         <div class="callout cool">
-          Build a <code>Gradebook</code> that owns a <code>std::vector&lt;int&gt;</code> of scores. The class invariant: every stored score is in <code>0..100</code>. We will pick members, design the interface, write constructors with init lists, and split into <code>.hpp</code>/<code>.cpp</code>.
+          Build a <code>Rational</code> class for fractions <code>n/d</code>. The class invariant: <code>den</code> is strictly positive, and <code>num</code>, <code>den</code> share no common factor &mdash; so every fraction is stored in <em>simplified</em> form.
         </div>
       </section>
 
@@ -67,132 +67,163 @@
         <div class="stat-grid">
           <article class="stat">
             <span class="kicker">Data members</span>
-            <strong>one vector</strong>
-            <span>A <code>std::vector&lt;int&gt;</code> holds the scores.</span>
+            <strong>num, den</strong>
+            <span>Two <code>int</code>s, both <code>private</code>.</span>
           </article>
           <article class="stat">
             <span class="kicker">const?</span>
             <strong>readers are const</strong>
-            <span><code>size</code>, <code>at</code>, <code>average</code> never modify state.</span>
+            <span><code>print</code>, <code>equals</code>, arithmetic &mdash; none modify state.</span>
           </article>
           <article class="stat">
             <span class="kicker">Invariant</span>
-            <strong>scores in 0..100</strong>
-            <span>The class rejects values outside the range.</span>
+            <strong>simplified, den &gt; 0</strong>
+            <span>Helpers <code>make_den_positive</code> / <code>simplify</code> enforce it.</span>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 2: The Header (Interface)</h2>
+        <h2>Step 2: The Interface</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// gradebook.hpp
-#ifndef GRADEBOOK_HPP
-#define GRADEBOOK_HPP
-#include &lt;vector&gt;
-
-class Gradebook {
+class Rational {
 public:
-    Gradebook();                 // start empty
-    void add(int score);         // append, enforce 0..100
-    int  size() const;           // how many scores
-    int  at(int i) const;        // read score i
-    double average() const;      // mean of all scores
+    Rational()                   : num(0), den(1) {}
+    Rational(int n)              : num(n), den(1) {}
+    Rational(int n, int d) : num(n), den(d) {
+        assert(den != 0);
+        make_den_positive();
+        simplify();
+    }
+
+    void print() const { cout &lt;&lt; num &lt;&lt; '/' &lt;&lt; den; }
+    bool equals(const Rational&amp; other) const {
+        return num == other.num &amp;&amp; den == other.den;
+    }
+    bool is_zero() const { return num == 0; }
+
+    Rational      plus(const Rational&amp; other) const;
+    Rational     minus(const Rational&amp; other) const;
+    Rational     times(const Rational&amp; other) const;
+    Rational divided_by(const Rational&amp; other) const;
+
 private:
-    std::vector&lt;int&gt; scores;     // the managed data
+    int num;
+    int den;
+
+    void make_den_positive();
+    void simplify();
 };
-#endif
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>scores</code> is <code>private</code>: callers cannot touch it.</li>
-              <li>Three of four functions are <code>const</code> &mdash; readers only.</li>
-              <li><code>add</code> is the one door for new data, so it enforces the rule.</li>
+              <li>Three constructors: <code>0/1</code>, <code>n/1</code>, <code>n/d</code>.</li>
+              <li>Every reader is <code>const</code>; arithmetic returns a new <code>Rational</code>.</li>
+              <li><code>make_den_positive</code> and <code>simplify</code> are <em>private</em> helpers.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 3: The Implementation (.cpp)</h2>
+        <h2>Step 3: Private Helpers Enforce the Invariant</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-#include "gradebook.hpp"
-
-Gradebook::Gradebook() : scores() { }   // empty vector
-
-void Gradebook::add(int score) {
-    if (score &lt; 0)   score = 0;
-    if (score &gt; 100) score = 100;
-    scores.push_back(score);            // invariant kept
+void Rational::make_den_positive() {
+    if (den &lt; 0) { num *= -1; den *= -1; }
 }
-int Gradebook::size() const { return scores.size(); }
-int Gradebook::at(int i) const { return scores[i]; }
-double Gradebook::average() const {
-    if (scores.size() == 0) return 0.0;
-    int sum = 0;
-    for (int i = 0; i &lt; scores.size(); ++i) sum += scores[i];
-    return static_cast&lt;double&gt;(sum) / scores.size();
+
+void Rational::simplify() {
+    int a = abs(num), b = abs(den);
+    while (b != 0) {                  // Euclidean algorithm
+        int r = a % b;
+        a = b;
+        b = r;
+    }
+    num /= a; den /= a;
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>The constructor uses an init list (<code>scores()</code> = empty).</li>
-              <li><code>add</code> clamps before <code>push_back</code> &mdash; invariant held.</li>
-              <li><code>const</code> members read <code>scores</code> but never modify it.</li>
+              <li>The constructor calls these once on creation.</li>
+              <li>A user never sees them &mdash; they live in <code>private</code>.</li>
+              <li>So every <code>Rational</code> in existence is already simplified.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 4: Trace It</h2>
+        <h2>Step 4: Arithmetic Members</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-Gradebook g;
-g.add(80);
-g.add(120);          // clamped to 100
-g.add(-5);           // clamped to 0
-std::cout &lt;&lt; g.size()    &lt;&lt; '\n';   // ?
-std::cout &lt;&lt; g.at(1)     &lt;&lt; '\n';   // ?
-std::cout &lt;&lt; g.average() &lt;&lt; '\n';   // ?
+Rational Rational::plus(const Rational&amp; other) const {
+    return Rational(num * other.den + other.num * den,
+                    den * other.den);
+}
+Rational Rational::minus(const Rational&amp; other) const {
+    return Rational(num * other.den - other.num * den,
+                    den * other.den);
+}
+Rational Rational::times(const Rational&amp; other) const {
+    return Rational(num * other.num, den * other.den);
+}
+Rational Rational::divided_by(const Rational&amp; other) const {
+    assert(!other.is_zero());
+    return Rational(num * other.den, den * other.num);
+}
             </code>
           </pre>
           <article class="card">
             <ul class="tight">
-              <li><code>size()</code> &rarr; <code>3</code> (three calls to <code>add</code>).</li>
-              <li><code>at(1)</code> &rarr; <code>100</code> (the clamped <code>120</code>).</li>
-              <li><code>average()</code> &rarr; <code>(80+100+0)/3 = 60</code>.</li>
+              <li>Each builds a new <code>Rational</code> from the formula.</li>
+              <li>The <code>(int, int)</code> constructor simplifies the result.</li>
+              <li>All four are <code>const</code> &mdash; they never modify the caller.</li>
             </ul>
           </article>
         </div>
       </section>
 
       <section>
-        <h2>Step 5: const Instances Need const Members</h2>
+        <h2>Step 5: Putting It to Work</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-void report(const Gradebook&amp; gb) {
-    std::cout &lt;&lt; gb.size();      // OK: size() is const
-    std::cout &lt;&lt; gb.average();   // OK: average() is const
-    gb.add(50);                  // ERROR: add() is non-const
+int main() {
+    // 2 + (3/4) / (1/5)
+    Rational(2).plus(
+        Rational(3, 4).divided_by(Rational(1, 5))
+    ).print();
+    cout &lt;&lt; endl;                            // 23/4
+
+    // (2 + 3/4) / (1/5)
+    Rational(2).plus(Rational(3, 4))
+               .divided_by(Rational(1, 5))
+               .print();
+    cout &lt;&lt; endl;                            // 55/4
 }
             </code>
           </pre>
           <article class="card secondary">
             <ul class="tight">
-              <li>A <code>const Gradebook&amp;</code> can only call <code>const</code> members.</li>
-              <li>This is why we marked the readers <code>const</code>.</li>
-              <li>The design choices from Step 1 pay off here.</li>
+              <li>Calls chain: each operation returns a <code>Rational</code> to act on.</li>
+              <li>Output: <code>23/4</code> then <code>55/4</code>.</li>
+              <li>(PIC 10B: overload <code>+</code>, <code>/</code>, <code>&lt;&lt;</code> to write <code>r1 + r2/r3</code>.)</li>
             </ul>
           </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why num and den Are private</h2>
+        <div class="callout cool">
+          If a user could write <code>r.num += 7</code>, the stored fraction would no longer be simplified, and <code>equals</code> (which compares numerators and denominators directly) would return wrong answers. Encapsulation is what keeps the invariant trustworthy.
         </div>
       </section>
 
@@ -327,25 +358,23 @@ f(3);      // AMBIGUOUS: A matches, B matches via default
       </section>
 
       <section>
-        <h2>Avoiding the Trap</h2>
+        <h2>Example: Different Types Are Fine</h2>
         <div class="code-pair">
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-// Pick ONE strategy for the arity choice.
+void print(int x);                       // A
+void print(double x, int prec = 2);      // B
 
-// Strategy 1: defaults only
-void f(int a, int b = 0);
-
-// Strategy 2: overloads only
-void g(int a);
-void g(int a, int b);
+print(3);        // A: int matches exactly
+print(3.14);     // B: double matches exactly, prec=2
+print(3.14, 4);  // B: prec=4
             </code>
           </pre>
-          <article class="card secondary">
+          <article class="card">
             <ul class="tight">
-              <li>Use defaults <em>or</em> overloads, not both for the same call.</li>
-              <li>Do not let an overload shadow a defaulted call.</li>
-              <li>Clear interfaces compile without surprises.</li>
+              <li>The overloads differ in the <em>first</em> parameter's type.</li>
+              <li>Overload resolution decides before defaults come into play.</li>
+              <li>No ambiguity &mdash; each call has one best match.</li>
             </ul>
           </article>
         </div>
@@ -358,7 +387,7 @@ void g(int a, int b);
         <div class="check-grid">
           <article class="card">
             <h3>Exercise 1</h3>
-            <p class="meta">In <code>Gradebook</code>, why can <code>add</code> guarantee every stored score is in <code>0..100</code> while a public <code>vector</code> could not?</p>
+            <p class="meta">In <code>Rational</code>, why can the class guarantee every fraction is simplified, while a struct with public <code>num</code>/<code>den</code> could not?</p>
           </article>
           <article class="card secondary">
             <h3>Exercise 2</h3>
@@ -374,7 +403,7 @@ void g(int a, int b);
             <h3>Main ideas</h3>
             <ul class="tight">
               <li>Design: pick data members, then the operations they need.</li>
-              <li>State the invariant; defend it in the constructor and <code>add</code>.</li>
+              <li>State the invariant; defend it in the constructor and private helpers.</li>
               <li>Defaults go in the declaration only.</li>
               <li>Every parameter after a defaulted one must be defaulted.</li>
             </ul>
@@ -396,12 +425,12 @@ void g(int a, int b);
           <article class="card">
             <h3>Classes review</h3>
             <ul class="tight qa-list">
-              <li><strong>Q1.</strong> Why make <code>scores</code> private?</li>
-              <li class="answer-line"><strong>Answer:</strong> So callers cannot bypass <code>add</code> and store an out-of-range value.</li>
-              <li><strong>Q2.</strong> Why is <code>size()</code> marked <code>const</code>?</li>
-              <li class="answer-line"><strong>Answer:</strong> It only reads <code>scores</code>, and const instances must be able to call it.</li>
-              <li><strong>Q3.</strong> Why does <code>average()</code> check <code>size() == 0</code> first?</li>
-              <li class="answer-line"><strong>Answer:</strong> To avoid dividing by zero on an empty gradebook.</li>
+              <li><strong>Q1.</strong> Why make <code>num</code> and <code>den</code> private?</li>
+              <li class="answer-line"><strong>Answer:</strong> So callers cannot break the simplified-form invariant.</li>
+              <li><strong>Q2.</strong> Why is <code>equals</code> marked <code>const</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> It only reads members, and a <code>const Rational&amp;</code> must be able to call it.</li>
+              <li><strong>Q3.</strong> Why are <code>simplify</code> and <code>make_den_positive</code> private?</li>
+              <li class="answer-line"><strong>Answer:</strong> They are implementation helpers a user does not need &mdash; and should not call &mdash; on their own.</li>
             </ul>
           </article>
           <article class="card secondary">
@@ -425,19 +454,19 @@ void g(int a, int b);
             <h3>Spot the bug</h3>
             <ul class="tight qa-list">
               <li>
-                <strong>Q1.</strong> Why is this loop wrong?
+                <strong>Q1.</strong> Why does <code>r.equals(s)</code> give a wrong answer here?
           <pre>
             <code data-trim data-line-numbers contenteditable class="language-cpp">
-double Gradebook::average() const {
-    int sum = 0;
-    for (int i = 1; i &lt;= scores.size(); ++i)
-        sum += scores[i];
-    return (double)sum / scores.size();
-}
+// Suppose num/den were public:
+Rational r(3, 6);   // stored as 1/2
+Rational s(1, 2);   // stored as 1/2
+
+r.num += 7;         // r is now stored as 8/2  (NOT simplified!)
+std::cout &lt;&lt; r.equals(s);   // ?
             </code>
           </pre>
               </li>
-              <li class="answer-line"><strong>Answer:</strong> It starts at <code>1</code> (skips <code>scores[0]</code>) and uses <code>&lt;=</code> (reads <code>scores[size()]</code>, out of range). Use <code>i = 0; i &lt; scores.size()</code>.</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>equals</code> compares <code>num</code> and <code>den</code> directly, assuming both are simplified. The write to <code>r.num</code> broke that invariant, so <code>r.equals(s)</code> returns <code>false</code> even though <code>8/2 == 1/2</code>. This is why <code>num</code> and <code>den</code> are <code>private</code>.</li>
             </ul>
           </article>
           <article class="card secondary">

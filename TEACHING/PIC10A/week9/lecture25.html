@@ -17,7 +17,7 @@
     <div class="slides">
       <section class="hero">
         <div class="eyebrow">PIC 10A • Lecture 25</div>
-        <h1>C-style Arrays I</h1>
+        <h1>C-style Arrays</h1>
         <p class="lead">
           Before <code>std::vector</code> there were raw arrays: a fixed block of elements laid out back to back in memory, with a size fixed at compile time and no safety net.
         </p>
@@ -46,7 +46,7 @@
               <li>Declaring and initializing raw arrays.</li>
               <li>Indexing, traversal, and the fixed-size rule.</li>
               <li>Why overrunning an array is undefined behavior.</li>
-              <li>Arrays vs <code>std::vector</code>.</li>
+              <li>Decay, pointer arithmetic, and <code>a[i] == *(a + i)</code>.</li>
             </ul>
           </article>
         </div>
@@ -172,99 +172,6 @@ int b[N];          // OK -- N is a compile-time constant
       </section>
 
       <section>
-        <h2>Traversing With a Size Variable</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-const int N = 5;
-int a[N] = {3, 1, 4, 1, 5};
-
-int sum = 0;
-for (int i = 0; i &lt; N; ++i) {
-    sum += a[i];
-}
-std::cout &lt;&lt; sum &lt;&lt; std::endl;   // 14
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li>An array does not know its own length.</li>
-              <li>You must carry the size <code>N</code> alongside it.</li>
-              <li>The loop condition is <code>i &lt; N</code>, never <code>i &lt;= N</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>The Classic Off-by-One</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-const int N = 5;
-int a[N] = {1, 2, 3, 4, 5};
-
-for (int i = 0; i &lt;= N; ++i) {   // BUG: i == 5 is out of range
-    std::cout &lt;&lt; a[i] &lt;&lt; ' ';
-}
-            </code>
-          </pre>
-          <article class="card">
-            <ul class="tight">
-              <li><code>i &lt;= N</code> reaches <code>a[5]</code>, which does not exist.</li>
-              <li>That last read is undefined behavior.</li>
-              <li>Always loop while <code>i &lt; N</code>.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Arrays vs std::vector</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <span class="kicker">Size</span>
-            <strong>fixed vs dynamic</strong>
-            <span>Array size is locked; a vector can grow and shrink.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Length</span>
-            <strong>tracked or not</strong>
-            <span>A vector knows <code>.size()</code>; an array does not.</span>
-          </article>
-          <article class="stat">
-            <span class="kicker">Safety</span>
-            <strong>.at() vs nothing</strong>
-            <span><code>v.at(i)</code> can range-check; <code>a[i]</code> never does.</span>
-          </article>
-        </div>
-      </section>
-
-      <section>
-        <h2>Prefer vector by Default</h2>
-        <div class="code-pair">
-          <pre>
-            <code data-trim data-line-numbers contenteditable class="language-cpp">
-// Raw array: size and data travel separately
-int a[5] = {1, 2, 3, 4, 5};
-
-// vector: size travels with the data, can grow
-std::vector&lt;int&gt; v = {1, 2, 3, 4, 5};
-v.push_back(6);
-std::cout &lt;&lt; v.size() &lt;&lt; std::endl;   // 6
-            </code>
-          </pre>
-          <article class="card secondary">
-            <ul class="tight">
-              <li><code>vector</code> carries its own length and resizes.</li>
-              <li>It copies cleanly and can be returned from a function.</li>
-              <li>Use raw arrays only when an interface forces them.</li>
-            </ul>
-          </article>
-        </div>
-      </section>
-
-      <section>
         <h2>Passing an Array to a Function</h2>
         <div class="code-pair">
           <pre>
@@ -290,9 +197,95 @@ std::cout &lt;&lt; sum(data, 4) &lt;&lt; std::endl;    // 20 -- size passed by h
       </section>
 
       <section>
-        <h2>Decay Loses the Size</h2>
-        <div class="callout cool">
-          Inside the function, the parameter is a pointer &mdash; not an array. <code>sizeof</code> on it gives the size of a pointer, not the array. The length only survives if you pass it yourself. (Detail next lecture.)
+        <h2>The Array Name Is an Address</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {10, 20, 30, 40};
+
+int* p = a;        // a converts to &amp;a[0]
+cout &lt;&lt; *p &lt;&lt; endl;        // 10
+cout &lt;&lt; *(a) &lt;&lt; endl;      // 10
+cout &lt;&lt; (a == &amp;a[0]);     // 1 (true)
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li>In most expressions, <code>a</code> decays to a pointer to <code>a[0]</code>.</li>
+              <li><code>int* p = a;</code> copies that address into <code>p</code>.</li>
+              <li>Dereferencing the array name yields the first element.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>a[i] Is *(a + i)</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {5, 6, 7, 8};
+
+a[2];        // 7
+*(a + 2);    // 7  — same thing
+*(2 + a);    // 7  — and so is 2[a] (please never write that)
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li>Subscripting is defined as <code>a[i] == *(a + i)</code>.</li>
+              <li><code>a + i</code> is the address of element <code>i</code>.</li>
+              <li>This identity is the whole secret of arrays.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Pointer Arithmetic Counts Elements</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[4] = {5, 6, 7, 8};
+int* p = a;     // points at a[0]
+
+p + 1;          // address of a[1], not "one byte later"
+*(p + 3);       // 8
+++p;            // now p points at a[1]
+cout &lt;&lt; *p;     // 6
+            </code>
+          </pre>
+          <article class="card">
+            <ul class="tight">
+              <li><code>p + k</code> advances by <code>k</code> elements, scaled by <code>sizeof(int)</code>.</li>
+              <li>Incrementing a pointer moves it to the next element.</li>
+              <li>The compiler handles the byte math for you.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Walking an Array With a Pointer</h2>
+        <div class="code-pair">
+          <pre>
+            <code data-trim data-line-numbers contenteditable class="language-cpp">
+int a[5] = {1, 2, 3, 4, 5};
+int sum = 0;
+
+for (int* p = a; p &lt; a + 5; ++p) {
+    sum += *p;
+}
+cout &lt;&lt; sum &lt;&lt; endl;   // 15
+            </code>
+          </pre>
+          <article class="card secondary">
+            <ul class="tight">
+              <li><code>a + 5</code> is the "one-past-the-end" address.</li>
+              <li>Loop while <code>p &lt; a + 5</code> — never dereference that end.</li>
+              <li>You may form the one-past-end address, but not read it.</li>
+            </ul>
+          </article>
         </div>
       </section>
 
@@ -320,6 +313,7 @@ std::cout &lt;&lt; sum(data, 4) &lt;&lt; std::endl;    // 20 -- size passed by h
               <li>Indices run <code>0</code> to <code>N-1</code>; no bounds checking.</li>
               <li>Out-of-range access is undefined behavior.</li>
               <li>The size is a compile-time constant and cannot change.</li>
+              <li>An array name decays to a pointer; <code>a[i] == *(a + i)</code>.</li>
             </ul>
           </article>
           <article class="card secondary">
@@ -327,7 +321,7 @@ std::cout &lt;&lt; sum(data, 4) &lt;&lt; std::endl;    // 20 -- size passed by h
             <ul class="tight">
               <li>Loop while <code>i &lt; N</code>, never <code>i &lt;= N</code>.</li>
               <li>Pass the size alongside the array to functions.</li>
-              <li>Reach for <code>std::vector</code> unless an interface forbids it.</li>
+              <li>Remember <code>a[i]</code> is just <code>*(a + i)</code>.</li>
             </ul>
           </article>
         </div>
@@ -354,8 +348,8 @@ std::cout &lt;&lt; sum(data, 4) &lt;&lt; std::endl;    // 20 -- size passed by h
               <li class="answer-line"><strong>Answer:</strong> Undefined behavior &mdash; out of range, no diagnostic.</li>
               <li><strong>Q5.</strong> Why pass a size parameter to <code>sum(int a[], int n)</code>?</li>
               <li class="answer-line"><strong>Answer:</strong> The array decays to a pointer and loses its length.</li>
-              <li><strong>Q6.</strong> Why is <code>std::vector</code> usually preferred?</li>
-              <li class="answer-line"><strong>Answer:</strong> It tracks its own size, resizes, and copies safely.</li>
+              <li><strong>Q6.</strong> For <code>int a[4]; int* p = a;</code>, what is <code>*(p + 2)</code>?</li>
+              <li class="answer-line"><strong>Answer:</strong> <code>a[2]</code> &mdash; pointer arithmetic counts elements, so <code>a[i] == *(a + i)</code>.</li>
             </ul>
           </article>
         </div>
@@ -400,13 +394,6 @@ std::cout &lt;&lt; s &lt;&lt; std::endl;
         </div>
       </section>
 
-      <section class="transition-slide center-copy">
-        <div class="eyebrow">Next Lecture</div>
-        <h2>C-style Arrays II</h2>
-        <p class="lead center-copy">
-          Next time we open up array-to-pointer decay: why <code>int a[]</code> is really <code>int*</code>, and how <code>a[i]</code> is just <code>*(a + i)</code>.
-        </p>
-      </section>
     </div>
   </div>
 

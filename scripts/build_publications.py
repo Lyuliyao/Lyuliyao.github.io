@@ -164,7 +164,10 @@ def normalize_title(title: str) -> str:
 def link_html(url: str, label: str) -> str:
     safe_url = html.escape(url, quote=True)
     safe_label = html.escape(label.upper())
-    return f'<a href="{safe_url}" class="logo">[{safe_label}]</a>'
+    return (
+        f'<a href="{safe_url}" class="pub-link" target="_blank" '
+        f'rel="noopener">[{safe_label}]</a>'
+    )
 
 
 def format_links(entry: dict, links_map: dict) -> str:
@@ -239,7 +242,7 @@ def get_corresponding_names(entry: dict, corr_map: dict) -> list[str]:
         names.extend([n for n in mapped if isinstance(n, str)])
     field = entry.get("corresponding", "") or entry.get("correspondence", "")
     if field:
-        raw_parts = re.split(r";|\\s+and\\s+", field, flags=re.I)
+        raw_parts = re.split(r";|\s+and\s+", field, flags=re.I)
         names.extend([p.strip() for p in raw_parts if p.strip()])
     # De-dup by normalized name while preserving order
     seen = set()
@@ -254,7 +257,7 @@ def get_corresponding_names(entry: dict, corr_map: dict) -> list[str]:
 
 def build_list_html(entries: list[dict], links_map: dict, corr_map: dict) -> str:
     items = [format_entry(e, links_map, corr_map) for e in entries]
-    return "<ol reversed>\n" + "\n".join(items) + "\n</ol>"
+    return '<ol reversed class="pub-list">\n' + "\n".join(items) + "\n</ol>"
 
 
 def update_page(list_html: str) -> None:
@@ -276,7 +279,7 @@ def main() -> None:
         parsed = parse_entry(raw)
         if parsed:
             year_text = parsed.get("year", "")
-            year_num = int(re.sub(r"\\D", "", year_text) or 0)
+            year_num = int(re.sub(r"\D", "", year_text) or 0)
             parsed["year_num"] = year_num
             entries.append(parsed)
 

@@ -1,112 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Lyu Liyao's Home page</title>
+    <title data-en="Research — Liyao Lyu" data-zh="研究 — 吕力遥">Research — Liyao Lyu</title>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="Research of Liyao Lyu: machine learning for multiscale modeling and coarse-grained molecular dynamics, scientific machine learning algorithms, and gradient-free optimization."/>
+    <meta name="author" content="Liyao Lyu"/>
+    <link rel="canonical" href="https://lyuliyao.com/research.html"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Research — Liyao Lyu"/>
+    <meta property="og:description" content="Machine learning for multiscale modeling, scientific machine learning, and gradient-free optimization."/>
+    <meta property="og:url" content="https://lyuliyao.com/research.html"/>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg"/>
     <link rel="stylesheet" href="assets/css/main.css"/>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CQSV68665C');
+    </script>
+    <style>
+      /* Page-specific components (cards, feature rows, embeds) */
+      .lang-controls{display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap}
+
+      .section-title{font-size:1.8rem; margin:4px 0 14px}
+      .subtle{color:var(--muted)}
+
+      .grid{display:grid; gap:18px}
+      @media (min-width: 820px){
+        .grid{grid-template-columns:1fr 1fr}
+      }
+
+      /* Research interest cards */
+      .pill-list{display:grid; gap:14px}
+      .pill{background:rgba(42,92,80,0.07); border:1px solid rgba(20,33,32,0.1); border-radius:var(--radius); padding:18px}
+      .pill strong{display:block; font-size:1.35rem; margin-bottom:6px}
+      .bullets{margin:6px 0 0; color:var(--muted)}
+
+      /* Feature rows with text + media */
+      .feature{display:flex; gap:18px; align-items:flex-start; background:rgba(42,92,80,0.05); border:1px solid rgba(20,33,32,0.08); border-radius:var(--radius); padding:18px; min-height:480px}
+      .feature + .feature{margin-top:16px}
+      .feature .txt{flex:1; min-width:250px}
+      .feature .txt ol{margin:6px 0 0 18px}
+
+      /* Responsive embeds with stable aspect ratio */
+      .embed{position:relative; isolation:isolate; width:100%; max-width:680px; aspect-ratio:4/3; min-height:420px; border-radius:12px; overflow:hidden; flex:1; min-width:280px; box-shadow:0 10px 30px rgba(22,34,33,0.18); background:#fff}
+      .embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
+      .embed::after{content:''; position:absolute; inset:0; box-shadow:inset 0 0 0 1px rgba(20,33,32,0.08); border-radius:inherit; pointer-events:none}
+
+      @media (max-width: 820px){
+        .feature{min-height:360px; flex-wrap:wrap}
+        .embed{min-height:300px}
+      }
+
+      section.block{margin:20px 0}
+      .card{background:rgba(42,92,80,0.05); border:1px solid rgba(20,33,32,0.08); border-radius:var(--radius); padding:18px}
+
+      /* Anchor badges in the header */
+      .badge{display:inline-block; padding:.28rem .6rem; background:rgba(42,92,80,0.1); color:inherit; border:1px solid rgba(42,92,80,0.35); border-radius:999px; font-size:.78rem; border-bottom-width:1px}
+      .badge:hover{background:rgba(42,92,80,0.18)}
+    </style>
 </head>
-  
-  <!-- Self‑contained CSS so the layout is stable even without external files -->
-  <style>
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    a{color:var(--accent); text-decoration:none}
-    a:hover{text-decoration:underline}
-
-    /* Page shell */
-    .wrap{max-width:var(--maxw); margin:auto; padding:24px}
-    header.site{display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 0 20px}
-    .brand{font-weight:800; letter-spacing:.3px; font-size:1.1rem}
-    .lang-controls{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
-    .lang-toggle{
-      padding:0.35rem 0.6rem;
-      border:1px solid #c9c9c9;
-      border-radius:6px;
-      background:#fff;
-      color:inherit;
-      font-size:0.85rem;
-      cursor:pointer;
-    }
-    .lang-toggle:hover{background:#f2f2f2}
-
-    /* Section titles */
-    .section-title{font-size:1.8rem; margin:4px 0 14px}
-    .subtle{color:var(--muted)}
-
-    /* Card grid */
-    .grid{display:grid; gap:18px}
-    @media (min-width: 820px){
-      .grid{grid-template-columns:1fr 1fr}
-    }
-
-    /* Research interest list as neat cards */
-    .pill-list{display:grid; gap:14px}
-    .pill{background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
-    .pill strong{display:block; font-size:1.35rem; margin-bottom:6px}
-    .bullets{margin:6px 0 0; color:var(--muted)}
-
-    /* Feature rows with text + media */
-    .feature{display:flex; gap:18px; align-items:flex-start; background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px; min-height:480px}
-    .feature + .feature{margin-top:16px}
-    .feature .txt{flex:1; min-width:250px}
-    .feature .txt ol{margin:6px 0 0 18px}
-
-    /* Responsive embeds with stable aspect ratio */
-    .embed{position:relative; isolation:isolate; width:100%; max-width:680px; aspect-ratio:4/3; min-height:420px; border-radius:12px; overflow:hidden; flex:1; min-width:280px; box-shadow:0 8px 30px rgba(0,0,0,.35)}
-    .embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0}
-    .embed::after{content:''; position:absolute; inset:0; box-shadow:inset 0 0 0 1px #ffffff10; border-radius:inherit; pointer-events:none}
-
-    @media (max-width: 820px){
-      .feature{min-height:360px}
-      .embed{min-height:300px}
-    }
-
-    /* Section blocks */
-    section.block{margin:20px 0}
-    .card{background:var(--panel); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
-
-    /* Lists inside cards */
-    ol{padding-left:20px}
-
-    /* Contact footer */
-    footer{margin:40px 0 10px; color:var(--muted); font-size:.95rem}
-
-    /* Small helper badges */
-    .badge{display:inline-block; padding:.28rem .6rem; background:#6ea8fe22; color:#000000; border:1px solid #6ea8fe55; border-radius:999px; font-size:.78rem; margin-left:8px}
-
-    /* Focus rings for accessibility */
-    :focus-visible{outline: 3px solid var(--ring); outline-offset:2px; border-radius:10px}
-  </style>
-<body class="is-preload">
+<body class="is-preload home">
 <div id="wrapper">
     <div id="main">
         <div class="inner">
         <header id="header">
             <a href="index.html" class="logo">
               <b>
-                <span data-lang="en">Lyu Liyao's</span>
+                <span data-lang="en">Liyao Lyu</span>
                 <span data-lang="zh" hidden>吕力遥</span>
               </b>
-              <span data-lang="en"> Home Page</span>
-              <span data-lang="zh" hidden> 主页</span>
             </a>
             <div class="lang-controls">
-              <nav aria-label="Skip links">
+              <nav aria-label="Section shortcuts">
                 <a href="#interests" class="badge">
                   <span data-lang="en">Interests</span>
                   <span data-lang="zh" hidden>兴趣方向</span>
                 </a>
                 <a href="#mlmm" class="badge">
-                  <span data-lang="en">ML × Multiscale</span>
-                  <span data-lang="zh" hidden>机器学习×多尺度</span>
+                  <span data-lang="en">ML &times; Multiscale</span>
+                  <span data-lang="zh" hidden>机器学习&times;多尺度</span>
                 </a>
                 <a href="#sci-ml" class="badge">
                   <span data-lang="en">Scientific ML</span>
                   <span data-lang="zh" hidden>科学机器学习</span>
                 </a>
                 <a href="#gfree" class="badge">
-                  <span data-lang="en">Gradient‑Free</span>
+                  <span data-lang="en">Gradient-Free</span>
                   <span data-lang="zh" hidden>无梯度优化</span>
                 </a>
               </nav>
@@ -127,8 +110,8 @@
               <span data-lang="zh" hidden>多尺度建模</span>
             </strong>
             <div class="bullets">
-              <span data-lang="en">Coarse‑Grained Molecular Dynamics, Mori–Zwanzig, Generalized Langevin Equation, Model Reduction</span>
-              <span data-lang="zh" hidden>粗粒化分子动力学、Mori–Zwanzig、广义朗之万方程、模型降阶</span>
+              <span data-lang="en">Coarse-Grained Molecular Dynamics, Mori&ndash;Zwanzig, Generalized Langevin Equation, Model Reduction</span>
+              <span data-lang="zh" hidden>粗粒化分子动力学、Mori&ndash;Zwanzig、广义朗之万方程、模型降阶</span>
             </div>
             </div>
             <div class="pill">
@@ -137,7 +120,7 @@
               <span data-lang="zh" hidden>优化</span>
             </strong>
             <div class="bullets">
-              <span data-lang="en">Consensus‑Based Optimization & Sampling, Stochastic Optimal Control</span>
+              <span data-lang="en">Consensus-Based Optimization &amp; Sampling, Stochastic Optimal Control</span>
               <span data-lang="zh" hidden>基于共识的优化与采样、随机最优控制</span>
             </div>
             </div>
@@ -147,7 +130,7 @@
               <span data-lang="zh" hidden>科学计算</span>
             </strong>
             <div class="bullets">
-              <span data-lang="en">Mixed Residual Methods, Deep‑Learning‑aided Discontinuous Galerkin, Reproducing Activation Functions</span>
+              <span data-lang="en">Mixed Residual Methods, Deep-Learning-aided Discontinuous Galerkin, Reproducing Activation Functions</span>
               <span data-lang="zh" hidden>混合残差方法、深度学习辅助的不连续 Galerkin、再现激活函数</span>
             </div>
             </div>
@@ -161,23 +144,23 @@
           <span data-lang="zh" hidden>机器学习与多尺度建模</span>
         </h2>
         <p class="subtle">
-          <span data-lang="en">Developing learning methodologies that enhance bottom‑up multiscale modeling and accurately predict complex physical phenomena.</span>
+          <span data-lang="en">Developing learning methodologies that enhance bottom-up multiscale modeling and accurately predict complex physical phenomena.</span>
           <span data-lang="zh" hidden>发展数据驱动方法以提升自下而上的多尺度建模能力，并准确预测复杂物理现象。</span>
         </p>
 
         <article class="feature">
             <div class="txt">
             <h3 style="margin:0 0 6px">
-              <span data-lang="en">Non‑conservative Memory Terms for CGMD</span>
+              <span data-lang="en">Non-conservative Memory Terms for CGMD</span>
               <span data-lang="zh" hidden>CGMD 的非保守记忆项</span>
             </h3>
             <ol>
-                <li data-lang="en"><strong>Many‑body dissipative interactions.</strong> ML‑based coarse‑grained MD using Mori–Zwanzig to include non‑Markovian many‑body memory.</li>
-                <li data-lang="zh" hidden><strong>多体耗散相互作用。</strong> 基于 Mori–Zwanzig 的机器学习粗粒化分子动力学，引入非马尔可夫多体记忆项。</li>
-                <li data-lang="en"><strong>Symmetry‑aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
+                <li data-lang="en"><strong>Many-body dissipative interactions.</strong> ML-based coarse-grained MD using Mori&ndash;Zwanzig to include non-Markovian many-body memory.</li>
+                <li data-lang="zh" hidden><strong>多体耗散相互作用。</strong> 基于 Mori&ndash;Zwanzig 的机器学习粗粒化分子动力学，引入非马尔可夫多体记忆项。</li>
+                <li data-lang="en"><strong>Symmetry-aware neural networks.</strong> Networks respect rotational, translational, and permutation symmetries to model friction matrices.</li>
                 <li data-lang="zh" hidden><strong>对称性神经网络。</strong> 网络满足旋转、平移与置换对称性，用于刻画摩擦矩阵。</li>
-                <li data-lang="en"><strong>Beyond mean‑field metrics.</strong> Built on Mori–Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
-                <li data-lang="zh" hidden><strong>超越平均场度量。</strong> 基于 Mori–Zwanzig 传递异质信息，而非仅匹配速度自相关函数（VACF）。</li>
+                <li data-lang="en"><strong>Beyond mean-field metrics.</strong> Built on Mori&ndash;Zwanzig, inheriting heterogeneous information rather than only matching VACF.</li>
+                <li data-lang="zh" hidden><strong>超越平均场度量。</strong> 基于 Mori&ndash;Zwanzig 传递异质信息，而非仅匹配速度自相关函数（VACF）。</li>
             </ol>
             </div>
             <div class="embed" aria-label="Von Hove animation">
@@ -188,13 +171,13 @@
         <article class="feature">
             <div class="txt">
             <h3 style="margin:0 0 6px">
-              <span data-lang="en">Coarse‑Grained Models for <em>Non‑Equilibrium</em> Processes</span>
+              <span data-lang="en">Coarse-Grained Models for <em>Non-Equilibrium</em> Processes</span>
               <span data-lang="zh" hidden>非平衡过程的粗粒化模型</span>
             </h3>
             <ol>
-                <li data-lang="en"><strong>Generalization challenge.</strong> Non‑equilibrium applicability is limited by inconsistent conditional distributions.</li>
+                <li data-lang="en"><strong>Generalization challenge.</strong> Non-equilibrium applicability is limited by inconsistent conditional distributions.</li>
                 <li data-lang="zh" hidden><strong>泛化挑战。</strong> 非平衡情形下条件分布不一致限制了模型的适用性。</li>
-                <li data-lang="en"><strong>Training CG variables.</strong> Time‑lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
+                <li data-lang="en"><strong>Training CG variables.</strong> Time-lagged ICA to find auxiliary CG variables minimizing the entropy contribution of unresolved modes.</li>
                 <li data-lang="zh" hidden><strong>训练粗粒变量。</strong> 采用时滞 ICA 寻找辅助粗粒变量，最小化未解析模态的熵贡献。</li>
             </ol>
             </div>
@@ -214,15 +197,15 @@
         <article class="feature">
             <div class="txt">
             <h3 style="margin:0 0 6px">
-              <span data-lang="en">Deep Mixed Residual Method (MIM) for <em>high‑order</em> PDEs</span>
+              <span data-lang="en">Deep Mixed Residual Method (MIM) for <em>high-order</em> PDEs</span>
               <span data-lang="zh" hidden>用于高阶 PDE 的深度混合残差方法（MIM）</span>
             </h3>
             <ol>
-                <li data-lang="en"><strong>Mixed residual.</strong> Rewrite a high‑order PDE as a first‑order system (akin to LDG and mixed FEM).</li>
+                <li data-lang="en"><strong>Mixed residual.</strong> Rewrite a high-order PDE as a first-order system (akin to LDG and mixed FEM).</li>
                 <li data-lang="zh" hidden><strong>混合残差。</strong> 将高阶 PDE 改写为一阶系统（类似 LDG 与混合 FEM）。</li>
                 <li data-lang="en"><strong>Flexible networks.</strong> Share or separate DNNs for different unknowns as needed.</li>
                 <li data-lang="zh" hidden><strong>灵活网络。</strong> 根据未知量选择共享或独立的 DNN。</li>
-                <li data-lang="en"><strong>Built‑in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
+                <li data-lang="en"><strong>Built-in boundary conditions.</strong> Construct DNNs that satisfy boundary/initial conditions by design.</li>
                 <li data-lang="zh" hidden><strong>内置边界条件。</strong> 通过构造满足边界/初值条件的网络以保证一致性。</li>
             </ol>
             </div>
@@ -234,13 +217,13 @@
         <article class="feature">
             <div class="txt">
             <h3 style="margin:0 0 6px">
-              <span data-lang="en">Deep Learning‑based Discontinuous Galerkin (D2GM)</span>
+              <span data-lang="en">Deep Learning-based Discontinuous Galerkin (D2GM)</span>
               <span data-lang="zh" hidden>基于深度学习的不连续 Galerkin 方法（D2GM）</span>
             </h3>
             <ol>
                 <li data-lang="en"><strong>Handles discontinuities.</strong> Weak formulation with discontinuous bases approximates shocks accurately.</li>
                 <li data-lang="zh" hidden><strong>处理不连续性。</strong> 采用不连续基函数的弱形式更准确地逼近间断。</li>
-                <li data-lang="en"><strong>High‑dimensional uncertainty.</strong> Mini‑batch sampling controls sample count and mitigates curse of dimensionality.</li>
+                <li data-lang="en"><strong>High-dimensional uncertainty.</strong> Mini-batch sampling controls sample count and mitigates curse of dimensionality.</li>
                 <li data-lang="zh" hidden><strong>高维不确定性。</strong> 通过小批量采样控制样本数量并缓解维数灾难。</li>
             </ol>
             </div>
@@ -250,30 +233,24 @@
         </article>
         </section>
 
-        <!-- Gradient‑Free -->
+        <!-- Gradient-Free -->
         <section id="gfree" class="block">
         <h2 class="section-title">
-          <span data-lang="en">Gradient‑Free Optimization Methods</span>
+          <span data-lang="en">Gradient-Free Optimization Methods</span>
           <span data-lang="zh" hidden>无梯度优化方法</span>
         </h2>
         <div class="card">
-            <span data-lang="en">Exploring optimization strategies that bypass gradient calculations for complex, multi‑modal problems (e.g., consensus‑based optimization/sampling, finite‑horizon stochastic control).</span>
+            <span data-lang="en">Exploring optimization strategies that bypass gradient calculations for complex, multi-modal problems (e.g., consensus-based optimization/sampling, finite-horizon stochastic control).</span>
             <span data-lang="zh" hidden>探索无需梯度计算的优化策略，解决复杂多峰问题（如基于共识的优化/采样、有限时域随机控制）。</span>
         </div>
         </section>
     </div>
     </div>
 
-  <div id="sidebar">
+    <div id="sidebar">
         <a href="#sidebar" class="toggle" aria-label="Toggle menu"></a>
         <div class="inner">
             <div id="navbar-placeholder"></div>
-				<script>
-				// 使用fetch API来加载navbar.html内容
-				fetch('./side.html')
-				  .then(response => response.text())
-				  .then(text => document.getElementById('navbar-placeholder').innerHTML = text);
-				</script>
             <section>
                 <header class="major">
                     <h2>
@@ -289,40 +266,14 @@
                 <script type="text/javascript" id="mapmyvisitors" src="//mapmyvisitors.com/map.js?d=fyniTHl2ZGxgcNWs_O9EuNBzh2EK37nKZri8nc6RM3Y&cl=ffffff&w=a"></script>
             </section>
         </div>
-  </div>
+    </div>
 </div>
-  <script>
-    (function(){
-      var currentLang = 'en';
-      var toggle = document.getElementById('langToggle');
-      var elements = document.querySelectorAll('[data-lang]');
 
-      function applyLang(lang){
-        currentLang = lang;
-        elements.forEach(function(el){
-          el.hidden = el.getAttribute('data-lang') !== lang;
-        });
-        if (toggle) {
-          toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');
-          toggle.textContent = lang === 'zh' ? 'English' : '中文';
-        }
-        document.documentElement.setAttribute('lang', lang);
-      }
-
-      if (toggle) {
-        toggle.addEventListener('click', function(){
-          applyLang(currentLang === 'en' ? 'zh' : 'en');
-        });
-      }
-
-      applyLang('en');
-    })();
-  </script>
-  <!-- Optional: Google Analytics (kept async; safe to remove) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-CQSV68665C');
-  </script>
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/site.js"></script>
 </body>
 </html>

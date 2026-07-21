@@ -1,0 +1,23 @@
+{
+  "lyu2022mim": {"DOI": "https://doi.org/10.1016/j.jcp.2021.110930"},
+  "lyu2020qmc": {"DOI": "https://doi.org/10.4208/nmtma.oa-2020-0032"},
+  "lyu2021enforcing": {"DOI": "https://doi.org/10.4208/csiam-am.so-2021-0011"},
+  "chen2022consensus": {"DOI": "https://doi.org/10.4208/cicp.oa-2021-0144"},
+  "liang2024reproducing": {"DOI": "https://doi.org/10.4310/cms.2024.v22.n2.a1"},
+  "lyu2022local": {
+    "DOI": "https://doi.org/10.1007/s42967-020-00104-3",
+    "PDF": "publications/LDG_FDE_Springer_repo.pdf"
+  },
+  "chen2021quasi": {"DOI": "https://doi.org/10.4208/nmtma.oa-2020-0062"},
+  "lyu2023construction": {"DOI": "https://doi.org/10.1103/PhysRevLett.131.177301"},
+  "chen2022deep": {
+    "DOI": "https://doi.org/10.4208/jcm.2205-m2021-0277",
+    "arXiv": "https://arxiv.org/abs/2107.01127"
+  },
+  "lyu2023consensus": {"arXiv": "https://arxiv.org/abs/2311.05009"},
+  "lyu2025generalization": {"DOI": "https://doi.org/10.1137/24M1694549"},
+  "lyu2025generative": {"NSF PAR": "https://par.nsf.gov/biblio/10610686"},
+  "she2025unified": {"arXiv": "https://arxiv.org/abs/2509.07264"},
+  "lyu2025stochastic": {"arXiv": "https://arxiv.org/abs/2510.27615"},
+  "lyuconsensus": {"OpenReview": "https://openreview.net/forum?id=W7dN3SQKkH"}
+}

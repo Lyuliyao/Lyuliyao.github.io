@@ -737,3 +737,104 @@ body.home #banner .image.object {
     padding: 1.6rem;
   }
 }
+
+/* ============ Shared Components ============ */
+:root {
+  --shadow: 0 10px 30px rgba(22, 34, 33, 0.1);   /* soft card shadow */
+  --ring: #2a5c50;                                /* focus outline color */
+}
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Language toggle button (top-right of every page) */
+.lang-toggle {
+  margin-left: 0.75rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(20, 33, 32, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: inherit;
+  font-family: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  flex: 0 0 auto;
+}
+.lang-toggle:hover {
+  background: #fff;
+  border-color: var(--home-accent, #2a5c50);
+}
+
+/* Quick profile links (homepage banner) */
+ul.quick-links {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+ul.quick-links li { margin: 0; }
+ul.quick-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid rgba(20, 33, 32, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+ul.quick-links a:hover {
+  background: #fff;
+  border-color: var(--home-accent, #2a5c50);
+}
+
+/* Announcement highlight */
+.notice {
+  border-left: 4px solid var(--home-accent-strong, #b55a2d);
+  background: rgba(181, 90, 45, 0.08);
+  border-radius: 0 12px 12px 0;
+  padding: 0.9rem 1.2rem;
+  margin: 0 0 1.5em;
+}
+.notice p { margin: 0; }
+
+/* Publication list */
+.pub-list li { margin: 0.7em 0; }
+a.pub-link {
+  border-bottom: 0;
+  font-size: 0.85em;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+/* Teaching: per-week lecture cards */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 1rem;
+  margin: 0 0 1.5em;
+}
+.week-card {
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--home-border, rgba(20, 33, 32, 0.12));
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+}
+.week-card h4 {
+  margin: 0 0 0.5em;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(42, 92, 80, 0.2);
+}
+.week-card ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.week-card li { margin: 0.35em 0; }

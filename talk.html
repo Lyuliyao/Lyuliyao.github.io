@@ -1,45 +1,37 @@
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-    <title>Talk</title>
+    <title data-en="Talks — Liyao Lyu" data-zh="报告 — 吕力遥">Talks — Liyao Lyu</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Invited seminars and conference presentations by Liyao Lyu, with slides."/>
+    <meta name="author" content="Liyao Lyu"/>
+    <link rel="canonical" href="https://lyuliyao.com/talk.html"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Talks — Liyao Lyu"/>
+    <meta property="og:description" content="Invited seminars and conference presentations by Liyao Lyu."/>
+    <meta property="og:url" content="https://lyuliyao.com/talk.html"/>
+    <link rel="icon" type="image/svg+xml" href="images/favicon.svg"/>
     <link rel="stylesheet" href="assets/css/main.css" />
-    <style>
-      .lang-toggle{
-        margin-left:0.75rem;
-        padding:0.35rem 0.6rem;
-        border:1px solid #c9c9c9;
-        border-radius:6px;
-        background:#fff;
-        color:inherit;
-        font-size:0.85rem;
-        cursor:pointer;
-      }
-      .lang-toggle:hover{background:#f2f2f2}
-    </style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CQSV68665C');
+    </script>
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CQSV68665C');
-</script>
-<body class="is-preload">
+<body class="is-preload home">
     <div id="wrapper">
         <div id="main">
             <div class="inner">
                 <header id="header">
                     <a href="index.html" class="logo">
                       <b>
-                        <span data-lang="en">Lyu Liyao's</span>
+                        <span data-lang="en">Liyao Lyu</span>
                         <span data-lang="zh" hidden>吕力遥</span>
                       </b>
-                      <span data-lang="en"> Home Page</span>
-                      <span data-lang="zh" hidden> 主页</span>
                     </a>
                     <button id="langToggle" class="lang-toggle" type="button" aria-pressed="false">中文</button>
                 </header>
@@ -55,31 +47,28 @@
                             <span data-lang="en">Seminar Presentations at Universities</span>
                             <span data-lang="zh" hidden>高校研讨会报告</span>
                         </h4>
-                        <div>
-                            <ul>
-                                <li>
-                                  Student Computational Math Seminar, The Ohio State University, March 2024.
-                                  <a href="https://u.osu.edu/studentcomputationalmathseminar">"Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory"</a>
-                                  <a href="./Slides/OSU_2024_3_29/index.html">Slides</a>
-                                </li>
-                                <li>
-                                  Math Seminar, SUFE, June 2025.
-                                  <a href="./Slides/USTC_2025_5_19/index.html">Slides</a>
-                                </li>
-                            </ul>
-                        </div>
+                        <ul>
+                            <li>
+                              <a href="https://u.osu.edu/studentcomputationalmathseminar" target="_blank" rel="noopener">Student Computational Math Seminar</a>, The Ohio State University, March 2024.
+                              &ldquo;Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory&rdquo;
+                              <a href="./Slides/OSU_2024_3_29/index.html" class="pub-link">[SLIDES]</a>
+                            </li>
+                            <li>
+                              Math Seminar, SUFE, June 2025.
+                              <a href="./Slides/USTC_2025_5_19/index.html" class="pub-link">[SLIDES]</a>
+                            </li>
+                        </ul>
                     </section>
                     <section>
-                    <h4>
-                        <span data-lang="en">Presentations at Conferences</span>
-                        <span data-lang="zh" hidden>会议报告</span>
-                    </h4>
-                    <div>
+                        <h4>
+                            <span data-lang="en">Presentations at Conferences</span>
+                            <span data-lang="zh" hidden>会议报告</span>
+                        </h4>
                         <ul>
                             <li>
                               SIAM CSE, Fort Worth, USA, Mar 2025.
-                              "Machine Learning-based Coarse-Grained models for molecular systems"
-                              <a href="./Slides/CSE_2025/index.html">Slides</a>
+                              &ldquo;Machine Learning-based Coarse-Grained Models for Molecular Systems&rdquo;
+                              <a href="./Slides/CSE_2025/index.html" class="pub-link">[SLIDES]</a>
                             </li>
                             <li>
                               Poster. Scale Bridging Meeting and Workshop, Los Alamos, NM, USA, Apr 2024.
@@ -94,22 +83,14 @@
                               Mathematical Foundation and Applications of Deep Learning, Virtual, Aug 2021.
                             </li>
                         </ul>
-      
-                    </div>
                     </section>
-
                 </section>
             </div>
         </div>
         <div id="sidebar">
+            <a href="#sidebar" class="toggle" aria-label="Toggle menu"></a>
             <div class="inner">
                 <div id="navbar-placeholder"></div>
-				<script>
-				// 使用fetch API来加载navbar.html内容
-				fetch('./side.html')
-				  .then(response => response.text())
-				  .then(text => document.getElementById('navbar-placeholder').innerHTML = text);
-				</script>
                 <section>
                     <header class="major">
                         <h2>
@@ -117,45 +98,18 @@
                           <span data-lang="zh" hidden>联系方式</span>
                         </h2>
                     </header>
-                <ul class="contact">
-                    <li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
-                </ul>
+                    <ul class="contact">
+                        <li class="icon solid fa-envelope">lyuliyao[at]math[dot]ucla[dot]edu</li>
+                    </ul>
                 </section>
             </div>
         </div>
-    </div>  
+    </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/browser.min.js"></script>
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
-    <script>
-      (function(){
-        var currentLang = 'en';
-        var toggle = document.getElementById('langToggle');
-        var elements = document.querySelectorAll('[data-lang]');
-
-        function applyLang(lang){
-          currentLang = lang;
-          elements.forEach(function(el){
-            el.hidden = el.getAttribute('data-lang') !== lang;
-          });
-          if (toggle) {
-            toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');
-            toggle.textContent = lang === 'zh' ? 'English' : '中文';
-          }
-          document.documentElement.setAttribute('lang', lang);
-          document.title = lang === 'zh' ? '报告' : 'Talk';
-        }
-
-        if (toggle) {
-          toggle.addEventListener('click', function(){
-            applyLang(currentLang === 'en' ? 'zh' : 'en');
-          });
-        }
-
-        applyLang('en');
-      })();
-    </script>
+    <script src="assets/js/site.js"></script>
 </body>
 </html>

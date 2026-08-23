@@ -8,7 +8,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>From Particles to Measures and Back — Learning and Assimilating Mean-Field Dynamics</title>
+	<title>从粒子到测度，再回到粒子｜平均场动力学的学习与数据同化</title>
 	<link rel="stylesheet" href="../UCLA/dist/reset.css">
 	<link rel="stylesheet" href="../UCLA/dist/reveal.css">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,8 +31,8 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			--green: #0A7F5E;  --green-tint: #E5F3EE;
 			--dark: #10202B;   --dark-2: #183040;
 			--on-dark: #F2F5F7; --on-dark-2: #B6C3CD; --on-dark-3: #7F93A1;
-			--serif: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
-			--sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", Helvetica, Arial, sans-serif;
+			--serif: "Source Serif 4", "Source Serif Pro", "Songti SC", STSong, Georgia, "Times New Roman", serif;
+			--sans: "Source Sans 3", "Source Sans Pro", "PingFang SC", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif;
 			--part: var(--blue);
 		}
 		.reveal-viewport { background: var(--ground); }
@@ -81,6 +81,11 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			text-transform: uppercase;
 			color: var(--part);
 			margin: 0;
+		}
+		.reveal .slides section .slide > .eyebrow {
+			font-size: 16px;
+			font-weight: 700;
+			letter-spacing: 0.12em;
 		}
 		.reveal p { margin: 0; }
 		.reveal b, .reveal strong { font-weight: 600; }
@@ -173,6 +178,87 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			font-family: var(--sans); font-size: 15px; font-weight: 600; letter-spacing: 0.04em;
 			padding: 3px 12px; border-radius: 999px; background: var(--ground-2); border: 1px solid var(--line); color: var(--ink-2);
 		}
+		.reveal .application-visual { flex: 1; min-height: 0; }
+		.reveal .application-visual img {
+			width: 100%; height: 310px; object-fit: cover; object-position: 50% 50%;
+			border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2);
+		}
+		.reveal .application-labels {
+			display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px;
+		}
+		.reveal .application-label {
+			border-top: 2px solid var(--blue); padding-top: 7px; font-size: 16px; line-height: 1.25;
+		}
+		.reveal .application-label b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 2px; }
+		.reveal .application-label span { color: var(--muted); }
+		.reveal .mf-transition {
+			display: flex; align-items: center; gap: 12px; margin: 2px 0;
+			font-size: 17px; font-weight: 600; color: var(--blue); text-align: center;
+		}
+		.reveal .mf-transition::before, .reveal .mf-transition::after {
+			content: ""; flex: 1; height: 1px; background: var(--line);
+		}
+		.reveal .mf-sequence { gap: 0; }
+		.reveal .mf-step-card {
+			display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: center;
+			border: 1px solid var(--line); border-radius: 10px; padding: 12px 20px; background: var(--ground-2);
+		}
+		.reveal .mf-step-card.measure {
+			grid-template-columns: 220px 0.82fr 1.18fr; background: var(--blue-tint); border-color: #BFD8EA;
+		}
+		.reveal .mf-step-card.limit { background: var(--green-tint); border-color: #BFE0D2; }
+		.reveal .mf-step-label h4 { margin: 3px 0 0; font-size: 20px; line-height: 1.2; }
+		.reveal .mf-step-equation { text-align: center; }
+		.reveal .mf-step-card .MathJax_SVG_Display { margin: 0.2em 0 !important; }
+		.reveal .mf-measure-copy {
+			border-left: 3px solid var(--blue); padding-left: 18px; font-size: 18px; line-height: 1.35; color: var(--ink-2);
+		}
+		.reveal .mf-measure-copy b { display: block; color: var(--ink); font-size: 20px; margin-bottom: 3px; }
+		.reveal .learning-setup {
+			display: grid; grid-template-columns: minmax(0, 1.35fr) 38px minmax(0, 0.85fr); gap: 14px; align-items: stretch;
+		}
+		.reveal .setup-block { border-radius: 9px; padding: 10px 16px; }
+		.reveal .setup-block.given { background: var(--blue-tint); border: 1px solid #BFD8EA; }
+		.reveal .setup-block.learn { background: var(--green-tint); border: 1px solid #BFE0D2; }
+		.reveal .setup-label {
+			font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px;
+		}
+		.reveal .setup-block.given .setup-label { color: var(--blue); }
+		.reveal .setup-block.learn .setup-label { color: var(--green); }
+		.reveal .setup-main { font-family: var(--serif); font-size: 22px; line-height: 1.25; }
+		.reveal .setup-detail { font-size: 17px; line-height: 1.25; color: var(--ink-2); margin-top: 2px; }
+		.reveal .setup-arrow { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 30px; }
+		.reveal .obstacle-heading {
+			font-size: 15px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); margin-top: 2px;
+		}
+		.reveal .obstacle-grid {
+			display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; flex: 1; align-items: stretch;
+		}
+		.reveal .obstacle {
+			display: flex; flex-direction: column; min-width: 0; padding: 13px 25px 8px;
+			border-left: 1px solid var(--line);
+		}
+		.reveal .obstacle:first-child { border-left: 0; padding-left: 0; }
+		.reveal .obstacle:last-child { padding-right: 0; }
+		.reveal .obstacle-no {
+			font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green);
+		}
+		.reveal .obstacle h4 { font-family: var(--serif); font-size: 23px; line-height: 1.17; margin: 3px 0 5px; }
+		.reveal .obstacle .equation { min-height: 58px; display: flex; align-items: center; justify-content: center; text-align: center; }
+		.reveal .obstacle .signal {
+			align-self: flex-start; margin: 2px 0 6px; padding: 1px 8px; border-radius: 4px;
+			background: var(--orange-tint); color: var(--orange); font-size: 18px; font-weight: 700;
+		}
+		.reveal .model-space-maps { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
+		.reveal .space-map { display: flex; flex-direction: column; align-items: flex-start; padding-bottom: 5px; border-bottom: 1px solid var(--line-2); }
+		.reveal .space-map:last-child { padding-bottom: 0; border-bottom: 0; }
+		.reveal .space-label { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); }
+		.reveal .space-formula { font-size: 16px; line-height: 1.2; white-space: nowrap; margin: 1px 0; }
+		.reveal .space-note { font-size: 14px; line-height: 1.15; color: var(--ink-2); }
+		.reveal .space-map.target .space-label,
+		.reveal .space-map.target .space-formula,
+		.reveal .space-map.target .space-note { color: var(--green); font-weight: 600; }
+		.reveal .obstacle p { font-size: 17px; line-height: 1.3; color: var(--ink-2); }
 
 		/* ---------- flow diagrams ---------- */
 		.reveal .flow { display: flex; align-items: stretch; gap: 10px; }
@@ -182,11 +268,49 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 		.reveal .flow .node.model { background: var(--ground-2); --part: var(--ink-2); }
 		.reveal .flow .node.nudge { background: var(--blue-tint); border-color: #BFD8EA; --part: var(--blue); }
 		.reveal .flow .arrow { display: flex; align-items: center; color: var(--muted); font-size: 30px; padding: 0 2px; }
-		.reveal .net { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.8em; text-align: center; }
-		.reveal .net .nb { border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; background: var(--ground); }
-		.reveal .net .nb.emb { background: var(--green-tint); border-color: #BFE0D2; }
-		.reveal .net .nb.int { background: var(--blue-tint); border-color: #BFD8EA; }
-		.reveal .net .ar { color: var(--muted); font-size: 1.4em; }
+		.reveal .roadmap-flow { flex: 1; align-items: center; gap: 14px; }
+		.reveal .roadmap-flow .node {
+			min-height: 230px; display: flex; flex-direction: column; justify-content: center; padding: 22px 26px;
+		}
+		.reveal .roadmap-flow .roadmap-verb {
+			font-family: var(--serif); font-size: 38px; font-weight: 600; line-height: 1; margin: 8px 0 16px;
+		}
+		.reveal .roadmap-flow .roadmap-problem {
+			font-size: 16px; font-weight: 600; color: var(--orange); margin-bottom: 8px;
+		}
+		.reveal .roadmap-flow .roadmap-route { font-size: 21px; line-height: 1.35; color: var(--ink-2); }
+		.reveal .roadmap-flow .roadmap-route b { color: var(--ink); white-space: nowrap; }
+		.reveal .roadmap-flow .arrow { font-size: 36px; }
+		.reveal .roadmap-principle { font-family: var(--serif); font-size: 27px; text-align: center; padding: 15px 22px; }
+		.reveal .mvnn-definition { font-family: var(--serif); font-size: 23px; color: var(--ink-2); text-align: center; }
+		.reveal .mvnn-diagram {
+			display: grid; grid-template-columns: 1fr 0.18fr 1.1fr 0.18fr 1.25fr 0.18fr 1.1fr 0.18fr 0.85fr;
+			align-items: center; flex: 1; min-height: 0; margin: 4px 0 2px;
+		}
+		.reveal .mvnn-stage { min-width: 0; text-align: center; padding: 6px 4px; }
+		.reveal .mvnn-stage svg { display: block; margin: 0 auto 7px; }
+		.reveal .mvnn-stage .stage-name { font-size: 18px; font-weight: 700; line-height: 1.18; color: var(--ink); }
+		.reveal .mvnn-stage .stage-math { font-size: 17px; line-height: 1.25; color: var(--ink-2); margin-top: 5px; }
+		.reveal .mvnn-arrow { color: var(--muted); font-size: 34px; text-align: center; }
+		.reveal .particle-icon { width: 120px; height: 88px; }
+		.reveal .particle-icon circle { fill: var(--blue); opacity: 0.88; }
+		.reveal .particle-icon circle:nth-child(3n+2) { fill: var(--green); }
+		.reveal .particle-icon circle:nth-child(4n) { fill: var(--orange); }
+		.reveal .nn-icon { width: 126px; height: 92px; color: var(--green); }
+		.reveal .nn-icon.int { color: var(--blue); }
+		.reveal .nn-icon .edges { fill: none; stroke: currentColor; stroke-width: 1.8; opacity: 0.34; }
+		.reveal .nn-icon .nodes { fill: var(--ground); stroke: currentColor; stroke-width: 2.6; }
+		.reveal .pool-icon {
+			width: 96px; height: 96px; margin: 0 auto 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+			background: var(--orange-tint); border: 2px solid #E9B48E; color: var(--orange); font-family: var(--serif); font-size: 25px; font-weight: 600;
+		}
+		.reveal .mvnn-output {
+			border-left: 4px solid var(--green); background: var(--green-tint); border-radius: 0 10px 10px 0;
+			padding: 18px 10px; text-align: center;
+		}
+		.reveal .mvnn-output .output-math { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink); }
+		.reveal .mvnn-output .output-label { font-size: 15px; color: var(--green); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 5px; }
+		.reveal .mvnn-caption { font-size: 19px; padding: 9px 15px; text-align: center; }
 
 		/* pipeline lanes */
 		.reveal .lane { border-radius: 12px; padding: 12px 18px; }
@@ -211,8 +335,6 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 		.reveal section.cover .sub { font-family: var(--serif); font-size: 27px; font-style: italic; color: #9CD0EE; margin-bottom: 46px; }
 		.reveal section.cover .who { font-size: 23px; line-height: 1.45; color: var(--on-dark-2); }
 		.reveal section.cover .who b { color: var(--on-dark); font-weight: 600; font-size: 26px; }
-		.reveal section.cover .papers { font-size: 15px; line-height: 1.45; color: var(--on-dark-3); }
-		.reveal section.cover .papers span { color: var(--on-dark-2); }
 		.reveal section.divider .numeral {
 			position: absolute; right: 56px; bottom: 36px;
 			font-family: var(--serif); font-weight: 700; font-size: 300px; line-height: 0.8; color: rgba(255,255,255,0.06);
@@ -285,18 +407,13 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<div class="slide" style="justify-content:center;">
 					<div class="cols" style="align-items:center; gap:48px;">
 						<div style="flex:1.2;">
-							<div class="eyebrow" style="--part:#9CD0EE; margin-bottom:22px;">Mean-field dynamics · learning and data assimilation</div>
-							<h1>From Particles to Measures and Back</h1>
-							<div class="sub">Learning and assimilating mean-field dynamics</div>
+							<div class="eyebrow" style="--part:#9CD0EE; margin-bottom:22px; letter-spacing:0.08em; text-transform:none;">平均场动力学</div>
+							<h1>从粒子到测度，<br>再回到粒子</h1>
+							<div class="sub" style="font-style:normal; letter-spacing:0.02em; margin-bottom:32px;">平均场动力学的学习与数据同化</div>
 							<div class="who">
 								<b>Liyao Lyu</b><br>
-								Department of Mathematics, University of California, Los Angeles<br>
-								<span style="font-style:italic;">with Hayden Schaeffer, Xinyue Yu and David Schneidinger</span>
-							</div>
-							<div class="papers" style="margin-top:38px;">
-								<span>MVNN</span> — learning McKean–Vlasov dynamics from particle data, arXiv:2604.00333 &nbsp;·&nbsp;
-								<span>Multiscale Nudging</span> — from macroscopic observations to microscopic dynamics, arXiv:2606.06809 &nbsp;·&nbsp;
-								<span>Wasserstein moment nudging</span> for Vlasov–Poisson data assimilation, 2026
+								加州大学洛杉矶分校数学系<br>
+								<span style="font-style:italic;">合作：Hayden Schaeffer、Xinyue Yu、David Schneidinger</span>
 							</div>
 						</div>
 						<figure style="flex:0.8;">
@@ -307,82 +424,147 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 					</div>
 				</div>
 				<aside class="notes">
-					One pipeline: learn a mean-field model from particle data, forecast with it, and correct the forecast with the
-					macroscopic observations that are actually available. Three papers, one principle: formulate on measures, act on particles.
+					一条主线：从粒子数据学习平均场模型，用它进行预测，再利用实际可观测的宏观量纠正预测。
+					核心原则：在测度空间建模，在粒子层面实施。
 				</aside>
 			</section>
 
 			<!-- ===================================================== Motivation -->
+			<section data-menu-title="Mean-field applications">
+				<div class="slide">
+					<div class="eyebrow">Motivation</div>
+					<h2>Mean-field models connect systems across science</h2>
+					<div class="body">
+						<p class="small muted">When many similar agents interact through the population, their collective behavior is naturally described by an evolving distribution.</p>
+						<figure class="application-visual">
+							<img src="./generated/mean_field_applications.png" alt="Scientific illustration of collective motion, crowds, cells, social networks, and plasma particles">
+						</figure>
+						<div class="application-labels">
+							<div class="application-label"><b>Collective motion</b><span>bird flocks · fish schools · swarms</span></div>
+							<div class="application-label"><b>Crowds &amp; transport</b><span>congestion · lane formation</span></div>
+							<div class="application-label"><b>Living systems</b><span>cells · chemotaxis · neural populations</span></div>
+							<div class="application-label"><b>Social dynamics</b><span>consensus · clustering · polarization</span></div>
+							<div class="application-label"><b>Kinetic physics</b><span>plasmas · particle beams</span></div>
+						</div>
+						<div class="note blue small">
+							<b>Different mechanisms, same reduction:</b> many labeled agents \(\longrightarrow\) one evolving law \(\mu_t\).
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					Use the illustration to establish breadth, then name the shared abstraction: an evolving probability law. The visual is an original illustration generated for this deck; it does not reproduce a published figure.
+
+					[Sources]
+					Cucker &amp; Smale (2007), Emergent Behavior in Flocks, doi:10.1109/TAC.2007.895842.
+					Helbing &amp; Molnár (1995), Social force model for pedestrian dynamics, doi:10.1103/PhysRevE.51.4282.
+					Keller &amp; Segel (1970), Initiation of slime mold aggregation viewed as an instability, doi:10.1016/0022-5193(70)90092-5.
+					Hegselmann &amp; Krause (2002), Opinion dynamics and bounded confidence, https://www.jasss.org/5/3/2.html.
+					Lazarovici &amp; Pickl (2017), A Mean Field Limit for the Vlasov–Poisson System, doi:10.1007/s00205-017-1125-0.
+					Visual: original AI-generated scientific illustration created for this presentation.
+					[/Sources]
+				</aside>
+			</section>
+
+			<!-- ===================================================== Mean-field limit -->
 			<section data-menu-title="Mean-field limit">
 				<div class="slide">
 					<div class="eyebrow">Motivation</div>
-					<h2>Many-body systems and their mean-field limit</h2>
-					<div class="body row">
-						<div class="stackv small" style="flex:1.25;">
-							<div class="card mtight">
-								<h4>\(N\) interacting agents — flocks, crowds, cells, charged particles</h4>
+					<h2>Mean-field reduction: discard labels, then let \(N\to\infty\)</h2>
+					<div class="body mf-sequence small">
+						<div class="mf-step-card">
+							<div class="mf-step-label">
+								<div class="eyebrow">1 · Labeled system</div>
+								<h4>\(N\) interacting agents</h4>
+							</div>
+							<div class="mf-step-equation">
 								\[
 								\intd \bX^i_t = \frac1N\sum_{j=1}^N K(\bX^j_t-\bX^i_t)\,\intd t + \Sigma\,\intd\bW^i_t .
 								\]
 							</div>
-							<div class="card mtight fragment">
-								<h4>\(N\to\infty\): one representative particle (Kac, McKean, Sznitman)</h4>
-								\[
-								\intd \bX_t = \bb(\bX_t,\mu_t)\,\intd t + \Sigma\,\intd\bW_t,\qquad \mu_t=\Law(\bX_t),
-								\]
-								<span class="muted">nonlinear Fokker–Planck: \(\partial_t\mu = -\nabla\!\cdot(\bb(\cdot,\mu)\mu)+\tfrac12\nabla\!\cdot(\Sigma\Sigma^\top\nabla\mu)\). Kinetic example: Vlasov–Poisson, with \(f(\bx,\bv,t)\) on phase space.</span>
-							</div>
-							<div class="note blue fragment push">
-								The drift is a function of <em>state and law</em>, \(\bb:\Rd\times\Ptwo\to\Rd\). <b>The object of interest is a law \(\mu_t\)</b>, not a labeled configuration — everything in this talk lives on the space of probability measures.
+						</div>
+
+						<div class="fragment" data-fragment-index="0">
+							<div class="mf-transition"><span>Discard the agent labels</span></div>
+							<div class="mf-step-card measure">
+								<div class="mf-step-label">
+									<div class="eyebrow">2 · Measure-valued state</div>
+									<h4>Keep only the empirical measure</h4>
+								</div>
+								<div class="mf-step-equation">
+									\[
+									\mu_t^N=\frac1N\sum_{j=1}^N\delta_{\bX_t^j}
+									\]
+								</div>
+								<div class="mf-measure-copy">
+									<b>The interaction depends on the population only through \(\mu_t^N\).</b>
+									Relabeling or reordering the agents leaves the dynamics unchanged.
+								</div>
 							</div>
 						</div>
-						<figure class="framed" style="flex:0.85;">
-							<video muted autoplay loop playsinline style="width:100%; max-height:440px;">
-								<source src="./fish_preview.mp4" type="video/mp4">
-							</video>
-							<figcaption>~1000 fish in a tank (Walter &amp; Couzin 2021): what we can film.</figcaption>
-						</figure>
+
+						<div class="fragment" data-fragment-index="1">
+							<div class="mf-transition"><span>Let <i>N</i>&nbsp;&rarr;&nbsp;&infin;</span></div>
+							<div class="mf-step-card limit">
+								<div class="mf-step-label">
+									<div class="eyebrow">3 · Mean-field limit</div>
+									<h4>One particle coupled to its law</h4>
+								</div>
+								<div class="mf-step-equation">
+									\[
+									\intd \bX_t = \bb(\bX_t,\mu_t)\,\intd t + \Sigma\,\intd\bW_t,
+									\qquad \mu_t=\Law(\bX_t).
+									\]
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
-				<aside class="notes">Set up the McKean–Vlasov picture; emphasize that the state is a measure and particle labels carry no meaning.</aside>
+				<aside class="notes">
+					Build the reduction in three steps. Start with the labeled particle system. Next discard arbitrary labels by representing the population with its empirical measure; the interaction depends on the population only through that measure. Finally take the large-population limit to obtain the McKean–Vlasov law.
+
+					[Sources]
+					McKean (1966), A Class of Markov Processes Associated with Nonlinear Parabolic Equations, doi:10.1073/pnas.56.6.1907.
+					Sznitman (1991), Topics in propagation of chaos, Lecture Notes in Mathematics 1464.
+					[/Sources]
+				</aside>
 			</section>
 
 			<!-- ===================================================== Roadmap -->
 			<section data-menu-title="Roadmap">
 				<div class="slide">
 					<div class="eyebrow">Roadmap</div>
-					<h2>Two gaps between a mean-field model and reality</h2>
+					<h2>A three-step loop from particle data to corrected forecasts</h2>
 					<div class="body">
-						<div class="flow small">
+						<div class="flow roadmap-flow">
 							<div class="node learn">
-								<div class="eyebrow">Part I — learn</div>
-								<span class="accent">Gap 1.</span> \(\bb\) is unknown, or has no closed form: normalized interactions, density-dependent speeds, cell–chemical coupling.<br>
-								<b>MVNN</b> — a neural network that takes a <em>measure</em> as input and learns \(\bb_\theta(\bx,\mu)\) from particle trajectories.
+								<div class="eyebrow">Part I</div>
+								<div class="roadmap-verb">Learn</div>
+								<div class="roadmap-problem">Unknown dynamics</div>
+								<div class="roadmap-route">Particle trajectories \(\longrightarrow\) <b>\(\bb_\theta(\bx,\mu)\)</b></div>
 							</div>
 							<div class="arrow">&#8594;</div>
 							<div class="node model">
-								<div class="eyebrow">Forecast</div>
-								Roll out \(\intd\bY=\bmodel(\bY,\nu)\intd t+\Sigma\intd\bW\) with \(N\) particles.<br>
-								<span class="accent">Gap 2.</span> Every model — learned or first-principles — is biased and mis-initialized, so the forecast <em>drifts</em>.
+								<div class="eyebrow">Model rollout</div>
+								<div class="roadmap-verb">Forecast</div>
+								<div class="roadmap-problem">Evolve the population</div>
+								<div class="roadmap-route">Mean-field model \(\longrightarrow\) <b>\(N\)-particle forecast</b></div>
 							</div>
 							<div class="arrow">&#8594;</div>
 							<div class="node nudge">
-								<div class="eyebrow">Parts II–III — correct</div>
-								Observations are <em>macroscopic</em>: images and densities (II), hydrodynamic moments \((\rho,\bu,T)\) (III) — no particle labels.<br>
-								<b>Nudging</b> — the Wasserstein gradient of a measure-level misfit, evaluated at the particles.
+								<div class="eyebrow">Parts II–III</div>
+								<div class="roadmap-verb">Correct</div>
+								<div class="roadmap-problem">Forecast drift</div>
+								<div class="roadmap-route">Macroscopic data \(\longrightarrow\) <b>particle nudging</b></div>
 							</div>
 						</div>
-						<div class="note blue fragment">
-							<b>One principle.</b> Formulate on probability measures — permutation invariant, well posed in the mean-field limit — and realize on particles:
-							learned <em>embeddings</em> \(\langle\varphi_\emb,\mu\rangle\) for learning, <em>Wasserstein gradients</em> \(-\nabla\,\delta J/\delta\mu\) for correction.
+						<div class="note blue roadmap-principle fragment">
+							<b>One principle:</b> formulate on measures; realize on particles.
 						</div>
-						<p class="small faint push">
-							Today: the three building blocks, what we can prove for each (well-posedness, propagation of chaos, approximation, error decay, an obstruction),
-							and experiments from opinion dynamics to a real fish school and plasma PIC simulations.
-						</p>
 					</div>
 				</div>
-				<aside class="notes">This is the story arc. Learn the drift; forecast; correct with macroscopic data. Keep coming back to the principle.</aside>
+				<aside class="notes">
+					Keep this slide at the level of the story arc. Part I learns an unknown mean-field drift from particle trajectories. The learned or first-principles model produces an (N)-particle forecast. Parts II–III correct forecast drift using macroscopic observations — images, densities, and hydrodynamic moments — through Wasserstein nudging. The technical guarantees and experiments appear in the corresponding sections.
+				</aside>
 			</section>
 
 			<!-- ===================================================== Divider I -->
@@ -391,12 +573,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<div class="slide" style="justify-content:center;">
 					<div class="eyebrow">Part I</div>
 					<h1>Learning the drift from particle data</h1>
-					<div class="thesis">A neural network whose input is a probability measure — and the guarantees that make it a genuine mean-field model.</div>
-					<div class="inside">
-						<div><b>Architecture</b>measure-valued neural network</div>
-						<div><b>Theory</b>well-posedness · propagation of chaos · approximation rates</div>
-						<div><b>Experiments</b>Motsch–Tadmor · 2D swarms · multi-group · second order</div>
-					</div>
+					<div class="thesis">Learn \(\bb(\bx,\mu)\) directly from trajectories as a function of the population law.</div>
 				</div>
 			</section>
 
@@ -404,125 +581,156 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="I. Learning the drift" style="--part:#0A7F5E;">
 				<div class="slide">
 					<div class="eyebrow">Part I — learning the drift</div>
-					<h2>Learning \(\bb(\bx,\mu)\) from particle trajectories</h2>
-					<div class="body row small">
-						<div class="stackv">
-							<div class="card">
-								<h4>Data</h4>
-								\(M\) trajectories of \(N\) particles at times \(t_0&lt;\dots&lt;t_L\): \(\{\bX^i_{t_\ell,m}\}\),
-								velocities by finite differences \(\bV^i_{t_\ell,m}=(\bX^i_{t_{\ell+1},m}-\bX^i_{t_\ell,m})/\Delta t\),
-								empirical law \(\hat\mu_{t_\ell,m}=\frac1N\sum_j\delta_{\bX^j_{t_\ell,m}}\).
+					<h2>Why learning \(\bb(\bx,\mu)\) is hard</h2>
+					<div class="body">
+						<div class="learning-setup">
+							<div class="setup-block given">
+								<div class="setup-label">Given by particle trajectories</div>
+								<div class="setup-main">Particle configurations evolving in time</div>
+								<div class="setup-detail">The data tell us where the particles move.</div>
 							</div>
-							<div class="card fragment">
-								<h4>Goal</h4>
-								\(\bb:\Rd\times\Ptwo\to\Rd\) with \(\intd\bX=\bb(\bX,\mu)\intd t+\sigma\intd\bB\); diffusion known (or zero).
-							</div>
-							<div class="card mtight fragment">
-								<h4>The standard ansatz is pairwise</h4>
-								<span class="muted">Lu–Maggioni–Tang–Zhong; Feng et al.; mean-field WSINDy:</span>
-								\[
-								\bb(\bx,\mu)=\int\phi(\|\by-\bx\|)(\by-\bx)\,\mu(\intd\by)\quad\text{— linear in } \mu .
-								\]
+							<div class="setup-arrow">&rarr;</div>
+							<div class="setup-block learn">
+								<div class="setup-label">Unknown · learn from data</div>
+								<div class="setup-main">\(\bb:\Rd\times\Ptwo\to\Rd\)</div>
+								<div class="setup-detail">How the population law changes a particle's drift.</div>
 							</div>
 						</div>
-						<div class="stackv">
-							<div class="card fragment">
-								<h4>Many systems are nonlinear in \(\mu\)</h4>
-								<ul class="tight">
-									<li>Motsch–Tadmor, normalized influence: \(\displaystyle \dot X^i=\frac{\sum_j\phi(|X^j-X^i|)(X^j-X^i)}{\sum_k\phi(|X^k-X^i|)}\)</li>
-									<li>global order parameters: \(\bb=\gamma(M_\mu-x)+(a-\alpha M_\mu^2)x-\beta x^3\)</li>
-									<li>crowds: speed = function of local density; cells: chemical field of the whole population.</li>
-								</ul>
+						<div class="obstacle-heading">The model class must overcome three obstacles</div>
+						<div class="obstacle-grid">
+							<div class="obstacle fragment">
+								<div class="obstacle-no">01 · computation</div>
+								<h4>Direct interactions are expensive</h4>
+								<div class="equation">\(\displaystyle \bb_i=\frac1N\sum_{j=1}^{N}K(\bX_i,\bX_j),\quad i=1,\ldots,N\)</div>
+								<div class="signal">all drifts: \(O(N^2)\)</div>
+								<p>Evaluating every drift touches every particle pair.</p>
 							</div>
-							<div class="note green fragment">
-								<b>Wanted.</b> A hypothesis class that is a genuine function of the measure, permutation invariant, costs \(O(N)\) per evaluation (pairwise sums cost \(O(N^2)\)), and comes with mean-field guarantees.
+							<div class="obstacle fragment">
+								<div class="obstacle-no">02 · expressivity</div>
+								<h4>Pairwise models are linear in the measure</h4>
+								<div class="equation">\(\displaystyle \bb(\bx,\mu)=\int K(\bx,\by)\,\mu(\intd\by)\)</div>
+								<div class="signal">linear in \(\mu\)</div>
+								<p>They cannot express nonlinear many-body effects beyond additive pairs.</p>
+							</div>
+							<div class="obstacle fragment">
+								<div class="obstacle-no">03 · input space</div>
+								<h4>The population input is a probability measure</h4>
+								<div class="model-space-maps">
+									<div class="space-map mlp">
+										<div class="space-label">Standard MLP</div>
+										<div class="space-formula">\(F_\theta:\mathbb R^{Nd}\to\mathbb R^{Nd},\quad \bX\mapsto\mathbf b\)</div>
+										<div class="signal">fixed dimension \(Nd\) · order-sensitive</div>
+									</div>
+									<div class="space-map">
+										<div class="space-label">Operator learning</div>
+										<div class="space-formula">\(\mathcal G_\theta:\mathcal A\to\mathcal U,\quad a(\cdot)\mapsto u(\cdot)\)</div>
+										<div class="signal">function space \(\longrightarrow\) function space</div>
+									</div>
+									<div class="space-map target">
+										<div class="space-label">Mean-field drift</div>
+										<div class="space-formula">\(\bb:\Rd\times\Ptwo\to\Rd\)</div>
+										<div class="space-note">state + probability measure \(\longrightarrow\) drift</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<aside class="notes">Pairwise kernels are linear functionals of the measure. Normalizations and order parameters break that. We want to learn an operator on the Wasserstein space.</aside>
+				<aside class="notes">
+					Keep the setup conceptual here: the observed object is a collection of particle trajectories, while the unknown is the complete map from a state and a population law to the drift. Introduce the empirical-measure and finite-difference notation later, when the training pairs and loss are discussed. Following the paper's introduction, emphasize three obstacles. First, explicit all-pairs evaluation costs O(N squared) for N particles. Second, an additive pairwise ansatz is linear in the empirical measure and cannot represent nonlinear many-body effects beyond a superposition of two-body forces; normalized interactions are one example, not the main summary. Third, a standard MLP is a finite-dimensional vector-to-vector map, with a dimension fixed by N, and is order-sensitive unless symmetry is imposed. Neural operators instead learn maps between function spaces, typically for functions defined on structured domains. The mean-field drift has a different domain: its second input is a probability measure. These requirements motivate an architecture defined directly on measures.
+					[Sources]
+					- Lyu et al., “MVNN: A Measure-Valued Neural Network for Learning McKean–Vlasov Dynamics from Particle Data,” Introduction and Sections 2.1–2.2, local manuscript: /Users/liyaolyu/Documents/github/papers/Mean-field-kernel/rebuttal/main.tex.
+					[/Sources]
+				</aside>
 			</section>
 
 			<!-- ===================================================== I. Architecture -->
 			<section data-menu-title="MVNN architecture" style="--part:#0A7F5E;">
 				<div class="slide">
 					<div class="eyebrow">Part I — learning the drift</div>
-					<h2>Measure-valued neural network (MVNN)</h2>
-					<div class="body small">
-						<div class="card">
-							<b>Cylindrical functionals</b> \(\;\mu\mapsto F\big(\langle g_1,\mu\rangle,\dots,\langle g_n,\mu\rangle\big)\)
-							are dense on compact subsets of Wasserstein space (Guo–Pham–Wei 2023). <span class="accent">Idea: learn the test functions.</span>
-						</div>
-						<div class="card mtight fragment">
-							\[
-							\bb_\theta(\bx,\mu)=\varphi_\intn\!\Big(\bx,\;\big\langle\varphi_\emb(\cdot;\theta_\emb),\mu\big\rangle;\theta_\intn\Big),
-							\qquad
-							\varphi_\emb:\Rd\to\mathbb R^k,\quad \varphi_\intn:\Rd\times\mathbb R^k\to\Rd .
-							\]
-							<div class="net" style="margin:6px 0 8px 0;">
-								<div class="nb">particles \(\{\bX^j\}_{j=1}^N\)</div>
-								<div class="ar">&#8594;</div>
-								<div class="nb emb">\(\varphi_\emb\) per particle</div>
-								<div class="ar">&#8594;</div>
-								<div class="nb">mean \(\;\bz=\frac1N\sum_j\varphi_\emb(\bX^j)\)</div>
-								<div class="ar">&#8594;</div>
-								<div class="nb int">\(\varphi_\intn(\bx,\bz)\)</div>
-								<div class="ar">&#8594;</div>
-								<div class="nb">\(\bb_\theta(\bx,\mu^N)\)</div>
+					<h2>Measure-Valued Neural Network (MVNN)</h2>
+					<div class="body">
+						<div class="mvnn-definition">Two neural networks connected by one population average.</div>
+						<div class="mvnn-diagram">
+							<div class="mvnn-stage">
+								<svg class="particle-icon" viewBox="0 0 140 100" aria-hidden="true">
+									<circle cx="24" cy="25" r="8"/><circle cx="62" cy="17" r="7"/><circle cx="105" cy="27" r="9"/>
+									<circle cx="42" cy="52" r="9"/><circle cx="82" cy="48" r="7"/><circle cx="119" cy="58" r="8"/>
+									<circle cx="20" cy="79" r="7"/><circle cx="65" cy="80" r="9"/><circle cx="101" cy="82" r="7"/>
+								</svg>
+								<div class="stage-name">Population</div>
+								<div class="stage-math">\(\bX^1,\ldots,\bX^N\sim\mu\)</div>
 							</div>
-							On \(\mu^N\) the embedding is a particle average: <b>permutation invariant</b>, one pass per particle, <b>\(O(N)\) cost</b>.
+							<div class="mvnn-arrow">&rarr;</div>
+							<div class="mvnn-stage">
+								<svg class="nn-icon" viewBox="0 0 140 100" aria-hidden="true">
+									<path class="edges" d="M20 25L70 15 M20 25L70 38 M20 25L70 62 M20 50L70 15 M20 50L70 38 M20 50L70 62 M20 75L70 38 M20 75L70 62 M70 15L120 30 M70 38L120 30 M70 38L120 70 M70 62L120 30 M70 62L120 70 M70 85L120 70"/>
+									<g class="nodes"><circle cx="20" cy="25" r="7"/><circle cx="20" cy="50" r="7"/><circle cx="20" cy="75" r="7"/><circle cx="70" cy="15" r="7"/><circle cx="70" cy="38" r="7"/><circle cx="70" cy="62" r="7"/><circle cx="70" cy="85" r="7"/><circle cx="120" cy="30" r="7"/><circle cx="120" cy="70" r="7"/></g>
+								</svg>
+								<div class="stage-name">Shared embedding network</div>
+								<div class="stage-math">\(\varphi_\emb(\bX^j)\)</div>
+							</div>
+							<div class="mvnn-arrow">&rarr;</div>
+							<div class="mvnn-stage">
+								<div class="pool-icon">\(\frac1N\sum\)</div>
+								<div class="stage-name">Population average</div>
+								<div class="stage-math">\(\displaystyle \bz_\mu=\frac1N\sum_{j=1}^N\varphi_\emb(\bX^j)\)</div>
+							</div>
+							<div class="mvnn-arrow">&rarr;</div>
+							<div class="mvnn-stage">
+								<svg class="nn-icon int" viewBox="0 0 140 100" aria-hidden="true">
+									<path class="edges" d="M20 25L70 15 M20 25L70 38 M20 25L70 62 M20 50L70 15 M20 50L70 38 M20 50L70 62 M20 75L70 38 M20 75L70 62 M70 15L120 30 M70 38L120 30 M70 38L120 70 M70 62L120 30 M70 62L120 70 M70 85L120 70"/>
+									<g class="nodes"><circle cx="20" cy="25" r="7"/><circle cx="20" cy="50" r="7"/><circle cx="20" cy="75" r="7"/><circle cx="70" cy="15" r="7"/><circle cx="70" cy="38" r="7"/><circle cx="70" cy="62" r="7"/><circle cx="70" cy="85" r="7"/><circle cx="120" cy="30" r="7"/><circle cx="120" cy="70" r="7"/></g>
+								</svg>
+								<div class="stage-name">Interaction network</div>
+								<div class="stage-math">\(\varphi_\intn(\bx,\bz_\mu)\)</div>
+							</div>
+							<div class="mvnn-arrow">&rarr;</div>
+							<div class="mvnn-output">
+								<div class="output-math">\(\bb_\theta(\bx,\mu)\)</div>
+								<div class="output-label">drift</div>
+							</div>
 						</div>
-						<div class="card fragment">
-							<h4>Training</h4>
-							\(\theta^\star\in\arg\min_\theta \frac{1}{MLN}\sum_{m,\ell,i}\big\|\bV^i_{t_\ell,m}-\bb_\theta(\bX^i_{t_\ell,m},\hat\mu_{t_\ell,m})\big\|^2\)
-							— for \(\sigma\equiv\sigma I\) this is the Euler–Maruyama discretization of the Girsanov log-likelihood (MSE = MLE). Adam in JAX.
-						</div>
-						<div class="card fragment">
-							<h4>Extensions</h4>
-							Multi-group: one embedding per group, \(\bb_k(\bx,\mu_1,\dots,\mu_K)\approx\varphi_{\intn,k}(\bx,\bz_1,\dots,\bz_K)\).
-							Second order: \(\varphi_\intn(\bx,\bv,\langle\varphi_\emb,\mu\rangle)\) on phase space \(\to\) acceleration.
-						</div>
+						<div class="note green mvnn-caption"><b>Key idea.</b> The population enters only through the averaged feature \(\bz_\mu\).</div>
 					</div>
 				</div>
-				<aside class="notes">Weak-form flavour: the network reads the measure through learned test functions, like a finite-element method reads a function through integrals.</aside>
+				<aside class="notes">
+					MVNN stands for Measure-Valued Neural Network. Read the diagram from left to right. The same embedding network is applied independently to every particle. Averaging the resulting features produces a finite population representation z_mu. The interaction network then combines the query state x with z_mu to produce the drift. Because the population enters through one average, the architecture is permutation invariant and its particle evaluation is linear in N. Training minimizes the velocity MSE; the detailed empirical-measure and finite-difference notation can be introduced here verbally or on a later training slide.
+					[Sources]
+					- Lyu et al., “MVNN: A Measure-Valued Neural Network for Learning McKean–Vlasov Dynamics from Particle Data,” Section 2.1, local manuscript: /Users/liyaolyu/Documents/github/papers/Mean-field-kernel/rebuttal/main.tex.
+					[/Sources]
+				</aside>
 			</section>
 
 			<!-- ===================================================== I. Guarantees -->
 			<section data-menu-title="MVNN guarantees" style="--part:#0A7F5E;">
 				<div class="slide">
 					<div class="eyebrow">Part I — learning the drift</div>
-					<h2>What can we guarantee for the learned dynamics?</h2>
+					<h2>Three guarantees for MVNN</h2>
 					<div class="body small">
 						<div class="thm">
-							<span class="lbl">Proposition</span><span class="ttl">Well-posedness and propagation of chaos</span>
+							<span class="lbl">1</span><span class="ttl">Well posed</span>
 							<div class="stmt">
-								If \(\varphi_\emb,\varphi_\intn\) are globally Lipschitz, the learned McKean–Vlasov SDE
-								\(\intd\bX^\theta=\bb_\theta(\bX^\theta,f^\theta_t)\intd t+\sigma\intd\bB\) has a unique strong solution, and the learned \(N\)-particle system is \(f^\theta\)-chaotic:
-								\(\;\lim_{N\to\infty}W_2\big(f^{1,\theta,N}_{[0,T]},f^\theta_{[0,T]}\big)=0\).
-								<span class="intuition"><b>Meaning:</b> the network trained at finite \(N\) defines a genuine mean-field model — simulate it at any \(N\).</span>
+								Lipschitz networks define a unique McKean–Vlasov dynamics.
 							</div>
 						</div>
 						<div class="thm fragment">
-							<span class="lbl">Theorem</span><span class="ttl">Universal approximation (after Pham–Warin)</span>
+							<span class="lbl">2</span><span class="ttl">Consistent across particle counts</span>
 							<div class="stmt">
-								For any continuous \(\bb^\star:\Rd\times\Ptwo\to\Rd\) with \(\|\bb^\star\|_{L^2(\zeta)}&lt;\infty\) and any \(\varepsilon&gt;0\) there are \(k\), \(\varphi_\emb\), \(\varphi_\intn\) with
-								\(\|\bb^\star-\varphi_\intn(\cdot,\langle\varphi_\emb,\cdot\rangle)\|_{L^2(\zeta)}\le\varepsilon\).
+								Propagation of chaos: \(\mu_t^{\theta,N}\longrightarrow f_t^\theta\) as \(N\to\infty\).
 							</div>
 						</div>
 						<div class="thm fragment">
-							<span class="lbl">Theorem</span><span class="ttl">Rates: curse of dimensionality vs. order parameters</span>
+							<span class="lbl">3</span><span class="ttl">Expressive</span>
 							<div class="stmt">
-								In general a partition-of-unity embedding needs \(C_\Omega=\varepsilon^{-d}\) features and \(H\sim\varepsilon^{-C_\Omega-d}\) ReLU units.
-								If the drift depends on the measure through finitely many features (order parameters),
-								\(\bb^\star(\bx,\mu)=G\big(\bx,\langle g_1,\mu\rangle,\dots,\langle g_r,\mu\rangle\big)\) with Lipschitz \(G\) and \(g\), then ReLU networks achieve
-								\(\sup_{\bx,\mu}\|\bb^\star-\bb_\theta\|\le\varepsilon\) with depth \(O(\log\varepsilon^{-1})\) and widths
-								\(W_\intn=O(\varepsilon^{-(d+r)})\), \(W_\emb=O(\varepsilon^{-d})\).
-								<span class="intuition"><b>Meaning:</b> the embedding network learns the order parameters; the cost is set by \(d+r\), not by \(\varepsilon^{-d}\) test functions.</span>
+								For every continuous \(\bb^\star\) and \(\varepsilon&gt;0\), MVNN can achieve \(\|\bb^\star-\bb_\theta\|_{L^2}\le\varepsilon\). With \(r\) order parameters, complexity is governed by \(d+r\).
 							</div>
 						</div>
 					</div>
 				</div>
-				<aside class="notes">Three layers of guarantees: the learned object is a mean-field model; the class is rich enough; and it is efficient exactly when physics says it should be (low-dimensional measure dependence).</aside>
+				<aside class="notes">
+					Assume the embedding and interaction networks are globally Lipschitz. Then the learned McKean–Vlasov SDE has a unique strong solution and the learned (N)-particle system is chaotic, so a model trained at one finite (N) can be simulated at another. Universal approximation follows the cylindrical-functional construction. In general, approximation suffers from a curse of dimensionality; when the drift depends on the law through (r) order parameters, ReLU depth is (O(\log\varepsilon^{-1})), interaction width is (O(\varepsilon^{-(d+r)})), and embedding width is (O(\varepsilon^{-d})).
+				</aside>
 			</section>
 
 			<!-- ===================================================== I. Motsch–Tadmor -->
@@ -530,33 +738,38 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift</div>
-						<h2>Motsch–Tadmor dynamics: normalized, non-pairwise</h2>
+						<h2>MVNN captures normalized interactions</h2>
 						<div class="body">
 							<div class="mtight">
 							\[
-							\dot X^i_t=\frac{\sum_{j}\phi(|X^j_t-X^i_t|)\,(X^j_t-X^i_t)}{\sum_{k}\phi(|X^k_t-X^i_t|)},\qquad \phi(r)=e^{-(r/\ell)^2},\quad \ell=0.5 .
+							\dot X^i_t=\frac{\sum_{j}\phi(|X^j_t-X^i_t|)\,(X^j_t-X^i_t)}{\sum_{k}\phi(|X^k_t-X^i_t|)} .
 							\]
 							</div>
 							<div class="cols small">
-								<ul style="flex:0.9;">
-									<li>Train: \(N=16{,}000\), \(M=100\) trajectories, \(T=2\), \(\Delta t=10^{-2}\); initial laws = random Gaussian mixtures (2–8 modes).</li>
-									<li>Test: autonomous rollout of the learned \(N\)-particle system from <b>unseen</b> initial laws.</li>
-									<li>Baselines: mean-field WSINDy \(f(x)+\int K(y-x)\mu(\intd y)\), linear in \(\mu\); online parameter estimation, which needs the form of \(\bb\) and a good initial guess; a Gaussian-process pairwise kernel.</li>
-									<li class="fragment">The normalization makes \(\bb\) a <em>nonlinear</em> functional of \(\mu\): additive and pairwise classes cannot represent it; MVNN needs no functional form.</li>
-								</ul>
-								<figure class="framed" style="flex:1.15;">
+								<div class="stackv" style="flex:0.68;">
+									<div class="note green">
+										<b>Why it is hard.</b> The normalization is nonlinear in \(\mu\).
+									</div>
+									<div class="card fragment">
+										<b>Train:</b> Gaussian-mixture laws<br>
+										<b>Test:</b> autonomous rollouts from unseen laws
+									</div>
+								</div>
+								<figure class="framed" style="flex:1.32;">
 									<img src="./figure/mvnn/result_wsindy_param_est_mvnn_N_16000_seed_1.png" style="width:100%;">
-									<figcaption>Unseen initial law, \(N=16{,}000\): MVNN (blue) vs. mean-field WSINDy (orange) vs. online parameter estimation (green) vs. reference (red), \(t=0,1,2\).</figcaption>
+									<figcaption>Unseen initial law, \(t=0,1,2\): MVNN tracks the reference while linear-in-\(\mu\) baselines drift.</figcaption>
 								</figure>
 							</div>
 						</div>
 					</div>
-					<aside class="notes">The normalization makes the drift a nonlinear functional of the measure: additive/pairwise classes cannot represent it. MVNN does not need the functional form.</aside>
+					<aside class="notes">
+						Here \(\phi(r)=e^{-(r/\ell)^2}\) with \(\ell=0.5\). Training uses \(N=16{,}000\), \(M=100\) trajectories, \(T=2\), \(\Delta t=10^{-2}\), and random Gaussian-mixture initial laws with 2–8 modes. Baselines include mean-field WSINDy, online parameter estimation, and a Gaussian-process pairwise kernel. The normalization makes the drift nonlinear in the measure, so additive and pairwise classes cannot represent it; MVNN receives no functional form.
+					</aside>
 				</section>
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · optional</div>
-						<h2>Drifts with global order parameters</h2>
+						<h2>MVNN finds a global order parameter</h2>
 						<div class="body">
 							<div class="mtight">
 							\[
@@ -565,30 +778,31 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							</div>
 							<figure class="framed">
 								<img src="./figure/mvnn/compare_wsindy.png" style="max-height:280px;">
-								<figcaption>Forecast densities and \(L^2\) error over 36 held-out trajectories. Time-averaged \(W_1\) error: local PDE-WSINDy 0.27, kernel WSINDy 0.091, online parameter estimation 0.18, MVNN 0.005–0.006.</figcaption>
+								<figcaption>Held-out rollouts: MVNN gives the lowest density error.</figcaption>
 							</figure>
 							<div class="note green small push">
-								The term \((M_\mu)^2x\) is <em>quadratic</em> in the measure: outside any local PDE library and any additive pairwise class. MVNN needs no prescribed moment, kernel form, or parametric family.
+								<b>Takeaway.</b> The network captures \((M_\mu)^2\) without being told which moment to use.
 							</div>
 						</div>
 					</div>
+					<aside class="notes">The term \((M_\mu)^2x\) is quadratic in the measure and lies outside local PDE libraries and additive pairwise classes. Across 36 held-out trajectories, the time-averaged \(W_1\) error is 0.27 for local PDE-WSINDy, 0.091 for kernel WSINDy, 0.18 for online parameter estimation, and 0.005–0.006 for MVNN.</aside>
 				</section>
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · optional</div>
-						<h2>Data efficiency and cost</h2>
+						<h2>Accuracy and linear cost</h2>
 						<div class="body row" style="align-items:center;">
 							<figure class="framed" style="flex:1.3;">
 								<img src="./figure/mvnn/mvnn_training_test_learning_curve.png" style="max-height:360px;">
-								<figcaption>Learning curve in the number of training trajectories \(M\) (30 held-out trajectories, 3 seeds).</figcaption>
+								<figcaption>Held-out error vs. training trajectories \(M\).</figcaption>
 							</figure>
 							<figure class="framed" style="flex:0.8;">
 								<img src="./figure/mvnn/mvnn_gp_time_dual_axis.png" style="max-height:360px;">
-								<figcaption>Rollout time vs. \(N\): MVNN vs. a Gaussian-process pairwise model on matched data.</figcaption>
+								<figcaption>Rollout time vs. particle count \(N\).</figcaption>
 							</figure>
 						</div>
-						<p class="small faint" style="margin-top:10px;">GP training needs a dense \(n_{\rm obs}\times n_{\rm obs}\) kernel matrix (\(O(n_{\rm obs}^3)\)); MVNN rollouts scale linearly in \(N\).</p>
 					</div>
+					<aside class="notes">The learning curve uses 30 held-out trajectories and 3 seeds. The Gaussian-process baseline requires a dense \(n_{\rm obs}\times n_{\rm obs}\) kernel matrix and cubic training cost, while MVNN rollouts scale linearly in \(N\).</aside>
 				</section>
 			</section>
 
@@ -597,57 +811,48 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift</div>
-						<h2>2D aggregation: transfer to unseen initial geometries</h2>
+						<h2>Generalization in 2D</h2>
 						<div class="body">
-							<p class="small">
-								\(\dot{\bX}^i=\frac1N\sum_j\phi(\|\bX^j-\bX^i\|)(\bX^j-\bX^i)\), \(\;\phi(r)=c_{\rm rep}e^{-(r/\ell_{\rm rep})^2}-c_{\rm att}e^{-(r/\ell_{\rm att})^2}\) (short-range repulsion, long-range attraction), \(N=16{,}000\).
-								<b>Trained only on noisy single rings</b> of random radius and width; tested on geometries never seen in training.
-							</p>
+							<div class="note green small"><b>Train:</b> noisy single rings &nbsp;·&nbsp; <b>Test:</b> double-ring and asymmetric initial measures</div>
 							<div class="cols">
 								<figure class="framed">
 									<img src="./figure/mvnn/simple_2d_2ring.png" style="max-height:310px;">
-									<figcaption>Double ring: reference (top) vs. learned MVNN dynamics (bottom), \(t=0,1,2\).</figcaption>
+									<figcaption>Double ring: reference / MVNN, \(t=0,1,2\).</figcaption>
 								</figure>
 								<figure class="framed">
 									<img src="./figure/mvnn/simple_2d_hl.png" style="max-height:310px;">
-									<figcaption>Binary asymmetric initialization (dense left, sparse right): the density gradient and the asymmetric aggregation are reproduced.</figcaption>
+									<figcaption>Asymmetric initialization: reference / MVNN.</figcaption>
 								</figure>
 							</div>
 							<div class="note green small push">
-								Same governing law and parameters, different initial <em>measure</em>: the learned \(\bb_\theta(\bx,\mu)\) transfers across initial-distribution geometries — evidence that it learned the measure dependence rather than memorizing trajectories.
+								<b>Same law, new initial measures:</b> transfer supports learned measure dependence rather than trajectory memorization.
 							</div>
 						</div>
 					</div>
-					<aside class="notes">Also disk initializations (not shown). We do not claim extrapolation to other dynamics or parameters.</aside>
+					<aside class="notes">The model is trained at \(N=16{,}000\) on noisy single rings with random radius and width under short-range repulsion and long-range attraction. The double ring and asymmetric split are unseen initial geometries. Disk initializations are also tested but not shown. We do not claim extrapolation to different governing dynamics or parameters.</aside>
 				</section>
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · optional</div>
-						<h2>Heterogeneous groups and second-order systems</h2>
+						<h2>Groups and phase space</h2>
 						<div class="body row small">
 							<div class="stackv">
-								<p>
-									<b>Hierarchical 3-group system</b> (\(N=16{,}000/4{,}000/200\)), upper-triangular influence matrix
-									\(D=\Big(\begin{smallmatrix}5&10&0\\0&2&5\\0&0&1\end{smallmatrix}\Big)\), radii \((1,2.5,5)\).
-									MG-MVNN recovers the directional entrainment group 3 &rarr; 2 &rarr; 1.
-								</p>
+								<div class="note green"><b>Multiple groups.</b> Recover directed entrainment \(3\to2\to1\).</div>
 								<figure class="framed">
 									<img src="./figure/mvnn/simple_case_multi_sepcies_3.png" style="max-height:330px;">
-									<figcaption>Group densities (rows) vs. time; held-out, spatially separated initialization.</figcaption>
+									<figcaption>Held-out multi-group rollout.</figcaption>
 								</figure>
 							</div>
 							<div class="stackv">
-								<p>
-									<b>Second-order Cucker–Smale</b> \(\ddot{\bX}^i=\frac1N\sum_j\phi(\|\bX^j-\bX^i\|)(\dot{\bX}^j-\dot{\bX}^i)\):
-									learn \(\bb_\theta(\bx,\bv,\mu)\) on phase space from \((\bX,\bV,\bA)\) data.
-								</p>
+								<div class="note green"><b>Second order.</b> Learn acceleration \(\bb_\theta(\bx,\bv,\mu_{x,v})\) on phase space.</div>
 								<figure class="framed">
 									<img src="./figure/mvnn/gaussian_v.png" style="max-height:330px;">
-									<figcaption>Velocity distribution: reference (top) vs. learned (bottom), Gaussian initial position and velocity.</figcaption>
+									<figcaption>Held-out velocity distribution.</figcaption>
 								</figure>
 							</div>
 						</div>
 					</div>
+					<aside class="notes">The three-group experiment uses populations \(N=16{,}000/4{,}000/200\), an upper-triangular influence matrix, and separated initial groups; MG-MVNN recovers the directional entrainment. The second-order example is Cucker–Smale alignment, learned from position, velocity, and acceleration data on phase space.</aside>
 				</section>
 			</section>
 
@@ -655,28 +860,29 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="Bridge: model ≠ forecast">
 				<div class="slide">
 					<div class="eyebrow">From learning to assimilation</div>
-					<h2>A model is not a forecast</h2>
+					<h2>A learned model still drifts</h2>
 					<div class="body row">
 						<div class="stackv small" style="flex:1.15;">
-							<ul>
-								<li class="fragment fade-in-then-semi-out">Any model — learned or first-principles — carries a bias \(\mathbf R=\bmodel-\btrue\) and an initialization error; rolled out without feedback, the forecast <span class="accent">drifts</span>.
-									<span class="muted">Fish: the MVNN drift captures the circulation but loses coherence within seconds.</span></li>
-								<li class="fragment fade-in-then-semi-out">The data we get are <b>macroscopic</b>: pixel intensities and reconstructed densities, KDE of partially tracked <em>unlabeled</em> positions, hydrodynamic moments.</li>
-								<li class="fragment fade-in-then-semi-out"><b>Cross-scale mismatch.</b> Forecast = labeled configuration \(\{\bZ^i\}_{i=1}^N\); observation = permutation-invariant functional of its law.</li>
-								<li class="fragment fade-in-then-semi-out">EnKF: covariances between <em>labeled</em> coordinates. 4D-Var: lifting a density to a configuration is non-unique. Particle filters: weight degeneracy. Particle-flow filters: likelihoods on labeled states.</li>
-							</ul>
+							<div class="card">
+								<h4>Open loop</h4>
+								Model bias + initialization error \(\longrightarrow\) <span class="accent">forecast drift</span>
+							</div>
+							<div class="card fragment">
+								<h4>Observed</h4>
+								Densities or moments — macroscopic, unlabeled, permutation invariant
+							</div>
 							<div class="note blue fragment push">
-								<b>Goal.</b> Add a feedback term to the <em>particle</em> SDE that is driven only by the observed <em>density</em>, compares at the observation scale, and needs no matching, linearization, or ensemble covariances.
+								<b>Needed.</b> Compare distributions, then nudge particles.
 							</div>
 						</div>
 						<figure style="flex:0.85;">
 							<img src="./figure/fish_raw_row.png" style="width:100%;">
 							<img src="./figure/fish_density_row.png" style="width:93%; margin-top:10px;">
-							<figcaption>What is observed: raw frames, and the KDE density \(K_h*\hat\mu_t\) on a grid — no identities, no matching.</figcaption>
+							<figcaption>Raw frame \(\longrightarrow\) KDE density; identities are never observed.</figcaption>
 						</figure>
 					</div>
 				</div>
-				<aside class="notes">This is the hinge of the talk: the object we learned in Part I now becomes the biased model of Part II.</aside>
+				<aside class="notes">This is the hinge of the talk: the object learned in Part I becomes the biased model of Part II. In the fish example, the learned drift captures circulation but loses coherence within seconds. Conventional methods face a cross-scale mismatch: forecasts are labeled configurations while observations are functionals of the law. EnKF uses labeled-coordinate covariances; 4D-Var requires a non-unique lift from density to configuration; particle filters suffer weight degeneracy; and particle-flow filters typically require likelihoods on labeled states.</aside>
 			</section>
 
 			<!-- ===================================================== Divider II -->

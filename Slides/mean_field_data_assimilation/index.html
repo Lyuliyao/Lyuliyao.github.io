@@ -787,7 +787,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<!-- ===================================================== I. Guarantees -->
 			<section data-menu-title="MVNN: well-posedness" style="--part:#0A7F5E;">
 				<div class="slide">
-					<div class="eyebrow">Part I — learning the drift · guarantees 1/2</div>
+					<div class="eyebrow">Part I — learning the drift · guarantees 1/3</div>
 					<h2>The learned drift defines a genuine mean-field model</h2>
 					<div class="body small">
 						<div class="thm">
@@ -821,7 +821,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 
 			<section data-menu-title="MVNN: approximation" style="--part:#0A7F5E;">
 				<div class="slide">
-					<div class="eyebrow">Part I — learning the drift · guarantees 2/2</div>
+					<div class="eyebrow">Part I — learning the drift · guarantees 2/3</div>
 					<h2>How expressive is the architecture?</h2>
 					<div class="body small">
 						<div class="thm">
@@ -834,10 +834,44 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							</div>
 						</div>
 						<div class="thm fragment">
-							<span class="lbl">Theorem</span><span class="ttl">Approximation rate under low-dimensional measure dependence</span>
+							<span class="lbl">Theorem</span><span class="ttl">Quantitative approximation via finite-dimensional measure embeddings</span>
 							<div class="stmt">
-								Suppose the drift depends on the measure only through \(r\) order parameters,
-								\(\bb^\star(\bx,\mu)=G\big(\bx,\langle g_1,\mu\rangle,\dots,\langle g_r,\mu\rangle\big)\) on \([0,1]^d\) with \(G\) and \(g\) Lipschitz.
+								Let \(f:\Omega\times U\to\mathbb R\) be Lipschitz in the state and in \(W_1\), with all measures supported in \(\Omega=[-\gamma_1,\gamma_1]^d\). Cover \(\Omega\) by \(C_\Omega=\varepsilon^{-d}\) balls, take a partition of unity \(\{\omega_m\}\) subordinate to it, and embed \(\mu\mapsto\bu=\big(\langle\omega_1,\mu\rangle,\dots,\langle\omega_{C_\Omega},\mu\rangle\big)\). Then there are coefficients \(a_k\) and ReLU networks \(q_k\) with explicit depth, sparsity and weight bounds such that
+								\[
+								\sup_{\bx\in\Omega,\,\mu\in U}\Big|f(\bx,\mu)-\sum_{k=1}^{H}a_k\,q_k(\bx,\bu)\Big|\le\varepsilon,
+								\qquad
+								H=O\Big(\big((C_\Omega+d)\,C_\Omega d\big)^{\frac{C_\Omega+d}{2}}\,\varepsilon^{-C_\Omega-d}\Big).
+								\]
+								<span class="intuition"><b>Meaning:</b> exactly MVNN’s form — a finite embedding of \(\mu\) feeding an interaction network — made fully constructive. But a <em>fixed</em> histogram-type embedding needs \(C_\Omega=\varepsilon^{-d}\) features, and \(H\) blows up accordingly: the curse of dimensionality when \(\bb\) may be an arbitrary functional of \(\mu\).</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+				UAP comes from the density of cylindrical functionals on Wasserstein space. The quantitative theorem makes the same form constructive with a fixed partition-of-unity (histogram-type) embedding: everything is explicit — depth and sparsity polynomial in d+C_Omega, but C_Omega = epsilon^{-d} features are needed and the number of networks H and the weight bounds blow up like epsilon^{-C_Omega}. That worst case motivates the structural assumption on the next slide.
+				</aside>
+			</section>
+
+			<section data-menu-title="MVNN: approximation rate" style="--part:#0A7F5E;">
+				<div class="slide">
+					<div class="eyebrow">Part I — learning the drift · guarantees 3/3</div>
+					<h2>Approximation rate under low-dimensional measure dependence</h2>
+					<div class="body small">
+						<div class="thm">
+							<span class="lbl">Assumption</span><span class="ttl">Finite-dimensional measure dependency</span>
+							<div class="stmt">
+								On the family \(U\) of measures of interest, every functional is determined by \(r\) fixed feature functions:
+								\[
+								V(\mu)=G\big(\langle g_1,\mu\rangle,\dots,\langle g_r,\mu\rangle\big)\qquad\forall\,\mu\in U .
+								\]
+								<span class="intuition"><b>Meaning:</b> \(U\) lies on a finite-dimensional manifold inside \(\Ptwo\). Gaussians are the model case — determined by mean and covariance, \(r=d+d(d+1)/2\); flocking, consensus and aggregation are governed by a few order parameters.</span>
+							</div>
+						</div>
+						<div class="thm fragment">
+							<span class="lbl">Theorem</span><span class="ttl">Approximation rate of MVNN under the assumption</span>
+							<div class="stmt">
+								Suppose the drift depends on the measure only through the \(r\) features,
+								\(\bb^\star(\bx,\mu)=G\big(\bx,\langle g_1,\mu\rangle,\dots,\langle g_r,\mu\rangle\big)\) on \([0,1]^d\) with \(G\) and the \(g_i\) Lipschitz.
 								Then for every \(\varepsilon&gt;0\) there are deep ReLU networks achieving
 								\(\sup_{\bx,\mu}\|\bb^\star-\bb_\theta\|\le\varepsilon\) with
 								\[
@@ -845,13 +879,13 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 								W_\intn=O\big(\varepsilon^{-(d+r)}\big),\qquad
 								W_\emb=O\big(\varepsilon^{-d}\big).
 								\]
-								<span class="intuition"><b>Meaning:</b> the embedding network learns the order parameters, so the complexity is governed by \(d+r\). Without this structure, the constructive embedding needs \(\varepsilon^{-d}\) features — a curse of dimensionality that the low-dimensional physics removes.</span>
+								<span class="intuition"><b>Meaning:</b> the embedding network <em>learns</em> the \(r\) order parameters instead of the \(\varepsilon^{-d}\) fixed features of the previous theorem — the complexity is governed by \(d+r\), and the curse disappears.</span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<aside class="notes">
-					UAP comes from the density of cylindrical functionals on Wasserstein space; the rate theorem is the reason MVNN is practical: flocking, consensus and aggregation are governed by a few macroscopic order parameters, so r is small.
+					This is the reason MVNN is practical: flocking, consensus and aggregation are governed by a few macroscopic order parameters, so r is small. The Gaussian family is the canonical example of the assumption. Contrast with the previous slide: there the embedding was fixed and of size epsilon^{-d}; here the network learns the r features, and the rate is polynomial in epsilon^{-1} with exponent d+r.
 				</aside>
 			</section>
 
@@ -955,12 +989,16 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							</div>
 							<div class="cols">
 								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_2ring.png" style="max-height:300px;">
-									<figcaption>Double ring: reference (top) vs. MVNN (bottom), \(t=0,1,2\) — correct contraction, topology preserved.</figcaption>
+									<img src="./figure/mvnn/simple_2d_ring.png" style="max-height:280px;">
+									<figcaption>Single ring — the <b>training</b> geometry: reference (top) vs. MVNN (bottom), \(t=0,1,2\).</figcaption>
 								</figure>
 								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_hl.png" style="max-height:300px;">
-									<figcaption>Binary asymmetric (dense / sparse): gradient and asymmetric aggregation reproduced.</figcaption>
+									<img src="./figure/mvnn/simple_2d_2ring.png" style="max-height:280px;">
+									<figcaption>Double ring — <b>unseen</b>: correct contraction, topology preserved.</figcaption>
+								</figure>
+								<figure class="framed">
+									<img src="./figure/mvnn/simple_2d_hl.png" style="max-height:280px;">
+									<figcaption>Binary asymmetric — <b>unseen</b>: gradient and asymmetric aggregation reproduced.</figcaption>
 								</figure>
 							</div>
 						</div>
@@ -997,28 +1035,34 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<div class="slide">
 					<div class="eyebrow">From learning to assimilation</div>
 					<h2>A learned model still drifts</h2>
-					<div class="body row">
-						<div class="stackv small" style="flex:1.15;">
-							<div class="card">
-								<h4>Open loop</h4>
-								Model bias + initialization error \(\longrightarrow\) <span class="accent">forecast drift</span>
-							</div>
-							<div class="card fragment">
-								<h4>Observed</h4>
-								Densities or moments — macroscopic, unlabeled, permutation invariant
-							</div>
-							<div class="note blue fragment push">
-								<b>Needed.</b> Compare distributions, then nudge particles.
+					<div class="body small">
+						<div class="cols" style="align-items:center;">
+							<figure style="flex:1.02;">
+								<img src="./figure/fish_raw_row.png" style="width:100%;">
+								<img src="./figure/fish_density_row.png" style="width:93%; margin-top:10px;">
+								<figcaption>Top: overhead video frames, \(t=0\)–\(6.25\,\mathrm{s}\) — every bright streak is one fish. Bottom: the KDE density built from the tracks — the only usable observation.</figcaption>
+							</figure>
+							<div class="stackv" style="flex:0.98;">
+								<div class="card">
+									<h4>The example: a real fish school</h4>
+									\(N\approx1{,}126\) fish in a shallow tank, filmed from above and tracked frame by frame (TRex). The school circulates along the tank wall.
+								</div>
+								<div class="card fragment">
+									<h4>What is actually observed</h4>
+									Tracks are incomplete (occlusions, dropouts) and identities are not consistent across frames — so the observation is the <b>density</b>: macroscopic, unlabeled, permutation invariant.
+								</div>
+								<div class="card fragment">
+									<h4>Open loop drifts</h4>
+									An MVNN drift trained on this dataset (Part I) captures the mean circulation, but bias + initialization error make the free rollout <span class="accent">lose the school within seconds</span>.
+								</div>
+								<div class="note blue fragment push">
+									<b>Needed.</b> Compare distributions, then nudge particles.
+								</div>
 							</div>
 						</div>
-						<figure style="flex:0.85;">
-							<img src="./figure/fish_raw_row.png" style="width:100%;">
-							<img src="./figure/fish_density_row.png" style="width:93%; margin-top:10px;">
-							<figcaption>Raw frame \(\longrightarrow\) KDE density; identities are never observed.</figcaption>
-						</figure>
 					</div>
 				</div>
-				<aside class="notes">This is the hinge of the talk: the object learned in Part I becomes the biased model of Part II. In the fish example, the learned drift captures circulation but loses coherence within seconds. Conventional methods face a cross-scale mismatch: forecasts are labeled configurations while observations are functionals of the law. EnKF uses labeled-coordinate covariances; 4D-Var requires a non-unique lift from density to configuration; particle filters suffer weight degeneracy; and particle-flow filters typically require likelihoods on labeled states.</aside>
+				<aside class="notes">This is the hinge of the talk: the object learned in Part I becomes the biased model of Part II. In the fish example, the learned drift captures circulation but loses coherence within seconds. The tracker is TRex; at every frame a substantial fraction of trajectories carry a missing flag. Conventional methods face a cross-scale mismatch: forecasts are labeled configurations while observations are functionals of the law. EnKF uses labeled-coordinate covariances; 4D-Var requires a non-unique lift from density to configuration; particle filters suffer weight degeneracy; and particle-flow filters typically require likelihoods on labeled states.</aside>
 			</section>
 
 			<!-- ===================================================== Divider II -->

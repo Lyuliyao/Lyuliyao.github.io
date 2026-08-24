@@ -9,11 +9,9 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>从粒子到测度，再回到粒子｜平均场动力学的学习与数据同化</title>
-	<link rel="stylesheet" href="../UCLA/dist/reset.css">
-	<link rel="stylesheet" href="../UCLA/dist/reveal.css">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap">
+	<link rel="stylesheet" href="./vendor/reveal/dist/reset.css">
+	<link rel="stylesheet" href="./vendor/reveal/dist/reveal.css">
+	<link rel="stylesheet" href="./vendor/fonts/fonts.css">
 	<style>
 		/* =====================================================================
 		   Design tokens
@@ -154,6 +152,19 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			color: var(--ink-2); margin-top: 8px; text-align: center;
 		}
 		.reveal figure.framed img, .reveal figure.framed video { border: 1px solid var(--line-2); border-radius: 6px; }
+		.reveal .figure-selector { min-width: 0; text-align: center; }
+		.reveal .figure-options {
+			display: flex; justify-content: center; align-items: center; gap: 18px;
+			margin: 0 0 7px; min-height: 28px;
+		}
+		.reveal .figure-option {
+			appearance: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+			background: transparent; color: var(--muted); padding: 2px 2px 3px;
+			font: 600 16px/1.2 var(--sans); cursor: pointer;
+		}
+		.reveal .figure-option:hover, .reveal .figure-option:focus-visible { color: var(--ink); outline: none; border-bottom-color: var(--line); }
+		.reveal .figure-option.active { color: var(--part); border-bottom-color: var(--part); }
+		.reveal .figure-selector-2d figure img { width: auto; max-width: 100%; max-height: 330px; object-fit: contain; }
 
 		/* ---------- tables ---------- */
 		.reveal table { border-collapse: collapse; width: 100%; font-size: 0.84em; line-height: 1.3; }
@@ -179,6 +190,57 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			font-family: var(--sans); font-size: 15px; font-weight: 600; letter-spacing: 0.04em;
 			padding: 3px 12px; border-radius: 999px; background: var(--ground-2); border: 1px solid var(--line); color: var(--ink-2);
 		}
+		.reveal .result-hero {
+			background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px 7px;
+		}
+		.reveal .result-hero img { width: 100%; max-height: 345px; object-fit: contain; }
+		.reveal .result-hero.tg-animation img { max-height: 390px; }
+		.reveal .experiment-model {
+			font-family: var(--sans); font-size: 16px; line-height: 1.3; color: var(--ink-2);
+			border-left: 3px solid var(--part); background: var(--ground-2); padding: 7px 13px;
+		}
+		.reveal .experiment-model.definition { font-size: 19px; line-height: 1.35; padding: 8px 14px 9px; }
+		.reveal .experiment-model .model-name { color: var(--ink); font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+		.reveal .experiment-model .model-line { min-height: 25px; }
+		.reveal .initial-grid {
+			display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start;
+		}
+		.reveal .initial-panel { min-width: 0; border-top: 3px solid var(--ink); padding: 8px 5px 0; }
+		.reveal .initial-panel.prior { border-top-color: var(--part); }
+		.reveal .initial-panel h3 {
+			font-family: var(--sans); font-size: 20px; font-weight: 650; line-height: 1.2; margin: 0 0 3px; color: var(--ink);
+		}
+		.reveal .initial-panel .MathJax_SVG_Display { margin: 0.24em 0 !important; }
+		.reveal .setup-meaning { font-size: 16px; line-height: 1.3; color: var(--ink-2); margin-top: 4px; }
+		.reveal .setup-meta {
+			display: flex; flex-wrap: wrap; justify-content: center; gap: 5px 20px;
+			border-top: 1px solid var(--line); padding-top: 8px; font-size: 16px; line-height: 1.25; color: var(--ink-2);
+		}
+		.reveal .setup-meta b { color: var(--ink); }
+		.reveal .result-with-ratios img { max-height: 285px; }
+		.reveal .result-hero.tg-animation.result-with-ratios img { max-height: 285px; }
+		.reveal .result-with-ratios figcaption { font-size: 16px; margin-top: 5px; }
+		.reveal .marginal-comparison img { max-height: 350px; }
+		.reveal .marginal-comparison figcaption { font-size: 16px; margin-top: 5px; }
+		.reveal .ratio-band {
+			display: grid; grid-template-columns: minmax(210px, 0.72fr) minmax(0, 1.8fr); gap: 18px; align-items: center;
+			border-top: 1px solid var(--line); padding-top: 6px;
+		}
+		.reveal .ratio-context { font-size: 15px; line-height: 1.28; color: var(--ink-2); }
+		.reveal .ratio-context b { display: block; font-size: 17px; color: var(--ink); }
+		.reveal .ratio-band table { font-size: 16px; }
+		.reveal .ratio-band table.num { width: 100%; }
+		.reveal .ratio-band table.num th, .reveal .ratio-band table.num td { padding: 2px 10px; }
+		.reveal .evidence-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+		.reveal .evidence-stat {
+			display: flex; align-items: baseline; gap: 9px; min-width: 0;
+			border-top: 3px solid var(--part); border-radius: 7px; background: var(--ground-2); padding: 7px 12px 8px;
+		}
+		.reveal .evidence-stat b { font-family: var(--serif); font-size: 28px; line-height: 1; color: var(--part); white-space: nowrap; }
+		.reveal .evidence-stat span { font-size: 15px; line-height: 1.18; color: var(--ink-2); }
+		.reveal .limit-layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, 0.85fr); gap: 24px; align-items: center; }
+		.reveal .limit-layout figure img { width: 100%; max-height: 408px; object-fit: contain; }
+		.reveal .limit-label { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--part); margin-bottom: 2px; }
 		.reveal .application-visual { flex: 1; min-height: 0; }
 		.reveal .application-visual img {
 			width: 100%; height: 310px; object-fit: cover; object-position: 50% 50%;
@@ -344,8 +406,9 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 		/* ---------- fragments ---------- */
 		.reveal .fragment { transition: opacity 0.25s ease; }
 		@media (prefers-reduced-motion: reduce) { .reveal .fragment { transition: none; } }
+		html.static-media .figure-options { display: none; }
 	</style>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+	<script src="./vendor/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
 	<script type="text/x-mathjax-config">
 		MathJax.Hub.Config({
 			messageStyle: "none",
@@ -388,12 +451,12 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							<div class="sub" style="font-style:normal; letter-spacing:0.02em; margin-bottom:32px;">平均场动力学的学习与数据同化</div>
 							<div class="who">
 								<b>Liyao Lyu</b><br>
-								加州大学洛杉矶分校数学系<br>
+								中国科学技术大学（USTC）人工智能与数据科学学院<br>
 								<span style="font-style:italic;">合作：Hayden Schaeffer、Xinyue Yu、David Schneidinger</span>
 							</div>
 						</div>
 						<figure style="flex:0.8;">
-							<video muted autoplay loop playsinline style="width:100%; max-height:560px; border-radius:12px; object-fit:cover;">
+							<video muted autoplay loop playsinline data-pdf-src="./figure/pdf_static/cover_fish.png" data-pdf-alt="Fish school snapshot" style="width:100%; max-height:560px; border-radius:12px; object-fit:cover;">
 								<source src="./fish_preview.mp4" type="video/mp4">
 							</video>
 						</figure>
@@ -890,8 +953,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			</section>
 
 			<!-- ===================================================== I. Motsch–Tadmor -->
-			<section data-menu-title="MVNN: Motsch–Tadmor">
-				<section style="--part:#0A7F5E;">
+				<section data-menu-title="MVNN: normalized interaction" style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · example 1/3</div>
 						<h2>MVNN captures normalized interactions</h2>
@@ -905,10 +967,22 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 									<div><b>Test.</b> Autonomous rollout of the full \(N\)-particle system from <b>unseen</b> mixtures.</div>
 							</div>
 							<div class="cols" style="align-items:center;">
-								<figure class="framed" style="flex:1.4;">
-									<img src="./figure/mvnn/result_wsindy_param_est_mvnn_N_16000_seed_1.png" style="max-height:285px;">
-									<figcaption>Unseen initial law: density at \(t=0,1,2\) — baselines misplace or over-concentrate the peaks.</figcaption>
-								</figure>
+								<div class="figure-selector" data-figure-selector style="flex:1.4;">
+									<div class="figure-options" role="group" aria-label="Choose the Motsch–Tadmor comparison">
+										<button type="button" class="figure-option active" aria-pressed="true"
+											data-src="./figure/mvnn/mvnn_motsch_tadmor.gif"
+											data-caption="MVNN tracks the reference from an unseen initial law."
+											data-alt="Animated reference and MVNN density rollouts">MVNN rollout</button>
+										<button type="button" class="figure-option" aria-pressed="false"
+											data-src="./figure/mvnn/result_wsindy_param_est_mvnn_N_16000_seed_1.png"
+											data-caption="Reference, MVNN, WSINDy, and online parameter estimation."
+											data-alt="Static all-method comparison">All methods</button>
+									</div>
+									<figure class="framed">
+										<img class="figure-selector-image" src="./figure/mvnn/mvnn_motsch_tadmor.gif" data-pdf-src="./figure/pdf_static/mvnn_motsch_tadmor_t2.png" alt="Animated reference and MVNN density rollouts" style="max-height:220px;">
+										<figcaption class="figure-selector-caption">MVNN tracks the reference from an unseen initial law.</figcaption>
+									</figure>
+								</div>
 									<div class="card" style="flex:0.78;">
 										<ul class="tight">
 											<li><b>WSINDy</b>: additive \(\int K(y-x)\,\mu(\intd y)\) — linear in \(\mu\).</li>
@@ -919,10 +993,10 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 						</div>
 					</div>
 					<aside class="notes">
-						Here \(\phi(r)=e^{-(r/\ell)^2}\) with \(\ell=0.5\). Training uses \(N=16{,}000\), \(M=100\) trajectories, \(T=2\), \(\Delta t=10^{-2}\), and random Gaussian-mixture initial laws with 2–8 modes. Baselines shown: mean-field WSINDy and online parameter estimation. The Gaussian-process pairwise-kernel baseline is compared separately on matched small data — exact GP training is cubic in the number of observations, so it cannot be trained at this scale; see the cost slide. The normalization makes the drift nonlinear in the measure, so additive and pairwise classes cannot represent it; MVNN receives no functional form.
+						Here \(\phi(r)=e^{-(r/\ell)^2}\) with \(\ell=0.5\). Training uses \(N=16{,}000\), \(M=100\) trajectories, \(T=2\), \(\Delta t=10^{-2}\), and random Gaussian-mixture initial laws with 2–8 modes. The animation uses 21 archived reference/MVNN snapshots at steps 0,10,…,200; density KDE is performed independently at each saved time, with no temporal interpolation. Use “All methods” to show the archived paper comparison with mean-field WSINDy and online parameter estimation at \(t=0,1,2\). Their complete time trajectories are not stored in the provided experiment root, so intermediate baseline frames are not synthesized. The Gaussian-process pairwise-kernel baseline is compared separately on matched small data — exact GP training is cubic in the number of observations, so it cannot be trained at this scale; see the cost slide. The normalization makes the drift nonlinear in the measure, so additive and pairwise classes cannot represent it; MVNN receives no functional form.<br><br>[Sources] Reference: SIMPLE/CASE5/TEST_DATA3/data/opinion_traj_1.npy. MVNN: SIMPLE/CASE5/SIM3/data/x_save_1.npy. All-method comparison: Mean-field-kernel/figure/result_wsindy_param_est_mvnn_N=16000_seed=1.pdf. [/Sources]
 					</aside>
 				</section>
-				<section style="--part:#0A7F5E;">
+				<section data-menu-title="MVNN: global order parameter" style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · example 2/3</div>
 						<h2>MVNN finds a global order parameter</h2>
@@ -939,8 +1013,8 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							</div>
 							<div class="cols" style="align-items:center;">
 								<figure class="framed" style="flex:1.7;">
-									<img src="./figure/mvnn/compare_wsindy.png" style="width:100%;">
-									<figcaption>Forecast densities at \(t=0,0.5,1\) and density \(L^2\) error vs. time, averaged over the held-out set.</figcaption>
+									<img src="./figure/mvnn/mvnn_global_mean.gif" data-pdf-src="./figure/pdf_static/mvnn_global_mean_t1.png" style="max-height:275px; width:auto; max-width:100%;">
+									<figcaption>Only MVNN follows the nonlinear global-mean evolution.</figcaption>
 								</figure>
 								<div style="flex:0.62;">
 									<table class="num compact">
@@ -954,30 +1028,11 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							</div>
 						</div>
 					</div>
-					<aside class="notes">The term \((M_\mu)^2x\) is quadratic in the measure and lies outside local PDE libraries and additive pairwise classes. Across 36 held-out trajectories, the time-averaged \(W_1\) error is 0.27 for local PDE-WSINDy, 0.091 for kernel WSINDy, 0.18 for online parameter estimation, and 0.005–0.006 for MVNN.</aside>
+					<aside class="notes">The term \((M_\mu)^2x\) is quadratic in the measure and lies outside local PDE libraries and additive pairwise classes. The animation uses the 21 frozen evaluation snapshots \(t=0,0.05,\ldots,1\); the online parameter-estimation density is reconstructed at the same saved times with the archived bandwidth 0.05, and no temporal interpolation is used. Across 36 held-out trajectories, the time-averaged \(W_1\) error is 0.27 for local PDE-WSINDy, 0.091 for kernel WSINDy, 0.18 for online parameter estimation, and 0.005–0.006 for MVNN.<br><br>[Sources] Frozen evaluation cache: SIMPLE/revision/experiments/r1c1_threebody_global_mean/outputs/threebody/final/summary/rebuttal_figure_data.npz. Online parameter estimation: mean_field_rebuttal/param_est_sim/data_threebody/x_save_param_est_mixed_100.npy. [/Sources]</aside>
 				</section>
-				<section style="--part:#0A7F5E;">
-					<div class="slide">
-						<div class="eyebrow">Part I — learning the drift · optional</div>
-						<h2>Accuracy and linear cost</h2>
-						<div class="body row" style="align-items:center;">
-							<figure class="framed" style="flex:1.3;">
-								<img src="./figure/mvnn/mvnn_training_test_learning_curve.png" style="max-height:360px;">
-								<figcaption>Held-out error vs. training trajectories \(M\).</figcaption>
-							</figure>
-							<figure class="framed" style="flex:0.8;">
-								<img src="./figure/mvnn/mvnn_gp_time_dual_axis.png" style="max-height:360px;">
-								<figcaption>Rollout time vs. particle count \(N\).</figcaption>
-							</figure>
-						</div>
-					</div>
-					<aside class="notes">The learning curve uses 30 held-out trajectories and 3 seeds. The Gaussian-process baseline requires a dense \(n_{\rm obs}\times n_{\rm obs}\) kernel matrix and cubic training cost, while MVNN rollouts scale linearly in \(N\).</aside>
-				</section>
-			</section>
 
 			<!-- ===================================================== I. 2D generalization -->
-			<section data-menu-title="MVNN: 2D generalization">
-				<section style="--part:#0A7F5E;">
+				<section data-menu-title="MVNN: 2D generalization" style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · example 3/3</div>
 						<h2>Generalization in 2D: unseen initial geometries</h2>
@@ -987,73 +1042,132 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 								<div><b>Train.</b> Only noisy single rings, of random radius and width.</div>
 								<div><b>Test.</b> Double-ring, uniform-disk and binary asymmetric \(\mu_0\) — same law, only the initial geometry changes.</div>
 							</div>
-							<div class="cols">
+							<div class="figure-selector figure-selector-2d" data-figure-selector>
+								<div class="figure-options" role="group" aria-label="Choose the two-dimensional initial geometry">
+									<button type="button" class="figure-option" aria-pressed="false"
+										data-src="./figure/mvnn/mvnn_2d_ring_wide.gif"
+										data-caption="Single ring — the training geometry; reference and MVNN remain aligned."
+										data-alt="Single-ring reference and MVNN animation">Single ring · train</button>
+									<button type="button" class="figure-option active" aria-pressed="true"
+										data-src="./figure/mvnn/mvnn_2d_two_ring_wide.gif"
+										data-caption="Double ring — unseen geometry; contraction and topology stay synchronized."
+										data-alt="Double-ring reference and MVNN animation">Double ring · unseen</button>
+									<button type="button" class="figure-option" aria-pressed="false"
+										data-src="./figure/mvnn/mvnn_2d_binary_wide.gif"
+										data-caption="Binary asymmetric — unseen geometry; MVNN reproduces the density gradient and asymmetry."
+										data-alt="Asymmetric-binary reference and MVNN animation">Asymmetric · unseen</button>
+								</div>
 								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_ring.png" style="max-height:280px;">
-									<figcaption>Single ring — the <b>training</b> geometry: reference (top) vs. MVNN (bottom), \(t=0,1,2\).</figcaption>
-								</figure>
-								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_2ring.png" style="max-height:280px;">
-									<figcaption>Double ring — <b>unseen</b>: correct contraction, topology preserved.</figcaption>
-								</figure>
-								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_hl.png" style="max-height:280px;">
-									<figcaption>Binary asymmetric — <b>unseen</b>: gradient and asymmetric aggregation reproduced.</figcaption>
+									<img class="figure-selector-image" src="./figure/mvnn/mvnn_2d_two_ring_wide.gif" data-pdf-src="./figure/pdf_static/mvnn_2d_two_ring_t1_99.png" alt="Double-ring reference and MVNN animation">
+									<figcaption class="figure-selector-caption">Double ring — unseen geometry; contraction and topology stay synchronized.</figcaption>
 								</figure>
 							</div>
 						</div>
 					</div>
-					<aside class="notes">The model is trained at \(N=16{,}000\) on noisy single rings with random radius and width under short-range repulsion and long-range attraction. The double ring and asymmetric split are unseen initial geometries. Disk initializations are also tested but not shown. We do not claim extrapolation to different governing dynamics or parameters.</aside>
+					<aside class="notes">The model is trained at \(N=16{,}000\) on noisy single rings with random radius and width under short-range repulsion and long-range attraction. The double ring and asymmetric split are unseen initial geometries. Each animation contains 21 actual trajectory snapshots at steps 0,10,…,190,199, corresponding to \(t=0,0.1,\ldots,1.9,1.99\); spatial histogram smoothing uses a fixed range and color scale within each case, with no temporal interpolation. Disk initializations are also tested but not shown. We do not claim extrapolation to different governing dynamics or parameters.<br><br>[Sources] Single ring: SIMPLE/CASE4/TEST_DATA/data/simulation_1.npy and SIMPLE/CASE4/SIM/data/x_save_1.npy. Double ring: SIMPLE/CASE4/TEST_DATA2/data/simulation_1.npy and SIMPLE/CASE4/SIM2/data/x_save_1.npy. Binary asymmetric: SIMPLE/CASE4/TEST_DATA4/data/simulation_1.npy and SIMPLE/CASE4/SIM4/data/x_save_1.npy. [/Sources]</aside>
 				</section>
-				<section style="--part:#0A7F5E;">
+				<section data-menu-title="MVNN: multi-species" style="--part:#0A7F5E;">
 					<div class="slide">
 						<div class="eyebrow">Part I — learning the drift · optional</div>
-						<h2>Groups and phase space</h2>
-						<div class="body row small">
-							<div class="stackv">
-								<div class="note green"><b>Multiple groups.</b> Recover directed entrainment \(3\to2\to1\).</div>
-								<figure class="framed">
-									<img src="./figure/mvnn/simple_case_multi_sepcies_3.png" style="max-height:330px;">
-									<figcaption>Held-out multi-group rollout.</figcaption>
-								</figure>
-							</div>
-							<div class="stackv">
-								<div class="note green"><b>Second order.</b> Learn acceleration \(\bb_\theta(\bx,\bv,\mu_{x,v})\) on phase space.</div>
-								<figure class="framed">
-									<img src="./figure/mvnn/gaussian_v.png" style="max-height:330px;">
-									<figcaption>Held-out velocity distribution.</figcaption>
+						<h2>Extend to a multi-species setup</h2>
+						<div class="body xs">
+							<div class="cols" style="align-items:center; gap:18px;">
+								<div class="stackv" style="flex:0.96;">
+									<div class="card">
+										<h4>Asymmetric three-species model</h4>
+										\[
+										\begin{aligned}
+										\dot X_t^{i,k}
+										&=\sum_{\ell=1}^{3}\frac{1}{N_\ell-\delta_{k\ell}}
+										\sum_{\substack{j\\(j,\ell)\neq(i,k)}}
+										\phi_{k\ell}\!\left(|X_t^{i,k}-X_t^{j,\ell}|\right)
+										\left(X_t^{j,\ell}-X_t^{i,k}\right),\\[-2pt]
+										\phi_{k\ell}(r)&=D_{k\ell}\,\psi(r/R_\ell),\qquad
+										\psi(u)=\exp\!\left(1-\frac{1}{1-|u|^{10}}\right)\mathbf 1_{\{|u|<1\}} .
+										\end{aligned}
+										\]
+										\[
+										D=\begin{pmatrix}5&10&0\\0&2&5\\0&0&1\end{pmatrix},
+										\qquad (R_1,R_2,R_3)=(1,2.5,5).
+										\]
+										<div><b>\(D_{k\ell}\):</b> source species \(\ell\) acts on target species \(k\); \(R_\ell\) is its interaction radius. Thus <span class="accent">\(3\to2\to1\)</span>.</div>
+									</div>
+									<div class="note green"><b>MG-MVNN.</b> Learn \(b_{\theta,k}(x,\mu_1,\mu_2,\mu_3)\) for each species; architecture details are in the paper.<br><b>Held out.</b> Spatially separated species with \((N_1,N_2,N_3)=(16{,}000,4{,}000,200)\).</div>
+								</div>
+								<figure class="framed" style="flex:1.28;">
+									<img src="./figure/mvnn/mvnn_multigroup_hierarchy.gif" data-pdf-src="./figure/pdf_static/mvnn_multigroup_t0_5.png" alt="Reference and MG-MVNN multi-group density animation" style="width:100%; max-height:405px; object-fit:contain;">
+									<figcaption>MG-MVNN reproduces the hierarchical entrainment \(3\to2\to1\).</figcaption>
 								</figure>
 							</div>
 						</div>
 					</div>
-					<aside class="notes">The three-group experiment uses populations \(N=16{,}000/4{,}000/200\), an upper-triangular influence matrix, and separated initial groups; MG-MVNN recovers the directional entrainment. The second-order example is Cucker–Smale alignment, learned from position, velocity, and acceleration data on phase space.</aside>
+					<aside class="notes">The displayed microscopic model now makes the influence parameters explicit: \(D_{k\ell}\) is the strength with which source species \(\ell\) acts on target species \(k\), while \(R_\ell\) sets the source species' interaction range. The simulation uses the attractive sign convention \((X^{j,\ell}-X^{i,k})\). The influence matrix is not supplied to MG-MVNN; it defines the reference system used to generate training data. The upper-triangular matrix gives the chain \(3\to2\to1\). The animation uses 21 actual snapshots at steps 0,25,…,500 with \(\Delta t=10^{-3}\); the x-range and per-species density scale are fixed, and there is no temporal interpolation. The group-specific embedding and interaction-network construction can be given verbally or read in the paper.<br><br>[Sources] Reference: SIMPLE/CASE7_opinion_dynamics/TEST_CASE4/data/opinion_{workers,managers,ceos}_mpi_3.npy. MG-MVNN: SIMPLE/CASE7_opinion_dynamics/SIM3_4/data/opinion_{workers,managers,ceos}_mpi_3.npy. Model and parameters: Mean-field-kernel/rebuttal/main.tex, “Extensions to Systems with Heterogeneous Agent Groups”; numerical sign convention: TEST_CASE4/simulation.py. [/Sources]</aside>
 				</section>
-			</section>
+				<section data-menu-title="MVNN: phase-space" style="--part:#0A7F5E;">
+					<div class="slide">
+						<div class="eyebrow">Part I — learning the drift · optional</div>
+						<h2>Phase-space MVNN learns acceleration</h2>
+						<div class="body xs">
+							<div class="cols" style="align-items:center; gap:18px;">
+								<div class="stackv" style="flex:0.76;">
+									<div class="card">
+										<h4>MVNN learns the acceleration</h4>
+										\[
+										\dot X_t^i=V_t^i,\qquad
+										\dot V_t^i=b_\theta\!\left(X_t^i,V_t^i,\mu^N_t\right),\qquad
+										\mu_t^N=\frac1N\sum_j\delta_{(X_t^j,V_t^j)} .
+										\]
+										\[
+										b_\theta(x,v,\mu)=
+										\varphi_{\rm int}\!\left(
+										x,v,\int\varphi_{\rm emb}(y,w)\,\mu(\intd y,\intd w)
+										\right).
+										\]
+										<div><b>Target:</b> \(A_\ell^i\approx(V_{\ell+1}^i-V_\ell^i)/\Delta t\).</div>
+									</div>
+									<div class="card">
+										<h4>Cucker–Smale test system</h4>
+										\[
+										\begin{aligned}
+										\dot X_t^i&=V_t^i,\\
+										\dot V_t^i&=\frac1N\sum_{j=1}^N
+										\phi\!\left(\|X_t^j-X_t^i\|\right)(V_t^j-V_t^i),\\
+										\phi(r)&=c_{\rm rep}e^{-(r/\ell_{\rm rep})^2}
+										-c_{\rm att}e^{-(r/\ell_{\rm att})^2}.
+										\end{aligned}
+										\]
+										<div>\((c_{\rm rep},\ell_{\rm rep},c_{\rm att},\ell_{\rm att})=(1,0.5,0.7,2),\quad N=16{,}000\)</div>
+									</div>
+								</div>
+								<figure class="framed" style="flex:1.35;">
+									<img src="./figure/mvnn/mvnn_phase_space_cucker_smale.gif" data-pdf-src="./figure/pdf_static/mvnn_phase_space_t2.png" alt="Reference and MVNN position and velocity density animation" style="width:100%; max-height:425px; object-fit:contain;">
+									<figcaption>On held-out data, MVNN reproduces both position and velocity distributions.</figcaption>
+								</figure>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">The state is now the position–velocity pair, and MVNN learns the phase-space-dependent acceleration rather than a first-order velocity field. The experiment is the two-dimensional Cucker–Smale system. The source files pool 101 held-out trajectories; this animation displays one matched \(N=16{,}000\) rollout so that the dynamics remain legible. It uses 21 nearest stored snapshots covering \(t\in[0,2]\); the reference archive has 200 stored frames and the MVNN archive has 201. Position uses the fixed domain \([-5,5]^2\), velocity uses \([-1,1]^2\), reference and MVNN share a color scale within each column and frame, and no temporal interpolation is used.<br><br>[Sources] Reference: /anvil/projects/x-mth260007/Tracy/case4_cs/test_data_second_order/{result_second_order.npy,v_result_second_order.npy}. MVNN: /anvil/projects/x-mth260007/Tracy/case4_cs/sim_second_order/{result_second_order.npy,v_result_second_order.npy}. Model: Mean-field-kernel/rebuttal/main.tex, “Second-Order Dynamics.” [/Sources]</aside>
+				</section>
 
 			<!-- ===================================================== Bridge -->
 			<section data-menu-title="Bridge: model ≠ forecast">
 				<div class="slide">
 					<div class="eyebrow">From learning to assimilation</div>
 					<h2>A learned model still drifts</h2>
-					<div class="body small">
+					<div class="body xs">
 						<div class="cols" style="align-items:center;">
-							<figure style="flex:1.02;">
-								<img src="./figure/fish_raw_row.png" style="width:100%;">
-								<img src="./figure/fish_density_row.png" style="width:93%; margin-top:10px;">
-								<figcaption>Top: overhead video frames, \(t=0\)–\(6.25\,\mathrm{s}\) — every bright streak is one fish. Bottom: the KDE density built from the tracks — the only usable observation.</figcaption>
+							<figure class="framed" style="flex:1.55;">
+								<img src="./figure/fish_open_loop_drift.gif" data-pdf-src="./figure/pdf_static/fish_open_loop_t6_25.png" style="width:100%; max-height:350px; object-fit:contain;">
+								<figcaption>The learned model initially captures the circulation, then drifts away from the experiment.</figcaption>
 							</figure>
-							<div class="stackv" style="flex:0.98;">
+							<div class="stackv" style="flex:0.68;">
 								<div class="card">
-									<h4>The example: a real fish school</h4>
-									\(N\approx1{,}126\) fish in a shallow tank, filmed from above and tracked frame by frame (TRex). The school circulates along the tank wall.
+									<h4>Observation: a measure</h4>
+									\(N\approx1{,}126\) fish; occlusions and identity dropouts make the usable observation an unlabeled KDE density.
 								</div>
 								<div class="card fragment">
-									<h4>What is actually observed</h4>
-									Tracks are incomplete (occlusions, dropouts) and identities are not consistent across frames — so the observation is the <b>density</b>: macroscopic, unlabeled, permutation invariant.
-								</div>
-								<div class="card fragment">
-									<h4>Open loop drifts</h4>
-									An MVNN drift trained on this dataset (Part I) captures the mean circulation, but bias + initialization error make the free rollout <span class="accent">lose the school within seconds</span>.
+									<h4>Simulation: open loop</h4>
+									The learned drift captures circulation initially, but bias accumulates and the free simulation <span class="accent">loses the observed school within seconds</span>.
 								</div>
 								<div class="note blue fragment push">
 									<b>Needed.</b> Compare distributions, then nudge particles.
@@ -1062,7 +1176,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 						</div>
 					</div>
 				</div>
-				<aside class="notes">This is the hinge of the talk: the object learned in Part I becomes the biased model of Part II. In the fish example, the learned drift captures circulation but loses coherence within seconds. The tracker is TRex; at every frame a substantial fraction of trajectories carry a missing flag. Conventional methods face a cross-scale mismatch: forecasts are labeled configurations while observations are functionals of the law. EnKF uses labeled-coordinate covariances; 4D-Var requires a non-unique lift from density to configuration; particle filters suffer weight degeneracy; and particle-flow filters typically require likelihoods on labeled states.</aside>
+				<aside class="notes">This is the hinge of the talk: the object learned in Part I becomes the biased model of Part II. The animation uses 26 actual frames at indices 0,10,…,250, corresponding to \(t=0,0.25,\ldots,6.25\) seconds, with no temporal interpolation. The left panel is the enhanced experimental video, the middle panel is the Gaussian-KDE observation formed from TREX tracks after applying the missing-data mask, and the right panel is the learned-model free simulation evaluated with the same bandwidth and color scale. The learned drift captures circulation but loses coherence within seconds. Conventional methods face a cross-scale mismatch: forecasts are labeled configurations while observations are functionals of the law.<br><br>[Sources] TREX reference: /mnt/scratch/lyuliyao/MEAN_FIELD/video/trex_results/data_all.npz and luminance/pv_preview.mp4 frames. Learned free simulation: DA/video/SIM/data/x_save_0.npy. Plotting conventions: DA/video/SIM_EnFK8/figure_3way.py. [/Sources]</aside>
 			</section>
 
 			<!-- ===================================================== Divider II -->
@@ -1071,15 +1185,15 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<div class="slide" style="justify-content:center;">
 					<div class="eyebrow">Part II</div>
 					<h1>Multiscale Nudging</h1>
-					<div class="thesis">Compare forecast and data at the macroscopic scale, correct every particle at the microscopic scale — through the Wasserstein gradient of one misfit functional.</div>
+					<div class="thesis">Compare forecasts and data as measures; correct the particles directly.</div>
 				</div>
 			</section>
 
 			<!-- ===================================================== II. Why hard -->
 			<section data-menu-title="II. Why classical DA fails">
 				<div class="slide">
-					<div class="eyebrow">Part II — Multiscale Nudging</div>
-					<h2>Why assimilating density data into particles is hard</h2>
+					<div class="eyebrow">Part II — multiscale nudging</div>
+					<h2>Density data have no particle labels</h2>
 					<div class="body xs">
 						<div class="learning-setup">
 							<div class="setup-block given">
@@ -1104,7 +1218,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 								<li class="fragment"><b>Transport / mean-field filters</b> — feedback velocities built from a likelihood on the labeled state, not on the density.</li>
 							</ul>
 						</div>
-						<div class="note blue fragment push">
+						<div class="note blue fragment">
 							<b>Nudging</b> is the exception — a simple feedback with rigorous theory, but classically formulated on labeled states and fields. <span class="accent">Part II lifts it to the measure level.</span>
 						</div>
 					</div>
@@ -1117,10 +1231,10 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<!-- ===================================================== II. Setup -->
 			<section data-menu-title="II. Setup">
 				<div class="slide">
-					<div class="eyebrow">Part II — Multiscale Nudging</div>
-					<h2>True vs. model dynamics, and what is observed</h2>
+					<div class="eyebrow">Part II — multiscale nudging</div>
+					<h2>Truth, model, and observations</h2>
 					<div class="body small">
-						<div class="card mtight">
+						<div class="card mtight" style="padding-top:8px; padding-bottom:8px;">
 							<h4>True process \(\bX_t\) and model \(\bY_t\): shared noise channel, bias in the drift</h4>
 							\[
 							\intd\bX_t=\btrue(\bX_t,\mu_t)\intd t+\Sigma\intd\bW_t,\qquad
@@ -1152,8 +1266,8 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<!-- ===================================================== II. Wasserstein gradient -->
 			<section data-menu-title="Nudging = Wasserstein gradient">
 				<div class="slide">
-					<div class="eyebrow">Part II — Multiscale Nudging</div>
-					<h2>Nudging as the Wasserstein gradient of a measure-level misfit</h2>
+					<div class="eyebrow">Part II — multiscale nudging</div>
+					<h2>Nudging is a Wasserstein gradient</h2>
 					<div class="body small">
 						<div class="card mtight">
 							<h4>Misfit at the observation scale, and its first variation (\(K_h\) even \(\Rightarrow\) self-adjoint)</h4>
@@ -1163,33 +1277,24 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							\]
 						</div>
 						<div class="card mtight fragment">
-							<h4>Steepest descent in Wasserstein geometry (JKO minimizing movement, \(\muobs\) frozen) gives a velocity field on state space</h4>
+							<h4>In Wasserstein geometry, the first variation gives the steepest-descent direction:</h4>
 							\[
-							\nu^{+}\in\arg\min_{\rho\in\mathcal P_2}\Big\{\tfrac{1}{2\tau}W_2^2(\rho,\nu)+\lambda J_{\mathrm{nud},h}(\rho,\muobs)\Big\}
-							\quad\xrightarrow{\ \tau\to0\ }\quad
 							\bu_{\mathrm{nud}}(\bz)=-\lambda\nabla\phi_{\nu,h}(\bz)=-\lambda\nabla\big(\widetilde K_h*\nu-K_h*\muobs\big)(\bz).
 							\]
 						</div>
-						<div class="card mtight fragment">
-							<h4>Assimilated dynamics — its law solves the nonlinear Fokker–Planck equation with the extra flux \(\lambda\nu_t\nabla(K_h*r_t)\), \(r_t=K_h*\nu_t-\muobs_t\)</h4>
-							\[
-							\intd\bZ_t=\bmodel(\bZ_t,\nu_t)\intd t-\lambda\nabla\big(\widetilde K_h*\nu_t-K_h*\muobs_t\big)(\bZ_t)\intd t+\Sigma\intd\bW_t .
-							\]
-						</div>
 						<div class="note blue fragment">
-							<b>Structure preserving.</b> If \(\bmodel=-\nabla\frac{\delta F}{\delta\nu}\) and \(\Sigma=\sqrt{2\beta}\,I\), the assimilated flow is itself the Wasserstein gradient flow of
-							\(\mathcal F_t(\nu)=F(\nu)+\lambda J_{\mathrm{nud},h}(\nu,\muobs_t)+\beta\,\mathrm{Ent}(\nu)\): nudging adds an observation-driven, time-dependent potential.
+							The same field drives the finite particles, the representative mean-field particle, and its law.
 						</div>
 					</div>
 				</div>
-				<aside class="notes">Smoothing by K_h restores enough regularity for the velocity to be defined when nu is only a measure, and matches the observation scale.</aside>
+				<aside class="notes">Smoothing by \(K_h\) restores enough regularity for the velocity to be defined when \(\nu\) is only a measure, and matches the observation scale. If the model drift is itself a Wasserstein gradient and \(\Sigma=\sqrt{2\beta}I\), nudging adds the time-dependent potential \(\lambda J_{\mathrm{nud},h}(\nu,\mu_t^{\mathrm{obs}})\) to the free energy.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, first variation and Wasserstein velocity, lines 68–131; gradient-flow interpretation, lines 154–159.<br>[/Sources]</aside>
 			</section>
 
 			<!-- ===================================================== II. Pipeline -->
-			<section data-menu-title="Pipeline">
+			<section data-menu-title="Finite-particle pipeline">
 				<div class="slide">
-					<div class="eyebrow">Part II — Multiscale Nudging</div>
-					<h2>Compare at the macro scale, correct at the micro scale</h2>
+					<div class="eyebrow">Part II — multiscale nudging · particle implementation</div>
+					<h2>Compare at the density scale, correct at the particle scale</h2>
 					<div class="body small">
 						<div class="lane macro">
 							<div class="lanelabel">Macroscopic — observation scale \(h\)</div>
@@ -1216,167 +1321,325 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 								<div style="flex:1.5;"><b>forecast step (biased model)</b> \(\;\bZ\leftarrow\bZ+\Delta t\,\bmodel(\bZ,\nu)+\Sigma\sqrt{\Delta t}\,\xi\), then \(L_{\rm nud}\) nudging substeps &nbsp;&#8635; repeat</div>
 							</div>
 						</div>
-						<div class="card mtight fragment">
-							<b>Interacting particle system</b> <span class="muted">(Case B: replace \(\nabla(K_h*\muobs)(\bZ^i)\) by \(\tfrac1M\sum_k\nabla\widetilde K_h(\bZ^i-\bX^{\obs,k})\))</span>
-							\[
-							\intd\bZ^{i}_t=\bmodel(\bZ^{i}_t,\nu^N_t)\intd t+\Sigma\intd\bW^{i}_t
-							-\lambda\Big[\tfrac1N\!\sum_{j}\nabla\widetilde K_h(\bZ^{i}_t-\bZ^{j}_t)-\nabla(K_h*\muobs_t)(\bZ^{i}_t)\Big]\intd t .
-							\]
-							No particle matching, no model linearization, no ensemble covariances.
+						<div class="note blue fragment">
+							No particle matching, no model linearization, and no ensemble covariances.
 						</div>
 					</div>
 				</div>
-				<aside class="notes">Read the diagram clockwise: particles up to a density, compare, gradient back down to every particle, advance, repeat.</aside>
+				<aside class="notes">Read the diagram clockwise: particles up to a density, compare, gradient back down to every particle, advance, repeat. The exact interacting-particle SDE is introduced on the next theory slide so this page can remain an algorithmic overview.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, particle algorithm, lines 163–189.<br>[/Sources]</aside>
 			</section>
 
-			<!-- ===================================================== II. Guarantees -->
-			<section data-menu-title="Guarantees (nudging)">
+			<!-- ===================================================== II. Guarantee 1 -->
+			<section data-menu-title="II. Guarantee 1 — well-posedness">
 				<div class="slide">
-					<div class="eyebrow">Part II — Multiscale Nudging</div>
-					<h2>Guarantees: well posed, mean-field consistent, error contracting</h2>
+					<div class="eyebrow">Part II — guarantee 1/3</div>
+					<h2>Mean-field particle dynamics are well posed</h2>
 					<div class="body small">
-						<div class="thm">
-							<span class="lbl">Propositions</span><span class="ttl">Well-posedness; propagation of chaos</span>
-							<div class="stmt">
-								\(\bmodel\) Lipschitz in \((\bx,W_2)\) and \(\nabla\widetilde K_h\) Lipschitz \(\Rightarrow\) unique strong solution for any \(T\) and \(\Law(\bZ_0)\in\mathcal P_2\).
-								\(\|\nabla\widetilde K_h\|_\infty&lt;\infty\) \(\Rightarrow\) the nudged \(N\)-particle system is \(f\)-chaotic: \(W_2\big(f^{1,N}_{[0,T]},f_{[0,T]}\big)\to0\).
-								<span class="intuition">(Synchronous coupling + Grönwall; for the Gaussian kernel \(\widetilde K_h\in C^\infty\) and \(\|\nabla v-\nabla(\widetilde K_h*v)\|_{L^2}\le Ch\|D^2v\|_{L^2}\).)</span>
-							</div>
+						<div class="card mtight">
+							<h4>Mean-field particle dynamics</h4>
+							\[
+							\intd\bZ_t
+							=\bmodel(\bZ_t,\nu_t)\intd t
+							-\lambda\nabla\big(\widetilde K_h*\nu_t-K_h*\muobs_t\big)(\bZ_t)\intd t
+							+\Sigma\intd\bW_t,
+							\qquad \nu_t=\Law(\bZ_t).
+							\]
 						</div>
-						<div class="thm mtight fragment xs">
-							<span class="lbl">Theorem</span><span class="ttl">\(L^2\) decay to a bias floor — \(\Omega=\Tor\), \(A=\tfrac12\Sigma\Sigma^\top\succeq\kappa I\), exact smoothed observations \(\muobs_t=K_h*\mu_t\), \(\int(\nu_0-\mu_0)=0\)</span>
-							<div class="stmt">
-								Let \(e_t=\nu_t-\mu_t\), \(V(t)=\tfrac12\|e_t\|^2_{L^2}\). Assume (C1) \(\|\bmodel(\cdot,\mu)-\bmodel(\cdot,\nu)\|_{L^2}\le L_\mu\|\mu-\nu\|_{L^2}\);
-								(C2) \(\mu_t,\nu_t\le\bar\rho\), \(\nu_t\ge\underline\nu&gt;0\); (C3) \(\|\nabla e_t-\nabla(\widetilde K_h*e_t)\|_{L^2}\le\delta(h)\|\nabla e_t\|_{L^2}\), \(\delta(h)\to0\).
-								With \(C_{\rm adv}=B_{\rm model}+\bar\rho L_\mu\), model bias \(\Delta=\sup_t\|\bmodel(\cdot,\mu_t)-\btrue(\cdot,\mu_t)\|_{L^\infty}\) and Poincaré constant \(C_P\): if
-								\[
-								\delta(h)\le\frac{\underline\nu}{2\bar\rho}
-								\quad\text{and}\quad
-								\lambda>\frac{1}{\underline\nu}\Big(\frac{2C_{\rm adv}^2C_P}{\kappa}-\kappa\Big),
-								\qquad\text{then}\qquad
-								V(t)\le e^{-\alpha t}V(0)+\frac{\bar\rho^{\,2}}{\alpha\kappa}\Delta^2,
-								\qquad \alpha=\frac{\kappa+\lambda\underline\nu}{C_P}-\frac{2C_{\rm adv}^2}{\kappa}>0 .
-								\]
+						<div class="thm mtight fragment">
+							<span class="lbl">Proposition 1</span><span class="ttl">Well-posedness</span>
+							<div class="stmt cols" style="align-items:stretch; gap:26px;">
+								<div style="flex:1.15;">
+									<b>Assume.</b> For any \(T&gt;0\),
+									\[
+									\nu_0\in\mathcal P_2,\qquad
+									\|\mathbf b_s(\bz,\rho)-\mathbf b_s(\bz',\rho')\|
+									\le L_s\big(\|\bz-\bz'\|+W_2(\rho,\rho')\big),
+									\quad s\in\{\mathrm{true},\mathrm{model}\},
+									\]
+									and \(\nabla\widetilde K_h\) is globally Lipschitz; the observation force is uniformly Lipschitz in space.
+								</div>
+								<div style="flex:0.85; border-left:1px solid var(--line); padding-left:26px;">
+									<b>Then.</b> The assimilated McKean–Vlasov SDE has a <b>unique strong solution</b> on \([0,T]\). Consequently, its law \(\nu_t\) is uniquely determined.
+								</div>
 							</div>
-						</div>
-						<div class="note blue fragment push">
-							<b>Reading.</b> Nudging contributes a dissipation \(-\lambda\underline\nu\|\nabla e\|^2\) that beats the advective growth \(C_{\rm adv}\|\nabla e\|\|e\|\) (Poincaré); (C3) says the kernel does not hide the error at scale \(h\);
-							the long-time error is a <span class="accent">bias floor \(\propto\Delta^2\)</span> — zero for an exact model. Noisy or finite-sample observations add residual terms.
 						</div>
 					</div>
 				</div>
-				<aside class="notes">Larger λ beats advective instability; smaller h shrinks δ(h). Positivity of ν_t is guaranteed on finite intervals by a separate proposition.</aside>
+				<aside class="notes">The mean-field particle SDE is kept on one line because the Wasserstein feedback was defined on the preceding slide. For exact smoothed observations, \(\mu_t^{\mathrm{obs}}=K_h*\mu_t\), the observation force inherits the required spatial regularity from the kernel. More generally, one may directly assume that \(x\mapsto\nabla(K_h*\mu_t^{\mathrm{obs}})(x)\) is uniformly Lipschitz.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, assimilated McKean–Vlasov SDE, lines 133–138; regularity assumption and well-posedness proposition, lines 261–295.<br>[/Sources]</aside>
 			</section>
+
+			<!-- ===================================================== II. Guarantee 2 -->
+			<section data-menu-title="II. Guarantee 2 — particle consistency">
+				<div class="slide">
+					<div class="eyebrow">Part II — guarantee 2/3</div>
+					<h2>Finite particles converge to the mean-field law</h2>
+					<div class="body small">
+						<div class="card mtight">
+							<h4>Mean-field particle dynamics</h4>
+							\[
+							\intd\bZ_t
+							=\bmodel(\bZ_t,\nu_t)\intd t
+							-\lambda\nabla\big(\widetilde K_h*\nu_t-K_h*\muobs_t\big)(\bZ_t)\intd t
+							+\Sigma\intd\bW_t,
+							\qquad \nu_t=\Law(\bZ_t).
+							\]
+							<div class="mtight" style="border-top:1px solid var(--line); padding-top:10px;">
+							<h4>Finite-\(N\) particle dynamics</h4>
+							\[
+							\nu_t^N=\frac1N\sum_{j=1}^N\delta_{\bZ_t^{j,N}},
+							\qquad
+							\intd\bZ_t^{i,N}
+							=\bmodel(\bZ_t^{i,N},\nu_t^N)\intd t
+							-\lambda\nabla\big(\widetilde K_h*\nu_t^N-K_h*\muobs_t\big)(\bZ_t^{i,N})\intd t
+							+\Sigma\intd\bW_t^i.
+							\]
+							</div>
+						</div>
+						<div class="thm mtight fragment">
+							<span class="lbl">Proposition 2</span><span class="ttl">Propagation of chaos</span>
+							<div class="stmt cols" style="align-items:stretch; gap:26px;">
+								<div style="flex:0.9;">
+									<b>Assume.</b>
+									<ul class="tight">
+										<li>\(\mathbf b_s\) is globally Lipschitz in \((\bx,W_2)\), \(s\in\{\mathrm{true},\mathrm{model}\}\), and the observation force is uniformly Lipschitz.</li>
+										<li>\(\nabla\widetilde K_h\) is globally Lipschitz and \(\|\nabla\widetilde K_h\|_{L^\infty}&lt;\infty\).</li>
+										<li>The initial ensemble is \(f_0\)-chaotic, with \(f_0\in\mathcal P_2\).</li>
+									</ul>
+								</div>
+								<div style="flex:1.1; border-left:1px solid var(--line); padding-left:26px;">
+									<b>Then, for every \(T&gt;0\),</b>
+									\[
+									W_2\!\left(\Law(\bZ^{1,N}_{[0,T]}),\Law(\bZ_{[0,T]})\right)\longrightarrow0
+									\qquad\text{as }N\to\infty.
+									\]
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">The two displayed dynamics make the limit explicit: replace the empirical law \(\nu_t^N\) by the law \(\nu_t=\Law(\bZ_t)\). Propagation of chaos is a consistency statement, not a rate statement: the paper proves path-law convergence of a tagged particle but does not claim an explicit rate. For direct density observations, expanding the finite-particle convolution gives the all-particle kernel sum; for unlabeled observed locations, the observation force is replaced by the corresponding observed-particle kernel sum.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, assimilated mean-field SDE, lines 133–138; finite-particle system and propagation of chaos, lines 296–329.<br>[/Sources]</aside>
+			</section>
+
+			<!-- ===================================================== II. Guarantee 3 -->
+				<section data-menu-title="II. Guarantee 3 — assumptions">
+				<div class="slide">
+					<div class="eyebrow">Part II — guarantee 3/3 · equations and assumptions</div>
+					<h2>Continuous equations and tracking assumptions</h2>
+					<div class="body small">
+						<div class="card mtight">
+							<h4>Truth and assimilated density equations</h4>
+							\[
+							\begin{aligned}
+							\partial_t\mu_t
+							&=-\nabla\!\cdot\big(\mu_t\btrue(\cdot,\mu_t)\big)
+							+\nabla\!\cdot(A\nabla\mu_t),\\
+							\partial_t\nu_t
+							&=-\nabla\!\cdot\big(\nu_t\bmodel(\cdot,\nu_t)\big)
+							+\nabla\!\cdot(A\nabla\nu_t)
+							+\lambda\nabla\!\cdot\big[\nu_t\nabla(K_h*r_t)\big].
+							\end{aligned}
+							\]
+							<div style="text-align:center; margin-top:1px;">\(r_t:=K_h*\nu_t-\muobs_t,\qquad A:=\tfrac12\Sigma\Sigma^\top.\)</div>
+						</div>
+						<div class="thm mtight">
+							<span class="lbl">Theorem 3 · assumptions</span><span class="ttl">Resolved observations and strong feedback</span>
+							<div class="stmt" style="line-height:1.22;">
+								<b>Assume.</b>
+								<div style="display:grid; grid-template-columns:1fr 1fr; gap:0 30px; margin-top:1px;">
+									<ul class="tight">
+										<li>\(\Omega=\Tor\) and \(A\succeq\kappa I\), with \(\kappa&gt;0\).</li>
+										<li>Exact observations: \(\muobs_t=K_h*\mu_t\).</li>
+										<li>\(\mu_t,\nu_t\) are classical and \(\int_\Omega(\nu_0-\mu_0)\,d\bx=0\).</li>
+										<li>\(\btrue\) and \(\bmodel\) are globally Lipschitz in \((\bx,W_2)\).</li>
+									</ul>
+									<ul class="tight">
+										<li>\(\|\bmodel\|_\infty,\|\nabla\!\cdot\bmodel\|_\infty\le B_{\rm model}\).</li>
+										<li>\(\|\bmodel(\cdot,\rho)-\bmodel(\cdot,\eta)\|_2\le L_\mu\|\rho-\eta\|_2\).</li>
+										<li>\(0&lt;\underline\nu\le\nu_t\) and \(\|\mu_t\|_\infty,\|\nu_t\|_\infty\le\bar\rho\).</li>
+										<li>For \(e_t:=\nu_t-\mu_t\), \(\|\nabla e_t-\nabla(\widetilde K_h*e_t)\|_2\le\delta(h)\|\nabla e_t\|_2\), with \(\delta(h)\to0\).</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">The truth and assimilated density equations are shown together so the feedback term is the only structural difference. The residual \(r_t\) and diffusion matrix \(A\) are defined only after both equations. Each assumption is stated as a separate bullet. Here \(e_t=\nu_t-\mu_t\), and \(\delta(h)\to0\) is the kernel observability error.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, true Fokker–Planck equation, lines 33–36; assimilated nonlinear Fokker–Planck equation, lines 139–153; \(L^2\)-tracking theorem assumptions, lines 387–433.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II. Guarantee 3 — conclusion">
+					<div class="slide">
+						<div class="eyebrow">Part II — guarantee 3/3 · conclusion</div>
+						<h2>Continuous evolution: \(L^2\) tracking to the model-bias floor</h2>
+						<div class="body small">
+							<div class="thm">
+								<span class="lbl">Theorem 3 · conclusion</span><span class="ttl">Tracking error decays to the drift-mismatch floor</span>
+								<div class="stmt">
+									<div class="note blue mtight"><b>Under the assumptions on the previous slide, choose</b>
+										\[
+										\delta(h)\le\frac{\underline\nu}{2\bar\rho},\qquad
+										\lambda&gt;\frac1{\underline\nu}
+										\left(\frac{2C_{\rm adv}^2C_P}{\kappa}-\kappa\right),
+										\quad C_{\rm adv}:=B_{\rm model}+\bar\rho L_\mu.
+										\]
+									</div>
+									<div class="cols push" style="align-items:center; gap:30px;">
+										<div style="flex:1.02;">
+											\[
+											V(t):=\tfrac12\|\nu_t-\mu_t\|_2^2,
+											\]
+											\[
+											\Delta:=\sup_{s\in[0,T]}
+											\|\bmodel(\cdot,\mu_s)-\btrue(\cdot,\mu_s)\|_\infty,
+											\]
+											\[
+											\alpha:=\frac{\kappa+\lambda\underline\nu}{C_P}
+											-\frac{2C_{\rm adv}^2}{\kappa}&gt;0.
+											\]
+										</div>
+										<div style="flex:0.98; border-left:1px solid var(--line); padding-left:30px;">
+											\[
+											\boxed{\;
+											V(t)\le e^{-\alpha t}V(0)
+											+\frac{\bar\rho^{\,2}}{\alpha\kappa}\Delta^2,
+											\qquad 0\le t\le T
+											\;}
+											\]
+											<div class="note orange mtight">
+												<div><b>\(\Delta=0\).</b> Exponential synchronization.</div>
+												<div><b>\(\Delta\ne0\).</b> Squared \(L^2\) error reaches a <span class="accent">bias floor \(O(\Delta^2)\)</span>.</div>
+											</div>
+										</div>
+									</div>
+									<div class="muted mtight">\(C_P\): zero-mean Poincaré constant.</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">The manuscript states the assumptions and model-bias bound on \([0,T]\); the estimate holds for all \(t\ge0\) only if these bounds hold uniformly for all time. The \(O(\Delta^2)\) floor is for \(V(t)\), the squared \(L^2\) error; the \(L^2\) norm itself has an \(O(\Delta)\) floor.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, \(L^2\)-tracking theorem, feedback thresholds, and model-bias estimate, lines 387–456.<br>[/Sources]</aside>
+				</section>
 
 			<!-- ===================================================== II. Benchmarks -->
-			<section data-menu-title="Benchmarks">
-				<section>
+				<section data-menu-title="II. Benchmark — Gaussian">
 					<div class="slide">
-						<div class="eyebrow">Part II — multiscale nudging · experiment 1/3</div>
-						<h2>Benchmarks with a misspecified interaction strength</h2>
+						<div class="eyebrow">Part II — multiscale nudging · Gaussian benchmark</div>
+						<h2>Nudging corrects a misspecified interaction</h2>
 						<div class="body small">
-						<div class="card mtight">
-							<div><b>Design.</b> \(\intd X^i=-\nabla U(X^i)\intd t-a(X^i-m_t)\intd t+\intd W^i\), \(m_t\) = empirical mean; \(U\equiv0\) (Gaussian) or \(U=x^4/4-x^2/2\) (bimodal, metastable).</div>
-							<div><b>Truth vs. model.</b> Same functional form — the forecast model runs with the <span class="accent">wrong coupling \(a\)</span>.</div>
-							<div><b>Observed.</b> The smoothed density \(K_h*\mu_t\), \(h=0.5\).</div>
-						</div>
-							<div class="cols" style="align-items:center;">
-								<figure class="framed" style="flex:1.1;">
-									<img src="./figure/case2_density_true_0.25_a_1.5.png" style="max-height:320px;">
-									<figcaption>Bimodal, \(a_{\rm true}=0.25\), model \(a=1.5\): reference / biased / nudged \(\lambda=10\) / \(\lambda=1000\). Mass is moved across the barrier into the correct wells.</figcaption>
-								</figure>
-								<figure class="framed" style="flex:1;">
-									<img src="./figure/w2_vs_lambda_iter20.png" style="max-height:320px;">
-									<figcaption>Gaussian case, \(a\in\{0.5,2,5\}\): final-time and time-averaged \(W_2\) error vs. \(\lambda\) — monotone decrease, saturation at the bias floor.</figcaption>
-								</figure>
-							</div>
-						</div>
-					</div>
-					<aside class="notes">Same functional form on both sides; only a is wrong. Too-aggressive nudging with a single substep overshoots — a stability/accuracy trade-off, cured by substeps.</aside>
-				</section>
-				<section>
-					<div class="slide">
-						<div class="eyebrow">Part II — multiscale nudging · optional</div>
-						<h2>Gaussian benchmark and a chaotic mean-field Lorenz system</h2>
-						<div class="body row" style="align-items:center;">
-							<figure class="framed" style="flex:0.8;">
-								<img src="./figure/1d_case_density_a_0.5.png" style="max-height:360px;">
-								<figcaption>Linear case, \(a_{\rm true}=1\), model \(a=0.5\) (too diffuse): reference / biased / two nudging strengths.</figcaption>
-							</figure>
-							<figure class="framed" style="flex:1.3;">
-								<img src="./figure/lorenz_lambda_comparison.png" style="max-height:360px;">
-								<figcaption>Mean-field Lorenz (\(N=1000\), coupling through empirical means) vs. an uncoupled biased model: mean trajectory and its error for three nudging strengths (strong &rarr; weak).</figcaption>
-							</figure>
-						</div>
-					</div>
-					<aside class="notes">Density-level feedback stabilizes a biased microscopic forecast even in a chaotic regime; the weakest nudging shows intermittent excursions to the wrong lobe of the attractor.</aside>
-				</section>
-			</section>
-
-			<!-- ===================================================== II. Vlasov–Poisson -->
-			<section data-menu-title="Vlasov–Poisson (density obs.)">
-				<section>
-					<div class="slide">
-						<div class="eyebrow">Part II — multiscale nudging · experiment 2/3</div>
-						<h2>Kinetic test: Vlasov–Poisson with phase-space observations</h2>
-						<div class="body xs">
 							<div class="card mtight">
-								\[
-								\dot X^i=V^i,\qquad \dot V^i=E(X^i,t),\qquad E=-\partial_x\phi,\qquad -\partial_{xx}\phi=\rho-1 .
-								\]
-								<div><b>Design.</b> Vlasov–Poisson characteristics with the self-consistent field; observation = the smoothed <b>phase-space</b> density \(K_h*f_t\) on \((x,v)\).</div>
-								<div><b>Truth.</b> Two-stream: \(f_0\propto\tfrac12\big(f_{M,\sigma}(v-u_0)+f_{M,\sigma}(v+u_0)\big)(1+\varepsilon\cos\kappa x)\), \(\sigma=0.2\), \(u_0=1\).</div>
-								<div><b>Prior.</b> A <span class="accent">single Maxwellian</span> with the same perturbation — structurally wrong.</div>
+								<div><b>Design.</b> \(\intd X^i=-a(X^i-m_t)\intd t+\intd W^i\), with \(m_t\) the empirical mean.</div>
+								<div><b>Truth.</b> \(a_{\rm true}=1\), \(X_0^i\sim\mathcal N(0,0.5)\), integrated to \(T=5\).</div>
+								<div><b>Model.</b> The same SDE with the <span class="accent">wrong coupling</span> \(a\in\{0.5,2,5\}\); the animation shows \(a=0.5\).</div>
+								<div><b>Observed.</b> The smoothed density \(K_h*\mu_t\), with \(h=0.5\).</div>
 							</div>
 							<div class="cols" style="align-items:center;">
 								<figure class="framed" style="flex:1.15;">
-									<img src="./figure/two_stream_step_2000.png" style="max-height:315px;">
-									<figcaption>Phase space at step 2000: truth, biased single-Maxwellian forecast, and two nudging strengths — nudging on \(K_h*f\) recovers the filamentation and vortex merging.</figcaption>
+									<img src="./figure/part2/gaussian_density_truth_biased_nudged.gif" data-pdf-src="./figure/pdf_static/part2_gaussian_t5.png" style="width:100%; max-height:300px; object-fit:contain;">
+									<figcaption>Nudging corrects the biased coupling and restores the truth density.</figcaption>
 								</figure>
-								<div class="stackv" style="flex:0.72;">
-									<div class="note blue fragment">
-										<b>But</b> real diagnostics rarely give \(f\) — they give its moments. <span class="accent">&rarr; Part III</span>
-									</div>
-								</div>
+								<figure class="framed" style="flex:0.85;">
+									<img src="./figure/w2_vs_lambda_iter20.png" style="max-height:300px;">
+									<figcaption>For all three biased couplings, final and time-averaged \(W_2\) errors decrease as \(\lambda\) increases.</figcaption>
+								</figure>
 							</div>
+						</div>
 					</div>
+					<aside class="notes">This is the cleanest model-bias test: truth and forecast have the same equation, but the interaction coefficient is wrong. Read the animation first, then the Wasserstein summary. The displayed animation uses 31 stored states and no temporal interpolation.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Simple linear system.”<br>Animation provenance and exact frame indices: figure/part2/manifest.json.<br>[/Sources]</aside>
 				</section>
-				<section>
+				<section data-menu-title="II. Benchmark — bimodal">
 					<div class="slide">
-						<div class="eyebrow">Part II — multiscale nudging · optional</div>
-						<h2>Landau damping</h2>
+						<div class="eyebrow">Part II — multiscale nudging · bimodal benchmark</div>
+						<h2>Nudging moves mass across the barrier</h2>
 						<div class="body small">
 							<div class="card mtight">
+								<div><b>Design.</b> \(\intd X^i=-(X_i^3-X_i)\intd t-a(X^i-m_t)\intd t+\intd W^i\): a double-well system with metastable transitions.</div>
+								<div><b>Truth.</b> \(a_{\rm true}=0.25\), \(X_0^i\sim\mathcal N(0,0.5)\), integrated to \(T=5\).</div>
+								<div><b>Model.</b> The same dynamics with the wrong coupling; the figure shows \(a=1.5\), which places too much mass near the barrier.</div>
+								<div><b>Observed.</b> The smoothed density \(K_h*\mu_t\), with \(h=0.5\).</div>
+							</div>
+							<figure class="framed" style="align-self:center; width:100%;">
+								<img src="./figure/part2/bimodal_density_truth_biased_nudged.gif" data-pdf-src="./figure/pdf_static/part2_bimodal_t5.png" style="width:100%; max-height:345px; object-fit:contain;">
+								<figcaption>Nudging moves mass across the barrier and recovers both modes.</figcaption>
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">Unlike the Gaussian case, matching one or two moments is not enough here: the forecast must move probability mass through the barrier at x=0 and recover both modes. The black and blue curves form the two wells, while the orange biased forecast remains concentrated near the barrier.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Multimodal distribution.”<br>The animation was recomputed from the manuscript configuration using the KDE-nudging update in Lyuliyao/multiscale-nudging, commit 3914e4822f4517f9fe38eff3672f29d1e95b40b2. Exact parameters and frame indices: figure/part2/bimodal_manifest.json.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II. Benchmark — Lorenz">
+					<div class="slide">
+						<div class="eyebrow">Part II — multiscale nudging · chaotic benchmark</div>
+						<h2>Strong nudging stabilizes a chaotic mean</h2>
+						<div class="body small">
+							<div class="card mtight">
+								<div><b>Design.</b> A stochastic mean-field Lorenz system with \(N=1000\) and coupling through \((m_{t,x},m_{t,y},m_{t,z})\).</div>
+								<div><b>Truth.</b> Mean-field coupling with \((\sigma_L,\rho,\beta)=(10,28,8/3)\) and noise amplitude \(1\).</div>
+								<div><b>Model.</b> \(N\) independent Lorenz systems: replace the empirical means by each particle's own coordinates.</div>
+								<div><b>Observed.</b> The smoothed three-dimensional density \(K_h*\mu_t\), with \(h=0.5\).</div>
+							</div>
+							<figure class="framed" style="align-self:center; width:100%;">
+								<img src="./figure/part2/lorenz_truth_biased_nudged.gif" data-pdf-src="./figure/pdf_static/part2_lorenz_t10.png" style="width:100%; max-height:330px; object-fit:contain;">
+								<figcaption>Strong nudging keeps the mean trajectory close to the truth and suppresses forecast error.</figcaption>
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">The modeling error is structural, not a parameter perturbation: the truth couples particles through ensemble means, whereas the forecast runs independent Lorenz systems. Compare the orange open-loop path with the blue nudged path and then read the error panel.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Lorenz dynamics.”<br>Animation provenance and exact frame indices: figure/part2/manifest.json.<br>[/Sources]</aside>
+				</section>
+
+			<!-- ===================================================== II. Vlasov–Poisson -->
+				<section data-menu-title="II. Kinetic — two-stream">
+					<div class="slide">
+						<div class="eyebrow">Part II — multiscale nudging · kinetic benchmark</div>
+						<h2>Phase-space data recover the two streams</h2>
+						<div class="body xs">
+							<div class="card mtight">
+								<div><b>Design.</b> \(\dot X^i=V^i\), \(\dot V^i=E(X^i,t)\), with \(E=-\partial_x\phi\) and \(-\partial_{xx}\phi=\rho-1\).</div>
+								<div><b>Truth.</b> A perturbed two-stream law with \(\sigma=0.2\), \(u_0=1\), \(\varepsilon=0.01\), and \(\kappa=0.5\).</div>
+								<div><b>Model.</b> The same Vlasov–Poisson dynamics initialized from a <span class="accent">single Maxwellian</span> — the velocity law is structurally wrong.</div>
+								<div><b>Observed.</b> The full smoothed phase-space density \((K_h*f_t)(x,v)\).</div>
+							</div>
+							<figure class="framed" style="align-self:center; width:100%;">
+								<img src="./figure/part2/vp_density_obs_truth_biased_nudged.gif" data-pdf-src="./figure/pdf_static/part2_vp_t100.png" style="width:100%; max-height:290px; object-fit:contain;">
+								<figcaption>Density nudging reconstructs the two-stream structure missed by the Maxwellian forecast.</figcaption>
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">Read the three panels at the same time and on the same color scale. The biased single-Maxwellian forecast remains a thin band, while density-level nudging reconstructs the two-stream phase-space structure. The animation uses 31 stored states from step 0 through step 2000, corresponding to t=0 through t=100; no frames are interpolated.<br><br>[Sources]<br>Existing outputs case3_Vlasov_poisson_instability/assimilation/data_lambda_0/phase_da_kdenudge_1d1v_seed0.npz and data_lambda_1e_3/phase_da_kdenudge_1d1v_seed0.npz; exact frame indices and the global color limit are recorded in figure/part2/manifest.json.<br>https://github.com/Lyuliyao/multiscale-nudging, commit 3914e4822f4517f9fe38eff3672f29d1e95b40b2.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II. Kinetic — Landau damping">
+					<div class="slide">
+						<div class="eyebrow">Part II — multiscale nudging · kinetic benchmark</div>
+						<h2>Nudging recovers the Landau damping rate</h2>
+						<div class="body small">
+							<div class="card mtight">
+								<div><b>Design.</b> The same one-dimensional Vlasov–Poisson dynamics, monitored through the fundamental electric-field mode \(|\hat E(\kappa,t)|\).</div>
 								<div><b>Truth.</b> \(f_0\propto f_{M,1}(v)(1+\varepsilon\cos\kappa x)\), \(\varepsilon=0.5\), \(\kappa=\tfrac12\), \(x\in[0,4\pi]\).</div>
-								<div><b>Prior.</b> The unperturbed Maxwellian (\(\varepsilon=0\)) — no initial density modulation.</div>
-								<div><b>Diagnostic.</b> \(|\hat E(\kappa,t)|\), which decays exponentially at the Landau rate in the linear regime.</div>
+								<div><b>Model.</b> The same dynamics initialized from the unperturbed Maxwellian, \(\varepsilon=0\) — no initial spatial modulation.</div>
+								<div><b>Observed.</b> The full smoothed phase-space density \((K_h*f_t)(x,v)\).</div>
 							</div>
 							<figure class="framed" style="align-self:center;">
-								<img src="./figure/landau_damping.png" style="max-height:360px;">
+								<img src="./figure/landau_damping.png" style="max-height:330px;">
 								<figcaption>Reference / biased / assimilated: the nudged runs recover the damping profile from density-level data.</figcaption>
 							</figure>
+						</div>
 					</div>
+					<aside class="notes">The observed object is the phase-space density; the electric-field mode is the diagnostic used to test whether the correct damping behavior is recovered.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Vlasov–Poisson equation,” paragraph “Landau damping.”<br>[/Sources]</aside>
 				</section>
-			</section>
 
 			<!-- ===================================================== II. Fish -->
-			<section data-menu-title="Fish school">
-				<section>
+				<section data-menu-title="II. Fish school">
 					<div class="slide">
-						<div class="eyebrow">Part II — multiscale nudging · experiment 3/3</div>
-						<h2>Closing the loop on real data: learned model + nudging</h2>
+						<div class="eyebrow">Part II — multiscale nudging · collective-motion data</div>
+						<h2>Density feedback stabilizes a learned fish model</h2>
 						<div class="body small">
 							<figure>
-								<video muted autoplay loop playsinline style="width:100%; max-height:240px; border-radius:8px;">
+								<video muted autoplay loop playsinline data-pdf-src="./figure/pdf_static/fish_assimilation_final.png" data-pdf-alt="Fish data assimilation comparison at the final time" style="width:100%; max-height:240px; border-radius:8px;">
 									<source src="./comparison_3panel.mp4" type="video/mp4">
 								</video>
-								<figcaption>Left: observation. Middle: biased forecast — the learned MVNN drift rolled out. Right: Multiscale Nudging.</figcaption>
+								<figcaption>Multiscale nudging keeps the learned fish forecast aligned with the observed density.</figcaption>
 							</figure>
 							<div class="cols" style="align-items:center;">
 								<div class="card mtight" style="flex:1.4;">
-									<div><b>Data.</b> The fish school of the bridge slide: \(N\approx1126\) fish, TRex tracks with occlusions and identity dropouts — unlabeled and incomplete.</div>
-									<div><b>Model.</b> The MVNN drift of Part I, trained on held-out frames of the same dataset.</div>
-									<div><b>Obs.</b> Gaussian KDE, \(125\times125\) grid, \(h=2\,\)px; \(\Delta t=0.025\,\)s, \(L_{\rm nud}=100\), \(\lambda=1\).</div>
+									<div><b>Design.</b> Start all three runs from the same frame; integrate with \(\Delta t=0.025\,\)s, \(L_{\rm nud}=100\), and \(\lambda=1\).</div>
+									<div><b>Truth.</b> TRex tracks for \(N\approx1126\) fish, with occlusions, missing detections, and inconsistent identities.</div>
+									<div><b>Model.</b> The learned MVNN drift from Part I, rolled out without observation feedback.</div>
+									<div><b>Observed.</b> Gaussian KDE of the unmasked detections on a \(125\times125\) grid, with \(h=2\,\)px.</div>
 								</div>
 								<figure class="framed" style="flex:0.6;">
 									<img src="./figure/density_L2_error_vs_time.png" style="max-height:195px;">
@@ -1385,21 +1648,8 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 							</div>
 						</div>
 					</div>
-					<aside class="notes">This is where Parts I and II meet: the learned drift is the biased model, the KDE is the observation, the nudged forecast tracks the boundary ring and the hollow core for the whole window.</aside>
+					<aside class="notes">This is where Parts I and II meet: the learned MVNN drift supplies the biased open-loop model, while the KDE of the experimental detections supplies the observation. The nudged forecast tracks the boundary ring and central low-density region over the full window.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Collective-motion data.”<br>[/Sources]</aside>
 				</section>
-				<section>
-					<div class="slide">
-						<div class="eyebrow">Part II — multiscale nudging · optional</div>
-						<h2>Fish school: density snapshots</h2>
-						<div class="body" style="align-items:center;">
-							<figure class="framed">
-								<img src="./figure/comparison_3way_density.png" style="max-height:465px;">
-								<figcaption>Rows: reference / biased forecast / Multiscale Nudging; columns \(t=0,1.25,3.75,6.25\,\)s. The biased forecast develops a spurious concentration in the upper-left corner and never recovers the boundary ring.</figcaption>
-							</figure>
-						</div>
-					</div>
-				</section>
-			</section>
 
 			<!-- ===================================================== Divider III -->
 			<section class="divider" data-background-color="#10202B" data-menu-title="Part III" style="--part:#F0A06A;">
@@ -1407,33 +1657,42 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				<div class="slide" style="justify-content:center;">
 					<div class="eyebrow">Part III</div>
 					<h1>Moment nudging for Vlasov–Poisson</h1>
-					<div class="thesis">When only density, bulk velocity and temperature are observed, the data fix a family of phase-space distributions, not a member — what can feedback still do?</div>
+					<div class="thesis">Correct particles from \((\rho,\bu,T)\) without reconstructing the full phase-space law.</div>
 				</div>
 			</section>
 
 			<!-- ===================================================== III. Setup -->
 			<section data-menu-title="III. Moments only" style="--part:#C9520E;">
 				<div class="slide">
-					<div class="eyebrow">Part III — moment nudging for Vlasov–Poisson</div>
-					<h2>Plasmas: only hydrodynamic moments are observed</h2>
+					<div class="eyebrow">Part III — moment nudging</div>
+					<h2>Moments determine a family, not a distribution</h2>
 					<div class="body small">
 						<div class="card">
-							Vlasov–Poisson with collisions, \(\partial_t f+\bv\cdot\nabla_\bx f+\bE\cdot\nabla_\bv f=Q[f]\), \(-\Delta\phi=\rho-1\) on \(\Tor\times\mathbb R^d\).
-							PIC: \(f^{N_p}=\sum_i w_i\,\delta_{(\bX^i,\bV^i)}\) — the particles are <em>quadrature points</em> of one law, not candidate states.
+							\[
+							\begin{aligned}
+							\partial_t f+\bv\cdot\nabla_\bx f+\bE[f]\cdot\nabla_\bv f &= Q[f],\\
+							\bE[f]= -\nabla_\bx\phi,\qquad -\Delta_\bx\phi &= \rho[f]-1 .
+							\end{aligned}
+							\]
+							<div class="muted">PIC: \(f^{N_p}=\sum_i w_i\,\delta_{(\bX^i,\bV^i)}\) — the particles are quadrature points of one law.</div>
 						</div>
 						<div class="cols fill" style="align-items:stretch;">
 							<div class="stackv" style="flex:1.0;">
 								<div class="card mtight xs fragment">
-									<h4>Observed: smoothed conserved moments (equivalently \(\rho,\bu,T\)), linear in \(f\)</h4>
+									<h4>Observed moment map — linear in \(f\)</h4>
 									\[
-									\big(\rho_h,\bj_h,\mathcal K_h\big)[f](\bx)=\int K_h(\bx-\by)\,\big(1,\bv,\tfrac12|\bv|^2\big)\,f(\by,\bv)\,\intd\by\,\intd\bv
+									M_h[f](\bx):=\big(\rho_h,\bj_h,\mathcal K_h\big)[f](\bx)
+									=\int K_h(\bx-\by)\,\big(1,\bv,\tfrac12|\bv|^2\big)f(\by,\bv)\,\intd\by\,\intd\bv .
 									\]
-									residuals \(r_0=\rho_h[f]-\rho^\obs,\ \mathbf r_1=\bj_h[f]-\bj^\obs,\ r_2=\mathcal K_h[f]-\mathcal K^\obs\),
-									with \(\bj^\obs=\rho^\obs\bu^\obs\), \(\mathcal K^\obs=\tfrac12\rho^\obs|\bu^\obs|^2+\tfrac d2\rho^\obs T^\obs\).
+									\[
+									\begin{aligned}
+									\mathbf r[f]&:=M_h[f]-M^\obs=(r_0,\mathbf r_1,r_2),\\
+									J_M[f]&:=\frac{\gamma_1}{2}\|r_0\|_{L^2}^2+\frac{\gamma_2}{2}\|\mathbf r_1\|_{L^2}^2+\frac{\gamma_3}{2}\|r_2\|_{L^2}^2 .
+									\end{aligned}
+									\]
 								</div>
 								<div class="note orange fragment">
-									<b>Moment-compatible set</b> \(\mathcal S_h=\{f: r_0=\mathbf r_1=r_2=0\}\ni f^\dagger\): the data fix a <em>family</em>, not a member.
-									Needed: a lift from the moment residuals to a particle drift that sees the particles only through \(\mu^{N_p}\) and <b>vanishes on all of \(\mathcal S_h\)</b>.
+									<b>Moment-compatible family</b> \(\mathcal S_h=\{f:J_M[f]=0\}\ni f^\dagger\). The data fix this family, not one distribution; feedback must therefore <b>vanish on all of \(\mathcal S_h\)</b>.
 								</div>
 							</div>
 							<figure style="flex:1.0;">
@@ -1466,239 +1725,511 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 						</div>
 					</div>
 				</div>
-				<aside class="notes">A two-stream state can have exactly the moments of a Maxwellian. The observations determine only the family. Nudging the moment equations directly would need a closure — the hierarchy is not closed at the observed level.</aside>
+				<aside class="notes">A two-stream state can have exactly the moments of a Maxwellian. The observations determine only the family. Here \(M^\obs=(\rho^\obs,\bj^\obs,\mathcal K^\obs)\), where \(\bj^\obs=\rho^\obs\bu^\obs\) and \(\mathcal K^\obs=\tfrac12\rho^\obs|\bu^\obs|^2+\tfrac d2\rho^\obs T^\obs\). We retain \(r_0,\mathbf r_1,r_2\) because Method B on the next slide uses the density, momentum, and energy residuals separately. Nudging the moment equations directly would need a closure — the hierarchy is not closed at the observed level.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, moment observation map, residuals, and quadratic mismatch \(J_M\).<br>[/Sources]</aside>
 			</section>
 
-			<!-- ===================================================== III. Obstruction -->
-			<section data-menu-title="Two-Maxwellian obstruction" style="--part:#C9520E;">
-				<div class="slide">
-					<div class="eyebrow">Part III — moment nudging for Vlasov–Poisson</div>
-					<h2>What moment feedback cannot do: the two-Maxwellian obstruction</h2>
-					<div class="body small">
-						<div class="thm">
-							<span class="lbl">Proposition</span><span class="ttl">Two-Maxwellian obstruction</span>
-							<div class="stmt">
-								Consider any residual-driven assimilation
-								\(\partial_t f+\bv\cdot\nabla_\bx f+\bE[f]\cdot\nabla_\bv f=Q[f]+\mathcal N\big(f,\mathcal O[f]-\mathcal O[f^\dagger]\big)\) on the neutral torus. Assume
-								(A1) \(Q[\mathcal M_{1,\bu,T}]=0\) for every homogeneous Maxwellian; (A2) \(\mathcal N(f,0)=0\);
-								(A3) there are \((\bu_1,T_1)\neq(\bu_2,T_2)\) with \(\mathcal O[\mathcal M_{1,\bu_1,T_1}]=\mathcal O[\mathcal M_{1,\bu_2,T_2}]\); (A4) uniqueness.
-								If \(f^\dagger(0)=\mathcal M_{1,\bu_1,T_1}\) and \(f(0)=\mathcal M_{1,\bu_2,T_2}\), then both stay put for all time and
-								\(d\big(f(t),f^\dagger(t)\big)\) is constant for every metric \(d\).
+			<!-- ===================================================== III. Methods A/B/C -->
+				<section data-menu-title="III. Method A" style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — moment nudging · feedback 1/3</div>
+						<h2>Method A: weight the transport geometry</h2>
+						<div class="body small">
+							<div class="card mtight" style="padding:10px 16px;">
+								<h4>Moment residuals define a phase-space potential</h4>
+								\[
+								\Phi_M[f]:=\frac{\delta J_M}{\delta f}
+								=\gamma_1q_0(\bx)+\gamma_2\bv\!\cdot\!\mathbf q_1(\bx)
+								+\frac{\gamma_3}{2}|\bv|^2q_2(\bx),
+								\quad
+								(q_0,\mathbf q_1,q_2)=K_h*(r_0,\mathbf r_1,r_2).
+								\]
+							</div>
+							<div class="cols fill" style="align-items:stretch;">
+								<div class="card" style="flex:0.9;">
+									<h4>Define the metric tensor \(G_t\)</h4>
+									\[
+									G_t(\bx,\bv)=\operatorname{diag}\!\big(a_t(\bx,\bv)I_d,I_d\big),
+									\qquad
+									a_t=1+\frac{|\bv-\bu^\obs(\bx,t)|^2}{V_*^2}.
+									\]
+									<div><b>\(V_*\)</b> is a reference thermal speed. The factor \(a_t\) increases only the cost of spatial motion.</div>
+								</div>
+								<div class="card" style="flex:1.1;">
+									<h4>Descend \(J_M\) in that metric</h4>
+									\[
+									\begin{aligned}
+									\bb_A&=-G_t^{-1}\nabla_{\bx,\bv}\Phi_M\\
+									&=\left(
+									-\frac{\nabla_\bx\Phi_M}
+									{1+|\bv-\bu^\obs|^2/V_*^2},
+									-\nabla_\bv\Phi_M
+									\right).
+									\end{aligned}
+									\]
+									<div class="muted">Large peculiar velocity damps the position channel; the velocity channel is unchanged.</div>
+								</div>
+							</div>
+							<div class="note orange">
+								<b>Why introduce \(G_t\)?</b> Plain \(W_2\) leaves
+								\(\tfrac{\gamma_3}{2}|\bv|^2\nabla_\bx q_2\) in the position drift. Dividing that channel by \(a_t\) controls the quadratic growth, while
+								\(\frac{\intd}{\intd t}J_M[f_t]\le0\).
 							</div>
 						</div>
-						<div class="thm fragment">
-							<span class="lbl">Corollary</span><span class="ttl">Necessity of moment observability</span>
-							<div class="stmt">
-								Synchronization from arbitrary Maxwellian initializations requires \((\bu,T)\mapsto\mathcal O[\mathcal M_{1,\bu,T}]\) to be <b>injective</b>:
-								an observation map that does not distinguish bulk velocity and temperature (e.g. density alone) cannot synchronize.
+					</div>
+					<aside class="notes">The preceding slide defines the moment residuals \(r_0,\mathbf r_1,r_2\) and the quadratic mismatch \(J_M\). Their first variation is the scalar phase-space potential \(\Phi_M\). The metric tensor \(G_t\) is a \(2d\times2d\) block-diagonal matrix acting on tangent velocities \((\xi_x,\xi_v)\): it multiplies only the spatial block by \(1+|\bv-\bu^\obs|^2/V_*^2\). Its inverse therefore divides only the spatial feedback by that factor. This is the default formulation because it retains one weighted-Wasserstein gradient-flow structure and controls the quadratic velocity growth created by the energy residual.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, quadratic moment mismatch, first variation, and velocity-weighted Wasserstein Method A.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="III. Method B" style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — moment nudging · feedback 2/3</div>
+						<h2>Method B: split residuals by direction</h2>
+						<div class="body small">
+							<div class="card mtight">
+								<h4>Keep the same quadratic mismatch, but split it</h4>
+								\[
+								J_M=
+								\underbrace{\frac{\gamma_1}{2}\|r_0\|_{L^2}^2}_{J_M^\rho}
+								+
+								\underbrace{\frac{\gamma_2}{2}\|\mathbf r_1\|_{L^2}^2
+								+\frac{\gamma_3}{2}\|r_2\|_{L^2}^2}_{J_M^{\mathbf j,\mathcal K}},
+								\qquad
+								(q_0,\mathbf q_1,q_2)=K_h*(r_0,\mathbf r_1,r_2).
+								\]
+							</div>
+							<div class="cols fill" style="align-items:stretch;">
+								<div class="card" style="flex:1;">
+									<h4>Density residual \(\rightarrow\) position</h4>
+									\[
+									\Phi_M^\rho=\gamma_1q_0(\bx),
+									\qquad
+									\bb_{B,\bx}=-\nabla_\bx\Phi_M^\rho
+									=-\gamma_1\nabla_\bx q_0 .
+									\]
+									<div>Particles move spatially to correct the observed density \(\rho^\obs\).</div>
+								</div>
+								<div class="card" style="flex:1;">
+									<h4>Momentum + energy \(\rightarrow\) velocity</h4>
+									\[
+									\begin{aligned}
+									\Phi_M^{\mathbf j,\mathcal K}
+									&=\gamma_2\bv\!\cdot\!\mathbf q_1+\frac{\gamma_3}{2}|\bv|^2q_2,\\
+									\bb_{B,\bv}
+									&=-\nabla_\bv\Phi_M^{\mathbf j,\mathcal K}
+									=-\gamma_2\mathbf q_1-\gamma_3\bv q_2 .
+									\end{aligned}
+									\]
+									<div>Velocity translations correct momentum; velocity scaling corrects kinetic energy.</div>
+								</div>
+							</div>
+							<div class="note orange">
+								<b>No metric tensor is needed.</b> Method B uses plain \(W_2\), but the energy residual never enters the position update; therefore the problematic \(|\bv|^2\nabla_\bx q_2\) term is absent.
 							</div>
 						</div>
-						<div class="note orange fragment">
-							<b>Why.</b> Linearized around a Maxwellian, moment-conserving collisions are coercive on the complement of \(\mathrm{span}\{1,\bv,|\bv|^2\}\): they damp the non-hydrodynamic
-							<em>shape</em> error but leave the hydrodynamic variables untouched. <span class="accent">What collisions do not damp, the data must observe</span> — so the feedback is built from all three residuals \((r_0,\mathbf r_1,r_2)\).
+					</div>
+					<aside class="notes">Method B does not take the full phase-space gradient of one first variation. Instead it assigns the density part of \(J_M\) to the position direction and the momentum-energy part to the velocity direction. The resulting position drift is independent of velocity and the velocity drift is affine in velocity. This removes the same quadratic position growth as Method A, but by splitting directions rather than changing the Wasserstein geometry.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, direction-split Method B.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="III. Method C" style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — moment nudging · feedback 3/3</div>
+						<h2>Method C: penalize moments, not shape</h2>
+						<div class="body xs">
+							<div class="cols fill" style="align-items:stretch;">
+								<div class="card" style="flex:1;">
+									<h4>Why full relative entropy is too strong</h4>
+									<div>Let \(\pi^\obs=\mathcal M_{\rho^\obs,\bu^\obs,\Theta^\obs}\) and let \(\mathcal M[f]\) be the Maxwellian with the same \((\rho_h,\bu_h,\Theta_h)\) as \(f\).</div>
+									\[
+									\operatorname{KL}(p\|q)
+									:=\int\!\left(p\log\frac pq-p+q\right)\ge0 .
+									\]
+									\[
+									\operatorname{KL}(f\|\pi^\obs)
+									=
+									\underbrace{\operatorname{KL}(f\|\mathcal M[f])}_{\text{unobserved shape}}
+									+
+									\underbrace{\operatorname{KL}(\mathcal M[f]\|\pi^\obs)}_{\text{moment mismatch}} .
+									\]
+									<div class="muted">Using the full KL would keep pushing every non-Maxwellian \(f\) toward \(\pi^\obs\), even after its observed moments are correct.</div>
+								</div>
+								<div class="stackv" style="flex:1;">
+									<div class="card">
+										<h4>Keep only the moment term</h4>
+										\[
+										J_{\rm ent}[f]
+										:=\operatorname{KL}\!\left(
+										\mathcal M_{h,\varepsilon}[f]\,
+										\middle\|\,
+										\pi^\obs_\varepsilon
+										\right),
+										\quad
+										\Theta_h=T_h+\varepsilon,\quad
+										\Theta^\obs=T^\obs+\varepsilon .
+										\]
+										<div>\(J_{\rm ent}=0\) exactly when \((\rho_h,\bu_h,T_h)=(\rho^\obs,\bu^\obs,T^\obs)\): the whole moment-compatible family remains a zero set.</div>
+									</div>
+									<div class="card">
+										<h4>Weighted-Wasserstein feedback</h4>
+										\[
+										\begin{aligned}
+										\bb_{C,\bx}
+										&=-\gamma\frac{\nabla_\bx\Psi_\varepsilon}
+										{1+|\bv-\bu^\obs|^2/V_*^2},
+										\qquad
+										\Psi_\varepsilon=\frac{\delta J_{\rm ent}}{\delta f},\\
+										\bb_{C,\bv}
+										&=-\gamma K_h*\!\left[
+										\frac{\bv-\bu^\obs}{\Theta^\obs}
+										-\frac{\bv-\bu_h}{\Theta_h}
+										\right].
+										\end{aligned}
+										\]
+									</div>
+								</div>
+							</div>
+							<div class="note orange">
+								<b>Why shape is preserved.</b> \(\bb_{C,\bv}\) is affine in \(\bv\): it translates and rescales velocity to correct \(\bu\) and \(T\), while leaving the unresolved non-Maxwellian shape term \(\operatorname{KL}(f\|\mathcal M[f])\) unchanged.
+							</div>
 						</div>
 					</div>
-				</div>
-				<aside class="notes">This is a design constraint, proved before any method: any feedback that only sees residuals inherits this obstruction.</aside>
-			</section>
-
-			<!-- ===================================================== III. Method A -->
-			<section data-menu-title="Method A" style="--part:#C9520E;">
-				<div class="slide">
-					<div class="eyebrow">Part III — moment nudging for Vlasov–Poisson</div>
-					<h2>Method A: quadratic mismatch + velocity-weighted Wasserstein metric</h2>
-					<div class="body small">
-						<div class="card mtight">
-							\[
-							J_M[f]=\sum_{k=0}^{2}\tfrac{\gamma_{k+1}}{2}\|r_k\|_{L^2}^2,\qquad
-							\Phi_M[f]=\frac{\delta J_M}{\delta f}=\gamma_1K_h*r_0+\gamma_2\,\bv\cdot K_h*\mathbf r_1+\tfrac{\gamma_3}{2}|\bv|^2K_h*r_2 .
-							\]
-						</div>
-						<div class="card fragment">
-							<b>Plain \(W_2\) descent</b> \(-\nabla_{\bx,\bv}\Phi_M\): the position drift contains \(\tfrac{\gamma_3}{2}|\bv|^2\nabla_\bx(K_h*r_2)\) —
-							<span class="accent">quadratic in \(\bv\)</span>, not globally Lipschitz, outside standard well-posedness theory.
-						</div>
-						<div class="card mtight fragment">
-							<h4>Fix the geometry, not the functional: weight spatial transport by the peculiar speed relative to the observed flow (Benamou–Brenier)</h4>
-							\[
-							G_t(\bx,\bv)=\mathrm{diag}\Big(\big(1+\tfrac{|\bv-\bu^\obs|^2}{V_*^2}\big)I_d,\;I_d\Big),
-							\qquad
-							\bb_A:=-G_t^{-1}\nabla_{\bx,\bv}\Phi_M=\Big(-\frac{\nabla_\bx\Phi_M}{1+|\bv-\bu^\obs|^2/V_*^2},\;-\nabla_\bv\Phi_M\Big),
-							\]
-							then \(\dot{\bX}^i=\bV^i+\bb_{A,\bx}\), \(\dot{\bV}^i=\bE(\bX^i)+\bb_{A,\bv}\) (+ collision map). The weight absorbs the \(|\bv|^2\) growth; the velocity drift is affine in \(\bv\).
-						</div>
-						<div class="note orange fragment push">
-							<b>Two structural facts.</b> \(\nabla_{\bx,\bv}\Phi_M[f]=0\) \(f\)-a.e. \(\iff f\in\mathcal S_h\) (the feedback vanishes exactly on the compatible set);
-							with frozen observations \(\frac{\intd}{\intd t}J_M[f_t]=-\|\mathrm{grad}_{G}J_M\|^2_{g_{f_t}}\le0\) (Lyapunov).
-						</div>
-					</div>
-				</div>
-				<aside class="notes">The peculiar speed is Galilean invariant and equals the intrinsic one on the compatible set. V_* is a thermal speed scale.</aside>
-			</section>
+					<aside class="notes">Here relative entropy is used only after projecting the current and observed moments to their local Maxwellians. The generalized KL is nonnegative even when the two densities have different total mass. Its Pythagorean splitting separates non-Maxwellian shape from moment mismatch. Method C defines the scalar objective \(J_{\rm ent}\), denoted \(\mathcal G_\varepsilon\) in the paper, as the KL between the two local Maxwellians; this is unrelated to the metric tensor \(G_t\) on the Method A slide. A temperature floor \(\varepsilon\) keeps logarithms and inverse temperatures well defined. The same weighted metric as Method A is used for the spatial channel. The velocity channel is affine in \(\bv\), so it corrects the observed bulk velocity and temperature without directly changing the unresolved velocity-space shape.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, moment-shape splitting of relative entropy and entropic Method C.<br>[/Sources]</aside>
+				</section>
 
 			<!-- ===================================================== III. Three methods -->
 			<section data-menu-title="Methods A/B/C + well-posedness" style="--part:#C9520E;">
 				<div class="slide">
-					<div class="eyebrow">Part III — moment nudging for Vlasov–Poisson</div>
-					<h2>Three methods, one principle — and a well-posed particle scheme</h2>
+					<div class="eyebrow">Part III — moment nudging</div>
+					<h2>All three schemes are well posed</h2>
 					<div class="body small">
-						<table>
-							<tr><th style="width:8%;">Method</th><th style="width:25%;">mismatch functional</th><th style="width:12%;">geometry</th><th>position / velocity drift</th><th style="width:22%;">structural property</th></tr>
-							<tr><td><b>A</b></td><td>quadratic \(J_M\)</td><td>velocity-weighted \(W_2\)</td><td>\(-\nabla_\bx\Phi_M/(1+|\bv-\bu^\obs|^2/V_*^2)\) &nbsp;/&nbsp; \(-\nabla_\bv\Phi_M\)</td><td>\(J_M\) is a Lyapunov functional of the feedback flow</td></tr>
-							<tr><td><b>B</b></td><td>quadratic, <em>direction-split</em> \(J_M^\rho+J_M^{\bj,\mathcal K}\)</td><td>plain \(W_2\)</td><td>\(-\gamma_1\nabla_\bx(K_h*r_0)\) &nbsp;/&nbsp; \(-\gamma_2K_h*\mathbf r_1-\gamma_3\bv\,K_h*r_2\)</td><td>no \(|\bv|^2\) term by construction</td></tr>
-							<tr><td><b>C</b></td><td>moment relative entropy \(\mathcal G_\varepsilon=\KL\big(\mathcal M[f]\,\|\,\pi^\obs\big)\) — the moment part of \(\KL(f\|\pi^\obs)\) (Pythagoras splitting)</td><td>velocity-weighted \(W_2\)</td><td>\(-\gamma\nabla_\bx\Psi_\varepsilon/(1+\cdots)\) &nbsp;/&nbsp; \(-\gamma K_h*\Big[\frac{\bv-\bu^\obs}{\Theta^\obs}-\frac{\bv-\bu_h}{\Theta_h}\Big]\): affine, <b>shape-preserving</b></td><td>closed global balance \(\frac{\intd}{\intd t}\bar{\bu}=-\frac{\gamma}{T^\obs}(\bar{\bu}-\bu^\obs)\); explicit \(\bar T\) balance</td></tr>
-						</table>
-						<div class="thm fragment push">
-							<span class="lbl">Proposition</span><span class="ttl">Global well-posedness of the \(N_p\)-particle scheme</span>
+						<div class="cols" style="align-items:stretch;">
+							<div class="card" style="flex:1;">
+								<h4><span class="accent">A</span> · Lyapunov structure</h4>
+								\[
+								\frac{\intd}{\intd t}J_M[f_t]
+								=-\|\operatorname{grad}_G J_M\|^2\le0 .
+								\]
+								<span class="muted">One mismatch, one weighted gradient flow.</span>
+							</div>
+							<div class="card" style="flex:1;">
+								<h4><span class="accent">B</span> · No quadratic position drift</h4>
+								Direction splitting removes the problematic
+								\[
+								|\bv|^2\nabla_\bx(K_h*r_2)
+								\]
+								from the position update.
+							</div>
+							<div class="card" style="flex:1;">
+								<h4><span class="accent">C</span> · Closed moment balances</h4>
+								\[
+								\dot{\bar{\bu}}
+								=-\frac{\gamma}{T^\obs}\big(\bar{\bu}-\bu^\obs\big).
+								\]
+								<span class="muted">Affine velocity maps are shape preserving.</span>
+							</div>
+						</div>
+						<div class="thm">
+							<span class="lbl">Proposition</span><span class="ttl">Global well-posedness for A, B and C</span>
 							<div class="stmt">
-								Close the nudged PIC system with Lenard–Bernstein collisions (Ornstein–Uhlenbeck in \(\bv\), rate \(\nu\)). If the deposition and observation kernels are \(W^{2,\infty}\), \(K_h\ge\kappa_h&gt;0\), the observed fields are \(W^{2,\infty}\) with \(\rho^\obs\ge\rho_{\min}&gt;0\), and \(\mathbb E\,m_2(0)&lt;\infty\),
-								then for every method \(a\in\{A,B,C\}\) (\(\varepsilon&gt;0\) for C) and <b>every scaling parameter</b> the particle SDE has a unique global strong solution.
-								<span class="intuition"><b>Key step:</b> the velocity drift is affine in \(\bv\), so the moments obey \(\mathcal L m_q\le q(\bar\alpha_a-\nu+\zeta)m_q+C\) — at most exponential growth, no finite-time blow-up.</span>
+								With Lenard–Bernstein collisions, smooth positive kernels and observations, and finite initial second moment, the \(N_p\)-particle SDE has a <b>unique global strong solution</b> for every method \(a\in\{A,B,C\}\) and every feedback strength.
 							</div>
 						</div>
 					</div>
 				</div>
-				<aside class="notes">All three compare at the moment level and correct at the particle level. C moves velocities by affine maps: Maxwellians to Maxwellians, shape untouched.</aside>
+				<aside class="notes">Full assumptions for the proposition: the deposition and observation kernels are \(W^{2,\infty}\), \(K_h\ge\kappa_h>0\); the observed fields are \(W^{2,\infty}\) with \(\rho^\obs\ge\rho_{\min}>0\); and \(\mathbb E\,m_2(0)<\infty\). For C, \(\varepsilon>0\). The conclusion holds for every scaling parameter. All three methods compare at the moment level and correct at the particle level; their affine-in-velocity structure prevents finite-time blow-up.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, global well-posedness result.<br>[/Sources]</aside>
 			</section>
 
 			<!-- ===================================================== III. 1D1V -->
-			<section data-menu-title="1D1V results">
-				<section style="--part:#C9520E;">
+				<section data-menu-title="III. 1D1V — setup" style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · experiment 1/3</div>
-						<h2>1D1V relaxation: only the feedback can move the moments</h2>
+						<div class="eyebrow">Part III — numerical setup · 1D1V</div>
+						<h2>Same temperature, different current and shape</h2>
 						<div class="body xs">
-							<div class="card mtight">
-								<div><b>Design.</b> Collisions are an <em>exactly conservative</em> Dougherty map — they relax the velocity <em>shape</em> but cannot correct \((\rho,\bu,T)\): <b>any moment synchronization is the feedback’s doing</b>.</div>
-								<div><b>Truth.</b> Maxwellian current wave \(u^\dagger_0(x)=0.25+0.8\sin(x/2)\), \(T_0=0.5\).</div>
-								<div><b>Prior.</b> Out-of-phase current wave \(u_0(x)=-0.25-0.3\sin(x/2+\pi/3)\), <span class="accent">bimodal shape</span> (streams at \(\pm0.55\)). <span class="muted">\(N_p=10^5\), \(\nu=0.5\), \(\gamma_k=3\), \(V_*=1\), 3 seeds.</span></div>
+							<div class="experiment-model definition">
+								<div class="model-name">Undriven Vlasov–Poisson–Dougherty</div>
+								<div class="model-line">\(\partial_t h+v\,\partial_x h+E[h]\,\partial_v h=Q_{\mathrm D}[h].\)</div>
+								<div class="model-line">\(-\partial_{xx}\phi=\rho[h]-1,\qquad E=-\partial_x\phi.\)</div>
+								<div class="model-line">\(Q_{\mathrm D}[h]=\nu\,\partial_v\!\left((v-u[h])h+T[h]\,\partial_vh\right).\)</div>
+								<div class="model-line">\(\rho[h]=\int h\,\mathrm dv,\qquad u[h]=\rho[h]^{-1}\!\int vh\,\mathrm dv,\qquad T[h]=\rho[h]^{-1}\!\int (v-u[h])^2h\,\mathrm dv.\)</div>
 							</div>
-							<div class="cols" style="align-items:flex-end;">
-								<figure class="framed" style="flex:1.75;">
-									<img src="./figure/vp/cc_abc_1d.png" style="max-height:205px;">
-									<figcaption>Errors \(e_u,e_T,e_f\) vs. time: unassimilated (gray) and Methods A/B/C (\(\pm1\sigma\) bands).</figcaption>
-								</figure>
-								<figure class="framed" style="flex:0.85;">
-									<img src="./figure/vp/cc_abc_1d_velmarg.png" style="max-height:205px;">
-									<figcaption>Velocity marginal at \(T_{\rm fin}=15\).</figcaption>
-								</figure>
+							<div class="initial-grid fill">
+								<div class="initial-panel">
+									<h3>Truth · Maxwellian current wave</h3>
+									\[
+									\begin{aligned}
+									f_0^\dagger(x,v)&=\mathcal M_{1,u_0^\dagger(x),T_0}(v),\\
+									u_0^\dagger(x)&=0.25+0.8\sin(x/2),\qquad T_0=0.5.
+									\end{aligned}
+									\]
+									\[
+									\mathcal M_{1,u,T}(v)=\frac{1}{\sqrt{2\pi T}}
+									\exp\!\left[-\frac{(v-u)^2}{2T}\right].
+									\]
+									<div class="setup-meaning">Unit density · single Gaussian velocity shape.</div>
+								</div>
+								<div class="initial-panel prior">
+									<h3>Prior · shifted bimodal current wave</h3>
+									\[
+									g_0(x,v)=\tfrac12\mathcal M_{1,u_0(x)-a,\theta}(v)
+									+\tfrac12\mathcal M_{1,u_0(x)+a,\theta}(v),
+									\]
+									\[
+									\begin{aligned}
+									u_0(x)&=-0.25-0.3\sin(x/2+\pi/3),\\
+									a&=0.55,\qquad \theta=T_0-a^2=0.1975.
+									\end{aligned}
+									\]
+									<div class="setup-meaning">Same \(\rho_0=1\) and \(T_0=0.5\); wrong mean flow, amplitude, phase, and velocity-space shape.</div>
+								</div>
 							</div>
-							<div class="push" style="display:flex; justify-content:center;">
+							<div class="setup-meta">
+								<span><b>Observed</b> \((\rho,u,T)(x,t)\), every step</span>
+								<span><b>Grid</b> \(L=4\pi,\ N_p=10^5,\ N_x=128\)</span>
+								<span><b>Run</b> \(\Delta t=0.002,\ T_{\rm fin}=15,\ \nu=0.5\)</span>
+								<span><b>Feedback</b> \(\gamma_{1,2,3}=\gamma=3,\ V_*=1\) (A,C)</span>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+						The collision substep conserves mass, momentum, and kinetic energy cell by cell, so it relaxes the bimodal velocity shape without directly correcting the collision-invariant moments. The Vlasov transport can still evolve the local fields. No assimilation and Methods A/B/C all start from the same prior. Method C uses \(\varepsilon=10^{-3}\).<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, undriven 1D1V conservative-collision experiment, initial conditions and numerical parameters.<br>[/Sources]
+					</aside>
+				</section>
+				<section data-menu-title="III. 1D1V — results" style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — moment nudging · 1D1V</div>
+						<h2>Moment errors collapse; shape relaxes more slowly</h2>
+						<div class="body xs">
+							<figure class="result-hero framed result-with-ratios">
+								<img src="./figure/vp/cc_abc_1d.png">
+								<figcaption>Methods A/B/C rapidly reduce the moment errors relative to no assimilation.</figcaption>
+							</figure>
+							<div class="ratio-band push">
+								<div class="ratio-context">
+									<b>Mean error / no assimilation</b>
+									\(R_*^S(10,15)\), averaged over \(t\in[10,15]\) and three seeds.
+								</div>
 								<table class="num compact">
-									<tr><th>\(R_*(10,15)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr>
-									<tr><td>A</td><td>0.015</td><td>0.005</td><td>0.045</td><td class="best">0.444</td></tr>
-									<tr><td>B</td><td class="best">0.008</td><td>0.016</td><td>0.061</td><td>0.447</td></tr>
-									<tr><td>C</td><td>0.012</td><td class="best">0.002</td><td class="best">0.019</td><td>0.446</td></tr>
+									<thead><tr><th>Method</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr></thead>
+									<tbody>
+										<tr><td>A</td><td>0.015</td><td>0.005</td><td>0.045</td><td class="best">0.444</td></tr>
+										<tr><td>B</td><td class="best">0.008</td><td>0.016</td><td>0.061</td><td>0.447</td></tr>
+										<tr><td>C</td><td>0.012</td><td class="best">0.002</td><td class="best">0.019</td><td>0.446</td></tr>
+									</tbody>
 								</table>
 							</div>
 						</div>
 					</div>
 					<aside class="notes">
-						Because the Dougherty map is exactly conservative, the unassimilated moment errors persist for all time — the gray curves are flat. Through the feedback alone, \(e_u,e_T\) drop 10–100&times; — C best on \(u,T\), B on \(\rho\), A on \(e_f\). \(e_f\) only halves: the feedback fixes the moments, collisions then erase the bimodal shape at their own rate. Excess kurtosis of the nudged marginal: 0.24 vs. true 0.20. The prior's local temperature is exactly \(T_0\), and the feedback is applied every step.
+							Without assimilation, the moment errors remain far above the assimilated errors over the reported window. The Dougherty collision substep itself conserves mass, momentum, and energy cell by cell, while Vlasov transport still evolves the local fields. With feedback, Method C reaches \(R_u=0.002\) and \(R_T=0.019\); the best full-distribution ratio is only \(R_f=0.444\). The gap is the point: the feedback fixes the measured moments, while collisions erase the unobserved bimodal shape at their own rate. The truth is a Maxwellian current wave; the prior has an out-of-phase current and two streams at \(\pm0.55\). \(N_p=10^5\), \(\nu=0.5\), three seeds.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, 1D1V moment-relaxation experiment and figure.<br>[/Sources]
 					</aside>
 				</section>
-				<section style="--part:#C9520E;">
+				<section data-menu-title="III. 2D2V — setup" style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · experiment 2/3</div>
-						<h2>Driven recovery: staying locked on a forced truth</h2>
+						<div class="eyebrow">Part III — numerical setup · 2D2V</div>
+						<h2>The prior reverses, shifts, and weakens the vortex</h2>
 						<div class="body xs">
-							<div class="card mtight">
-								<div><b>Design.</b> Continuously forced: all runs share the traveling wave \(E_{\rm ext}=E_0\sin(k_dx-\omega_dt)\) and BGK collisions — <b>can the feedback hold a moving target?</b></div>
-								<div><b>Truth.</b> \(\mathcal M_{1,0,1}\). <b>Prior.</b> The wrong Maxwellian \(\mathcal M_{1,\,0.3,\,1.5}\).</div>
-								<div><b>Setups.</b> I: weak non-resonant driver, moderate collisions \((E_0,\omega_d,\nu)=(0.05,1.3,0.5)\), 5 seeds. II: strong near-resonant, weak collisions \((0.2,2.0,0.05)\). <span class="muted">\(N_p=5\times10^5\), \(T_{\rm fin}=50\).</span></div>
+							<div class="experiment-model definition">
+								<div class="model-name">Undriven 2D2V Vlasov–Poisson–Dougherty</div>
+								<div class="model-line">\(\partial_t h+\bv\!\cdot\!\nabla_\bx h+\bE[h]\!\cdot\!\nabla_\bv h=Q_{\mathrm D}[h].\)</div>
+								<div class="model-line">\(-\Delta_\bx\phi=\rho[h]-1,\qquad \bE=-\nabla_\bx\phi.\)</div>
+								<div class="model-line">\(Q_{\mathrm D}[h]=\nu\,\nabla_\bv\!\cdot\!\left((\bv-\bu[h])h+T[h]\,\nabla_\bv h\right).\)</div>
+								<div class="model-line">\(\rho[h]=\int h\,\mathrm d\bv,\quad \bu[h]=\rho[h]^{-1}\!\int \bv h\,\mathrm d\bv,\quad T[h]=(2\rho[h])^{-1}\!\int|\bv-\bu[h]|^2h\,\mathrm d\bv.\)</div>
 							</div>
-							<div class="cols" style="align-items:center;">
-								<figure class="framed" style="flex:1.45;">
-									<img src="./figure/vp/e2_profiles.png" style="max-height:300px;">
-									<figcaption>Moment fields at \(t=25\) (top: I, bottom: II): the unassimilated run stays at its wrong prior in \(u,T\); A/B/C sit on the truth.</figcaption>
-								</figure>
-								<div class="stackv" style="flex:0.95;">
-									<table class="num compact">
-										<tr><th>\(R_*(10,50)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr>
-										<tr><td>I · A</td><td class="best">0.811</td><td class="best">0.102</td><td>0.065</td><td class="best">0.246</td></tr>
-										<tr><td>I · B</td><td>0.830</td><td>0.107</td><td>0.065</td><td>0.248</td></tr>
-										<tr><td>I · C</td><td>0.821</td><td>0.119</td><td class="best">0.049</td><td>0.247</td></tr>
-										<tr><td>II · A</td><td class="best">0.959</td><td class="best">0.193</td><td>0.133</td><td class="best">0.371</td></tr>
-										<tr><td>II · B</td><td>1.044</td><td>0.217</td><td>0.141</td><td>0.401</td></tr>
-										<tr><td>II · C</td><td>0.996</td><td>0.226</td><td class="best">0.126</td><td>0.379</td></tr>
-									</table>
+							<div class="initial-grid fill">
+								<div class="initial-panel">
+									<h3>Truth · Taylor–Green Maxwellian</h3>
+									\[
+									f_0^\dagger(\bx,\bv)
+									=\mathcal M_{1,\bu_0^\dagger(\bx),0.5}(\bv),
+									\]
+									\[
+									\begin{aligned}
+									u_{0,x}^\dagger(x,y)&=0.25+\sin x\cos y,\\
+									u_{0,y}^\dagger(x,y)&=-\cos x\sin y .
+									\end{aligned}
+									\]
+									<div class="setup-meaning">Mean flow \((0.25,0)\) · unit vortex amplitude · isotropic covariance \(0.5I_2\).</div>
 								</div>
+								<div class="initial-panel prior">
+									<h3>Prior · anisotropic Gaussian</h3>
+									\[
+							\begin{aligned}
+							g_0(\bx,\bv)
+							&=\frac{\exp\!\left[-\tfrac12(\bv-\bu_0)^\top
+							\Sigma_0^{-1}(\bv-\bu_0)\right]}
+							{2\pi\sqrt{\det\Sigma_0}},\\
+							\Sigma_0&=\operatorname{diag}(0.8,0.2),
+							\end{aligned}
+									\]
+									\[
+									\begin{aligned}
+									u_{0,x}&=-0.25-0.45\sin(x+\pi/3)\cos(y+\pi/4),\\
+									u_{0,y}&=\phantom{-}0.15+0.45\cos(x+\pi/3)\sin(y+\pi/4).
+									\end{aligned}
+									\]
+									<div class="setup-meaning">Wrong mean flow, phase, rotation, amplitude, and velocity anisotropy; but \(\tfrac12\operatorname{tr}\Sigma_0=0.5\), so the scalar temperature is initially correct.</div>
+								</div>
+							</div>
+							<div class="setup-meta">
+								<span><b>Observed</b> \((\rho,\bu,T)(x,y,t)\), every step</span>
+								<span><b>Grid</b> \(N_p=2\times10^5,\ 32^2\)</span>
+								<span><b>Run</b> \(\Delta t=0.002,\ T_{\rm fin}=12,\ \nu=0.5\)</span>
+								<span><b>Domain</b> \([0,2\pi)^2\)</span>
+								<span><b>Feedback</b> \(\gamma_{1,2,3}=\gamma=3,\ V_*=1\) (A,C)</span>
 							</div>
 						</div>
 					</div>
 					<aside class="notes">
-						Setup I is averaged over five particle initializations. Formulation B tracks A closely; C trades a slower u for the best temperature channel. In Setup I, \(e_u,e_T\) drop an order of magnitude and \(e_f\) falls 4&times;; the near-resonant Setup II keeps re-exciting the error, so gains shrink but the ordering persists. \(R_\rho\approx1\) is no failure — the prior density is already right.
+						The no-assimilation run and A/B/C all start from this same prior. The continuum prior is a centered Gaussian around \(\bu_0\) with covariance \(\Sigma_0\); the particle implementation conditions the peculiar velocities cell by cell before recoloring them to the target covariance. The full benchmark uses three independent particle initializations and feedback at every time step; Method C uses \(\varepsilon=10^{-3}\).<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-dimensional Taylor–Green relaxation initial conditions and numerical parameters.<br>[/Sources]
 					</aside>
 				</section>
-				<section style="--part:#C9520E;">
+				<section data-menu-title="III. 2D2V — results" style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · experiment 3/3</div>
-						<h2>2D2V Taylor–Green: recover the structure before it decays</h2>
+						<div class="eyebrow">Part III — moment nudging · 2D2V</div>
+						<h2>Method A follows the vortex through relaxation</h2>
 						<div class="body xs">
-							<div class="card mtight">
-								<div><b>Design.</b> Same feedback, parameters and cadence as in 1D — nothing retuned. The target is <em>transient</em>: collisions kill the vortex, std\((u_x)\) \(0.50\to0.28\) by \(t{=}1\).</div>
-								<div><b>Truth.</b> Maxwellian with Taylor–Green flow \(\bu^\dagger_0=(0.25+\sin x\cos y,\ -\cos x\sin y)\), \(T_0=0.5\).</div>
-								<div><b>Prior.</b> Weaker, phase-shifted, <span class="accent">counter-rotating</span> vortex; wrong mean flow, anisotropic shape. <span class="muted">\(N_p=2\times10^5\), \(32^2\) grid, \(\nu=0.5\).</span></div>
-							</div>
-							<div class="cols" style="align-items:center;">
-								<figure class="framed" style="flex:1.6;">
-									<img src="./figure/vp/cc_abc_2d_ufield.png" style="max-height:305px;">
-									<figcaption>\(u_x(x,y)\) at \(t=1\), while the vortex is still alive: the unassimilated run carries its counter-rotating, mean-shifted cells; A/B/C reproduce the true cells.</figcaption>
-								</figure>
-								<div class="stackv" style="flex:0.8;">
-									<table class="num compact">
-										<tr><th>\(R_*(8,12)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th></tr>
+							<figure class="result-hero framed tg-animation result-with-ratios">
+								<img src="./figure/vp/taylor_green_truth_none_A.gif?v=2" data-pdf-src="./figure/pdf_static/taylor_green_t1.png" alt="Animated Taylor–Green relaxation comparing the truth, no assimilation, and Method A">
+								<figcaption>Method A recovers the true vortex cells and follows their collisional relaxation.</figcaption>
+							</figure>
+							<div class="ratio-band push">
+								<div class="ratio-context">
+									<b>Late-time benchmark</b>
+									\(R_*^S(8,12)\): mean error / no assimilation over \(t\in[8,12]\) and three seeds.
+								</div>
+								<table class="num compact">
+									<thead><tr><th>Method</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th></tr></thead>
+									<tbody>
 										<tr><td>A</td><td>0.293</td><td class="best">0.019</td><td>0.039</td></tr>
 										<tr><td>B</td><td class="best">0.266</td><td>0.027</td><td>0.044</td></tr>
 										<tr><td>C</td><td>0.393</td><td>0.020</td><td class="best">0.032</td></tr>
-									</table>
-								</div>
+									</tbody>
+								</table>
 							</div>
 						</div>
 					</div>
 					<aside class="notes">
-						The same γ and V* as 1D1V — evidence the construction is not tuned per case. Without the feedback, the run relaxes to the wrong global Maxwellian \(\mathcal M_{1,(-0.25,0.15),0.55}\) instead of \(\mathcal M_{1,(0.25,0),0.75}\); \(R_u\le0.027\), \(R_T\le0.044\), density error cut 2.5–4&times;. \(e_f\) is not reported: a 4-D histogram is unresolved at this \(N_p\). Moment feedback must act on the collisional time scale, before the observable structure is gone. By the end, std\((u_x)\) has decayed to 0.014; the prior variances are \(0.8/0.2\).
+						The truth begins from a Taylor–Green vortex. The prior is weaker, phase shifted, counter rotating, and has the wrong mean flow. Method A first recovers the correct vortex cells and then follows their collisional relaxation. The feedback uses the same \(\gamma=3\) and \(V_*=1\) as the 1D experiment, without retuning. These are the 31 native saved states at \(t=0,0.1,\ldots,3\), shown on one fixed symmetric color scale; there is no temporal interpolation. The fields are deposited on the native \(32\times32\) grid and displayed with bilinear spatial interpolation. The animation uses representative seed 0, whereas the table reports the full \(T_{\rm fin}=12\) benchmark averaged over \(t\in[8,12]\) and three seeds. \(N_p=2\times10^5\), \(\Delta t=0.002\), \(\nu=0.5\), with the conservative Dougherty map. By \(t=3\), the truth enstrophy is 0.79% of its initial value.<br><br>[Sources]<br>User-owned simulation output: /ocean/projects/mth210003p/lyuliyao/DA/plasma/results/taylor_green_31frames_20260824_151805/output, including manifest.json, taylor_green_ux_fields_31.npz, and the 31-frame GIF; Slurm Job 44314797.<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-dimensional Taylor–Green relaxation experiment.<br>Code and configuration: https://github.com/Lyuliyao/data_assimilation_for_plasma, commit d32dd42ee131d20380055e3e8102f6e5a2120a33.<br>[/Sources]
 					</aside>
 				</section>
-			</section>
 <!-- ===================================================== III. Two-stream limit -->
-			<section data-menu-title="Two-stream limit">
-				<section style="--part:#C9520E;">
+				<section data-menu-title="III. Two-stream — truth" style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · the limit case</div>
-						<h2>Limits of moment feedback: the two-stream instability</h2>
-						<div class="body small">
-						<div class="card mtight">
-							<div><b>Design.</b> Weak BGK collisions (\(\nu=0.05\)), no driver — the instability saturates into a phase-space vortex, so the shape is <em>neither observed nor damped</em>.</div>
-							<div><b>Truth.</b> \(f^\dagger_0\propto v^2e^{-v^2/2}(1+\alpha\cos k_0x)\), moments \((\rho,u,T)=(1,0,3)\).</div>
-							<div><b>Priors.</b> Two, with the <b>same wrong moments</b> \((u,T)=(0.3,2)\): a Maxwellian (wrong shape) and the affinely shifted two-stream state (right shape).</div>
+						<div class="eyebrow">Part III — numerical setup · limit case</div>
+						<h2>The two-stream truth is far from equilibrium</h2>
+						<div class="body xs">
+							<div class="experiment-model definition">
+								<div class="model-name">Self-consistent 1D1V Vlasov–Poisson–BGK · no external driver</div>
+								<div class="model-line">\(\partial_t h+v\,\partial_x h+E[h]\,\partial_v h=Q_{\mathrm{BGK}}[h].\)</div>
+								<div class="model-line">\(-\partial_{xx}\phi=\rho[h]-1,\qquad E=-\partial_x\phi.\)</div>
+								<div class="model-line">\(Q_{\mathrm{BGK}}[h]=\nu\bigl(\mathcal M[h]-h\bigr),\qquad \mathcal M[h]=\dfrac{\rho[h]}{\sqrt{2\pi T[h]}}\exp\!\left[-\dfrac{(v-u[h])^2}{2T[h]}\right].\)</div>
+								<div class="model-line">\(\rho[h]=\int h\,\mathrm dv,\qquad u[h]=\rho[h]^{-1}\!\int vh\,\mathrm dv,\qquad T[h]=\rho[h]^{-1}\!\int(v-u[h])^2h\,\mathrm dv.\)</div>
+							</div>
+							<div class="initial-panel">
+								<h3>Truth · unstable two-stream state</h3>
+								\[
+								f_0^\dagger(x,v)=\frac{1}{\sqrt{2\pi}}\,v^2e^{-v^2/2}
+								\bigl(1+0.05\cos(x/2)\bigr),
+								\qquad \rho_0^\dagger(x)=1+0.05\cos(x/2),\quad u_0^\dagger=0,\quad T_0^\dagger=3.
+								\]
+							</div>
+							<div class="setup-meta">
+								<span><b>Observed</b> \((\rho,u,T)(x,t)\), every step</span>
+								<span><b>Domain</b> \(L=4\pi,\ \alpha=0.05,\ k_0=0.5\)</span>
+								<span><b>Grid</b> \(N_p=5\times10^5,\ N_x=128\)</span>
+								<span><b>Run</b> \(\Delta t=0.05,\ T_{\rm fin}=30\)</span>
+								<span><b>Truth BGK</b> \(\nu=0.05\)</span>
+							</div>
 						</div>
-							<div class="cols" style="align-items:center;">
-								<figure class="framed" style="flex:1.3;">
-									<img src="./figure/vp/e_obstruction_vkde.png" style="width:100%;">
-									<figcaption>Final velocity marginals \(\int f(x,v,T_{\rm fin})\intd x\) for the two priors — feedback fixes what is observed; <b>the model must supply the rest</b>.</figcaption>
-								</figure>
-								<div class="stackv" style="flex:1;">
-									<div class="card"><b>Maxwellian prior:</b> A/B synchronize \(u,T\) (\(R_u=0.21\), \(R_T=0.13\)), but the final marginal is a <em>Maxwellian with the observed moments</em> — not bimodal.</div>
-									<div class="card"><b>Two-stream prior:</b> the moments are corrected while the structure is kept; the nudged runs develop the instability and track the true vortex (\(R_f=0.48\) for A and B).</div>
+					</div>
+					<aside class="notes">
+							The BGK operator relaxes toward the local Maxwellian carrying the same density, bulk velocity, and temperature as \(h\). Here the true state is deliberately far from that equilibrium: its velocity marginal is bimodal and the seeded density modulation triggers the two-stream instability. The reference uses \(\nu=0.05\) and no external driver.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, Vlasov–Poisson model, BGK operator, and two-stream limitation experiment.<br>[/Sources]
+					</aside>
+				</section>
+				<section data-menu-title="III. Two-stream — priors" style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — numerical setup · limit case</div>
+						<h2>Same wrong \((u,T)\), different velocity shapes</h2>
+						<div class="body xs">
+							<div class="experiment-model" style="font-size:18px;">
+								<b>Truth:</b> \((u_0^\dagger,T_0^\dagger)=(0,3)\). &nbsp;
+								<b>Both priors:</b> \((u_0,T_0)=(0.3,2)\).
+							</div>
+							<div class="initial-grid fill">
+								<div class="initial-panel prior">
+									<h3>Prior 1 · Maxwellian</h3>
+									\[
+									g_0^{\mathrm M}(x,v)=\mathcal M_{1,0.3,2}(v).
+									\]
+									<div class="setup-meaning">Uniform in \(x\) · single-Gaussian velocity shape · no seeded density modulation.</div>
+								</div>
+								<div class="initial-panel prior">
+									<h3>Prior 2 · affine two-stream</h3>
+									\[
+									g_0^{\mathrm{2s}}=(\operatorname{Id}_x,A)_\# f_0^\dagger,
+									\qquad A(v)=0.3+\sqrt{2/3}\,v .
+									\]
+									<div class="setup-meaning">The seeded density modulation and two-stream velocity shape are retained.</div>
+								</div>
+							</div>
+							<div class="setup-meta">
+								<span><b>Prior 1 BGK</b> \(\nu=0.05\)</span>
+								<span><b>Prior 2 BGK</b> \(\nu=0.01\)</span>
+								<span><b>Feedback</b> unit scalings, \(V_*=1\) (A,C)</span>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">The two assimilating initializations deliberately share the same wrong bulk velocity and temperature, \((u,T)=(0.3,2)\), against the true \((0,3)\). Prior 1 is the spatially uniform Maxwellian and uses \(\nu=0.05\). Prior 2 is the velocity-only affine pushforward of the true two-stream state, so it retains the seeded density modulation and bimodal shape; it uses the weaker \(\nu=0.01\). The next slide compares the two branches through their final velocity marginals, followed by the Prior 2 + Method A animation.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, limitation experiment with Maxwellian and affine two-stream priors.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="III. Two-stream — limitation" style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — moment nudging · limit case</div>
+						<h2>Prior 1 corrects the moments—but stays single-peaked</h2>
+						<div class="body xs">
+							<figure class="result-hero framed marginal-comparison">
+								<img src="./figure/vp/e_obstruction_vkde.png" alt="Final velocity marginals from Maxwellian and two-stream priors">
+								<figcaption>A Maxwellian prior stays single-peaked; a two-stream prior preserves the missing bimodality.</figcaption>
+							</figure>
+							<div class="cols push" style="gap:30px; align-items:start;">
+								<div class="initial-panel prior" style="flex:1;">
+									<h3>Maxwellian prior</h3>
+									A/B/C improve \((u,T)\), but the marginal remains single-peaked and misses the bimodal truth.
+								</div>
+								<div class="initial-panel prior" style="flex:1;">
+									<h3>Two-stream prior</h3>
+									A/B/C preserve the two peaks; the missing velocity-space shape was already present in the prior.
 								</div>
 							</div>
 						</div>
 					</div>
+					<aside class="notes">This is the direct visual answer for Prior 1. Starting from the Maxwellian, moment feedback synchronizes bulk velocity and temperature but the final marginal remains single peaked. Starting from the affine two-stream prior with the same wrong \((u,T)\), the nudged marginals retain the bimodal shape and lie near the truth. The paper reports \(R_u=0.21\), \(R_T=0.13\) for A/B from the Maxwellian prior, but only modest phase-space improvement \(R_f=0.65\)–\(0.71\). From the two-stream prior, \(R_f=0.48\), \(0.48\), and \(0.72\) for A, B, and C.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-stream limitation experiment and final velocity-marginal figure \(e_{\rm obstruction,\,vkde}\).<br>[/Sources]</aside>
 				</section>
-				<section style="--part:#C9520E;">
+				<section data-menu-title="III. Two-stream — tracking" style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · optional</div>
-						<h2>Two-stream phase space from the two-stream prior</h2>
-						<div class="body" style="align-items:center;">
-							<figure class="framed">
-								<img src="./figure/vp/e_obstruction_fxv.png" style="max-height:500px;">
-								<figcaption>\(f(x,v)\) at \(t=0,15,20,30\): truth / unassimilated / Methods A, B, C — the nudged runs develop the instability and track the vortex.</figcaption>
-							</figure>
+						<div class="eyebrow">Part III — moment nudging · limit case</div>
+						<h2>With the right shape, Method A tracks the vortex</h2>
+						<div class="body xs">
+							<div class="limit-layout">
+								<figure class="result-hero framed">
+									<img src="./figure/vp/e_obstruction_truth_A.gif?v=2" data-pdf-src="./figure/pdf_static/two_stream_t20.png" alt="Animated truth and Method A phase-space densities from the two-stream prior">
+									<figcaption>With the correct prior shape, Method A tracks the evolving phase-space vortex.</figcaption>
+								</figure>
+							<div class="stackv">
+								<div class="card">
+									<div class="limit-label">Observed</div>
+									<b>The moments synchronize.</b><br>
+									The feedback corrects the wrong \((u,T)=(0.3,2)\) toward the truth \((0,3)\).
+								</div>
+								<div class="card">
+									<div class="limit-label">Not observed</div>
+									<b>The shape must come from the prior.</b><br>
+									A two-stream prior develops the vortex; a Maxwellian prior cannot become bimodal from moment data alone.
+								</div>
+								<div class="note orange">
+									<b>Boundary.</b> With the right shape in the prior, Method A tracks the full distribution at \(R_f=0.48\); the feedback does not invent that shape.
+								</div>
+							</div>
+						</div>
 						</div>
 					</div>
+					<aside class="notes">The animation uses Prior 2 with Method A and 31 saved simulation frames at \(t=0,1,\ldots,30\); there is no temporal interpolation. Each particle state is projected directly onto the same \((x,v)\) bins at its simulation time, and all panels share one global color scale. Because the two-stream velocity-space shape is already present in the prior, moment feedback can correct the wrong \((u,T)\) while the self-consistent instability develops and tracks the truth. Method A reaches \(R_f=0.48\) for this branch.<br><br>[Sources]<br>User-owned simulation output: /ocean/projects/mth210003p/lyuliyao/DA/plasma/results/exp_obstruction_two_stream_31frames_20260824_144735/output, including manifest.json, phase_space_grids_31.npz, and the 31-frame GIF; Slurm Job 44313025.<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-stream obstruction experiment.<br>Code and configuration: https://github.com/Lyuliyao/data_assimilation_for_plasma, commit d32dd42ee131d20380055e3e8102f6e5a2120a33.<br>[/Sources]</aside>
 				</section>
-			</section>
 
 			<!-- ===================================================== Summary -->
 			<section data-menu-title="Summary">
@@ -1753,19 +2284,44 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 		</div>
 	</div>
 
-	<script src="../UCLA/dist/reveal.js"></script>
-	<script src="../UCLA/plugin/notes/notes.js"></script>
-	<script src="../UCLA/plugin/markdown/markdown.js"></script>
-	<script src="../UCLA/plugin/highlight/highlight.js"></script>
+	<script src="./vendor/reveal/dist/reveal.js"></script>
+	<script src="./vendor/reveal/plugin/notes/notes.js"></script>
+	<script src="./vendor/reveal/plugin/markdown/markdown.js"></script>
+	<script src="./vendor/reveal/plugin/highlight/highlight.js"></script>
 	<script>
+		// The interactive HTML keeps animations; ?static=1 replaces them with
+		// deterministic representative frames for PDF export.
+		(function () {
+			const staticMedia = new URLSearchParams(window.location.search).get('static') === '1';
+			if (!staticMedia) return;
+			document.documentElement.classList.add('static-media');
+			document.querySelectorAll('img[data-pdf-src]').forEach((image) => {
+				image.src = image.dataset.pdfSrc;
+			});
+			document.querySelectorAll('video[data-pdf-src]').forEach((video) => {
+				const image = document.createElement('img');
+				image.src = video.dataset.pdfSrc;
+				image.alt = video.dataset.pdfAlt || 'Saved animation frame';
+				image.className = video.className;
+				image.style.cssText = video.style.cssText;
+				image.loading = 'eager';
+				video.replaceWith(image);
+			});
+		})();
+
 		Reveal.initialize({
 			width: 1280,
 			height: 720,
 			margin: 0,
 			center: false,
-			controls: false,
+			controls: true,
+			controlsLayout: 'edges',
+			controlsBackArrows: 'faded',
+			navigationMode: 'linear',
 			progress: true,
 			slideNumber: false,
+			pdfSeparateFragments: false,
+			pdfMaxPagesPerSlide: 1,
 			hash: true,
 			transition: 'fade',
 			transitionSpeed: 'fast',
@@ -1785,8 +2341,31 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 					const f = document.createElement('div');
 					f.className = 'foot';
 					const pos = v > 0 ? `${h + 1}.${v}` : `${h + 1}`;
-					f.innerHTML = `<span>From Particles to Measures and Back &nbsp;·&nbsp; Liyao Lyu, UCLA</span><span class="n">${pos} / ${total}</span>`;
+					f.innerHTML = `<span>From Particles to Measures and Back &nbsp;·&nbsp; Liyao Lyu, USTC</span><span class="n">${pos} / ${total}</span>`;
 					s.appendChild(f);
+				});
+			});
+		})();
+
+		// Lightweight figure selectors: keep one large scientific comparison visible at a time.
+		(function () {
+			document.querySelectorAll('[data-figure-selector]').forEach((selector) => {
+				const image = selector.querySelector('.figure-selector-image');
+				const caption = selector.querySelector('.figure-selector-caption');
+				selector.querySelectorAll('.figure-option').forEach((button) => {
+					button.addEventListener('click', (event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						selector.querySelectorAll('.figure-option').forEach((item) => {
+							item.classList.toggle('active', item === button);
+							item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
+						});
+						image.src = button.dataset.src;
+						image.alt = button.dataset.alt || '';
+						caption.innerHTML = button.dataset.caption || '';
+						if (window.MathJax && MathJax.Hub) MathJax.Hub.Queue(['Typeset', MathJax.Hub, caption]);
+						requestAnimationFrame(() => Reveal.layout());
+					});
 				});
 			});
 		})();

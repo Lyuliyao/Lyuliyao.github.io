@@ -166,6 +166,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 		.reveal table.num th, .reveal table.num td { text-align: center; padding: 5px 14px; }
 		.reveal table.num td:first-child, .reveal table.num th:first-child { text-align: left; }
 		.reveal table.num .best { font-weight: 700; color: var(--blue-deep); }
+		.reveal table.compact th, .reveal table.compact td { padding: 3px 12px; }
 
 		/* ---------- layout helpers ---------- */
 		.reveal .cols { display: flex; gap: 28px; align-items: flex-start; }
@@ -283,33 +284,8 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 		.reveal .roadmap-flow .arrow { font-size: 36px; }
 		.reveal .roadmap-principle { font-family: var(--serif); font-size: 27px; text-align: center; padding: 15px 22px; }
 		.reveal .mvnn-definition { font-family: var(--serif); font-size: 23px; color: var(--ink-2); text-align: center; }
-		.reveal .mvnn-diagram {
-			display: grid; grid-template-columns: 1fr 0.18fr 1.1fr 0.18fr 1.25fr 0.18fr 1.1fr 0.18fr 0.85fr;
-			align-items: center; flex: 1; min-height: 0; margin: 4px 0 2px;
-		}
-		.reveal .mvnn-stage { min-width: 0; text-align: center; padding: 6px 4px; }
-		.reveal .mvnn-stage svg { display: block; margin: 0 auto 7px; }
-		.reveal .mvnn-stage .stage-name { font-size: 18px; font-weight: 700; line-height: 1.18; color: var(--ink); }
-		.reveal .mvnn-stage .stage-math { font-size: 17px; line-height: 1.25; color: var(--ink-2); margin-top: 5px; }
-		.reveal .mvnn-arrow { color: var(--muted); font-size: 34px; text-align: center; }
-		.reveal .particle-icon { width: 120px; height: 88px; }
-		.reveal .particle-icon circle { fill: var(--blue); opacity: 0.88; }
-		.reveal .particle-icon circle:nth-child(3n+2) { fill: var(--green); }
-		.reveal .particle-icon circle:nth-child(4n) { fill: var(--orange); }
-		.reveal .nn-icon { width: 126px; height: 92px; color: var(--green); }
-		.reveal .nn-icon.int { color: var(--blue); }
-		.reveal .nn-icon .edges { fill: none; stroke: currentColor; stroke-width: 1.8; opacity: 0.34; }
-		.reveal .nn-icon .nodes { fill: var(--ground); stroke: currentColor; stroke-width: 2.6; }
-		.reveal .pool-icon {
-			width: 96px; height: 96px; margin: 0 auto 8px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-			background: var(--orange-tint); border: 2px solid #E9B48E; color: var(--orange); font-family: var(--serif); font-size: 25px; font-weight: 600;
-		}
-		.reveal .mvnn-output {
-			border-left: 4px solid var(--green); background: var(--green-tint); border-radius: 0 10px 10px 0;
-			padding: 18px 10px; text-align: center;
-		}
-		.reveal .mvnn-output .output-math { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink); }
-		.reveal .mvnn-output .output-label { font-size: 15px; color: var(--green); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 5px; }
+		.reveal .mvnn-figure { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 2px 0 0; }
+		.reveal .mvnn-figure svg { width: 100%; height: auto; }
 		.reveal .mvnn-caption { font-size: 19px; padding: 9px 15px; text-align: center; }
 
 		/* pipeline lanes */
@@ -650,48 +626,154 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 					<div class="eyebrow">Part I — learning the drift</div>
 					<h2>Measure-Valued Neural Network (MVNN)</h2>
 					<div class="body">
-						<div class="mvnn-definition">Two neural networks connected by one population average.</div>
-						<div class="mvnn-diagram">
-							<div class="mvnn-stage">
-								<svg class="particle-icon" viewBox="0 0 140 100" aria-hidden="true">
-									<circle cx="24" cy="25" r="8"/><circle cx="62" cy="17" r="7"/><circle cx="105" cy="27" r="9"/>
-									<circle cx="42" cy="52" r="9"/><circle cx="82" cy="48" r="7"/><circle cx="119" cy="58" r="8"/>
-									<circle cx="20" cy="79" r="7"/><circle cx="65" cy="80" r="9"/><circle cx="101" cy="82" r="7"/>
-								</svg>
-								<div class="stage-name">Population</div>
-								<div class="stage-math">\(\bX^1,\ldots,\bX^N\sim\mu\)</div>
-							</div>
-							<div class="mvnn-arrow">&rarr;</div>
-							<div class="mvnn-stage">
-								<svg class="nn-icon" viewBox="0 0 140 100" aria-hidden="true">
-									<path class="edges" d="M20 25L70 15 M20 25L70 38 M20 25L70 62 M20 50L70 15 M20 50L70 38 M20 50L70 62 M20 75L70 38 M20 75L70 62 M70 15L120 30 M70 38L120 30 M70 38L120 70 M70 62L120 30 M70 62L120 70 M70 85L120 70"/>
-									<g class="nodes"><circle cx="20" cy="25" r="7"/><circle cx="20" cy="50" r="7"/><circle cx="20" cy="75" r="7"/><circle cx="70" cy="15" r="7"/><circle cx="70" cy="38" r="7"/><circle cx="70" cy="62" r="7"/><circle cx="70" cy="85" r="7"/><circle cx="120" cy="30" r="7"/><circle cx="120" cy="70" r="7"/></g>
-								</svg>
-								<div class="stage-name">Shared embedding network</div>
-								<div class="stage-math">\(\varphi_\emb(\bX^j)\)</div>
-							</div>
-							<div class="mvnn-arrow">&rarr;</div>
-							<div class="mvnn-stage">
-								<div class="pool-icon">\(\frac1N\sum\)</div>
-								<div class="stage-name">Population average</div>
-								<div class="stage-math">\(\displaystyle \bz_\mu=\frac1N\sum_{j=1}^N\varphi_\emb(\bX^j)\)</div>
-							</div>
-							<div class="mvnn-arrow">&rarr;</div>
-							<div class="mvnn-stage">
-								<svg class="nn-icon int" viewBox="0 0 140 100" aria-hidden="true">
-									<path class="edges" d="M20 25L70 15 M20 25L70 38 M20 25L70 62 M20 50L70 15 M20 50L70 38 M20 50L70 62 M20 75L70 38 M20 75L70 62 M70 15L120 30 M70 38L120 30 M70 38L120 70 M70 62L120 30 M70 62L120 70 M70 85L120 70"/>
-									<g class="nodes"><circle cx="20" cy="25" r="7"/><circle cx="20" cy="50" r="7"/><circle cx="20" cy="75" r="7"/><circle cx="70" cy="15" r="7"/><circle cx="70" cy="38" r="7"/><circle cx="70" cy="62" r="7"/><circle cx="70" cy="85" r="7"/><circle cx="120" cy="30" r="7"/><circle cx="120" cy="70" r="7"/></g>
-								</svg>
-								<div class="stage-name">Interaction network</div>
-								<div class="stage-math">\(\varphi_\intn(\bx,\bz_\mu)\)</div>
-							</div>
-							<div class="mvnn-arrow">&rarr;</div>
-							<div class="mvnn-output">
-								<div class="output-math">\(\bb_\theta(\bx,\mu)\)</div>
-								<div class="output-label">drift</div>
-							</div>
+						<div class="mvnn-definition">Two neural networks connected by one population average: &nbsp;\(\bb_\theta(\bx,\mu)=\varphi_\intn\big(\bx,\ \langle\varphi_\emb,\mu\rangle\big)\).</div>
+						<div class="mvnn-figure">
+<svg viewBox="0 0 1160 412" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'Source Sans 3','Source Sans Pro','Segoe UI',Helvetica,Arial,sans-serif;font-size:16px;" aria-label="MVNN architecture">
+<defs>
+<marker id="ah-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#17232C"/></marker>
+<marker id="ah-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8C99A3"/></marker>
+<marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0A7F5E"/></marker>
+<marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#0B6FA8"/></marker>
+<marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#C9520E"/></marker>
+</defs>
+<rect x="20" y="60" width="270" height="250" rx="14" fill="#F4F7F9" stroke="#D7DEE4"/>
+<text x="34" y="46" font-size="15" font-weight="700" letter-spacing="0.1em" fill="#45535E">POPULATION</text>
+<text x="150" y="46" font-size="15" fill="#6B7A85">{X¹, …, X<tspan baseline-shift="super" font-size="11">N</tspan>} ~ μ<tspan baseline-shift="super" font-size="11">N</tspan>, unordered</text>
+<circle cx="60.1" cy="192.2" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="140.3" cy="98.1" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="76.0" cy="107.8" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="57.9" cy="96.0" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="195.0" cy="170.4" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="174.0" cy="175.5" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="220.4" cy="225.2" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="70.2" cy="168.5" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="192.3" cy="238.4" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="176.0" cy="201.1" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="230.5" cy="274.8" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="107.2" cy="161.9" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="49.0" cy="177.3" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="72.7" cy="134.0" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="95.8" cy="182.0" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="197.3" cy="188.1" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="217.2" cy="260.7" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="131.1" cy="164.6" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="184.8" cy="96.6" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="238.1" cy="208.0" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="147.4" cy="181.7" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="228.0" cy="116.6" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="255.1" cy="190.7" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="215.4" cy="191.6" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="158.9" cy="155.8" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="50.2" cy="140.4" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="197.7" cy="277.2" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="124.9" cy="128.5" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="87.7" cy="125.3" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="243.9" cy="253.8" r="5.2" fill="#0B6FA8" opacity="0.85"/>
+<circle cx="132" cy="252" r="8" fill="#C9520E" stroke="#fff" stroke-width="2"/>
+<text x="144" y="258" font-size="18" font-style="italic" font-weight="700" fill="#C9520E" style="font-family:'Source Serif 4',Georgia,serif;">x</text>
+<rect x="386" y="82" width="150" height="150" rx="12" fill="#fff" stroke="#BFE0D2" stroke-width="1.2"/>
+<rect x="379" y="89" width="150" height="150" rx="12" fill="#fff" stroke="#BFE0D2" stroke-width="1.2"/>
+<rect x="372" y="96" width="150" height="150" rx="12" fill="#E5F3EE" stroke="#BFE0D2" stroke-width="1.8"/>
+<line x1="402" y1="159.0" x2="447" y2="135.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="159.0" x2="447" y2="159.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="159.0" x2="447" y2="183.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="159.0" x2="447" y2="207.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="183.0" x2="447" y2="135.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="183.0" x2="447" y2="159.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="183.0" x2="447" y2="183.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="402" y1="183.0" x2="447" y2="207.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="135.0" x2="492" y2="147.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="135.0" x2="492" y2="171.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="135.0" x2="492" y2="195.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="159.0" x2="492" y2="147.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="159.0" x2="492" y2="171.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="159.0" x2="492" y2="195.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="183.0" x2="492" y2="147.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="183.0" x2="492" y2="171.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="183.0" x2="492" y2="195.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="207.0" x2="492" y2="147.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="207.0" x2="492" y2="171.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<line x1="447" y1="207.0" x2="492" y2="195.0" stroke="#0A7F5E" stroke-width="1.3" opacity="0.35"/>
+<circle cx="402" cy="159.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="402" cy="183.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="447" cy="135.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="447" cy="159.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="447" cy="183.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="447" cy="207.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="492" cy="147.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="492" cy="171.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<circle cx="492" cy="195.0" r="5.5" fill="#fff" stroke="#0A7F5E" stroke-width="2.2"/>
+<text x="447.0" y="276" font-size="18" text-anchor="middle" fill="#17232C" style="font-family:'Source Serif 4',Georgia,serif;"><tspan font-style="italic">φ</tspan><tspan baseline-shift="sub" font-size="12">emb</tspan> : ℝ<tspan baseline-shift="super" font-size="11">d</tspan> → ℝ<tspan baseline-shift="super" font-size="11">k</tspan></text>
+<text x="447.0" y="298" font-size="15" text-anchor="middle" fill="#45535E">shared embedding network,</text>
+<text x="447.0" y="318" font-size="15" text-anchor="middle" fill="#45535E">applied to every particle</text>
+<path d="M 261.1 190.7 C 330 190.7, 322 171.0, 368 171.0" fill="none" stroke="#8C99A3" stroke-width="1.4" opacity="0.8"/>
+<path d="M 249.9 253.8 C 330 253.8, 322 171.0, 368 171.0" fill="none" stroke="#8C99A3" stroke-width="1.4" opacity="0.8"/>
+<path d="M 244.1 208.0 C 330 208.0, 322 171.0, 368 171.0" fill="none" stroke="#8C99A3" stroke-width="1.4" opacity="0.8"/>
+<path d="M 236.5 274.8 C 330 274.8, 322 171.0, 368 171.0" fill="none" stroke="#8C99A3" stroke-width="1.4" opacity="0.8"/>
+<path d="M 342 171.0 L 368 171.0" stroke="#8C99A3" stroke-width="1.6" fill="none" marker-end="url(#ah-grey)"/>
+<text x="347.0" y="117.0" font-size="14" text-anchor="middle" fill="#6B7A85">each particle X<tspan baseline-shift="super" font-size="10">j</tspan></text>
+<path d="M 509 157.0 C 562 157.0, 580 171.0, 610 171.0" fill="none" stroke="#0A7F5E" stroke-width="1.5" opacity="0.7"/>
+<path d="M 516 164.0 C 562 164.0, 580 171.0, 610 171.0" fill="none" stroke="#0A7F5E" stroke-width="1.5" opacity="0.7"/>
+<path d="M 523 171.0 C 562 171.0, 580 171.0, 610 171.0" fill="none" stroke="#0A7F5E" stroke-width="1.5" opacity="0.7"/>
+<circle cx="640" cy="171.0" r="30" fill="#FBEEE4" stroke="#E9B48E" stroke-width="2"/>
+<text x="640" y="167.0" font-size="15" text-anchor="middle" fill="#C9520E" font-weight="700">1/N</text>
+<text x="640" y="188.0" font-size="20" text-anchor="middle" fill="#C9520E" font-weight="700">Σ</text>
+<text x="640" y="227.0" font-size="15" text-anchor="middle" fill="#45535E">average over</text>
+<text x="640" y="247.0" font-size="15" text-anchor="middle" fill="#45535E">the population</text>
+<path d="M 671 171.0 L 714 171.0" stroke="#0A7F5E" stroke-width="2" fill="none" marker-end="url(#ah-green)"/>
+<rect x="722" y="121.0" width="22" height="20" rx="3" fill="#E5F3EE" stroke="#0A7F5E" stroke-width="1.4"/>
+<rect x="722" y="141.0" width="22" height="20" rx="3" fill="#E5F3EE" stroke="#0A7F5E" stroke-width="1.4"/>
+<rect x="722" y="161.0" width="22" height="20" rx="3" fill="#E5F3EE" stroke="#0A7F5E" stroke-width="1.4"/>
+<rect x="722" y="181.0" width="22" height="20" rx="3" fill="#E5F3EE" stroke="#0A7F5E" stroke-width="1.4"/>
+<rect x="722" y="201.0" width="22" height="20" rx="3" fill="#E5F3EE" stroke="#0A7F5E" stroke-width="1.4"/>
+<text x="733" y="111.0" font-size="18" font-weight="700" text-anchor="middle" fill="#0A7F5E" style="font-family:'Source Serif 4',Georgia,serif;"><tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="12">μ</tspan></text>
+<text x="733" y="243.0" font-size="14" text-anchor="middle" fill="#45535E">∈ ℝ<tspan baseline-shift="super" font-size="10">k</tspan></text>
+<rect x="786" y="189.0" width="68" height="44" rx="10" fill="#fff" stroke="#D7DEE4" stroke-width="1.5"/>
+<text x="820" y="217.0" font-size="17" text-anchor="middle" fill="#17232C" style="font-family:'Source Serif 4',Georgia,serif;">[<tspan fill="#C9520E" font-style="italic" font-weight="700">x</tspan>, <tspan fill="#0A7F5E" font-style="italic" font-weight="700">z</tspan><tspan fill="#0A7F5E" baseline-shift="sub" font-size="11">μ</tspan>]</text>
+<path d="M 745 171.0 C 782 171.0, 750 211.0, 784 205.0" fill="none" stroke="#0A7F5E" stroke-width="2" marker-end="url(#ah-green)"/>
+<path d="M 132 261 L 132 358 Q 132 372, 146 372 L 806 372 Q 820 372, 820 358 L 820 241.0" fill="none" stroke="#C9520E" stroke-width="2.2" marker-end="url(#ah-orange)"/>
+<text x="441.0" y="363" font-size="14" text-anchor="middle" fill="#C9520E">the query particle enters directly</text>
+<rect x="886" y="121.0" width="150" height="150" rx="12" fill="#E7F1F8" stroke="#BFD8EA" stroke-width="1.8"/>
+<line x1="916" y1="172.0" x2="961" y2="160.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="172.0" x2="961" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="172.0" x2="961" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="172.0" x2="961" y2="232.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="196.0" x2="961" y2="160.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="196.0" x2="961" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="196.0" x2="961" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="196.0" x2="961" y2="232.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="220.0" x2="961" y2="160.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="220.0" x2="961" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="220.0" x2="961" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="916" y1="220.0" x2="961" y2="232.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="160.0" x2="1006" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="160.0" x2="1006" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="184.0" x2="1006" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="184.0" x2="1006" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="208.0" x2="1006" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="208.0" x2="1006" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="232.0" x2="1006" y2="184.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<line x1="961" y1="232.0" x2="1006" y2="208.0" stroke="#0B6FA8" stroke-width="1.3" opacity="0.35"/>
+<circle cx="916" cy="172.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="916" cy="196.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="916" cy="220.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="961" cy="160.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="961" cy="184.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="961" cy="208.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="961" cy="232.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="1006" cy="184.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<circle cx="1006" cy="208.0" r="5.5" fill="#fff" stroke="#0B6FA8" stroke-width="2.2"/>
+<path d="M 855 211.0 L 880 211.0" stroke="#8C99A3" stroke-width="2" fill="none" marker-end="url(#ah-grey)"/>
+<text x="961.0" y="301.0" font-size="18" text-anchor="middle" fill="#17232C" style="font-family:'Source Serif 4',Georgia,serif;"><tspan font-style="italic">φ</tspan><tspan baseline-shift="sub" font-size="12">int</tspan> : ℝ<tspan baseline-shift="super" font-size="11">d</tspan> × ℝ<tspan baseline-shift="super" font-size="11">k</tspan> → ℝ<tspan baseline-shift="super" font-size="11">d</tspan></text>
+<text x="961.0" y="323.0" font-size="15" text-anchor="middle" fill="#45535E">interaction network</text>
+<path d="M 1037 171.0 L 1070 171.0" stroke="#0B6FA8" stroke-width="2" fill="none" marker-end="url(#ah-blue)"/>
+<circle cx="1098" cy="183.0" r="8" fill="#C9520E" stroke="#fff" stroke-width="2"/>
+<path d="M 1098 183.0 L 1142 135.0" stroke="#17232C" stroke-width="2.6" fill="none" marker-end="url(#ah-ink)"/>
+<text x="1114" y="225.0" font-size="18" font-weight="700" text-anchor="middle" fill="#17232C" style="font-family:'Source Serif 4',Georgia,serif;">b<tspan baseline-shift="sub" font-size="12">θ</tspan>(<tspan fill="#C9520E" font-style="italic">x</tspan>, μ)</text>
+<text x="1114" y="247.0" font-size="15" text-anchor="middle" fill="#45535E">drift at <tspan font-style="italic" fill="#C9520E">x</tspan></text>
+</svg>
 						</div>
-						<div class="note green mvnn-caption"><b>Key idea.</b> The population enters only through the averaged feature \(\bz_\mu\).</div>
+						<div class="note green mvnn-caption"><b>Key idea.</b> The population enters only through the averaged feature \(\bz_\mu\) — permutation invariant by construction, one embedding pass per particle: \(O(N)\), not \(O(N^2)\).</div>
 					</div>
 				</div>
 				<aside class="notes">
@@ -703,33 +785,73 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			</section>
 
 			<!-- ===================================================== I. Guarantees -->
-			<section data-menu-title="MVNN guarantees" style="--part:#0A7F5E;">
+			<section data-menu-title="MVNN: well-posedness" style="--part:#0A7F5E;">
 				<div class="slide">
-					<div class="eyebrow">Part I — learning the drift</div>
-					<h2>Three guarantees for MVNN</h2>
+					<div class="eyebrow">Part I — learning the drift · guarantees 1/2</div>
+					<h2>The learned drift defines a genuine mean-field model</h2>
 					<div class="body small">
 						<div class="thm">
-							<span class="lbl">1</span><span class="ttl">Well posed</span>
+							<span class="lbl">Proposition</span><span class="ttl">Well-posedness of the learned dynamics</span>
 							<div class="stmt">
-								Lipschitz networks define a unique McKean–Vlasov dynamics.
+								If \(\varphi_\emb\) and \(\varphi_\intn\) are globally Lipschitz and \(f_0\in\mathcal P_2(\Rd)\), then for any \(T&gt;0\) the learned McKean–Vlasov SDE
+								\[
+								\intd\bX^\theta_t=\bb_\theta\big(\bX^\theta_t,f^\theta_t\big)\,\intd t+\sigma\,\intd\bB_t,
+								\qquad f^\theta_t=\Law(\bX^\theta_t),
+								\]
+								has a unique strong solution on \([0,T]\), and \(f^\theta_t\) is the unique weak solution of the associated nonlinear Fokker–Planck equation.
+								<span class="intuition"><b>Meaning:</b> trained weights give a well-defined continuum model — no smoothing or filtering of the data is needed.</span>
 							</div>
 						</div>
 						<div class="thm fragment">
-							<span class="lbl">2</span><span class="ttl">Consistent across particle counts</span>
+							<span class="lbl">Proposition</span><span class="ttl">Propagation of chaos for the learned particle system</span>
 							<div class="stmt">
-								Propagation of chaos: \(\mu_t^{\theta,N}\longrightarrow f_t^\theta\) as \(N\to\infty\).
-							</div>
-						</div>
-						<div class="thm fragment">
-							<span class="lbl">3</span><span class="ttl">Expressive</span>
-							<div class="stmt">
-								For every continuous \(\bb^\star\) and \(\varepsilon&gt;0\), MVNN can achieve \(\|\bb^\star-\bb_\theta\|_{L^2}\le\varepsilon\). With \(r\) order parameters, complexity is governed by \(d+r\).
+								Under the same assumptions, let \((\bX^{\theta,i,N}_t)_{i=1}^N\) solve the learned \(N\)-particle system with \(f_0\)-chaotic initial data. Then for any \(T&gt;0\) the particle law is \(f^\theta\)-chaotic:
+								\[
+								\lim_{N\to\infty}W_2\big(f^{1,\theta,N}_{[0,T]},\,f^{\theta}_{[0,T]}\big)=0 .
+								\]
+								<span class="intuition"><b>Meaning:</b> the \(N\)-particle simulation and the mean-field model agree as \(N\) grows — train at one \(N\), simulate at any \(N\).</span>
 							</div>
 						</div>
 					</div>
 				</div>
 				<aside class="notes">
-					Assume the embedding and interaction networks are globally Lipschitz. Then the learned McKean–Vlasov SDE has a unique strong solution and the learned (N)-particle system is chaotic, so a model trained at one finite (N) can be simulated at another. Universal approximation follows the cylindrical-functional construction. In general, approximation suffers from a curse of dimensionality; when the drift depends on the law through (r) order parameters, ReLU depth is (O(\log\varepsilon^{-1})), interaction width is (O(\varepsilon^{-(d+r)})), and embedding width is (O(\varepsilon^{-d})).
+					Standard McKean–Vlasov theory applies because the MVNN drift is Lipschitz in the state and in the measure (in W2). Propagation of chaos is by synchronous coupling and Grönwall.
+				</aside>
+			</section>
+
+			<section data-menu-title="MVNN: approximation" style="--part:#0A7F5E;">
+				<div class="slide">
+					<div class="eyebrow">Part I — learning the drift · guarantees 2/2</div>
+					<h2>How expressive is the architecture?</h2>
+					<div class="body small">
+						<div class="thm">
+							<span class="lbl">Theorem</span><span class="ttl">Universal approximation (after Pham–Warin)</span>
+							<div class="stmt">
+								Let \(\zeta\) be a probability measure on \(\Ptwo\) and \(\bb^\star:\Rd\times\Ptwo\to\Rd\) continuous with \(\|\bb^\star\|_{L^2(\zeta)}&lt;\infty\). For every \(\varepsilon&gt;0\) there exist \(k\in\mathbb N\) and networks \(\varphi_\emb:\Rd\to\mathbb R^k\), \(\varphi_\intn:\Rd\times\mathbb R^k\to\Rd\) such that
+								\[
+								\big\|\bb^\star-\varphi_\intn\big(\cdot,\langle\varphi_\emb,\cdot\rangle\big)\big\|_{L^2(\zeta)}\le\varepsilon .
+								\]
+							</div>
+						</div>
+						<div class="thm fragment">
+							<span class="lbl">Theorem</span><span class="ttl">Approximation rate under low-dimensional measure dependence</span>
+							<div class="stmt">
+								Suppose the drift depends on the measure only through \(r\) order parameters,
+								\(\bb^\star(\bx,\mu)=G\big(\bx,\langle g_1,\mu\rangle,\dots,\langle g_r,\mu\rangle\big)\) on \([0,1]^d\) with \(G\) and \(g\) Lipschitz.
+								Then for every \(\varepsilon&gt;0\) there are deep ReLU networks achieving
+								\(\sup_{\bx,\mu}\|\bb^\star-\bb_\theta\|\le\varepsilon\) with
+								\[
+								\text{depth}=O(\log\varepsilon^{-1}),\qquad
+								W_\intn=O\big(\varepsilon^{-(d+r)}\big),\qquad
+								W_\emb=O\big(\varepsilon^{-d}\big).
+								\]
+								<span class="intuition"><b>Meaning:</b> the embedding network learns the order parameters, so the complexity is governed by \(d+r\). Without this structure, the constructive embedding needs \(\varepsilon^{-d}\) features — a curse of dimensionality that the low-dimensional physics removes.</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">
+					UAP comes from the density of cylindrical functionals on Wasserstein space; the rate theorem is the reason MVNN is practical: flocking, consensus and aggregation are governed by a few macroscopic order parameters, so r is small.
 				</aside>
 			</section>
 
@@ -737,51 +859,64 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="MVNN: Motsch–Tadmor">
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
-						<div class="eyebrow">Part I — learning the drift</div>
+						<div class="eyebrow">Part I — learning the drift · example 1/3</div>
 						<h2>MVNN captures normalized interactions</h2>
-						<div class="body">
-							<div class="mtight">
-							\[
-							\dot X^i_t=\frac{\sum_{j}\phi(|X^j_t-X^i_t|)\,(X^j_t-X^i_t)}{\sum_{k}\phi(|X^k_t-X^i_t|)} .
-							\]
+						<div class="body xs">
+							<div class="card mtight">
+								\[
+								\dot X^i_t=\frac{\sum_{j}\phi(|X^j_t-X^i_t|)\,(X^j_t-X^i_t)}{\sum_{k}\phi(|X^k_t-X^i_t|)},\qquad \phi(r)=e^{-(r/\ell)^2},\quad \ell=0.5 .
+								\]
+									<div><b>Design.</b> The normalization makes \(\bb\) <span class="accent">nonlinear in \(\mu\)</span>, with asymmetric weights.</div>
+									<div><b>Train.</b> \(N=16{,}000\), \(M=100\), \(T=2\), \(\Delta t=10^{-2}\); random Gaussian mixtures (2–8 modes).</div>
+									<div><b>Test.</b> Autonomous rollout of the full \(N\)-particle system from <b>unseen</b> mixtures.</div>
 							</div>
-							<div class="cols small">
-								<div class="stackv" style="flex:0.68;">
-									<div class="note green">
-										<b>Why it is hard.</b> The normalization is nonlinear in \(\mu\).
-									</div>
-									<div class="card fragment">
-										<b>Train:</b> Gaussian-mixture laws<br>
-										<b>Test:</b> autonomous rollouts from unseen laws
-									</div>
-								</div>
-								<figure class="framed" style="flex:1.32;">
-									<img src="./figure/mvnn/result_wsindy_param_est_mvnn_N_16000_seed_1.png" style="width:100%;">
-									<figcaption>Unseen initial law, \(t=0,1,2\): MVNN tracks the reference while linear-in-\(\mu\) baselines drift.</figcaption>
+							<div class="cols" style="align-items:center;">
+								<figure class="framed" style="flex:1.4;">
+									<img src="./figure/mvnn/result_wsindy_param_est_mvnn_N_16000_seed_1.png" style="max-height:285px;">
+									<figcaption>Unseen initial law: density at \(t=0,1,2\) — baselines misplace or over-concentrate the peaks.</figcaption>
 								</figure>
+									<div class="card" style="flex:0.78;">
+										<ul class="tight">
+											<li><b>WSINDy</b>: additive \(\int K(y-x)\,\mu(\intd y)\) — linear in \(\mu\).</li>
+											<li><b>Online param. estimation</b>: needs the true form of \(\bb\) + a good initial guess.</li>
+										</ul>
+									</div>
 							</div>
 						</div>
 					</div>
 					<aside class="notes">
-						Here \(\phi(r)=e^{-(r/\ell)^2}\) with \(\ell=0.5\). Training uses \(N=16{,}000\), \(M=100\) trajectories, \(T=2\), \(\Delta t=10^{-2}\), and random Gaussian-mixture initial laws with 2–8 modes. Baselines include mean-field WSINDy, online parameter estimation, and a Gaussian-process pairwise kernel. The normalization makes the drift nonlinear in the measure, so additive and pairwise classes cannot represent it; MVNN receives no functional form.
+						Here \(\phi(r)=e^{-(r/\ell)^2}\) with \(\ell=0.5\). Training uses \(N=16{,}000\), \(M=100\) trajectories, \(T=2\), \(\Delta t=10^{-2}\), and random Gaussian-mixture initial laws with 2–8 modes. Baselines shown: mean-field WSINDy and online parameter estimation. The Gaussian-process pairwise-kernel baseline is compared separately on matched small data — exact GP training is cubic in the number of observations, so it cannot be trained at this scale; see the cost slide. The normalization makes the drift nonlinear in the measure, so additive and pairwise classes cannot represent it; MVNN receives no functional form.
 					</aside>
 				</section>
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
-						<div class="eyebrow">Part I — learning the drift · optional</div>
+						<div class="eyebrow">Part I — learning the drift · example 2/3</div>
 						<h2>MVNN finds a global order parameter</h2>
-						<div class="body">
+						<div class="body xs">
 							<div class="mtight">
 							\[
 							\intd X^i_t=\big[\gamma(M^N_t-X^i_t)+(a-\alpha (M^N_t)^2)X^i_t-\beta (X^i_t)^3\big]\intd t+\sigma\intd W^i_t,\qquad M^N_t=\tfrac1N\sum_j X^j_t .
 							\]
 							</div>
-							<figure class="framed">
-								<img src="./figure/mvnn/compare_wsindy.png" style="max-height:280px;">
-								<figcaption>Held-out rollouts: MVNN gives the lowest density error.</figcaption>
-							</figure>
-							<div class="note green small push">
-								<b>Takeaway.</b> The network captures \((M_\mu)^2\) without being told which moment to use.
+							<div class="card mtight">
+								<div><b>Design.</b> The drift couples to the population through \(M_\mu\) <em>and</em> \((M_\mu)^2\) — <span class="accent">quadratic in the measure</span>.</div>
+								<div><b>Train.</b> \(a=\alpha=1\), \(\beta=\gamma=0.2\), \(\sigma=0.03\), \(N=1024\); random mollifier-mixture initial laws.</div>
+								<div><b>Test.</b> 36 held-out trajectories; band = three independently trained MVNNs.</div>
+							</div>
+							<div class="cols" style="align-items:center;">
+								<figure class="framed" style="flex:1.7;">
+									<img src="./figure/mvnn/compare_wsindy.png" style="width:100%;">
+									<figcaption>Forecast densities at \(t=0,0.5,1\) and density \(L^2\) error vs. time, averaged over the held-out set.</figcaption>
+								</figure>
+								<div style="flex:0.62;">
+									<table class="num compact">
+										<tr><th>method</th><th>avg. \(W_1\)</th></tr>
+										<tr><td><b>MVNN</b></td><td class="best">0.005–0.006</td></tr>
+										<tr><td>kernel WSINDy</td><td>0.091</td></tr>
+										<tr><td>local PDE-WSINDy</td><td>0.27</td></tr>
+										<tr><td>online param. est.</td><td>0.18</td></tr>
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -810,22 +945,23 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="MVNN: 2D generalization">
 				<section style="--part:#0A7F5E;">
 					<div class="slide">
-						<div class="eyebrow">Part I — learning the drift</div>
-						<h2>Generalization in 2D</h2>
-						<div class="body">
-							<div class="note green small"><b>Train:</b> noisy single rings &nbsp;·&nbsp; <b>Test:</b> double-ring and asymmetric initial measures</div>
+						<div class="eyebrow">Part I — learning the drift · example 3/3</div>
+						<h2>Generalization in 2D: unseen initial geometries</h2>
+						<div class="body xs">
+							<div class="card mtight">
+								<div><b>Design.</b> Attraction–repulsion swarm: \(\dot{\bX}^i=\frac1N\sum_j\phi(\|\bX^j-\bX^i\|)(\bX^j-\bX^i)\), \(\phi(r)=c_{\rm rep}e^{-(r/\ell_{\rm rep})^2}-c_{\rm att}e^{-(r/\ell_{\rm att})^2}\); \(N=16{,}000\).</div>
+								<div><b>Train.</b> Only noisy single rings, of random radius and width.</div>
+								<div><b>Test.</b> Double-ring, uniform-disk and binary asymmetric \(\mu_0\) — same law, only the initial geometry changes.</div>
+							</div>
 							<div class="cols">
 								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_2ring.png" style="max-height:310px;">
-									<figcaption>Double ring: reference / MVNN, \(t=0,1,2\).</figcaption>
+									<img src="./figure/mvnn/simple_2d_2ring.png" style="max-height:300px;">
+									<figcaption>Double ring: reference (top) vs. MVNN (bottom), \(t=0,1,2\) — correct contraction, topology preserved.</figcaption>
 								</figure>
 								<figure class="framed">
-									<img src="./figure/mvnn/simple_2d_hl.png" style="max-height:310px;">
-									<figcaption>Asymmetric initialization: reference / MVNN.</figcaption>
+									<img src="./figure/mvnn/simple_2d_hl.png" style="max-height:300px;">
+									<figcaption>Binary asymmetric (dense / sparse): gradient and asymmetric aggregation reproduced.</figcaption>
 								</figure>
-							</div>
-							<div class="note green small push">
-								<b>Same law, new initial measures:</b> transfer supports learned measure dependence rather than trajectory memorization.
 							</div>
 						</div>
 					</div>
@@ -1363,91 +1499,103 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="1D1V results">
 				<section style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging for Vlasov–Poisson</div>
-						<h2>1D1V: recovering bulk velocity and temperature from moments</h2>
-						<div class="body small">
-							<p>
-								Undriven relaxation, exactly conservative Dougherty collisions (\(\nu=0.5\)), \(N_p=10^5\).
-								Truth: Maxwellian current wave \(u^\dagger_0(x)=0.25+0.8\sin(x/2)\), \(T_0=0.5\).
-								Assimilated runs start from a <span class="accent">wrong bulk velocity and a bimodal velocity shape</span> with the true temperature; \(\gamma_k=3\), \(V_*=1\).
-							</p>
+						<div class="eyebrow">Part III — moment nudging · experiment 1/3</div>
+						<h2>1D1V relaxation: only the feedback can move the moments</h2>
+						<div class="body xs">
+							<div class="card mtight">
+								<div><b>Design.</b> Collisions are an <em>exactly conservative</em> Dougherty map — they relax the velocity <em>shape</em> but cannot correct \((\rho,\bu,T)\): <b>any moment synchronization is the feedback’s doing</b>.</div>
+								<div><b>Truth.</b> Maxwellian current wave \(u^\dagger_0(x)=0.25+0.8\sin(x/2)\), \(T_0=0.5\).</div>
+								<div><b>Prior.</b> Out-of-phase current wave \(u_0(x)=-0.25-0.3\sin(x/2+\pi/3)\), <span class="accent">bimodal shape</span> (streams at \(\pm0.55\)). <span class="muted">\(N_p=10^5\), \(\nu=0.5\), \(\gamma_k=3\), \(V_*=1\), 3 seeds.</span></div>
+							</div>
 							<div class="cols" style="align-items:flex-end;">
-								<figure class="framed" style="flex:1.55;">
-									<img src="./figure/vp/cc_abc_1d.png" style="max-height:252px;">
-									<figcaption>Errors \(e_u,e_T,e_f\) vs. time: unassimilated (gray) and Methods A/B/C (3 seeds, \(\pm1\sigma\) bands).</figcaption>
+								<figure class="framed" style="flex:1.75;">
+									<img src="./figure/vp/cc_abc_1d.png" style="max-height:205px;">
+									<figcaption>Errors \(e_u,e_T,e_f\) vs. time: unassimilated (gray) and Methods A/B/C (\(\pm1\sigma\) bands).</figcaption>
 								</figure>
 								<figure class="framed" style="flex:0.85;">
-									<img src="./figure/vp/cc_abc_1d_velmarg.png" style="max-height:252px;">
+									<img src="./figure/vp/cc_abc_1d_velmarg.png" style="max-height:205px;">
 									<figcaption>Velocity marginal at \(T_{\rm fin}=15\).</figcaption>
 								</figure>
 							</div>
-							<div class="cols push" style="align-items:center;">
-								<table class="num" style="flex:0.9;">
+							<div class="push" style="display:flex; justify-content:center;">
+								<table class="num compact">
 									<tr><th>\(R_*(10,15)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr>
 									<tr><td>A</td><td>0.015</td><td>0.005</td><td>0.045</td><td class="best">0.444</td></tr>
 									<tr><td>B</td><td class="best">0.008</td><td>0.016</td><td>0.061</td><td>0.447</td></tr>
 									<tr><td>C</td><td>0.012</td><td class="best">0.002</td><td class="best">0.019</td><td>0.446</td></tr>
 								</table>
-								<div class="note orange" style="flex:1.3;">
-									Bulk-velocity and temperature errors drop by <b>one to two orders of magnitude</b>; the phase-space error is halved. \(R_*\) = mean error of the nudged run over \([10,15]\) relative to the unassimilated run.
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+						Because the Dougherty map is exactly conservative, the unassimilated moment errors persist for all time — the gray curves are flat. Through the feedback alone, \(e_u,e_T\) drop 10–100&times; — C best on \(u,T\), B on \(\rho\), A on \(e_f\). \(e_f\) only halves: the feedback fixes the moments, collisions then erase the bimodal shape at their own rate. Excess kurtosis of the nudged marginal: 0.24 vs. true 0.20. The prior's local temperature is exactly \(T_0\), and the feedback is applied every step.
+					</aside>
+				</section>
+				<section style="--part:#C9520E;">
+					<div class="slide">
+						<div class="eyebrow">Part III — moment nudging · experiment 2/3</div>
+						<h2>Driven recovery: staying locked on a forced truth</h2>
+						<div class="body xs">
+							<div class="card mtight">
+								<div><b>Design.</b> Continuously forced: all runs share the traveling wave \(E_{\rm ext}=E_0\sin(k_dx-\omega_dt)\) and BGK collisions — <b>can the feedback hold a moving target?</b></div>
+								<div><b>Truth.</b> \(\mathcal M_{1,0,1}\). <b>Prior.</b> The wrong Maxwellian \(\mathcal M_{1,\,0.3,\,1.5}\).</div>
+								<div><b>Setups.</b> I: weak non-resonant driver, moderate collisions \((E_0,\omega_d,\nu)=(0.05,1.3,0.5)\), 5 seeds. II: strong near-resonant, weak collisions \((0.2,2.0,0.05)\). <span class="muted">\(N_p=5\times10^5\), \(T_{\rm fin}=50\).</span></div>
+							</div>
+							<div class="cols" style="align-items:center;">
+								<figure class="framed" style="flex:1.45;">
+									<img src="./figure/vp/e2_profiles.png" style="max-height:300px;">
+									<figcaption>Moment fields at \(t=25\) (top: I, bottom: II): the unassimilated run stays at its wrong prior in \(u,T\); A/B/C sit on the truth.</figcaption>
+								</figure>
+								<div class="stackv" style="flex:0.95;">
+									<table class="num compact">
+										<tr><th>\(R_*(10,50)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr>
+										<tr><td>I · A</td><td class="best">0.811</td><td class="best">0.102</td><td>0.065</td><td class="best">0.246</td></tr>
+										<tr><td>I · B</td><td>0.830</td><td>0.107</td><td>0.065</td><td>0.248</td></tr>
+										<tr><td>I · C</td><td>0.821</td><td>0.119</td><td class="best">0.049</td><td>0.247</td></tr>
+										<tr><td>II · A</td><td class="best">0.959</td><td class="best">0.193</td><td>0.133</td><td class="best">0.371</td></tr>
+										<tr><td>II · B</td><td>1.044</td><td>0.217</td><td>0.141</td><td>0.401</td></tr>
+										<tr><td>II · C</td><td>0.996</td><td>0.226</td><td class="best">0.126</td><td>0.379</td></tr>
+									</table>
 								</div>
 							</div>
 						</div>
 					</div>
+					<aside class="notes">
+						Setup I is averaged over five particle initializations. Formulation B tracks A closely; C trades a slower u for the best temperature channel. In Setup I, \(e_u,e_T\) drop an order of magnitude and \(e_f\) falls 4&times;; the near-resonant Setup II keeps re-exciting the error, so gains shrink but the ordering persists. \(R_\rho\approx1\) is no failure — the prior density is already right.
+					</aside>
 				</section>
 				<section style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · optional</div>
-						<h2>Driven recovery with BGK collisions</h2>
-						<div class="body small">
-							<p>
-								Wrong initial Maxwellian \(\mathcal M_{1,0.3,1.5}\) vs. truth \(\mathcal M_{1,0,1}\) under an external traveling wave \(E_0\sin(k_dx-\omega_dt)\); \(N_p=5\times10^5\), \(T_{\rm fin}=50\).
-								Setup I: weak driver, moderate collisions, \((E_0,\omega_d,\nu)=(0.05,1.3,0.5)\). Setup II: strong near-resonant driver, weak collisions, \((0.2,2.0,0.05)\).
-							</p>
-							<div class="cols" style="align-items:center;">
-								<figure class="framed" style="flex:1.5;">
-									<img src="./figure/vp/e2_profiles.png" style="max-height:400px;">
-									<figcaption>Moment fields at \(t=25\): the unassimilated run stays at the wrong prior in \(u,T\); A/B/C synchronize.</figcaption>
-								</figure>
-								<table class="num" style="flex:0.8;">
-									<tr><th>\(R_*(10,50)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr>
-									<tr><td>I · A</td><td>0.811</td><td>0.102</td><td>0.065</td><td>0.246</td></tr>
-									<tr><td>I · B</td><td>0.830</td><td>0.107</td><td>0.065</td><td>0.248</td></tr>
-									<tr><td>I · C</td><td>0.821</td><td>0.119</td><td>0.049</td><td>0.247</td></tr>
-									<tr><td>II · A</td><td>0.959</td><td>0.193</td><td>0.133</td><td>0.371</td></tr>
-									<tr><td>II · B</td><td>1.044</td><td>0.217</td><td>0.141</td><td>0.401</td></tr>
-									<tr><td>II · C</td><td>0.996</td><td>0.226</td><td>0.126</td><td>0.379</td></tr>
-								</table>
+						<div class="eyebrow">Part III — moment nudging · experiment 3/3</div>
+						<h2>2D2V Taylor–Green: recover the structure before it decays</h2>
+						<div class="body xs">
+							<div class="card mtight">
+								<div><b>Design.</b> Same feedback, parameters and cadence as in 1D — nothing retuned. The target is <em>transient</em>: collisions kill the vortex, std\((u_x)\) \(0.50\to0.28\) by \(t{=}1\).</div>
+								<div><b>Truth.</b> Maxwellian with Taylor–Green flow \(\bu^\dagger_0=(0.25+\sin x\cos y,\ -\cos x\sin y)\), \(T_0=0.5\).</div>
+								<div><b>Prior.</b> Weaker, phase-shifted, <span class="accent">counter-rotating</span> vortex; wrong mean flow, anisotropic shape. <span class="muted">\(N_p=2\times10^5\), \(32^2\) grid, \(\nu=0.5\).</span></div>
 							</div>
-						</div>
-					</div>
-				</section>
-				<section style="--part:#C9520E;">
-					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging · optional</div>
-						<h2>2D2V Taylor–Green relaxation</h2>
-						<div class="body small">
-							<p>
-								Truth: Maxwellian with Taylor–Green bulk flow \(\bu^\dagger_0=(0.25+\sin x\cos y,\,-\cos x\sin y)\), \(T_0=0.5\); assimilated runs start from a weaker, phase-shifted, counter-rotating vortex with the wrong mean flow and an anisotropic velocity shape. Dougherty collisions, \(N_p=2\times10^5\), \(32^2\) grid.
-							</p>
 							<div class="cols" style="align-items:center;">
 								<figure class="framed" style="flex:1.6;">
-									<img src="./figure/vp/cc_abc_2d_ufield.png" style="max-height:380px;">
-									<figcaption>\(u_x(x,y)\) at \(t=1\): the nudged methods recover the true vortex cells.</figcaption>
+									<img src="./figure/vp/cc_abc_2d_ufield.png" style="max-height:305px;">
+									<figcaption>\(u_x(x,y)\) at \(t=1\), while the vortex is still alive: the unassimilated run carries its counter-rotating, mean-shifted cells; A/B/C reproduce the true cells.</figcaption>
 								</figure>
-								<table class="num" style="flex:0.7;">
-									<tr><th>\(R_*(8,12)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th></tr>
-									<tr><td>A</td><td>0.293</td><td class="best">0.019</td><td>0.039</td></tr>
-									<tr><td>B</td><td class="best">0.266</td><td>0.027</td><td>0.044</td></tr>
-									<tr><td>C</td><td>0.393</td><td>0.020</td><td class="best">0.032</td></tr>
-								</table>
+								<div class="stackv" style="flex:0.8;">
+									<table class="num compact">
+										<tr><th>\(R_*(8,12)\)</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th></tr>
+										<tr><td>A</td><td>0.293</td><td class="best">0.019</td><td>0.039</td></tr>
+										<tr><td>B</td><td class="best">0.266</td><td>0.027</td><td>0.044</td></tr>
+										<tr><td>C</td><td>0.393</td><td>0.020</td><td class="best">0.032</td></tr>
+									</table>
+								</div>
 							</div>
 						</div>
 					</div>
+					<aside class="notes">
+						The same γ and V* as 1D1V — evidence the construction is not tuned per case. Without the feedback, the run relaxes to the wrong global Maxwellian \(\mathcal M_{1,(-0.25,0.15),0.55}\) instead of \(\mathcal M_{1,(0.25,0),0.75}\); \(R_u\le0.027\), \(R_T\le0.044\), density error cut 2.5–4&times;. \(e_f\) is not reported: a 4-D histogram is unresolved at this \(N_p\). Moment feedback must act on the collisional time scale, before the observable structure is gone. By the end, std\((u_x)\) has decayed to 0.014; the prior variances are \(0.8/0.2\).
+					</aside>
 				</section>
 			</section>
-
-			<!-- ===================================================== III. Two-stream limit -->
+<!-- ===================================================== III. Two-stream limit -->
 			<section data-menu-title="Two-stream limit">
 				<section style="--part:#C9520E;">
 					<div class="slide">

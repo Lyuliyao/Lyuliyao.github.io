@@ -1238,20 +1238,21 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="Benchmarks">
 				<section>
 					<div class="slide">
-						<div class="eyebrow">Part II — Multiscale Nudging</div>
+						<div class="eyebrow">Part II — multiscale nudging · experiment 1/3</div>
 						<h2>Benchmarks with a misspecified interaction strength</h2>
-						<div class="body">
-							<p class="small">
-								\(\intd X^i=-\nabla U(X^i)\intd t-a(X^i-m_t)\intd t+\intd W^i\), \(m_t\) = empirical mean. Truth \(a_{\rm true}\); forecast model with the <span class="accent">wrong \(a\)</span>; observation \(K_h*\mu_t\), \(h=0.5\);
-								\(U\equiv0\) (Gaussian) or \(U=x^4/4-x^2/2\) (bimodal, metastable transitions).
-							</p>
+						<div class="body small">
+						<div class="card mtight">
+							<div><b>Design.</b> \(\intd X^i=-\nabla U(X^i)\intd t-a(X^i-m_t)\intd t+\intd W^i\), \(m_t\) = empirical mean; \(U\equiv0\) (Gaussian) or \(U=x^4/4-x^2/2\) (bimodal, metastable).</div>
+							<div><b>Truth vs. model.</b> Same functional form — the forecast model runs with the <span class="accent">wrong coupling \(a\)</span>.</div>
+							<div><b>Observed.</b> The smoothed density \(K_h*\mu_t\), \(h=0.5\).</div>
+						</div>
 							<div class="cols" style="align-items:center;">
 								<figure class="framed" style="flex:1.1;">
-									<img src="./figure/case2_density_true_0.25_a_1.5.png" style="max-height:400px;">
+									<img src="./figure/case2_density_true_0.25_a_1.5.png" style="max-height:320px;">
 									<figcaption>Bimodal, \(a_{\rm true}=0.25\), model \(a=1.5\): reference / biased / nudged \(\lambda=10\) / \(\lambda=1000\). Mass is moved across the barrier into the correct wells.</figcaption>
 								</figure>
 								<figure class="framed" style="flex:1;">
-									<img src="./figure/w2_vs_lambda_iter20.png" style="max-height:400px;">
+									<img src="./figure/w2_vs_lambda_iter20.png" style="max-height:320px;">
 									<figcaption>Gaussian case, \(a\in\{0.5,2,5\}\): final-time and time-averaged \(W_2\) error vs. \(\lambda\) — monotone decrease, saturation at the bias floor.</figcaption>
 								</figure>
 							</div>
@@ -1261,7 +1262,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				</section>
 				<section>
 					<div class="slide">
-						<div class="eyebrow">Part II — Multiscale Nudging · optional</div>
+						<div class="eyebrow">Part II — multiscale nudging · optional</div>
 						<h2>Gaussian benchmark and a chaotic mean-field Lorenz system</h2>
 						<div class="body row" style="align-items:center;">
 							<figure class="framed" style="flex:0.8;">
@@ -1273,8 +1274,8 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 								<figcaption>Mean-field Lorenz (\(N=1000\), coupling through empirical means) vs. an uncoupled biased model: mean trajectory and its error for three nudging strengths (strong &rarr; weak).</figcaption>
 							</figure>
 						</div>
-						<p class="small faint" style="margin-top:8px;">Density-level feedback stabilizes a biased microscopic forecast even in a chaotic regime; the weakest nudging shows intermittent excursions to the wrong lobe of the attractor.</p>
 					</div>
+					<aside class="notes">Density-level feedback stabilizes a biased microscopic forecast even in a chaotic regime; the weakest nudging shows intermittent excursions to the wrong lobe of the attractor.</aside>
 				</section>
 			</section>
 
@@ -1282,52 +1283,44 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="Vlasov–Poisson (density obs.)">
 				<section>
 					<div class="slide">
-						<div class="eyebrow">Part II — Multiscale Nudging</div>
+						<div class="eyebrow">Part II — multiscale nudging · experiment 2/3</div>
 						<h2>Kinetic test: Vlasov–Poisson with phase-space observations</h2>
-						<div class="body row small">
-							<div class="stackv" style="flex:0.95;">
-								<div class="card mtight">
-									<h4>Characteristics of \(f(x,v,t)\), self-consistent field</h4>
-									\[
-									\begin{aligned}
-									&\dot X^i=V^i,\qquad \dot V^i=E(X^i,t),\\
-									&E=-\partial_x\phi,\qquad -\partial_{xx}\phi=\rho-1 .
-									\end{aligned}
-									\]
-									Observation: the smoothed <b>phase-space</b> density \(y_t=K_h*f_t\) on \((x,v)\).
-								</div>
-								<div class="card">
-									<h4>Two-stream instability</h4>
-									Truth: bimodal velocities \(f_0\propto\tfrac12\big(f_{M,\sigma}(v-u_0)+f_{M,\sigma}(v+u_0)\big)(1+\varepsilon\cos\kappa x)\), \(\sigma=0.2\), \(u_0=1\).
-									<span class="accent">Biased model: a single Maxwellian</span> with the same perturbation — structurally wrong.
-								</div>
-								<div class="note blue fragment push">
-									Nudging on \(K_h*f\) recovers the filamentation and vortex merging that the biased model cannot produce.
-									<b>But</b> real diagnostics rarely give \(f\) — they give its moments. <span class="accent">&rarr; Part III</span>
+						<div class="body xs">
+							<div class="card mtight">
+								\[
+								\dot X^i=V^i,\qquad \dot V^i=E(X^i,t),\qquad E=-\partial_x\phi,\qquad -\partial_{xx}\phi=\rho-1 .
+								\]
+								<div><b>Design.</b> Vlasov–Poisson characteristics with the self-consistent field; observation = the smoothed <b>phase-space</b> density \(K_h*f_t\) on \((x,v)\).</div>
+								<div><b>Truth.</b> Two-stream: \(f_0\propto\tfrac12\big(f_{M,\sigma}(v-u_0)+f_{M,\sigma}(v+u_0)\big)(1+\varepsilon\cos\kappa x)\), \(\sigma=0.2\), \(u_0=1\).</div>
+								<div><b>Prior.</b> A <span class="accent">single Maxwellian</span> with the same perturbation — structurally wrong.</div>
+							</div>
+							<div class="cols" style="align-items:center;">
+								<figure class="framed" style="flex:1.15;">
+									<img src="./figure/two_stream_step_2000.png" style="max-height:315px;">
+									<figcaption>Phase space at step 2000: truth, biased single-Maxwellian forecast, and two nudging strengths — nudging on \(K_h*f\) recovers the filamentation and vortex merging.</figcaption>
+								</figure>
+								<div class="stackv" style="flex:0.72;">
+									<div class="note blue fragment">
+										<b>But</b> real diagnostics rarely give \(f\) — they give its moments. <span class="accent">&rarr; Part III</span>
+									</div>
 								</div>
 							</div>
-							<figure class="framed" style="flex:1.05;">
-								<img src="./figure/two_stream_step_2000.png" style="max-height:470px;">
-								<figcaption>Phase space at step 2000: truth, biased single-Maxwellian forecast, and assimilated runs for two nudging strengths.</figcaption>
-							</figure>
-						</div>
 					</div>
 				</section>
 				<section>
 					<div class="slide">
-						<div class="eyebrow">Part II — Multiscale Nudging · optional</div>
+						<div class="eyebrow">Part II — multiscale nudging · optional</div>
 						<h2>Landau damping</h2>
-						<div class="body row small" style="align-items:center;">
-							<div class="stackv">
-								<div class="card">Truth: \(f_0\propto f_{M,1}(v)(1+\varepsilon\cos\kappa x)\), \(\varepsilon=0.5\), \(\kappa=\tfrac12\), \(x\in[0,4\pi]\).</div>
-								<div class="card">Biased model: the unperturbed Maxwellian (\(\varepsilon=0\)) — no initial density modulation.</div>
-								<div class="card">Diagnostic: \(|\hat E(\kappa,t)|\), which decays exponentially at the Landau rate in the linear regime.</div>
+						<div class="body small">
+							<div class="card mtight">
+								<div><b>Truth.</b> \(f_0\propto f_{M,1}(v)(1+\varepsilon\cos\kappa x)\), \(\varepsilon=0.5\), \(\kappa=\tfrac12\), \(x\in[0,4\pi]\).</div>
+								<div><b>Prior.</b> The unperturbed Maxwellian (\(\varepsilon=0\)) — no initial density modulation.</div>
+								<div><b>Diagnostic.</b> \(|\hat E(\kappa,t)|\), which decays exponentially at the Landau rate in the linear regime.</div>
 							</div>
-							<figure class="framed" style="flex:1.2;">
-								<img src="./figure/landau_damping.png" style="max-height:430px;">
+							<figure class="framed" style="align-self:center;">
+								<img src="./figure/landau_damping.png" style="max-height:360px;">
 								<figcaption>Reference / biased / assimilated: the nudged runs recover the damping profile from density-level data.</figcaption>
 							</figure>
-						</div>
 					</div>
 				</section>
 			</section>
@@ -1336,24 +1329,24 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="Fish school">
 				<section>
 					<div class="slide">
-						<div class="eyebrow">Part II — Multiscale Nudging</div>
+						<div class="eyebrow">Part II — multiscale nudging · experiment 3/3</div>
 						<h2>Closing the loop on real data: learned model + nudging</h2>
-						<div class="body">
+						<div class="body small">
 							<figure>
 								<video muted autoplay loop playsinline style="width:100%; max-height:240px; border-radius:8px;">
 									<source src="./comparison_3panel.mp4" type="video/mp4">
 								</video>
 								<figcaption>Left: observation. Middle: biased forecast — the learned MVNN drift rolled out. Right: Multiscale Nudging.</figcaption>
 							</figure>
-							<div class="cols small" style="align-items:center;">
-								<ul class="tight" style="flex:1.4;">
-									<li>\(N\approx1126\) fish, TRex tracks with occlusions and identity dropouts &rarr; <b>Case B</b> (unlabeled, incomplete).</li>
-									<li>Model = the <b>MVNN drift of Part I</b>, \(\bmodel(\bx,\nu)=\mathrm{MLP}_{\theta_2}(\bx,\langle\mathrm{MLP}_{\theta_1},\nu\rangle)\), trained on held-out frames.</li>
-									<li>Observation: Gaussian KDE, \(125\times125\) grid, \(h=2\,\)px; \(\Delta t=0.025\,\)s, \(L_{\rm nud}=100\), \(\lambda=1\).</li>
-									<li>Density \(L^2\) error: the biased forecast saturates near 30 within 1 s; the nudged forecast stays near 2 — <b>10&times; lower</b> over the whole window.</li>
-								</ul>
+							<div class="cols" style="align-items:center;">
+								<div class="card mtight" style="flex:1.4;">
+									<div><b>Data.</b> The fish school of the bridge slide: \(N\approx1126\) fish, TRex tracks with occlusions and identity dropouts — unlabeled and incomplete.</div>
+									<div><b>Model.</b> The MVNN drift of Part I, trained on held-out frames of the same dataset.</div>
+									<div><b>Obs.</b> Gaussian KDE, \(125\times125\) grid, \(h=2\,\)px; \(\Delta t=0.025\,\)s, \(L_{\rm nud}=100\), \(\lambda=1\).</div>
+								</div>
 								<figure class="framed" style="flex:0.6;">
 									<img src="./figure/density_L2_error_vs_time.png" style="max-height:195px;">
+									<figcaption>Density \(L^2\) error: biased saturates near 30 within 1 s; nudged stays near 2 — <b>10&times; lower</b>.</figcaption>
 								</figure>
 							</div>
 						</div>
@@ -1362,7 +1355,7 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 				</section>
 				<section>
 					<div class="slide">
-						<div class="eyebrow">Part II — Multiscale Nudging · optional</div>
+						<div class="eyebrow">Part II — multiscale nudging · optional</div>
 						<h2>Fish school: density snapshots</h2>
 						<div class="body" style="align-items:center;">
 							<figure class="framed">
@@ -1643,26 +1636,23 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 			<section data-menu-title="Two-stream limit">
 				<section style="--part:#C9520E;">
 					<div class="slide">
-						<div class="eyebrow">Part III — moment nudging for Vlasov–Poisson</div>
+						<div class="eyebrow">Part III — moment nudging · the limit case</div>
 						<h2>Limits of moment feedback: the two-stream instability</h2>
 						<div class="body small">
-							<p>
-								Truth: \(f^\dagger_0\propto v^2e^{-v^2/2}(1+\alpha\cos k_0x)\), moments \((\rho,u,T)=(1,0,3)\); weak BGK collisions (\(\nu=0.05\)), no driver — the instability saturates into a phase-space vortex.
-								Two priors with the <b>same wrong moments</b> \((u,T)=(0.3,2)\): a Maxwellian (wrong shape) and the affinely shifted two-stream state (right shape).
-							</p>
+						<div class="card mtight">
+							<div><b>Design.</b> Weak BGK collisions (\(\nu=0.05\)), no driver — the instability saturates into a phase-space vortex, so the shape is <em>neither observed nor damped</em>.</div>
+							<div><b>Truth.</b> \(f^\dagger_0\propto v^2e^{-v^2/2}(1+\alpha\cos k_0x)\), moments \((\rho,u,T)=(1,0,3)\).</div>
+							<div><b>Priors.</b> Two, with the <b>same wrong moments</b> \((u,T)=(0.3,2)\): a Maxwellian (wrong shape) and the affinely shifted two-stream state (right shape).</div>
+						</div>
 							<div class="cols" style="align-items:center;">
 								<figure class="framed" style="flex:1.3;">
 									<img src="./figure/vp/e_obstruction_vkde.png" style="width:100%;">
-									<figcaption>Final velocity marginals \(\int f(x,v,T_{\rm fin})\intd x\) for the two priors.</figcaption>
+									<figcaption>Final velocity marginals \(\int f(x,v,T_{\rm fin})\intd x\) for the two priors — feedback fixes what is observed; <b>the model must supply the rest</b>.</figcaption>
 								</figure>
 								<div class="stackv" style="flex:1;">
 									<div class="card"><b>Maxwellian prior:</b> A/B synchronize \(u,T\) (\(R_u=0.21\), \(R_T=0.13\)), but the final marginal is a <em>Maxwellian with the observed moments</em> — not bimodal.</div>
 									<div class="card"><b>Two-stream prior:</b> the moments are corrected while the structure is kept; the nudged runs develop the instability and track the true vortex (\(R_f=0.48\) for A and B).</div>
 								</div>
-							</div>
-							<div class="note orange push">
-								Consistent with the obstruction: with weak collisions and a truth held far from equilibrium by its own field, the shape is <em>neither observed nor damped</em>.
-								<span class="accent">Feedback fixes what is observed; the model must supply the rest.</span>
 							</div>
 						</div>
 					</div>

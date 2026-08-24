@@ -1072,12 +1072,46 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 					<div class="eyebrow">Part II</div>
 					<h1>Multiscale Nudging</h1>
 					<div class="thesis">Compare forecast and data at the macroscopic scale, correct every particle at the microscopic scale — through the Wasserstein gradient of one misfit functional.</div>
-					<div class="inside">
-						<div><b>Construction</b>kernel-smoothed misfit · JKO steepest descent</div>
-						<div><b>Theory</b>well-posedness · propagation of chaos · \(L^2\) decay to a bias floor</div>
-						<div><b>Experiments</b>Gaussian / bimodal / Lorenz · Vlasov–Poisson · a real fish school</div>
+				</div>
+			</section>
+
+			<!-- ===================================================== II. Why hard -->
+			<section data-menu-title="II. Why classical DA fails">
+				<div class="slide">
+					<div class="eyebrow">Part II — Multiscale Nudging</div>
+					<h2>Why assimilating density data into particles is hard</h2>
+					<div class="body xs">
+						<div class="learning-setup">
+							<div class="setup-block given">
+								<div class="setup-label">Given</div>
+								<div class="setup-main">A biased forecast + coarse density observations</div>
+								<div class="setup-detail">Forecast: labeled particles \(\bY^i_t\). Data: the smoothed law \(K_h*\mu_t\) — unlabeled, macroscopic.</div>
+							</div>
+							<div class="setup-arrow">&rarr;</div>
+							<div class="setup-block learn">
+								<div class="setup-label">Wanted</div>
+								<div class="setup-main">A correction applied to every particle</div>
+								<div class="setup-detail">Driven by the measure-level mismatch — no labels, no matching.</div>
+							</div>
+						</div>
+						<div class="obstacle-heading">One mismatch behind all of them: the data carry no particle labels</div>
+						<div class="card">
+							\(\muobs\) is a <b>permutation-invariant functional of the empirical distribution</b> — it says where the mass is, never which particle is which. Each classical update needs those labels anyway:
+							<ul class="tight">
+								<li class="fragment"><b>EnKF</b> — the update is built from covariances between <em>labeled</em> state coordinates, so it depends on particle indexing unless identities, an ordering, or a matching rule are imposed.</li>
+								<li class="fragment"><b>3D/4D-Var</b> — handles nonlinear observation operators, but fitting a coarse density means optimizing over the configurations that produce it: the lift from density back to labeled particles is highly non-unique.</li>
+								<li class="fragment"><b>Particle filters</b> — the importance weights are likelihoods of <em>labeled</em> states; weight degeneracy in high dimension on top.</li>
+								<li class="fragment"><b>Transport / mean-field filters</b> — feedback velocities built from a likelihood on the labeled state, not on the density.</li>
+							</ul>
+						</div>
+						<div class="note blue fragment push">
+							<b>Nudging</b> is the exception — a simple feedback with rigorous theory, but classically formulated on labeled states and fields. <span class="accent">Part II lifts it to the measure level.</span>
+						</div>
 					</div>
 				</div>
+				<aside class="notes">
+					Following the paper’s introduction: EnKF updates are built from covariances between labeled state coordinates, so a permutation-invariant observation introduces an artificial dependence on particle indexing unless identities, a canonical ordering, or a matching rule are imposed. Variational methods can take nonlinear observation operators, but coarse-density data would require optimizing over microscopic configurations whose density matches — a highly non-unique lifting. Particle filters are fully nonlinear but suffer weight degeneracy in high dimension and do not resolve permutation invariance either. Transport- and coupling-based mean-field filters assume a likelihood acting on the labeled state. Classical nudging (Azouani–Olson–Titi) is simple and analyzable, and this is the family we extend: the relaxation is reformulated at the level of probability measures.
+				</aside>
 			</section>
 
 			<!-- ===================================================== II. Setup -->
@@ -1374,11 +1408,6 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 					<div class="eyebrow">Part III</div>
 					<h1>Moment nudging for Vlasov–Poisson</h1>
 					<div class="thesis">When only density, bulk velocity and temperature are observed, the data fix a family of phase-space distributions, not a member — what can feedback still do?</div>
-					<div class="inside">
-						<div><b>Obstruction</b>two Maxwellians the data cannot tell apart</div>
-						<div><b>Construction</b>velocity-weighted Wasserstein metrics · three methods</div>
-						<div><b>Experiments</b>1D1V · 2D2V · the two-stream limit</div>
-					</div>
 				</div>
 			</section>
 

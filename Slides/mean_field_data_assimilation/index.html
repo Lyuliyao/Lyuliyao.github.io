@@ -1566,20 +1566,32 @@ Mean-field (McKean–Vlasov) dynamics describe large interacting systems through
 					<div class="slide">
 						<div class="eyebrow">Part II — multiscale nudging · chaotic benchmark</div>
 						<h2>Strong nudging stabilizes a chaotic mean</h2>
-						<div class="body small">
-							<div class="card mtight">
-								<div><b>Design.</b> A stochastic mean-field Lorenz system with \(N=1000\) and coupling through \((m_{t,x},m_{t,y},m_{t,z})\).</div>
-								<div><b>Truth.</b> Mean-field coupling with \((\sigma_L,\rho,\beta)=(10,28,8/3)\) and noise amplitude \(1\).</div>
-								<div><b>Model.</b> \(N\) independent Lorenz systems: replace the empirical means by each particle's own coordinates.</div>
-								<div><b>Observed.</b> The smoothed three-dimensional density \(K_h*\mu_t\), with \(h=0.5\).</div>
+						<div class="body xs">
+							<div class="cols" style="gap:14px; align-items:stretch; flex:0 0 auto;">
+								<div class="card mtight" style="flex:1.45; font-size:17.5px;">
+									<div><b>Truth — stochastic mean-field Lorenz system</b></div>
+									\[
+									\begin{aligned}
+									\intd X_t^i &= \sigma_L(m_{t,y}-X_t^i)\,\intd t+\sigma\,\intd W_t^{x,i},\\
+									\intd Y_t^i &= [m_{t,x}(\rho-m_{t,z})-Y_t^i]\,\intd t+\sigma\,\intd W_t^{y,i},\\
+									\intd Z_t^i &= [m_{t,x}m_{t,y}-\beta Z_t^i]\,\intd t+\sigma\,\intd W_t^{z,i}.
+									\end{aligned}
+									\]
+									<div class="muted">\(\bm m_t=N^{-1}\sum_{j=1}^N(X_t^j,Y_t^j,Z_t^j)\).</div>
+								</div>
+								<div class="card mtight" style="flex:0.75; font-size:18px; display:flex; flex-direction:column; justify-content:center; gap:7px;">
+									<div><b>Parameters.</b> \(N=1000\), \((\sigma_L,\rho,\beta)=(10,28,8/3)\), \(\sigma=1\).</div>
+									<div><b>Biased model.</b> Replace \(\bm m_t\) by \((X_t^i,Y_t^i,Z_t^i)\): \(N\) independent Lorenz systems.</div>
+									<div><b>Observed.</b> \(K_h*\mu_t\) in 3D, with \(h=0.5\); nudged run \(\lambda=1000\).</div>
+								</div>
 							</div>
 							<figure class="framed" style="align-self:center; width:100%;">
-								<img src="./figure/part2/lorenz_truth_biased_nudged.gif" data-pdf-src="./figure/pdf_static/part2_lorenz_t10.png" style="width:100%; max-height:330px; object-fit:contain;">
+								<img src="./figure/part2/lorenz_truth_biased_nudged_large_labels.gif" data-pdf-src="./figure/pdf_static/part2_lorenz_t10_large_labels.png" style="width:100%; max-height:305px; object-fit:contain;">
 								<figcaption>Strong nudging keeps the mean trajectory close to the truth and suppresses forecast error.</figcaption>
 							</figure>
 						</div>
 					</div>
-					<aside class="notes">The modeling error is structural, not a parameter perturbation: the truth couples particles through ensemble means, whereas the forecast runs independent Lorenz systems. Compare the orange open-loop path with the blue nudged path and then read the error panel.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Lorenz dynamics.”<br>Animation provenance and exact frame indices: figure/part2/manifest.json.<br>[/Sources]</aside>
+					<aside class="notes">The modeling error is structural, not a parameter perturbation: the truth couples particles through ensemble means, whereas the forecast runs independent Lorenz systems. Compare the orange open-loop path with the blue nudged path and then read the error panel. The large-label animation plots all 1001 simulated mean states and exposes 31 animation frames; no trajectory interpolation is used.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Lorenz dynamics.”<br>Animation provenance and exact frame indices: figure/part2/manifest.json.<br>[/Sources]</aside>
 				</section>
 
 			<!-- ===================================================== II. Vlasov–Poisson -->

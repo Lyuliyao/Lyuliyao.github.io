@@ -1,0 +1,1748 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Vlasov–Poisson Data Assimilation</title>
+	<link rel="stylesheet" href="./vendor/reveal/dist/reset.css">
+	<link rel="stylesheet" href="./vendor/reveal/dist/reveal.css">
+	<link rel="stylesheet" href="./vendor/fonts/fonts.css">
+	<style>
+		/* =====================================================================
+		   Design tokens
+		   ===================================================================== */
+		:root {
+			--ink: #17232C;
+			--ink-2: #45535E;
+			--muted: #6B7A85;
+			--line: #D7DEE4;
+			--line-2: #E9EEF2;
+			--ground: #FFFFFF;
+			--ground-2: #F4F7F9;
+			--blue: #0B6FA8;   --blue-tint: #E7F1F8;   --blue-deep: #0A5A87;
+			--orange: #C9520E; --orange-tint: #FBEEE4;
+			--green: #0A7F5E;  --green-tint: #E5F3EE;
+			--dark: #10202B;   --dark-2: #183040;
+			--on-dark: #F2F5F7; --on-dark-2: #B6C3CD; --on-dark-3: #7F93A1;
+			--serif: "Source Serif 4", "Source Serif Pro", "Songti SC", STSong, Georgia, "Times New Roman", serif;
+			--sans: "Source Sans 3", "Source Sans Pro", "PingFang SC", "Microsoft YaHei", "Segoe UI", Helvetica, Arial, sans-serif;
+			--part: var(--blue);
+		}
+		.reveal-viewport { background: var(--ground); }
+		.reveal {
+			font-family: var(--sans);
+			font-size: 24px;
+			font-weight: 400;
+			line-height: 1.42;
+			color: var(--ink);
+		}
+		.reveal ::selection { background: var(--blue-tint); color: var(--ink); }
+		.reveal .slides { text-align: left; }
+		.reveal .slides > section,
+		.reveal .slides > section > section {
+			height: 100%;
+			box-sizing: border-box;
+			padding: 30px 56px 54px 56px;
+			text-align: left;
+		}
+		.reveal .slides > section.stack { padding: 0; }
+		.reveal .slides section .slide { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+		.reveal .slides section .body { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; }
+		.reveal .slides section .body.row { flex-direction: row; align-items: flex-start; gap: 28px; }
+		.reveal .progress { height: 4px; background: var(--line-2); }
+		.reveal .progress span { background: var(--part); }
+		.reveal .slide-number { display: none; }
+
+		/* ---------- type ---------- */
+		.reveal h2 {
+			font-family: var(--serif);
+			font-weight: 600;
+			font-size: 36px;
+			line-height: 1.15;
+			letter-spacing: -0.005em;
+			color: var(--ink);
+			margin: 4px 0 14px 0;
+			padding-bottom: 12px;
+			border-bottom: 1px solid var(--line);
+			text-wrap: balance;
+		}
+		.reveal .eyebrow {
+			font-family: var(--sans);
+			font-size: 13px;
+			font-weight: 600;
+			letter-spacing: 0.14em;
+			text-transform: uppercase;
+			color: var(--part);
+			margin: 0;
+		}
+		.reveal .slides section .slide > .eyebrow {
+			font-size: 24px;
+			font-weight: 700;
+			line-height: 1.1;
+			letter-spacing: 0.08em;
+			margin-bottom: 4px;
+		}
+		.reveal p { margin: 0; }
+		.reveal b, .reveal strong { font-weight: 600; }
+		.reveal em, .reveal i { font-style: italic; }
+		.reveal .small { font-size: 21px; }
+		.reveal .tiny { font-size: 17px; line-height: 1.4; }
+		.reveal .xs { font-size: 19px; line-height: 1.38; }
+		.reveal .muted { color: var(--ink-2); }
+		.reveal .faint { color: var(--muted); }
+		.reveal .accent { color: var(--orange); font-weight: 600; }
+		.reveal .c-blue { color: var(--blue); } .reveal .c-orange { color: var(--orange); } .reveal .c-green { color: var(--green); }
+		.reveal ul { margin: 0; padding-left: 1.05em; }
+		.reveal ul li { margin: 0.28em 0; padding-left: 0.1em; }
+		.reveal ul li::marker { color: var(--part); }
+		.reveal ul.tight li { margin: 0.15em 0; }
+		.reveal a { color: var(--blue); text-decoration: none; }
+
+		/* ---------- math ---------- */
+		.reveal .MathJax_SVG_Display { margin: 0.45em 0 !important; }
+		.reveal .slides section .MathJax_SVG_Display { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+		.reveal .slides section .MathJax_SVG svg { max-width: 100%; height: auto; }
+		.reveal .mtight .MathJax_SVG_Display { margin: 0.25em 0 !important; }
+
+		/* ---------- surfaces ---------- */
+		.reveal .card {
+			background: var(--ground-2);
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			padding: 12px 18px;
+		}
+		.reveal .card.plain { background: var(--ground); }
+		.reveal .card h4, .reveal .thm h4 {
+			font-family: var(--sans); font-weight: 600; font-size: 0.92em; margin: 0 0 4px 0; color: var(--ink);
+		}
+		.reveal .note {
+			border-left: 4px solid var(--part);
+			background: var(--ground-2);
+			border-radius: 0 10px 10px 0;
+			padding: 12px 18px;
+		}
+		.reveal .note.blue { border-left-color: var(--blue); background: var(--blue-tint); }
+		.reveal .note.orange { border-left-color: var(--orange); background: var(--orange-tint); }
+		.reveal .note.green { border-left-color: var(--green); background: var(--green-tint); }
+		.reveal .thm {
+			border: 1px solid var(--line);
+			border-left: 4px solid var(--part);
+			border-radius: 10px;
+			padding: 12px 18px 12px 18px;
+			background: var(--ground);
+		}
+		.reveal .thm .lbl {
+			display: inline-block;
+			font-family: var(--sans); font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+			color: var(--part); margin-right: 10px; vertical-align: middle;
+		}
+		.reveal .thm .ttl { font-family: var(--serif); font-weight: 600; font-size: 0.96em; color: var(--ink); }
+		.reveal .thm .stmt { margin-top: 4px; }
+		.reveal .intuition { color: var(--ink-2); }
+		.reveal .intuition b { color: var(--part); }
+
+		/* ---------- figures ---------- */
+		.reveal figure { margin: 0; text-align: center; }
+		.reveal figure img, .reveal figure video { max-width: 100%; height: auto; display: inline-block; vertical-align: top; }
+		.reveal figcaption {
+			font-family: var(--serif); font-style: italic; font-size: 17px; line-height: 1.35;
+			color: var(--ink-2); margin-top: 8px; text-align: center;
+		}
+		.reveal figure.framed img, .reveal figure.framed video { border: 1px solid var(--line-2); border-radius: 6px; }
+		.reveal .figure-selector { min-width: 0; text-align: center; }
+		.reveal .figure-options {
+			display: flex; justify-content: center; align-items: center; gap: 18px;
+			margin: 0 0 7px; min-height: 28px;
+		}
+		.reveal .figure-option {
+			appearance: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0;
+			background: transparent; color: var(--muted); padding: 2px 2px 3px;
+			font: 600 16px/1.2 var(--sans); cursor: pointer;
+		}
+		.reveal .figure-option:hover, .reveal .figure-option:focus-visible { color: var(--ink); outline: none; border-bottom-color: var(--line); }
+		.reveal .figure-option.active { color: var(--part); border-bottom-color: var(--part); }
+		.reveal .figure-selector-2d figure img { width: auto; max-width: 100%; max-height: 330px; object-fit: contain; }
+
+		/* ---------- tables ---------- */
+		.reveal table { border-collapse: collapse; width: 100%; font-size: 0.84em; line-height: 1.3; }
+		.reveal th {
+			font-family: var(--sans); font-weight: 600; font-size: 0.8em; letter-spacing: 0.06em; text-transform: uppercase;
+			color: var(--ink-2); text-align: left; padding: 6px 10px; border-bottom: 2px solid var(--ink);
+		}
+		.reveal td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: top; }
+		.reveal table.num { width: auto; font-variant-numeric: tabular-nums; }
+		.reveal table.num th, .reveal table.num td { text-align: center; padding: 5px 14px; }
+		.reveal table.num td:first-child, .reveal table.num th:first-child { text-align: left; }
+		.reveal table.num .best { font-weight: 700; color: var(--blue-deep); }
+		.reveal table.compact th, .reveal table.compact td { padding: 3px 12px; }
+
+		/* ---------- layout helpers ---------- */
+		.reveal .cols { display: flex; gap: 28px; align-items: flex-start; }
+		.reveal .cols > * { flex: 1; min-width: 0; }
+		.reveal .stackv { display: flex; flex-direction: column; gap: 12px; }
+		.reveal .fill { flex: 1; }
+		.reveal .push { margin-top: auto; }
+		.reveal .chips { display: flex; gap: 10px; flex-wrap: wrap; }
+		.reveal .chip {
+			font-family: var(--sans); font-size: 15px; font-weight: 600; letter-spacing: 0.04em;
+			padding: 3px 12px; border-radius: 999px; background: var(--ground-2); border: 1px solid var(--line); color: var(--ink-2);
+		}
+		.reveal .result-hero {
+			background: var(--ground); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px 7px;
+		}
+		.reveal .result-hero img { width: 100%; max-height: 345px; object-fit: contain; }
+		.reveal .result-hero.tg-animation img { max-height: 390px; }
+		.reveal .experiment-model {
+			font-family: var(--sans); font-size: 16px; line-height: 1.3; color: var(--ink-2);
+			border-left: 3px solid var(--part); background: var(--ground-2); padding: 7px 13px;
+		}
+		.reveal .experiment-model.definition { font-size: 19px; line-height: 1.35; padding: 8px 14px 9px; }
+		.reveal .experiment-model .model-name { color: var(--ink); font-size: 20px; font-weight: 700; margin-bottom: 3px; }
+		.reveal .experiment-model .model-line { min-height: 25px; }
+		.reveal .initial-grid {
+			display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; align-items: start;
+		}
+		.reveal .initial-panel { min-width: 0; border-top: 3px solid var(--ink); padding: 8px 5px 0; }
+		.reveal .initial-panel.prior { border-top-color: var(--part); }
+		.reveal .initial-panel h3 {
+			font-family: var(--sans); font-size: 20px; font-weight: 650; line-height: 1.2; margin: 0 0 3px; color: var(--ink);
+		}
+		.reveal .initial-panel .MathJax_SVG_Display { margin: 0.24em 0 !important; }
+		.reveal .setup-meaning { font-size: 16px; line-height: 1.3; color: var(--ink-2); margin-top: 4px; }
+		.reveal .setup-meta {
+			display: flex; flex-wrap: wrap; justify-content: center; gap: 5px 20px;
+			border-top: 1px solid var(--line); padding-top: 8px; font-size: 16px; line-height: 1.25; color: var(--ink-2);
+		}
+		.reveal .setup-meta b { color: var(--ink); }
+		.reveal .result-with-ratios img { max-height: 285px; }
+		.reveal .result-hero.tg-animation.result-with-ratios img { max-height: 285px; }
+		.reveal .result-with-ratios figcaption { font-size: 16px; margin-top: 5px; }
+		.reveal .marginal-comparison img { max-height: 350px; }
+		.reveal .marginal-comparison figcaption { font-size: 16px; margin-top: 5px; }
+		.reveal .ratio-band {
+			display: grid; grid-template-columns: minmax(210px, 0.72fr) minmax(0, 1.8fr); gap: 18px; align-items: center;
+			border-top: 1px solid var(--line); padding-top: 6px;
+		}
+		.reveal .ratio-context { font-size: 15px; line-height: 1.28; color: var(--ink-2); }
+		.reveal .ratio-context b { display: block; font-size: 17px; color: var(--ink); }
+		.reveal .ratio-band table { font-size: 16px; }
+		.reveal .ratio-band table.num { width: 100%; }
+		.reveal .ratio-band table.num th, .reveal .ratio-band table.num td { padding: 2px 10px; }
+		.reveal .evidence-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+		.reveal .evidence-stat {
+			display: flex; align-items: baseline; gap: 9px; min-width: 0;
+			border-top: 3px solid var(--part); border-radius: 7px; background: var(--ground-2); padding: 7px 12px 8px;
+		}
+		.reveal .evidence-stat b { font-family: var(--serif); font-size: 28px; line-height: 1; color: var(--part); white-space: nowrap; }
+		.reveal .evidence-stat span { font-size: 15px; line-height: 1.18; color: var(--ink-2); }
+		.reveal .limit-layout { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(250px, 0.85fr); gap: 24px; align-items: center; }
+		.reveal .limit-layout figure img { width: 100%; max-height: 408px; object-fit: contain; }
+		.reveal .limit-label { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--part); margin-bottom: 2px; }
+		.reveal .application-visual { flex: 1; min-height: 0; }
+		.reveal .application-visual img {
+			width: 100%; height: 310px; object-fit: cover; object-position: 50% 50%;
+			border-top: 1px solid var(--line-2); border-bottom: 1px solid var(--line-2);
+		}
+		.reveal .application-labels {
+			display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px;
+		}
+		.reveal .application-label {
+			border-top: 2px solid var(--blue); padding-top: 7px; font-size: 16px; line-height: 1.25;
+		}
+		.reveal .application-label b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 2px; }
+		.reveal .application-label span { color: var(--muted); }
+		.reveal .mf-transition {
+			display: flex; align-items: center; gap: 12px; margin: 2px 0;
+			font-size: 17px; font-weight: 600; color: var(--blue); text-align: center;
+		}
+		.reveal .mf-transition::before, .reveal .mf-transition::after {
+			content: ""; flex: 1; height: 1px; background: var(--line);
+		}
+		.reveal .mf-sequence { gap: 0; }
+		.reveal .mf-step-card {
+			display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 24px; align-items: center;
+			border: 1px solid var(--line); border-radius: 10px; padding: 12px 20px; background: var(--ground-2);
+		}
+		.reveal .mf-step-card.measure {
+			grid-template-columns: 220px 0.82fr 1.18fr; background: var(--blue-tint); border-color: #BFD8EA;
+		}
+		.reveal .mf-step-card.limit { background: var(--green-tint); border-color: #BFE0D2; }
+		.reveal .mf-step-label h4 { margin: 3px 0 0; font-size: 20px; line-height: 1.2; }
+		.reveal .mf-step-equation { text-align: center; }
+		.reveal .mf-step-card .MathJax_SVG_Display { margin: 0.2em 0 !important; }
+		.reveal .mf-measure-copy {
+			border-left: 3px solid var(--blue); padding-left: 18px; font-size: 18px; line-height: 1.35; color: var(--ink-2);
+		}
+		.reveal .mf-measure-copy b { display: block; color: var(--ink); font-size: 20px; margin-bottom: 3px; }
+		.reveal .learning-setup {
+			display: grid; grid-template-columns: minmax(0, 1.35fr) 38px minmax(0, 0.85fr); gap: 14px; align-items: stretch;
+		}
+		.reveal .setup-block { border-radius: 9px; padding: 10px 16px; }
+		.reveal .setup-block.given { background: var(--blue-tint); border: 1px solid #BFD8EA; }
+		.reveal .setup-block.learn { background: var(--green-tint); border: 1px solid #BFE0D2; }
+		.reveal .setup-label {
+			font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px;
+		}
+		.reveal .setup-block.given .setup-label { color: var(--blue); }
+		.reveal .setup-block.learn .setup-label { color: var(--green); }
+		.reveal .setup-main { font-family: var(--serif); font-size: 22px; line-height: 1.25; }
+		.reveal .setup-detail { font-size: 17px; line-height: 1.25; color: var(--ink-2); margin-top: 2px; }
+		.reveal .setup-arrow { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 30px; }
+		.reveal .obstacle-heading {
+			font-size: 15px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); margin-top: 2px;
+		}
+		.reveal .obstacle-grid {
+			display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; flex: 1; align-items: stretch;
+		}
+		.reveal .obstacle {
+			display: flex; flex-direction: column; min-width: 0; padding: 13px 25px 8px;
+			border-left: 1px solid var(--line);
+		}
+		.reveal .obstacle:first-child { border-left: 0; padding-left: 0; }
+		.reveal .obstacle:last-child { padding-right: 0; }
+		.reveal .obstacle-no {
+			font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green);
+		}
+		.reveal .obstacle h4 { font-family: var(--serif); font-size: 23px; line-height: 1.17; margin: 3px 0 5px; }
+		.reveal .obstacle .equation { min-height: 58px; display: flex; align-items: center; justify-content: center; text-align: center; }
+		.reveal .obstacle .signal {
+			align-self: flex-start; margin: 2px 0 6px; padding: 1px 8px; border-radius: 4px;
+			background: var(--orange-tint); color: var(--orange); font-size: 18px; font-weight: 700;
+		}
+		.reveal .model-space-maps { display: flex; flex-direction: column; gap: 5px; margin-top: 2px; }
+		.reveal .space-map { display: flex; flex-direction: column; align-items: flex-start; padding-bottom: 5px; border-bottom: 1px solid var(--line-2); }
+		.reveal .space-map:last-child { padding-bottom: 0; border-bottom: 0; }
+		.reveal .space-label { font-size: 13px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); }
+		.reveal .space-formula { font-size: 16px; line-height: 1.2; white-space: nowrap; margin: 1px 0; }
+		.reveal .space-note { font-size: 14px; line-height: 1.15; color: var(--ink-2); }
+		.reveal .space-map.target .space-label,
+		.reveal .space-map.target .space-formula,
+		.reveal .space-map.target .space-note { color: var(--green); font-weight: 600; }
+		.reveal .obstacle p { font-size: 17px; line-height: 1.3; color: var(--ink-2); }
+
+		/* ---------- flow diagrams ---------- */
+		.reveal .flow { display: flex; align-items: stretch; gap: 10px; }
+		.reveal .flow .node { flex: 1; border-radius: 12px; padding: 14px 18px; background: var(--ground-2); border: 1px solid var(--line); }
+		.reveal .flow .node .eyebrow { margin-bottom: 6px; }
+		.reveal .flow .node.learn { background: var(--green-tint); border-color: #BFE0D2; --part: var(--green); }
+		.reveal .flow .node.model { background: var(--ground-2); --part: var(--ink-2); }
+		.reveal .flow .node.nudge { background: var(--blue-tint); border-color: #BFD8EA; --part: var(--blue); }
+		.reveal .flow .arrow { display: flex; align-items: center; color: var(--muted); font-size: 30px; padding: 0 2px; }
+		.reveal .roadmap-flow { flex: 1; align-items: center; gap: 14px; }
+		.reveal .roadmap-flow .node {
+			min-height: 230px; display: flex; flex-direction: column; justify-content: center; padding: 22px 26px;
+		}
+		.reveal .roadmap-flow .roadmap-verb {
+			font-family: var(--serif); font-size: 38px; font-weight: 600; line-height: 1; margin: 8px 0 16px;
+		}
+		.reveal .roadmap-flow .roadmap-problem {
+			font-size: 16px; font-weight: 600; color: var(--orange); margin-bottom: 8px;
+		}
+		.reveal .roadmap-flow .roadmap-route { font-size: 21px; line-height: 1.35; color: var(--ink-2); }
+		.reveal .roadmap-flow .roadmap-route b { color: var(--ink); white-space: nowrap; }
+		.reveal .roadmap-flow .arrow { font-size: 36px; }
+		.reveal .roadmap-principle { font-family: var(--serif); font-size: 27px; text-align: center; padding: 15px 22px; }
+		.reveal .mvnn-definition { font-family: var(--serif); font-size: 23px; color: var(--ink-2); text-align: center; }
+		.reveal .mvnn-figure { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; margin: 2px 0 0; }
+		.reveal .mvnn-figure svg { width: 100%; height: auto; }
+		.reveal .mvnn-caption { font-size: 19px; padding: 9px 15px; text-align: center; }
+
+		/* pipeline lanes */
+		.reveal .lane { border-radius: 12px; padding: 12px 18px; }
+		.reveal .lane.macro { background: var(--blue-tint); }
+		.reveal .lane.micro { background: var(--orange-tint); }
+		.reveal .lane .lanelabel { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; }
+		.reveal .lane.macro .lanelabel { color: var(--blue); }
+		.reveal .lane.micro .lanelabel { color: var(--orange); }
+		.reveal .lane .cells { display: flex; gap: 18px; align-items: center; font-size: 0.88em; }
+		.reveal .lane .cells > div { flex: 1; }
+		.reveal .compare { background: var(--ground); border: 1.5px solid var(--green); border-radius: 10px; padding: 8px 14px; }
+		.reveal .between { display: flex; justify-content: space-between; align-items: center; padding: 4px 40px; font-size: 0.84em; }
+		.reveal .between .arr { display: flex; align-items: center; gap: 12px; }
+		.reveal .between svg.arrowsvg { width: 26px; height: 54px; flex: none; }
+
+		/* ---------- cover & dividers ---------- */
+		.reveal section.cover, .reveal section.divider, .reveal section.closing { color: var(--on-dark); }
+		.reveal section.cover h1 {
+			font-family: var(--serif); font-weight: 600; font-size: 58px; line-height: 1.08; letter-spacing: -0.01em;
+			color: var(--on-dark); margin: 0 0 14px 0; text-wrap: balance;
+		}
+		.reveal section.cover .sub { font-family: var(--serif); font-size: 27px; font-style: italic; color: #9CD0EE; margin-bottom: 46px; }
+		.reveal section.cover .who { font-size: 23px; line-height: 1.45; color: var(--on-dark-2); }
+		.reveal section.cover .who b { color: var(--on-dark); font-weight: 600; font-size: 26px; }
+		.reveal section.divider .numeral {
+			position: absolute; right: 56px; bottom: 36px;
+			font-family: var(--serif); font-weight: 700; font-size: 300px; line-height: 0.8; color: rgba(255,255,255,0.06);
+			pointer-events: none;
+		}
+		.reveal section.divider .eyebrow { font-size: 15px; }
+		.reveal section.divider h1 {
+			font-family: var(--serif); font-weight: 600; font-size: 54px; line-height: 1.1; color: var(--on-dark); margin: 12px 0 18px 0; text-wrap: balance;
+		}
+		.reveal section.divider .thesis { font-size: 26px; line-height: 1.4; color: var(--on-dark-2); max-width: 880px; }
+		.reveal section.divider .inside { margin-top: 40px; display: flex; gap: 36px; max-width: 880px; }
+		.reveal section.divider .inside div { flex: 1; }
+		.reveal section.divider .inside div { font-size: 19px; color: var(--on-dark-3); }
+		.reveal section.divider .inside div b { display: block; color: var(--part); font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+		.reveal section.closing h2 { color: var(--on-dark); border-bottom-color: rgba(255,255,255,0.15); }
+		.reveal section.closing .refs { font-size: 16px; line-height: 1.45; color: var(--on-dark-2); }
+		.reveal section.closing .refs b { color: var(--on-dark); font-weight: 600; }
+		.reveal section.closing .refs i { color: var(--on-dark); }
+		.reveal section.closing .refs .eyebrow { margin: 0 0 6px 0; }
+		.reveal section.closing ul li::marker { color: var(--on-dark-3); }
+
+		/* ---------- footer (injected) ---------- */
+		.reveal .foot {
+			position: absolute; left: 56px; right: 56px; bottom: 18px;
+			display: flex; justify-content: space-between; align-items: baseline;
+			font-family: var(--sans); font-size: 14px; letter-spacing: 0.02em; color: var(--muted);
+			pointer-events: none;
+		}
+		.reveal .foot .n { font-variant-numeric: tabular-nums; }
+
+		/* ---------- fragments ---------- */
+		.reveal .fragment { transition: opacity 0.25s ease; }
+		@media (prefers-reduced-motion: reduce) { .reveal .fragment { transition: none; } }
+		html.static-media .figure-options { display: none; }
+	</style>
+	<script src="./vendor/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+	<script type="text/x-mathjax-config">
+		MathJax.Hub.Config({
+			messageStyle: "none",
+			"SVG": { scale: 100, linebreaks: { automatic: false } },
+			TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					bx: "\\mathbf{x}", by: "\\mathbf{y}", bz: "\\mathbf{z}",
+					bX: "\\mathbf{X}", bY: "\\mathbf{Y}", bZ: "\\mathbf{Z}", bW: "\\mathbf{W}", bB: "\\mathbf{B}",
+					bE: "\\mathbf{E}", bb: "\\mathbf{b}", bu: "\\mathbf{u}", bv: "\\mathbf{v}", bj: "\\mathbf{j}",
+					bV: "\\mathbf{V}", bA: "\\mathbf{A}",
+					intd: "\\mathrm{d}",
+					Rd: "\\mathbb{R}^d",
+					Ptwo: "\\mathcal{P}_2(\\mathbb{R}^d)",
+					bmodel: "\\mathbf{b}_{\\mathrm{model}}",
+					btrue: "\\mathbf{b}_{\\mathrm{true}}",
+					muobs: "\\mu^{\\mathrm{obs}}",
+					obs: "\\mathrm{obs}",
+					Law: "\\mathrm{Law}",
+					emb: "\\mathrm{emb}",
+					intn: "\\mathrm{int}",
+					KL: "\\mathrm{KL}",
+					Tor: "\\mathbb{T}^d"
+				}
+			}
+		});
+	</script>
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+
+			<section class="cover" data-background-color="#10202B" data-menu-title="Title">
+				<div class="slide" style="justify-content:center;">
+					<div class="cols" style="align-items:center; gap:48px;">
+						<div style="flex:1.2;">
+							<div class="eyebrow" style="--part:#9CD0EE; margin-bottom:22px; letter-spacing:0.08em; text-transform:none;">Vlasov–Poisson 数据同化</div>
+							<h1>从宏观观测到<br>PIC 粒子反馈</h1><div class="sub" style="font-style:normal; letter-spacing:0.02em; margin-bottom:32px;">Wasserstein nudging for kinetic plasma simulations</div>
+							<div class="who">
+								<b>Liyao Lyu</b><br>
+								中国科学技术大学（USTC）人工智能与数据科学学院</div>
+						</div>
+						<figure><img src="./figure/pdf_static/two_stream_t20.png" alt="Vlasov–Poisson two-stream phase-space density" style="width:100%; max-height:560px; border-radius:12px; object-fit:contain;"></figure></div>
+				</div>
+				<aside class="notes">这次只讲 Vlasov–Poisson 数据同化：为什么需要 PIC、实验能观测什么、以及如何把 phase-space 或 moment mismatch 变成粒子反馈。</aside>
+			</section>
+
+			<section data-menu-title="1. VP equation → PIC" style="--part:#0B6FA8;">
+  <div class="slide">
+    <div class="eyebrow">1 · Simulation</div>
+    <h2>Vlasov–Poisson lives in six-dimensional phase space</h2>
+    <div class="body small">
+      <div class="card mtight">
+        \[
+        \partial_t f+\bv\!\cdot\!\nabla_\bx f+\bE[f]\!\cdot\!\nabla_\bv f=Q[f],
+        \qquad \bE=-\nabla_\bx\phi,
+        \qquad -\Delta_\bx\phi=\rho[f]-\rho_0 .
+        \]
+      </div>
+      <div class="flow" style="align-items:stretch; gap:13px;">
+        <div class="node" style="flex:1;"><div class="eyebrow">Equation</div><b>VP dynamics</b><br><span class="muted">A kinetic density \(f(t,\bx,\bv)\)</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">State</div><b>6D phase space</b><br><span class="muted">\(\bx\in\mathbb R^3,\ \bv\in\mathbb R^3\)</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1.15;"><div class="eyebrow">Bottleneck</div><b>Curse of dimensionality</b><br><span class="muted">A tensor grid costs \(O(n_x^3n_v^3)\)</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Simulation</div><b>PIC method</b><br><span class="muted">Represent \(f\) with particles</span></div>
+      </div>
+      <div class="note blue push">
+        \[
+        f_t^{N_p}=\sum_{i=1}^{N_p}w_i\delta_{(\bX_t^i,\bV_t^i)},
+        \qquad \dot{\bX}^i=\bV^i,
+        \qquad \dot{\bV}^i=\bE_h[f^{N_p}](\bX^i).
+        \]
+        <b>PIC avoids a six-dimensional Eulerian grid—but data assimilation must now act on particles.</b>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Start from the simulation problem. In three physical dimensions, the kinetic density depends on three position and three velocity coordinates. A direct tensor grid scales like n_x cubed times n_v cubed. PIC replaces the 6D grid by weighted phase-space particles and a mesh-based field solve. The assimilation question is therefore how an observed field can correct particle positions and velocities.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, Vlasov–Poisson model and PIC formulation.<br>[/Sources]</aside>
+</section><section data-menu-title="2. Macroscopic observations" style="--part:#0B6FA8;">
+  <div class="slide">
+    <div class="eyebrow">2 · Observation</div>
+    <h2>PIC evolves \((\bX,\bV)\); experiments measure macroscopic observables</h2>
+    <div class="body xs">
+      <div class="cols mtight" style="align-items:stretch; gap:22px;">
+        <div class="card" style="flex:0.82;">
+          <div class="eyebrow">Evolution state</div>
+          <h4>PIC advances particle positions and velocities</h4>
+          \[
+          Z_t^i=(\bX_t^i,\bV_t^i),
+          \qquad
+          \dot{\bX}^i=\bV^i,
+          \quad
+          \dot{\bV}^i=\bE_h[f^{N_p}](\bX^i).
+          \]
+        </div>
+        <div class="card" style="flex:1.18;">
+          <div class="eyebrow">Observation state</div>
+          <h4>Diagnostics return velocity moments</h4>
+          \[
+          \rho=\int f\,d\bv,
+          \qquad
+          \rho\bu=\int \bv f\,d\bv,
+          \qquad
+          d\rho T=\int|\bv-\bu|^2f\,d\bv.
+          \]
+        </div>
+      </div>
+      <div class="cols" style="align-items:stretch; gap:22px;">
+        <div class="card" style="flex:1.16;">
+          <div class="eyebrow">What experiments can measure</div>
+          <table style="font-size:18px; margin-top:4px;">
+            <tr><th style="width:31%;">Diagnostic</th><th>Typical observables</th></tr>
+            <tr><td><b>Thomson scattering</b></td><td>electron density \(n_e\) and electron temperature \(T_e\)</td></tr>
+            <tr><td><b>CER / MiCER</b></td><td>ion temperature \(T_i\), plasma rotation, and ion density</td></tr>
+            <tr><td><b>Helium beam</b></td><td>edge / SOL electron density \(n_e\) and temperature \(T_e\)</td></tr>
+          </table>
+        </div>
+        <div class="card" style="flex:0.84;">
+          <div class="eyebrow">Why standard DA is not plug-and-play</div>
+          <ul class="tight">
+            <li><b>EnKF:</b> needs a finite labeled state; PIC particles are exchangeable and extremely numerous.</li>
+            <li><b>4D-Var:</b> lifting a few moments back to particles is non-unique, and a long PIC adjoint is costly.</li>
+            <li><b>Particle filters:</b> weights degenerate in the high-dimensional particle state.</li>
+          </ul>
+          <div class="note blue" style="margin-top:8px;"><b>Not identified:</b> beams, tails, anisotropy, and other velocity-space shape can differ even when \((\rho,\bu,T)\) agree.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">The model state and observation state are different objects. PIC advances particle positions and velocities, whereas plasma diagnostics return a few macroscopic fields. Thomson scattering measures electron density and temperature. CER or MiCER provides ion temperature, rotation, and ion-density information. Helium-beam diagnostics provide electron density and temperature in the scrape-off layer. Standard DA is therefore not a direct state-vector update: particle labels are arbitrary, the inverse from moments to particles is non-unique, and the particle state is extremely high dimensional. Velocity-space shape remains unobserved.<br><br>[Sources]<br>Experimental diagnostics and requested framing specified by the user.<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, hydrodynamic moment map and non-identifiability.<br>[/Sources]</aside>
+</section><section class="stack" data-stack-title="3. Full phase-space nudging"><section data-menu-title="3. Full phase-space nudging" style="--part:#0B6FA8;">
+  <div class="slide">
+    <div class="eyebrow">3 · Full phase-space observation</div>
+    <h2>If \(f(\bx,\bv)\) is observed, nudge directly inside PIC</h2>
+    <div class="body small">
+      <div class="note blue mtight">
+        \[
+        J_h[f]=\frac12\left\|K_h*f-f_t^{\rm obs}\right\|_{L^2(\bx,\bv)}^2,
+        \qquad
+        \begin{bmatrix}\dot{\bX}^i\\[2pt]\dot{\bV}^i\end{bmatrix}
+        =
+        \begin{bmatrix}\bV^i\\[2pt]\bE_h[f^{N_p}](\bX^i)\end{bmatrix}
+        -\lambda\,\nabla_{\bx,\bv}\frac{\delta J_h}{\delta f}(\bX^i,\bV^i).
+        \]
+      </div>
+      <div class="flow" style="align-items:stretch; gap:16px;">
+        <div class="node" style="flex:1;"><div class="eyebrow">1 · Compare</div><b>Phase-space densities</b><br><span class="muted">Use the observable resolution \(h\).</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">2 · Differentiate</div><b>Wasserstein gradient</b><br><span class="muted">Obtain one field on \((\bx,\bv)\).</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">3 · Correct</div><b>PIC particles</b><br><span class="muted">No labels or particle matching.</span></div>
+      </div>
+      <div class="thm">
+        <span class="lbl">Result</span><span class="ttl">A stable particle-level feedback</span>
+        <div class="stmt">The analysis gives well-posedness, consistency of the particle approximation, and tracking to a floor set by model bias and observation scale.</div>
+      </div>
+      <div class="tiny faint push">↓ Proofs, particle derivation, two-stream instability, and Landau damping</div>
+    </div>
+  </div>
+  <aside class="notes">With full phase-space observations, the discrepancy is an L2 mismatch between smoothed kinetic densities. Its Wasserstein gradient is evaluated at every PIC particle and added to the position–velocity dynamics. The construction is permutation invariant and does not need a correspondence between observed and simulated particles. Move down for the derivation, guarantees, and Vlasov–Poisson tests.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Wasserstein feedback, well-posedness, propagation of chaos, tracking estimate, and Vlasov–Poisson experiments.<br>[/Sources]</aside>
+</section><section data-menu-title="I · detail — Setup" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Full phase-space nudging</div>
+					<h2>Truth, model, and observations</h2>
+					<div class="body small">
+						<div class="card mtight" style="padding-top:8px; padding-bottom:8px;">
+							<h4>True process \(\bX_t\) and model \(\bY_t\): shared noise channel, bias in the drift</h4>
+							\[
+							\intd\bX_t=\btrue(\bX_t,\mu_t)\intd t+\Sigma\intd\bW_t,\qquad
+							\intd\bY_t=\bmodel(\bY_t,\nu_t)\intd t+\Sigma\intd\bW_t,\qquad
+							\mathbf R:=\bmodel-\btrue .
+							\]
+						</div>
+						<p>Smoothing kernel \(K_h(\bx)=h^{-d}K(\bx/h)\) (Gaussian), even; the bandwidth \(h\) is the resolution of the measurement device.</p>
+						<div class="cols" style="align-items:stretch;">
+							<div class="card mtight fragment">
+								<h4>Case A — pixel / density observation</h4>
+								\[ \muobs_t(\bz)=(K_h*\mu_t)(\bz). \]
+								<span class="muted">Imaging, satellite products, reconstructed densities.</span>
+							</div>
+							<div class="card mtight fragment">
+								<h4>Case B — unlabeled particle locations</h4>
+								\[ \muobs_t(\bz)=\tfrac1M\sum_{k=1}^M K_h\big(\bz-\bX^{\obs,k,M}_t\big). \]
+								<span class="muted">Tracking with dropouts, no index matching across frames.</span>
+							</div>
+						</div>
+						<div class="note blue fragment">
+							Both cases enter the same framework through the same object, the <b>measure</b> \(\muobs\) — and the forecast is compared with it only after the same smoothing \(K_h\).
+						</div>
+					</div>
+				</div>
+				<aside class="notes">Keep the diffusion shared so the bias is in the drift. The two observation modalities plug into one formula.</aside>
+			</section>
+
+			<section data-menu-title="I · detail — Wasserstein gradient" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Full phase-space nudging · detail</div>
+					<h2>Nudging is a Wasserstein gradient</h2>
+					<div class="body small">
+						<div class="card mtight">
+							<h4>Misfit at the observation scale, and its first variation (\(K_h\) even \(\Rightarrow\) self-adjoint)</h4>
+							\[
+							J_{\mathrm{nud},h}(\nu,\muobs)=\tfrac12\!\int_{\Rd}\big|K_h*\nu-\muobs\big|^2\intd\bx,\qquad
+							\phi_{\nu,h}:=\frac{\delta J_{\mathrm{nud},h}}{\delta\nu}=\widetilde K_h*\nu-K_h*\muobs,\qquad \widetilde K_h:=K_h*K_h .
+							\]
+						</div>
+						<div class="card mtight fragment">
+							<h4>In Wasserstein geometry, the first variation gives the steepest-descent direction:</h4>
+							\[
+							\bu_{\mathrm{nud}}(\bz)=-\lambda\nabla\phi_{\nu,h}(\bz)=-\lambda\nabla\big(\widetilde K_h*\nu-K_h*\muobs\big)(\bz).
+							\]
+						</div>
+						<div class="note blue fragment">
+							The same field drives the finite particles, the representative mean-field particle, and its law.
+						</div>
+					</div>
+				</div>
+				<aside class="notes">Smoothing by \(K_h\) restores enough regularity for the velocity to be defined when \(\nu\) is only a measure, and matches the observation scale. If the model drift is itself a Wasserstein gradient and \(\Sigma=\sqrt{2\beta}I\), nudging adds the time-dependent potential \(\lambda J_{\mathrm{nud},h}(\nu,\mu_t^{\mathrm{obs}})\) to the free energy.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, first variation and Wasserstein velocity, lines 68–131; gradient-flow interpretation, lines 154–159.<br>[/Sources]</aside>
+			</section>
+
+			<section data-menu-title="I · detail — Particle pipeline" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Full phase-space nudging · particle implementation</div>
+					<h2>Compare at the density scale, correct at the particle scale</h2>
+					<div class="body small">
+						<div class="lane macro">
+							<div class="lanelabel">Macroscopic — observation scale \(h\)</div>
+							<div class="cells">
+								<div>observed data (true system): image / pixels, or unlabeled locations → KDE  →  <b>\(\muobs\)</b></div>
+								<div>coarse-grained forecast  <b>\(K_h*\nu=\frac1N\sum_j K_h(\cdot-\bZ^j)\)</b></div>
+								<div class="compare" style="flex:1.15;"><b>compare at scale \(h\)</b><br>residual \(r=K_h*\nu-\muobs\), misfit \(J=\tfrac12\int|r|^2\)</div>
+							</div>
+						</div>
+						<div class="between">
+							<div class="arr c-blue">
+								<svg class="arrowsvg" viewbox="0 0 26 54" aria-hidden="true"><path d="M13 52 V8" stroke="#0B6FA8" stroke-width="3" fill="none"></path><path d="M4 16 L13 4 L22 16" stroke="#0B6FA8" stroke-width="3" fill="none" stroke-linejoin="round"></path></svg>
+								<span><b>coarse-grain</b> — permutation invariant, cost \(O(NG)\)</span>
+							</div>
+							<div class="arr c-orange">
+								<span><b>Wasserstein-gradient nudge</b> \(\;\mathbf U^i=-\lambda\nabla\big(\widetilde K_h*\nu-K_h*\muobs\big)(\bZ^i)\)</span>
+								<svg class="arrowsvg" viewbox="0 0 26 54" aria-hidden="true"><path d="M13 2 V46" stroke="#C9520E" stroke-width="3" fill="none"></path><path d="M4 38 L13 50 L22 38" stroke="#C9520E" stroke-width="3" fill="none" stroke-linejoin="round"></path></svg>
+							</div>
+						</div>
+						<div class="lane micro">
+							<div class="lanelabel">Microscopic — particle scale</div>
+							<div class="cells">
+								<div>forecast particles \(\{\bZ^i\}_{i=1}^N\sim\nu\)</div>
+								<div style="flex:1.5;"><b>forecast step (biased model)</b> \(\;\bZ\leftarrow\bZ+\Delta t\,\bmodel(\bZ,\nu)+\Sigma\sqrt{\Delta t}\,\xi\), then \(L_{\rm nud}\) nudging substeps  ↻ repeat</div>
+							</div>
+						</div>
+						<div class="note blue fragment">
+							No particle matching, no model linearization, and no ensemble covariances.
+						</div>
+					</div>
+				</div>
+				<aside class="notes">Read the diagram clockwise: particles up to a density, compare, gradient back down to every particle, advance, repeat. The exact interacting-particle SDE is introduced on the next theory slide so this page can remain an algorithmic overview.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, particle algorithm, lines 163–189.<br>[/Sources]</aside>
+			</section>
+
+			<section data-menu-title="I · detail — Guarantee 1 — well-posedness" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Full phase-space — guarantee 1/3</div>
+					<h2>Mean-field particle dynamics are well posed</h2>
+					<div class="body small">
+						<div class="card mtight">
+							<h4>Mean-field particle dynamics</h4>
+							\[
+							\intd\bZ_t
+							=\bmodel(\bZ_t,\nu_t)\intd t
+							-\lambda\nabla\big(\widetilde K_h*\nu_t-K_h*\muobs_t\big)(\bZ_t)\intd t
+							+\Sigma\intd\bW_t,
+							\qquad \nu_t=\Law(\bZ_t).
+							\]
+						</div>
+						<div class="thm mtight fragment">
+							<span class="lbl">Proposition 1</span><span class="ttl">Well-posedness</span>
+							<div class="stmt cols" style="align-items:stretch; gap:26px;">
+								<div style="flex:1.15;">
+									<b>Assume.</b> For any \(T&gt;0\),
+									\[
+									\nu_0\in\mathcal P_2,\qquad
+									\|\mathbf b_s(\bz,\rho)-\mathbf b_s(\bz',\rho')\|
+									\le L_s\big(\|\bz-\bz'\|+W_2(\rho,\rho')\big),
+									\quad s\in\{\mathrm{true},\mathrm{model}\},
+									\]
+									and \(\nabla\widetilde K_h\) is globally Lipschitz; the observation force is uniformly Lipschitz in space.
+								</div>
+								<div style="flex:0.85; border-left:1px solid var(--line); padding-left:26px;">
+									<b>Then.</b> The assimilated McKean–Vlasov SDE has a <b>unique strong solution</b> on \([0,T]\). Consequently, its law \(\nu_t\) is uniquely determined.
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">The mean-field particle SDE is kept on one line because the Wasserstein feedback was defined on the preceding slide. For exact smoothed observations, \(\mu_t^{\mathrm{obs}}=K_h*\mu_t\), the observation force inherits the required spatial regularity from the kernel. More generally, one may directly assume that \(x\mapsto\nabla(K_h*\mu_t^{\mathrm{obs}})(x)\) is uniformly Lipschitz.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, assimilated McKean–Vlasov SDE, lines 133–138; regularity assumption and well-posedness proposition, lines 261–295.<br>[/Sources]</aside>
+			</section>
+
+			<section data-menu-title="I · detail — Guarantee 2 — particle consistency" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Full phase-space — guarantee 2/3</div>
+					<h2>Finite particles converge to the mean-field law</h2>
+					<div class="body small">
+						<div class="card mtight">
+							<h4>Mean-field particle dynamics</h4>
+							\[
+							\intd\bZ_t
+							=\bmodel(\bZ_t,\nu_t)\intd t
+							-\lambda\nabla\big(\widetilde K_h*\nu_t-K_h*\muobs_t\big)(\bZ_t)\intd t
+							+\Sigma\intd\bW_t,
+							\qquad \nu_t=\Law(\bZ_t).
+							\]
+							<div class="mtight" style="border-top:1px solid var(--line); padding-top:10px;">
+							<h4>Finite-\(N\) particle dynamics</h4>
+							\[
+							\nu_t^N=\frac1N\sum_{j=1}^N\delta_{\bZ_t^{j,N}},
+							\qquad
+							\intd\bZ_t^{i,N}
+							=\bmodel(\bZ_t^{i,N},\nu_t^N)\intd t
+							-\lambda\nabla\big(\widetilde K_h*\nu_t^N-K_h*\muobs_t\big)(\bZ_t^{i,N})\intd t
+							+\Sigma\intd\bW_t^i.
+							\]
+							</div>
+						</div>
+						<div class="thm mtight fragment">
+							<span class="lbl">Proposition 2</span><span class="ttl">Propagation of chaos</span>
+							<div class="stmt cols" style="align-items:stretch; gap:26px;">
+								<div style="flex:0.9;">
+									<b>Assume.</b>
+									<ul class="tight">
+										<li>\(\mathbf b_s\) is globally Lipschitz in \((\bx,W_2)\), \(s\in\{\mathrm{true},\mathrm{model}\}\), and the observation force is uniformly Lipschitz.</li>
+										<li>\(\nabla\widetilde K_h\) is globally Lipschitz and \(\|\nabla\widetilde K_h\|_{L^\infty}&lt;\infty\).</li>
+										<li>The initial ensemble is \(f_0\)-chaotic, with \(f_0\in\mathcal P_2\).</li>
+									</ul>
+								</div>
+								<div style="flex:1.1; border-left:1px solid var(--line); padding-left:26px;">
+									<b>Then, for every \(T&gt;0\),</b>
+									\[
+									W_2\!\left(\Law(\bZ^{1,N}_{[0,T]}),\Law(\bZ_{[0,T]})\right)\longrightarrow0
+									\qquad\text{as }N\to\infty.
+									\]
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">The two displayed dynamics make the limit explicit: replace the empirical law \(\nu_t^N\) by the law \(\nu_t=\Law(\bZ_t)\). Propagation of chaos is a consistency statement, not a rate statement: the paper proves path-law convergence of a tagged particle but does not claim an explicit rate. For direct density observations, expanding the finite-particle convolution gives the all-particle kernel sum; for unlabeled observed locations, the observation force is replaced by the corresponding observed-particle kernel sum.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, assimilated mean-field SDE, lines 133–138; finite-particle system and propagation of chaos, lines 296–329.<br>[/Sources]</aside>
+			</section>
+
+			<section data-menu-title="I · detail — Guarantee 3 — assumptions" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Full phase-space — guarantee 3/3 · equations and assumptions</div>
+					<h2>Continuous equations and tracking assumptions</h2>
+					<div class="body small">
+						<div class="card mtight">
+							<h4>Truth and assimilated density equations</h4>
+							\[
+							\begin{aligned}
+							\partial_t\mu_t
+							&amp;=-\nabla\!\cdot\big(\mu_t\btrue(\cdot,\mu_t)\big)
+							+\nabla\!\cdot(A\nabla\mu_t),\\
+							\partial_t\nu_t
+							&amp;=-\nabla\!\cdot\big(\nu_t\bmodel(\cdot,\nu_t)\big)
+							+\nabla\!\cdot(A\nabla\nu_t)
+							+\lambda\nabla\!\cdot\big[\nu_t\nabla(K_h*r_t)\big].
+							\end{aligned}
+							\]
+							<div style="text-align:center; margin-top:1px;">\(r_t:=K_h*\nu_t-\muobs_t,\qquad A:=\tfrac12\Sigma\Sigma^\top.\)</div>
+						</div>
+						<div class="thm mtight">
+							<span class="lbl">Theorem 3 · assumptions</span><span class="ttl">Resolved observations and strong feedback</span>
+							<div class="stmt" style="line-height:1.22;">
+								<b>Assume.</b>
+								<div style="display:grid; grid-template-columns:1fr 1fr; gap:0 30px; margin-top:1px;">
+									<ul class="tight">
+										<li>\(\Omega=\Tor\) and \(A\succeq\kappa I\), with \(\kappa&gt;0\).</li>
+										<li>Exact observations: \(\muobs_t=K_h*\mu_t\).</li>
+										<li>\(\mu_t,\nu_t\) are classical and \(\int_\Omega(\nu_0-\mu_0)\,d\bx=0\).</li>
+										<li>\(\btrue\) and \(\bmodel\) are globally Lipschitz in \((\bx,W_2)\).</li>
+									</ul>
+									<ul class="tight">
+										<li>\(\|\bmodel\|_\infty,\|\nabla\!\cdot\bmodel\|_\infty\le B_{\rm model}\).</li>
+										<li>\(\|\bmodel(\cdot,\rho)-\bmodel(\cdot,\eta)\|_2\le L_\mu\|\rho-\eta\|_2\).</li>
+										<li>\(0&lt;\underline\nu\le\nu_t\) and \(\|\mu_t\|_\infty,\|\nu_t\|_\infty\le\bar\rho\).</li>
+										<li>For \(e_t:=\nu_t-\mu_t\), \(\|\nabla e_t-\nabla(\widetilde K_h*e_t)\|_2\le\delta(h)\|\nabla e_t\|_2\), with \(\delta(h)\to0\).</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">The truth and assimilated density equations are shown together so the feedback term is the only structural difference. The residual \(r_t\) and diffusion matrix \(A\) are defined only after both equations. Each assumption is stated as a separate bullet. Here \(e_t=\nu_t-\mu_t\), and \(\delta(h)\to0\) is the kernel observability error.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, true Fokker–Planck equation, lines 33–36; assimilated nonlinear Fokker–Planck equation, lines 139–153; \(L^2\)-tracking theorem assumptions, lines 387–433.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="I · detail — Guarantee 3 — conclusion" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Full phase-space — guarantee 3/3 · conclusion</div>
+						<h2>Continuous evolution: \(L^2\) tracking to the model-bias floor</h2>
+						<div class="body small">
+							<div class="thm">
+								<span class="lbl">Theorem 3 · conclusion</span><span class="ttl">Tracking error decays to the drift-mismatch floor</span>
+								<div class="stmt">
+									<div class="note blue mtight"><b>Under the assumptions on the previous slide, choose</b>
+										\[
+										\delta(h)\le\frac{\underline\nu}{2\bar\rho},\qquad
+										\lambda&gt;\frac1{\underline\nu}
+										\left(\frac{2C_{\rm adv}^2C_P}{\kappa}-\kappa\right),
+										\quad C_{\rm adv}:=B_{\rm model}+\bar\rho L_\mu.
+										\]
+									</div>
+									<div class="cols push" style="align-items:center; gap:30px;">
+										<div style="flex:1.02;">
+											\[
+											V(t):=\tfrac12\|\nu_t-\mu_t\|_2^2,
+											\]
+											\[
+											\Delta:=\sup_{s\in[0,T]}
+											\|\bmodel(\cdot,\mu_s)-\btrue(\cdot,\mu_s)\|_\infty,
+											\]
+											\[
+											\alpha:=\frac{\kappa+\lambda\underline\nu}{C_P}
+											-\frac{2C_{\rm adv}^2}{\kappa}&gt;0.
+											\]
+										</div>
+										<div style="flex:0.98; border-left:1px solid var(--line); padding-left:30px;">
+											\[
+											\boxed{\;
+											V(t)\le e^{-\alpha t}V(0)
+											+\frac{\bar\rho^{\,2}}{\alpha\kappa}\Delta^2,
+											\qquad 0\le t\le T
+											\;}
+											\]
+											<div class="note orange mtight">
+												<div><b>\(\Delta=0\).</b> Exponential synchronization.</div>
+												<div><b>\(\Delta\ne0\).</b> Squared \(L^2\) error reaches a <span class="accent">bias floor \(O(\Delta^2)\)</span>.</div>
+											</div>
+										</div>
+									</div>
+									<div class="muted mtight">\(C_P\): zero-mean Poincaré constant.</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">The manuscript states the assumptions and model-bias bound on \([0,T]\); the estimate holds for all \(t\ge0\) only if these bounds hold uniformly for all time. The \(O(\Delta^2)\) floor is for \(V(t)\), the squared \(L^2\) error; the \(L^2\) norm itself has an \(O(\Delta)\) floor.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, \(L^2\)-tracking theorem, feedback thresholds, and model-bias estimate, lines 387–456.<br>[/Sources]</aside>
+				</section>
+
+			<section data-menu-title="I · detail — Kinetic — two-stream" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Full phase-space nudging · kinetic benchmark</div>
+						<h2>Phase-space data recover the two streams</h2>
+						<div class="body xs">
+							<div class="card mtight">
+								<div><b>Design.</b> \(\dot X^i=V^i\), \(\dot V^i=E(X^i,t)\), with \(E=-\partial_x\phi\) and \(-\partial_{xx}\phi=\rho-1\).</div>
+								<div><b>Truth.</b> A perturbed two-stream law with \(\sigma=0.2\), \(u_0=1\), \(\varepsilon=0.01\), and \(\kappa=0.5\).</div>
+								<div><b>Model.</b> The same Vlasov–Poisson dynamics initialized from a <span class="accent">single Maxwellian</span> — the velocity law is structurally wrong.</div>
+								<div><b>Observed.</b> The full smoothed phase-space density \((K_h*f_t)(x,v)\).</div>
+							</div>
+							<figure class="framed" style="align-self:center; width:100%;">
+								<img src="./figure/part2/vp_density_obs_truth_biased_nudged.gif" data-pdf-src="./figure/pdf_static/part2_vp_t100.png" style="width:100%; max-height:290px; object-fit:contain;">
+								<figcaption>Density nudging reconstructs the two-stream structure missed by the Maxwellian forecast.</figcaption>
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">Read the three panels at the same time and on the same color scale. The biased single-Maxwellian forecast remains a thin band, while density-level nudging reconstructs the two-stream phase-space structure. The animation uses 31 stored states from step 0 through step 2000, corresponding to t=0 through t=100; no frames are interpolated.<br><br>[Sources]<br>Existing outputs case3_Vlasov_poisson_instability/assimilation/data_lambda_0/phase_da_kdenudge_1d1v_seed0.npz and data_lambda_1e_3/phase_da_kdenudge_1d1v_seed0.npz; exact frame indices and the global color limit are recorded in figure/part2/manifest.json.<br>https://github.com/Lyuliyao/multiscale-nudging, commit 3914e4822f4517f9fe38eff3672f29d1e95b40b2.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="I · detail — Kinetic — Landau damping" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Full phase-space nudging · kinetic benchmark</div>
+						<h2>Nudging recovers the Landau damping rate</h2>
+						<div class="body small">
+							<div class="card mtight">
+								<div><b>Design.</b> The same one-dimensional Vlasov–Poisson dynamics, monitored through the fundamental electric-field mode \(|\hat E(\kappa,t)|\).</div>
+								<div><b>Truth.</b> \(f_0\propto f_{M,1}(v)(1+\varepsilon\cos\kappa x)\), \(\varepsilon=0.5\), \(\kappa=\tfrac12\), \(x\in[0,4\pi]\).</div>
+								<div><b>Model.</b> The same dynamics initialized from the unperturbed Maxwellian, \(\varepsilon=0\) — no initial spatial modulation.</div>
+								<div><b>Observed.</b> The full smoothed phase-space density \((K_h*f_t)(x,v)\).</div>
+							</div>
+							<figure class="framed" style="align-self:center;">
+								<img src="./figure/landau_damping.png" style="max-height:330px;">
+								<figcaption>Reference / biased / assimilated: the nudged runs recover the damping profile from density-level data.</figcaption>
+							</figure>
+						</div>
+					</div>
+					<aside class="notes">The observed object is the phase-space density; the electric-field mode is the diagnostic used to test whether the correct damping behavior is recovered.<br><br>[Sources]<br>Multiscale Nudging for Data Assimilation, user-provided manuscript, Section “Vlasov–Poisson equation,” paragraph “Landau damping.”<br>[/Sources]</aside>
+				</section>
+
+			</section><section class="stack" data-stack-title="4. Moment nudging"><section data-menu-title="4. Moment nudging — Method A" style="--part:#C9520E;">
+  <div class="slide">
+    <div class="eyebrow">4 · Moment observation</div>
+    <h2>If only \((\rho,\bu,T)\) are observed, change the geometry</h2>
+    <div class="body xs">
+      <div class="card mtight">
+        \[
+        M_h[f](\bx)=\int K_h(\bx-\by)
+        \left(1,\bv,\tfrac12|\bv|^2\right)f(\by,\bv)\,d\by\,d\bv,
+        \qquad
+        \mathbf r=M_h[f]-M^{\rm obs}=(r_0,\mathbf r_1,r_2),
+        \]
+        \[
+        J_M[f]=\frac{\gamma_1}{2}\|r_0\|_{L^2}^2
+        +\frac{\gamma_2}{2}\|\mathbf r_1\|_{L^2}^2
+        +\frac{\gamma_3}{2}\|r_2\|_{L^2}^2,
+        \qquad
+        \Phi_M[f]=\frac{\delta J_M}{\delta f}
+        =\gamma_1q_0(\bx)+\gamma_2\bv\!\cdot\!\mathbf q_1(\bx)
+        +\frac{\gamma_3}{2}|\bv|^2q_2(\bx),
+        \quad (q_0,\mathbf q_1,q_2)=K_h*\mathbf r.
+        \]
+      </div>
+      <div class="cols" style="align-items:stretch; gap:22px;">
+        <div class="note blue" style="flex:1.28;">
+          <div class="eyebrow">Method A · weighted Wasserstein</div>
+          \[
+          \bb_A=-G_t^{-1}\nabla_{\bx,\bv}\Phi_M,
+          \qquad
+          G_t=\operatorname{diag}\!\left(
+          \left[1+\frac{|\bv-\bu^{\rm obs}|^2}{V_*^2}\right]I_d,
+          I_d\right).
+          \]
+          <b>The spatial feedback is damped at large peculiar velocity, controlling the quadratic energy term while retaining one gradient-flow structure.</b>
+        </div>
+        <div class="stackv" style="flex:0.72;">
+          <div class="card"><div class="eyebrow">Method B</div><b>Split directions</b><br><span class="muted">Density corrects \(\bx\); momentum and energy correct \(\bv\).</span></div>
+          <div class="card"><div class="eyebrow">Method C</div><b>Local Maxwellian KL</b><br><span class="muted">Penalize observed moments without prescribing unresolved shape.</span></div>
+        </div>
+      </div>
+      <div class="tiny faint push">↓ Full moment map, Methods B/C, well-posedness, 1D1V, 2D2V, and two-stream limitation</div>
+    </div>
+  </div>
+  <aside class="notes">The naive phase-space gradient of a quadratic moment mismatch creates a spatial drift that grows quadratically in velocity. Method A changes the transport metric: only the spatial block is weighted by one plus the squared peculiar velocity over V-star squared. Methods B and C are alternatives shown below. The goal is to synchronize the measured fields, not to claim that three moments determine the full kinetic distribution.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, moment mismatch and Methods A–C.<br>[/Sources]</aside>
+</section><section data-menu-title="II · detail — Moments only" style="--part:#C9520E;" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Moment nudging</div>
+					<h2>Moments determine a family, not a distribution</h2>
+					<div class="body small">
+						<div class="card">
+							\[
+							\begin{aligned}
+							\partial_t f+\bv\cdot\nabla_\bx f+\bE[f]\cdot\nabla_\bv f &amp;= Q[f],\\
+							\bE[f]= -\nabla_\bx\phi,\qquad -\Delta_\bx\phi &amp;= \rho[f]-1 .
+							\end{aligned}
+							\]
+							<div class="muted">PIC: \(f^{N_p}=\sum_i w_i\,\delta_{(\bX^i,\bV^i)}\) — the particles are quadrature points of one law.</div>
+						</div>
+						<div class="cols fill" style="align-items:stretch;">
+							<div class="stackv" style="flex:1.0;">
+								<div class="card mtight xs fragment">
+									<h4>Observed moment map — linear in \(f\)</h4>
+									\[
+									M_h[f](\bx):=\big(\rho_h,\bj_h,\mathcal K_h\big)[f](\bx)
+									=\int K_h(\bx-\by)\,\big(1,\bv,\tfrac12|\bv|^2\big)f(\by,\bv)\,\intd\by\,\intd\bv .
+									\]
+									\[
+									\begin{aligned}
+									\mathbf r[f]&amp;:=M_h[f]-M^\obs=(r_0,\mathbf r_1,r_2),\\
+									J_M[f]&amp;:=\frac{\gamma_1}{2}\|r_0\|_{L^2}^2+\frac{\gamma_2}{2}\|\mathbf r_1\|_{L^2}^2+\frac{\gamma_3}{2}\|r_2\|_{L^2}^2 .
+									\end{aligned}
+									\]
+								</div>
+								<div class="note orange fragment">
+									<b>Moment-compatible family</b> \(\mathcal S_h=\{f:J_M[f]=0\}\ni f^\dagger\). The data fix this family, not one distribution; feedback must therefore <b>vanish on all of \(\mathcal S_h\)</b>.
+								</div>
+							</div>
+							<figure style="flex:1.0;">
+								<svg viewbox="0 0 600 262" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;font-family:'Source Sans 3',sans-serif;">
+<line x1="39" y1="222" x2="580" y2="222" stroke="#6B7A85" stroke-width="1.2"></line>
+<polygon points="580,218 588,222 580,226" fill="#6B7A85"></polygon>
+<text x="578" y="244" font-size="17" fill="#17232C" font-style="italic">v</text>
+<path d="M44.0,218.6 L45.3,218.3 L46.7,218.1 L48.0,217.9 L49.4,217.6 L50.7,217.4 L52.1,217.1 L53.4,216.8 L54.7,216.5 L56.1,216.2 L57.4,215.8 L58.8,215.5 L60.1,215.1 L61.5,214.7 L62.8,214.3 L64.2,213.9 L65.5,213.5 L66.8,213.0 L68.2,212.5 L69.5,212.0 L70.9,211.5 L72.2,211.0 L73.6,210.4 L74.9,209.8 L76.2,209.2 L77.6,208.6 L78.9,208.0 L80.3,207.3 L81.6,206.6 L83.0,205.9 L84.3,205.1 L85.6,204.4 L87.0,203.6 L88.3,202.7 L89.7,201.9 L91.0,201.0 L92.4,200.1 L93.7,199.2 L95.0,198.2 L96.4,197.3 L97.7,196.3 L99.1,195.2 L100.4,194.2 L101.8,193.1 L103.1,192.0 L104.5,190.8 L105.8,189.7 L107.1,188.5 L108.5,187.3 L109.8,186.0 L111.2,184.8 L112.5,183.5 L113.9,182.2 L115.2,180.9 L116.5,179.5 L117.9,178.2 L119.2,176.8 L120.6,175.4 L121.9,173.9 L123.3,172.5 L124.6,171.0 L125.9,169.6 L127.3,168.1 L128.6,166.6 L130.0,165.1 L131.3,163.6 L132.7,162.0 L134.0,160.5 L135.3,159.0 L136.7,157.4 L138.0,155.9 L139.4,154.3 L140.7,152.8 L142.1,151.2 L143.4,149.7 L144.8,148.2 L146.1,146.6 L147.4,145.1 L148.8,143.6 L150.1,142.2 L151.5,140.7 L152.8,139.2 L154.2,137.8 L155.5,136.4 L156.8,135.0 L158.2,133.6 L159.5,132.3 L160.9,131.0 L162.2,129.7 L163.6,128.5 L164.9,127.3 L166.2,126.1 L167.6,124.9 L168.9,123.8 L170.3,122.8 L171.6,121.8 L173.0,120.8 L174.3,119.9 L175.6,119.0 L177.0,118.2 L178.3,117.4 L179.7,116.7 L181.0,116.0 L182.4,115.4 L183.7,114.8 L185.1,114.3 L186.4,113.8 L187.7,113.4 L189.1,113.1 L190.4,112.8 L191.8,112.6 L193.1,112.4 L194.5,112.3 L195.8,112.3 L197.1,112.3 L198.5,112.3 L199.8,112.5 L201.2,112.6 L202.5,112.9 L203.9,113.2 L205.2,113.6 L206.5,114.0 L207.9,114.4 L209.2,115.0 L210.6,115.6 L211.9,116.2 L213.3,116.9 L214.6,117.6 L215.9,118.4 L217.3,119.3 L218.6,120.2 L220.0,121.1 L221.3,122.1 L222.7,123.1 L224.0,124.2 L225.4,125.3 L226.7,126.4 L228.0,127.6 L229.4,128.8 L230.7,130.1 L232.1,131.4 L233.4,132.7 L234.8,134.0 L236.1,135.4 L237.4,136.8 L238.8,138.2 L240.1,139.7 L241.5,141.1 L242.8,142.6 L244.2,144.1 L245.5,145.6 L246.8,147.1 L248.2,148.6 L249.5,150.2 L250.9,151.7 L252.2,153.2 L253.6,154.8 L254.9,156.3 L256.3,157.9 L257.6,159.4 L258.9,160.9 L260.3,162.5 L261.6,164.0 L263.0,165.5 L264.3,167.0 L265.7,168.5 L267.0,170.0 L268.3,171.5 L269.7,172.9 L271.0,174.4 L272.4,175.8 L273.7,177.2 L275.1,178.6 L276.4,179.9 L277.7,181.3 L279.1,182.6 L280.4,183.9 L281.8,185.2 L283.1,186.4 L284.5,187.6 L285.8,188.8 L287.1,190.0 L288.5,191.2 L289.8,192.3 L291.2,193.4 L292.5,194.5 L293.9,195.5 L295.2,196.6 L296.6,197.6 L297.9,198.5 L299.2,199.5 L300.6,200.4 L301.9,201.3 L303.3,202.1 L304.6,203.0 L306.0,203.8 L307.3,204.6 L308.6,205.3 L310.0,206.1 L311.3,206.8 L312.7,207.5 L314.0,208.2 L315.4,208.8 L316.7,209.4 L318.0,210.0 L319.4,210.6 L320.7,211.1 L322.1,211.7 L323.4,212.2 L324.8,212.7 L326.1,213.1 L327.4,213.6 L328.8,214.0 L330.1,214.4 L331.5,214.8 L332.8,215.2 L334.2,215.6 L335.5,215.9 L336.9,216.3 L338.2,216.6 L339.5,216.9 L340.9,217.2 L342.2,217.4 L343.6,217.7 L344.9,217.9 L346.3,218.2 L347.6,218.4 L348.9,218.6 L350.3,218.8 L351.6,219.0 L353.0,219.2 L354.3,219.4 L355.7,219.5 L357.0,219.7 L358.3,219.8 L359.7,220.0 L361.0,220.1 L362.4,220.2 L363.7,220.3 L365.1,220.4 L366.4,220.5 L367.7,220.6 L369.1,220.7 L370.4,220.8 L371.8,220.9 L373.1,221.0 L374.5,221.0 L375.8,221.1 L377.2,221.2 L378.5,221.2 L379.8,221.3 L381.2,221.3 L382.5,221.4 L383.9,221.4 L385.2,221.5 L386.6,221.5 L387.9,221.5 L389.2,221.6 L390.6,221.6 L391.9,221.6 L393.3,221.7 L394.6,221.7 L396.0,221.7 L397.3,221.7 L398.6,221.8 L400.0,221.8 L401.3,221.8 L402.7,221.8 L404.0,221.8 L405.4,221.8 L406.7,221.9 L408.1,221.9 L409.4,221.9 L410.7,221.9 L412.1,221.9 L413.4,221.9 L414.8,221.9 L416.1,221.9 L417.5,221.9 L418.8,221.9 L420.1,221.9 L421.5,221.9 L422.8,221.9 L424.2,222.0 L425.5,222.0 L426.9,222.0 L428.2,222.0 L429.5,222.0 L430.9,222.0 L432.2,222.0 L433.6,222.0 L434.9,222.0 L436.3,222.0 L437.6,222.0 L438.9,222.0 L440.3,222.0 L441.6,222.0 L443.0,222.0 L444.3,222.0 L445.7,222.0 L447.0,222.0 L448.4,222.0 L449.7,222.0 L451.0,222.0 L452.4,222.0 L453.7,222.0 L455.1,222.0 L456.4,222.0 L457.8,222.0 L459.1,222.0 L460.4,222.0 L461.8,222.0 L463.1,222.0 L464.5,222.0 L465.8,222.0 L467.2,222.0 L468.5,222.0 L469.8,222.0 L471.2,222.0 L472.5,222.0 L473.9,222.0 L475.2,222.0 L476.6,222.0 L477.9,222.0 L479.2,222.0 L480.6,222.0 L481.9,222.0 L483.3,222.0 L484.6,222.0 L486.0,222.0 L487.3,222.0 L488.7,222.0 L490.0,222.0 L491.3,222.0 L492.7,222.0 L494.0,222.0 L495.4,222.0 L496.7,222.0 L498.1,222.0 L499.4,222.0 L500.7,222.0 L502.1,222.0 L503.4,222.0 L504.8,222.0 L506.1,222.0 L507.5,222.0 L508.8,222.0 L510.1,222.0 L511.5,222.0 L512.8,222.0 L514.2,222.0 L515.5,222.0 L516.9,222.0 L518.2,222.0 L519.5,222.0 L520.9,222.0 L522.2,222.0 L523.6,222.0 L524.9,222.0 L526.3,222.0 L527.6,222.0 L529.0,222.0 L530.3,222.0 L531.6,222.0 L533.0,222.0 L534.3,222.0 L535.7,222.0 L537.0,222.0 L538.4,222.0 L539.7,222.0 L541.0,222.0 L542.4,222.0 L543.7,222.0 L545.1,222.0 L546.4,222.0 L547.8,222.0 L549.1,222.0 L550.4,222.0 L551.8,222.0 L553.1,222.0 L554.5,222.0 L555.8,222.0 L557.2,222.0 L558.5,222.0 L559.8,222.0 L561.2,222.0 L562.5,222.0 L563.9,222.0 L565.2,222.0 L566.6,222.0 L567.9,222.0 L569.3,222.0 L570.6,222.0 L571.9,222.0 L573.3,222.0 L574.6,222.0 L576.0,222.0 L577.3,222.0 L578.7,222.0 L580.0,222.0" fill="none" stroke="#8C99A3" stroke-width="2.4" stroke-dasharray="7,5"></path>
+<text x="136" y="102" font-size="17" fill="#6B7A85">forecast <tspan font-style="italic">g</tspan></text>
+<path d="M44.0,222.0 L45.3,222.0 L46.7,222.0 L48.0,222.0 L49.4,222.0 L50.7,222.0 L52.1,222.0 L53.4,222.0 L54.7,222.0 L56.1,222.0 L57.4,222.0 L58.8,222.0 L60.1,222.0 L61.5,222.0 L62.8,222.0 L64.2,222.0 L65.5,222.0 L66.8,222.0 L68.2,222.0 L69.5,222.0 L70.9,222.0 L72.2,222.0 L73.6,222.0 L74.9,222.0 L76.2,222.0 L77.6,222.0 L78.9,222.0 L80.3,222.0 L81.6,222.0 L83.0,222.0 L84.3,222.0 L85.6,222.0 L87.0,222.0 L88.3,222.0 L89.7,222.0 L91.0,222.0 L92.4,222.0 L93.7,222.0 L95.0,222.0 L96.4,222.0 L97.7,222.0 L99.1,222.0 L100.4,222.0 L101.8,222.0 L103.1,222.0 L104.5,222.0 L105.8,222.0 L107.1,222.0 L108.5,222.0 L109.8,222.0 L111.2,222.0 L112.5,222.0 L113.9,222.0 L115.2,222.0 L116.5,222.0 L117.9,222.0 L119.2,222.0 L120.6,222.0 L121.9,222.0 L123.3,222.0 L124.6,222.0 L125.9,222.0 L127.3,222.0 L128.6,222.0 L130.0,222.0 L131.3,222.0 L132.7,222.0 L134.0,222.0 L135.3,222.0 L136.7,222.0 L138.0,222.0 L139.4,222.0 L140.7,222.0 L142.1,222.0 L143.4,222.0 L144.8,222.0 L146.1,222.0 L147.4,222.0 L148.8,222.0 L150.1,222.0 L151.5,222.0 L152.8,222.0 L154.2,222.0 L155.5,222.0 L156.8,222.0 L158.2,222.0 L159.5,222.0 L160.9,222.0 L162.2,222.0 L163.6,222.0 L164.9,222.0 L166.2,222.0 L167.6,222.0 L168.9,222.0 L170.3,222.0 L171.6,222.0 L173.0,222.0 L174.3,222.0 L175.6,222.0 L177.0,222.0 L178.3,222.0 L179.7,222.0 L181.0,222.0 L182.4,222.0 L183.7,222.0 L185.1,222.0 L186.4,222.0 L187.7,222.0 L189.1,222.0 L190.4,222.0 L191.8,222.0 L193.1,222.0 L194.5,222.0 L195.8,222.0 L197.1,222.0 L198.5,222.0 L199.8,222.0 L201.2,222.0 L202.5,222.0 L203.9,222.0 L205.2,222.0 L206.5,222.0 L207.9,222.0 L209.2,222.0 L210.6,222.0 L211.9,222.0 L213.3,222.0 L214.6,222.0 L215.9,222.0 L217.3,222.0 L218.6,222.0 L220.0,222.0 L221.3,222.0 L222.7,222.0 L224.0,222.0 L225.4,222.0 L226.7,222.0 L228.0,221.9 L229.4,221.9 L230.7,221.9 L232.1,221.9 L233.4,221.9 L234.8,221.9 L236.1,221.9 L237.4,221.9 L238.8,221.8 L240.1,221.8 L241.5,221.8 L242.8,221.7 L244.2,221.7 L245.5,221.7 L246.8,221.6 L248.2,221.6 L249.5,221.5 L250.9,221.5 L252.2,221.4 L253.6,221.3 L254.9,221.2 L256.3,221.1 L257.6,221.0 L258.9,220.9 L260.3,220.8 L261.6,220.7 L263.0,220.5 L264.3,220.3 L265.7,220.1 L267.0,219.9 L268.3,219.7 L269.7,219.5 L271.0,219.2 L272.4,218.9 L273.7,218.6 L275.1,218.2 L276.4,217.8 L277.7,217.4 L279.1,216.9 L280.4,216.4 L281.8,215.9 L283.1,215.3 L284.5,214.7 L285.8,214.0 L287.1,213.3 L288.5,212.5 L289.8,211.6 L291.2,210.7 L292.5,209.8 L293.9,208.8 L295.2,207.7 L296.6,206.5 L297.9,205.2 L299.2,203.9 L300.6,202.5 L301.9,201.1 L303.3,199.5 L304.6,197.8 L306.0,196.1 L307.3,194.3 L308.6,192.4 L310.0,190.3 L311.3,188.2 L312.7,186.0 L314.0,183.7 L315.4,181.4 L316.7,178.9 L318.0,176.3 L319.4,173.6 L320.7,170.9 L322.1,168.0 L323.4,165.1 L324.8,162.1 L326.1,158.9 L327.4,155.8 L328.8,152.5 L330.1,149.2 L331.5,145.8 L332.8,142.4 L334.2,138.9 L335.5,135.4 L336.9,131.8 L338.2,128.2 L339.5,124.6 L340.9,121.0 L342.2,117.3 L343.6,113.7 L344.9,110.1 L346.3,106.5 L347.6,103.0 L348.9,99.5 L350.3,96.1 L351.6,92.7 L353.0,89.4 L354.3,86.2 L355.7,83.1 L357.0,80.1 L358.3,77.2 L359.7,74.5 L361.0,71.8 L362.4,69.4 L363.7,67.1 L365.1,64.9 L366.4,62.9 L367.7,61.1 L369.1,59.5 L370.4,58.1 L371.8,56.9 L373.1,55.9 L374.5,55.1 L375.8,54.4 L377.2,54.0 L378.5,53.9 L379.8,53.9 L381.2,54.1 L382.5,54.6 L383.9,55.2 L385.2,56.1 L386.6,57.2 L387.9,58.4 L389.2,59.9 L390.6,61.6 L391.9,63.4 L393.3,65.4 L394.6,67.6 L396.0,70.0 L397.3,72.5 L398.6,75.1 L400.0,77.9 L401.3,80.8 L402.7,83.8 L404.0,87.0 L405.4,90.2 L406.7,93.5 L408.1,96.9 L409.4,100.4 L410.7,103.9 L412.1,107.4 L413.4,111.0 L414.8,114.6 L416.1,118.2 L417.5,121.9 L418.8,125.5 L420.1,129.1 L421.5,132.7 L422.8,136.2 L424.2,139.8 L425.5,143.2 L426.9,146.7 L428.2,150.0 L429.5,153.3 L430.9,156.6 L432.2,159.7 L433.6,162.8 L434.9,165.8 L436.3,168.7 L437.6,171.6 L438.9,174.3 L440.3,176.9 L441.6,179.5 L443.0,182.0 L444.3,184.3 L445.7,186.6 L447.0,188.8 L448.4,190.9 L449.7,192.8 L451.0,194.7 L452.4,196.5 L453.7,198.3 L455.1,199.9 L456.4,201.4 L457.8,202.9 L459.1,204.3 L460.4,205.6 L461.8,206.8 L463.1,207.9 L464.5,209.0 L465.8,210.0 L467.2,211.0 L468.5,211.9 L469.8,212.7 L471.2,213.5 L472.5,214.2 L473.9,214.8 L475.2,215.5 L476.6,216.0 L477.9,216.6 L479.2,217.0 L480.6,217.5 L481.9,217.9 L483.3,218.3 L484.6,218.6 L486.0,219.0 L487.3,219.2 L488.7,219.5 L490.0,219.8 L491.3,220.0 L492.7,220.2 L494.0,220.4 L495.4,220.5 L496.7,220.7 L498.1,220.8 L499.4,221.0 L500.7,221.1 L502.1,221.2 L503.4,221.3 L504.8,221.3 L506.1,221.4 L507.5,221.5 L508.8,221.5 L510.1,221.6 L511.5,221.6 L512.8,221.7 L514.2,221.7 L515.5,221.8 L516.9,221.8 L518.2,221.8 L519.5,221.8 L520.9,221.9 L522.2,221.9 L523.6,221.9 L524.9,221.9 L526.3,221.9 L527.6,221.9 L529.0,221.9 L530.3,221.9 L531.6,222.0 L533.0,222.0 L534.3,222.0 L535.7,222.0 L537.0,222.0 L538.4,222.0 L539.7,222.0 L541.0,222.0 L542.4,222.0 L543.7,222.0 L545.1,222.0 L546.4,222.0 L547.8,222.0 L549.1,222.0 L550.4,222.0 L551.8,222.0 L553.1,222.0 L554.5,222.0 L555.8,222.0 L557.2,222.0 L558.5,222.0 L559.8,222.0 L561.2,222.0 L562.5,222.0 L563.9,222.0 L565.2,222.0 L566.6,222.0 L567.9,222.0 L569.3,222.0 L570.6,222.0 L571.9,222.0 L573.3,222.0 L574.6,222.0 L576.0,222.0 L577.3,222.0 L578.7,222.0 L580.0,222.0" fill="none" stroke="#17232C" stroke-width="2.6"></path>
+<path d="M44.0,222.0 L45.3,222.0 L46.7,222.0 L48.0,222.0 L49.4,222.0 L50.7,222.0 L52.1,222.0 L53.4,222.0 L54.7,222.0 L56.1,222.0 L57.4,222.0 L58.8,222.0 L60.1,222.0 L61.5,222.0 L62.8,222.0 L64.2,222.0 L65.5,222.0 L66.8,222.0 L68.2,222.0 L69.5,222.0 L70.9,222.0 L72.2,222.0 L73.6,222.0 L74.9,222.0 L76.2,222.0 L77.6,222.0 L78.9,222.0 L80.3,222.0 L81.6,222.0 L83.0,222.0 L84.3,222.0 L85.6,222.0 L87.0,222.0 L88.3,222.0 L89.7,222.0 L91.0,222.0 L92.4,222.0 L93.7,222.0 L95.0,222.0 L96.4,222.0 L97.7,222.0 L99.1,222.0 L100.4,222.0 L101.8,222.0 L103.1,222.0 L104.5,222.0 L105.8,222.0 L107.1,222.0 L108.5,222.0 L109.8,222.0 L111.2,222.0 L112.5,222.0 L113.9,222.0 L115.2,222.0 L116.5,222.0 L117.9,222.0 L119.2,222.0 L120.6,222.0 L121.9,222.0 L123.3,222.0 L124.6,222.0 L125.9,222.0 L127.3,222.0 L128.6,222.0 L130.0,222.0 L131.3,222.0 L132.7,222.0 L134.0,222.0 L135.3,222.0 L136.7,222.0 L138.0,222.0 L139.4,222.0 L140.7,222.0 L142.1,222.0 L143.4,222.0 L144.8,222.0 L146.1,222.0 L147.4,222.0 L148.8,222.0 L150.1,222.0 L151.5,222.0 L152.8,222.0 L154.2,222.0 L155.5,222.0 L156.8,222.0 L158.2,222.0 L159.5,222.0 L160.9,222.0 L162.2,222.0 L163.6,222.0 L164.9,222.0 L166.2,222.0 L167.6,222.0 L168.9,222.0 L170.3,222.0 L171.6,222.0 L173.0,222.0 L174.3,222.0 L175.6,222.0 L177.0,222.0 L178.3,222.0 L179.7,222.0 L181.0,222.0 L182.4,222.0 L183.7,222.0 L185.1,222.0 L186.4,222.0 L187.7,222.0 L189.1,222.0 L190.4,222.0 L191.8,222.0 L193.1,222.0 L194.5,222.0 L195.8,222.0 L197.1,222.0 L198.5,222.0 L199.8,222.0 L201.2,222.0 L202.5,222.0 L203.9,222.0 L205.2,222.0 L206.5,222.0 L207.9,222.0 L209.2,222.0 L210.6,222.0 L211.9,222.0 L213.3,222.0 L214.6,222.0 L215.9,222.0 L217.3,222.0 L218.6,222.0 L220.0,222.0 L221.3,222.0 L222.7,222.0 L224.0,222.0 L225.4,222.0 L226.7,221.9 L228.0,221.9 L229.4,221.9 L230.7,221.9 L232.1,221.9 L233.4,221.9 L234.8,221.9 L236.1,221.9 L237.4,221.9 L238.8,221.9 L240.1,221.8 L241.5,221.8 L242.8,221.8 L244.2,221.8 L245.5,221.7 L246.8,221.7 L248.2,221.7 L249.5,221.6 L250.9,221.6 L252.2,221.5 L253.6,221.4 L254.9,221.3 L256.3,221.2 L257.6,221.1 L258.9,221.0 L260.3,220.8 L261.6,220.6 L263.0,220.4 L264.3,220.2 L265.7,220.0 L267.0,219.7 L268.3,219.4 L269.7,219.0 L271.0,218.6 L272.4,218.2 L273.7,217.8 L275.1,217.4 L276.4,216.9 L277.7,216.4 L279.1,215.9 L280.4,215.3 L281.8,214.8 L283.1,214.2 L284.5,213.7 L285.8,213.1 L287.1,212.6 L288.5,212.0 L289.8,211.4 L291.2,210.9 L292.5,210.3 L293.9,209.7 L295.2,209.1 L296.6,208.5 L297.9,207.8 L299.2,207.1 L300.6,206.3 L301.9,205.3 L303.3,204.3 L304.6,203.1 L306.0,201.8 L307.3,200.2 L308.6,198.5 L310.0,196.5 L311.3,194.2 L312.7,191.7 L314.0,188.9 L315.4,185.7 L316.7,182.3 L318.0,178.5 L319.4,174.5 L320.7,170.1 L322.1,165.6 L323.4,160.8 L324.8,155.8 L326.1,150.7 L327.4,145.5 L328.8,140.3 L330.1,135.2 L331.5,130.1 L332.8,125.3 L334.2,120.7 L335.5,116.4 L336.9,112.4 L338.2,108.9 L339.5,105.8 L340.9,103.2 L342.2,101.1 L343.6,99.5 L344.9,98.4 L346.3,97.8 L347.6,97.5 L348.9,97.7 L350.3,98.2 L351.6,98.9 L353.0,99.8 L354.3,100.7 L355.7,101.6 L357.0,102.4 L358.3,102.9 L359.7,103.1 L361.0,102.9 L362.4,102.3 L363.7,101.1 L365.1,99.4 L366.4,97.0 L367.7,94.1 L369.1,90.7 L370.4,86.7 L371.8,82.2 L373.1,77.3 L374.5,72.1 L375.8,66.8 L377.2,61.3 L378.5,55.8 L379.8,50.6 L381.2,45.6 L382.5,41.0 L383.9,37.0 L385.2,33.6 L386.6,31.0 L387.9,29.2 L389.2,28.3 L390.6,28.2 L391.9,29.2 L393.3,31.0 L394.6,33.8 L396.0,37.5 L397.3,42.0 L398.6,47.2 L400.0,53.0 L401.3,59.5 L402.7,66.3 L404.0,73.5 L405.4,80.9 L406.7,88.3 L408.1,95.8 L409.4,103.1 L410.7,110.2 L412.1,117.0 L413.4,123.4 L414.8,129.4 L416.1,134.9 L417.5,139.9 L418.8,144.5 L420.1,148.5 L421.5,152.0 L422.8,155.1 L424.2,157.8 L425.5,160.0 L426.9,162.0 L428.2,163.6 L429.5,165.1 L430.9,166.3 L432.2,167.5 L433.6,168.6 L434.9,169.7 L436.3,170.7 L437.6,171.9 L438.9,173.1 L440.3,174.4 L441.6,175.9 L443.0,177.4 L444.3,179.1 L445.7,180.8 L447.0,182.7 L448.4,184.7 L449.7,186.7 L451.0,188.8 L452.4,190.9 L453.7,193.1 L455.1,195.2 L456.4,197.3 L457.8,199.3 L459.1,201.3 L460.4,203.1 L461.8,204.9 L463.1,206.6 L464.5,208.2 L465.8,209.6 L467.2,210.9 L468.5,212.1 L469.8,213.2 L471.2,214.2 L472.5,215.1 L473.9,215.9 L475.2,216.5 L476.6,217.1 L477.9,217.6 L479.2,218.1 L480.6,218.5 L481.9,218.8 L483.3,219.1 L484.6,219.3 L486.0,219.6 L487.3,219.8 L488.7,219.9 L490.0,220.1 L491.3,220.2 L492.7,220.4 L494.0,220.5 L495.4,220.6 L496.7,220.7 L498.1,220.8 L499.4,220.9 L500.7,221.0 L502.1,221.1 L503.4,221.2 L504.8,221.2 L506.1,221.3 L507.5,221.4 L508.8,221.4 L510.1,221.5 L511.5,221.6 L512.8,221.6 L514.2,221.7 L515.5,221.7 L516.9,221.7 L518.2,221.8 L519.5,221.8 L520.9,221.8 L522.2,221.9 L523.6,221.9 L524.9,221.9 L526.3,221.9 L527.6,221.9 L529.0,221.9 L530.3,222.0 L531.6,222.0 L533.0,222.0 L534.3,222.0 L535.7,222.0 L537.0,222.0 L538.4,222.0 L539.7,222.0 L541.0,222.0 L542.4,222.0 L543.7,222.0 L545.1,222.0 L546.4,222.0 L547.8,222.0 L549.1,222.0 L550.4,222.0 L551.8,222.0 L553.1,222.0 L554.5,222.0 L555.8,222.0 L557.2,222.0 L558.5,222.0 L559.8,222.0 L561.2,222.0 L562.5,222.0 L563.9,222.0 L565.2,222.0 L566.6,222.0 L567.9,222.0 L569.3,222.0 L570.6,222.0 L571.9,222.0 L573.3,222.0 L574.6,222.0 L576.0,222.0 L577.3,222.0 L578.7,222.0 L580.0,222.0" fill="none" stroke="#0B6FA8" stroke-width="2.2"></path>
+<path d="M44.0,222.0 L45.3,222.0 L46.7,222.0 L48.0,222.0 L49.4,222.0 L50.7,222.0 L52.1,222.0 L53.4,222.0 L54.7,222.0 L56.1,222.0 L57.4,222.0 L58.8,222.0 L60.1,222.0 L61.5,222.0 L62.8,222.0 L64.2,222.0 L65.5,222.0 L66.8,222.0 L68.2,222.0 L69.5,222.0 L70.9,222.0 L72.2,222.0 L73.6,222.0 L74.9,222.0 L76.2,222.0 L77.6,222.0 L78.9,222.0 L80.3,222.0 L81.6,222.0 L83.0,222.0 L84.3,222.0 L85.6,222.0 L87.0,222.0 L88.3,222.0 L89.7,222.0 L91.0,222.0 L92.4,222.0 L93.7,222.0 L95.0,222.0 L96.4,222.0 L97.7,222.0 L99.1,222.0 L100.4,222.0 L101.8,222.0 L103.1,222.0 L104.5,222.0 L105.8,222.0 L107.1,222.0 L108.5,222.0 L109.8,222.0 L111.2,222.0 L112.5,222.0 L113.9,222.0 L115.2,222.0 L116.5,222.0 L117.9,222.0 L119.2,222.0 L120.6,222.0 L121.9,222.0 L123.3,222.0 L124.6,222.0 L125.9,222.0 L127.3,222.0 L128.6,222.0 L130.0,222.0 L131.3,222.0 L132.7,222.0 L134.0,222.0 L135.3,222.0 L136.7,222.0 L138.0,222.0 L139.4,222.0 L140.7,222.0 L142.1,222.0 L143.4,222.0 L144.8,222.0 L146.1,222.0 L147.4,222.0 L148.8,222.0 L150.1,222.0 L151.5,222.0 L152.8,222.0 L154.2,222.0 L155.5,222.0 L156.8,222.0 L158.2,222.0 L159.5,222.0 L160.9,222.0 L162.2,222.0 L163.6,222.0 L164.9,222.0 L166.2,222.0 L167.6,222.0 L168.9,222.0 L170.3,222.0 L171.6,222.0 L173.0,222.0 L174.3,222.0 L175.6,222.0 L177.0,222.0 L178.3,222.0 L179.7,222.0 L181.0,222.0 L182.4,222.0 L183.7,222.0 L185.1,222.0 L186.4,222.0 L187.7,222.0 L189.1,222.0 L190.4,222.0 L191.8,222.0 L193.1,222.0 L194.5,222.0 L195.8,222.0 L197.1,222.0 L198.5,222.0 L199.8,222.0 L201.2,222.0 L202.5,222.0 L203.9,222.0 L205.2,222.0 L206.5,222.0 L207.9,222.0 L209.2,222.0 L210.6,222.0 L211.9,222.0 L213.3,222.0 L214.6,222.0 L215.9,222.0 L217.3,222.0 L218.6,222.0 L220.0,222.0 L221.3,222.0 L222.7,222.0 L224.0,222.0 L225.4,222.0 L226.7,222.0 L228.0,222.0 L229.4,222.0 L230.7,222.0 L232.1,222.0 L233.4,222.0 L234.8,222.0 L236.1,222.0 L237.4,222.0 L238.8,222.0 L240.1,222.0 L241.5,222.0 L242.8,222.0 L244.2,222.0 L245.5,222.0 L246.8,222.0 L248.2,222.0 L249.5,222.0 L250.9,222.0 L252.2,222.0 L253.6,221.9 L254.9,221.9 L256.3,221.9 L257.6,221.9 L258.9,221.9 L260.3,221.8 L261.6,221.8 L263.0,221.8 L264.3,221.7 L265.7,221.7 L267.0,221.6 L268.3,221.5 L269.7,221.4 L271.0,221.3 L272.4,221.1 L273.7,221.0 L275.1,220.8 L276.4,220.6 L277.7,220.3 L279.1,220.0 L280.4,219.7 L281.8,219.3 L283.1,218.9 L284.5,218.4 L285.8,217.9 L287.1,217.2 L288.5,216.5 L289.8,215.7 L291.2,214.8 L292.5,213.8 L293.9,212.7 L295.2,211.5 L296.6,210.2 L297.9,208.7 L299.2,207.1 L300.6,205.3 L301.9,203.4 L303.3,201.3 L304.6,199.0 L306.0,196.6 L307.3,194.0 L308.6,191.3 L310.0,188.3 L311.3,185.2 L312.7,182.0 L314.0,178.5 L315.4,175.0 L316.7,171.2 L318.0,167.4 L319.4,163.4 L320.7,159.3 L322.1,155.1 L323.4,150.8 L324.8,146.5 L326.1,142.1 L327.4,137.8 L328.8,133.4 L330.1,129.1 L331.5,124.9 L332.8,120.7 L334.2,116.7 L335.5,112.8 L336.9,109.0 L338.2,105.5 L339.5,102.1 L340.9,99.0 L342.2,96.2 L343.6,93.5 L344.9,91.2 L346.3,89.1 L347.6,87.3 L348.9,85.8 L350.3,84.5 L351.6,83.5 L353.0,82.8 L354.3,82.3 L355.7,82.1 L357.0,82.1 L358.3,82.2 L359.7,82.6 L361.0,83.1 L362.4,83.7 L363.7,84.4 L365.1,85.1 L366.4,85.9 L367.7,86.7 L369.1,87.5 L370.4,88.3 L371.8,88.9 L373.1,89.5 L374.5,90.0 L375.8,90.4 L377.2,90.7 L378.5,90.8 L379.8,90.8 L381.2,90.6 L382.5,90.3 L383.9,89.9 L385.2,89.4 L386.6,88.8 L387.9,88.1 L389.2,87.3 L390.6,86.5 L391.9,85.7 L393.3,84.9 L394.6,84.2 L396.0,83.5 L397.3,82.9 L398.6,82.5 L400.0,82.2 L401.3,82.1 L402.7,82.1 L404.0,82.4 L405.4,83.0 L406.7,83.7 L408.1,84.8 L409.4,86.1 L410.7,87.7 L412.1,89.6 L413.4,91.7 L414.8,94.2 L416.1,96.8 L417.5,99.8 L418.8,103.0 L420.1,106.4 L421.5,110.0 L422.8,113.7 L424.2,117.7 L425.5,121.7 L426.9,125.9 L428.2,130.2 L429.5,134.5 L430.9,138.8 L432.2,143.2 L433.6,147.6 L434.9,151.9 L436.3,156.1 L437.6,160.3 L438.9,164.4 L440.3,168.3 L441.6,172.2 L443.0,175.9 L444.3,179.4 L445.7,182.8 L447.0,186.0 L448.4,189.1 L449.7,192.0 L451.0,194.7 L452.4,197.2 L453.7,199.6 L455.1,201.8 L456.4,203.9 L457.8,205.7 L459.1,207.5 L460.4,209.1 L461.8,210.5 L463.1,211.8 L464.5,213.0 L465.8,214.1 L467.2,215.1 L468.5,215.9 L469.8,216.7 L471.2,217.4 L472.5,218.0 L473.9,218.5 L475.2,219.0 L476.6,219.4 L477.9,219.8 L479.2,220.1 L480.6,220.4 L481.9,220.6 L483.3,220.8 L484.6,221.0 L486.0,221.2 L487.3,221.3 L488.7,221.4 L490.0,221.5 L491.3,221.6 L492.7,221.7 L494.0,221.7 L495.4,221.8 L496.7,221.8 L498.1,221.8 L499.4,221.9 L500.7,221.9 L502.1,221.9 L503.4,221.9 L504.8,221.9 L506.1,222.0 L507.5,222.0 L508.8,222.0 L510.1,222.0 L511.5,222.0 L512.8,222.0 L514.2,222.0 L515.5,222.0 L516.9,222.0 L518.2,222.0 L519.5,222.0 L520.9,222.0 L522.2,222.0 L523.6,222.0 L524.9,222.0 L526.3,222.0 L527.6,222.0 L529.0,222.0 L530.3,222.0 L531.6,222.0 L533.0,222.0 L534.3,222.0 L535.7,222.0 L537.0,222.0 L538.4,222.0 L539.7,222.0 L541.0,222.0 L542.4,222.0 L543.7,222.0 L545.1,222.0 L546.4,222.0 L547.8,222.0 L549.1,222.0 L550.4,222.0 L551.8,222.0 L553.1,222.0 L554.5,222.0 L555.8,222.0 L557.2,222.0 L558.5,222.0 L559.8,222.0 L561.2,222.0 L562.5,222.0 L563.9,222.0 L565.2,222.0 L566.6,222.0 L567.9,222.0 L569.3,222.0 L570.6,222.0 L571.9,222.0 L573.3,222.0 L574.6,222.0 L576.0,222.0 L577.3,222.0 L578.7,222.0 L580.0,222.0" fill="none" stroke="#B5489B" stroke-width="2.2"></path>
+<line x1="379.0" y1="222" x2="379.0" y2="39.1" stroke="#C9520E" stroke-width="2.6"></line>
+<text x="379" y="244" font-size="17" fill="#C9520E" text-anchor="middle">observed <tspan font-style="italic">u</tspan>*</text>
+<line x1="341.2" y1="190.6" x2="416.8" y2="190.6" stroke="#0A7F5E" stroke-width="2.6"></line>
+<polygon points="341.2,190.6 350.2,185.6 350.2,195.6" fill="#0A7F5E"></polygon>
+<polygon points="416.8,190.6 407.8,185.6 407.8,195.6" fill="#0A7F5E"></polygon>
+<text x="407" y="182" font-size="17" fill="#0A7F5E" text-anchor="middle">√<tspan font-style="italic">T</tspan>*</text>
+<text x="389" y="22" font-size="15" fill="#17232C" text-anchor="middle" font-weight="600">moment-compatible family</text>
+<path d="M 245 138 Q 306 78 333 112" fill="none" stroke="#0B6FA8" stroke-width="4.5"></path>
+<polygon points="333,112 316,109 323,125" fill="#0B6FA8"></polygon>
+<text x="266" y="55" font-size="15" fill="#0B6FA8" text-anchor="middle" font-weight="600">nudge onto the family</text>
+<text x="53" y="34" font-size="15" fill="#6B7A85">same <tspan font-style="italic">u</tspan>*, <tspan font-style="italic">T</tspan>*:</text>
+<text x="53" y="57" font-size="15" fill="#17232C">Maxwellian</text>
+<text x="53" y="81" font-size="15" fill="#B5489B">bimodal</text>
+<text x="53" y="104" font-size="15" fill="#0B6FA8">distorted</text>
+</svg>
+								<figcaption>At one \(\bx\): the forecast \(g\) has the wrong moments; feedback must move it onto the family sharing \(u^*,T^*\). Collisions and the dynamics then move the unobserved shape along the family.</figcaption>
+							</figure>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">A two-stream state can have exactly the moments of a Maxwellian. The observations determine only the family. Here \(M^\obs=(\rho^\obs,\bj^\obs,\mathcal K^\obs)\), where \(\bj^\obs=\rho^\obs\bu^\obs\) and \(\mathcal K^\obs=\tfrac12\rho^\obs|\bu^\obs|^2+\tfrac d2\rho^\obs T^\obs\). We retain \(r_0,\mathbf r_1,r_2\) because Method B on the next slide uses the density, momentum, and energy residuals separately. Nudging the moment equations directly would need a closure — the hierarchy is not closed at the observed level.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, moment observation map, residuals, and quadratic mismatch \(J_M\).<br>[/Sources]</aside>
+			</section>
+
+			<section data-menu-title="II · detail — Method A" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · feedback 1/3</div>
+						<h2>Method A: weight the transport geometry</h2>
+						<div class="body small">
+							<div class="card mtight" style="padding:10px 16px;">
+								<h4>Moment residuals define a phase-space potential</h4>
+								\[
+								\Phi_M[f]:=\frac{\delta J_M}{\delta f}
+								=\gamma_1q_0(\bx)+\gamma_2\bv\!\cdot\!\mathbf q_1(\bx)
+								+\frac{\gamma_3}{2}|\bv|^2q_2(\bx),
+								\quad
+								(q_0,\mathbf q_1,q_2)=K_h*(r_0,\mathbf r_1,r_2).
+								\]
+							</div>
+							<div class="cols fill" style="align-items:stretch;">
+								<div class="card" style="flex:0.9;">
+									<h4>Define the metric tensor \(G_t\)</h4>
+									\[
+									G_t(\bx,\bv)=\operatorname{diag}\!\big(a_t(\bx,\bv)I_d,I_d\big),
+									\qquad
+									a_t=1+\frac{|\bv-\bu^\obs(\bx,t)|^2}{V_*^2}.
+									\]
+									<div><b>\(V_*\)</b> is a reference thermal speed. The factor \(a_t\) increases only the cost of spatial motion.</div>
+								</div>
+								<div class="card" style="flex:1.1;">
+									<h4>Descend \(J_M\) in that metric</h4>
+									\[
+									\begin{aligned}
+									\bb_A&amp;=-G_t^{-1}\nabla_{\bx,\bv}\Phi_M\\
+									&amp;=\left(
+									-\frac{\nabla_\bx\Phi_M}
+									{1+|\bv-\bu^\obs|^2/V_*^2},
+									-\nabla_\bv\Phi_M
+									\right).
+									\end{aligned}
+									\]
+									<div class="muted">Large peculiar velocity damps the position channel; the velocity channel is unchanged.</div>
+								</div>
+							</div>
+							<div class="note orange">
+								<b>Why introduce \(G_t\)?</b> Plain \(W_2\) leaves
+								\(\tfrac{\gamma_3}{2}|\bv|^2\nabla_\bx q_2\) in the position drift. Dividing that channel by \(a_t\) controls the quadratic growth, while
+								\(\frac{\intd}{\intd t}J_M[f_t]\le0\).
+							</div>
+						</div>
+					</div>
+					<aside class="notes">The preceding slide defines the moment residuals \(r_0,\mathbf r_1,r_2\) and the quadratic mismatch \(J_M\). Their first variation is the scalar phase-space potential \(\Phi_M\). The metric tensor \(G_t\) is a \(2d\times2d\) block-diagonal matrix acting on tangent velocities \((\xi_x,\xi_v)\): it multiplies only the spatial block by \(1+|\bv-\bu^\obs|^2/V_*^2\). Its inverse therefore divides only the spatial feedback by that factor. This is the default formulation because it retains one weighted-Wasserstein gradient-flow structure and controls the quadratic velocity growth created by the energy residual.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, quadratic moment mismatch, first variation, and velocity-weighted Wasserstein Method A.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II · detail — Method B" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · feedback 2/3</div>
+						<h2>Method B: split residuals by direction</h2>
+						<div class="body small">
+							<div class="card mtight">
+								<h4>Keep the same quadratic mismatch, but split it</h4>
+								\[
+								J_M=
+								\underbrace{\frac{\gamma_1}{2}\|r_0\|_{L^2}^2}_{J_M^\rho}
+								+
+								\underbrace{\frac{\gamma_2}{2}\|\mathbf r_1\|_{L^2}^2
+								+\frac{\gamma_3}{2}\|r_2\|_{L^2}^2}_{J_M^{\mathbf j,\mathcal K}},
+								\qquad
+								(q_0,\mathbf q_1,q_2)=K_h*(r_0,\mathbf r_1,r_2).
+								\]
+							</div>
+							<div class="cols fill" style="align-items:stretch;">
+								<div class="card" style="flex:1;">
+									<h4>Density residual \(\rightarrow\) position</h4>
+									\[
+									\Phi_M^\rho=\gamma_1q_0(\bx),
+									\qquad
+									\bb_{B,\bx}=-\nabla_\bx\Phi_M^\rho
+									=-\gamma_1\nabla_\bx q_0 .
+									\]
+									<div>Particles move spatially to correct the observed density \(\rho^\obs\).</div>
+								</div>
+								<div class="card" style="flex:1;">
+									<h4>Momentum + energy \(\rightarrow\) velocity</h4>
+									\[
+									\begin{aligned}
+									\Phi_M^{\mathbf j,\mathcal K}
+									&amp;=\gamma_2\bv\!\cdot\!\mathbf q_1+\frac{\gamma_3}{2}|\bv|^2q_2,\\
+									\bb_{B,\bv}
+									&amp;=-\nabla_\bv\Phi_M^{\mathbf j,\mathcal K}
+									=-\gamma_2\mathbf q_1-\gamma_3\bv q_2 .
+									\end{aligned}
+									\]
+									<div>Velocity translations correct momentum; velocity scaling corrects kinetic energy.</div>
+								</div>
+							</div>
+							<div class="note orange">
+								<b>No metric tensor is needed.</b> Method B uses plain \(W_2\), but the energy residual never enters the position update; therefore the problematic \(|\bv|^2\nabla_\bx q_2\) term is absent.
+							</div>
+						</div>
+					</div>
+					<aside class="notes">Method B does not take the full phase-space gradient of one first variation. Instead it assigns the density part of \(J_M\) to the position direction and the momentum-energy part to the velocity direction. The resulting position drift is independent of velocity and the velocity drift is affine in velocity. This removes the same quadratic position growth as Method A, but by splitting directions rather than changing the Wasserstein geometry.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, direction-split Method B.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II · detail — Method C" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · feedback 3/3</div>
+						<h2>Method C: penalize moments, not shape</h2>
+						<div class="body xs">
+							<div class="cols fill" style="align-items:stretch;">
+								<div class="card" style="flex:1;">
+									<h4>Why full relative entropy is too strong</h4>
+									<div>Let \(\pi^\obs=\mathcal M_{\rho^\obs,\bu^\obs,\Theta^\obs}\) and let \(\mathcal M[f]\) be the Maxwellian with the same \((\rho_h,\bu_h,\Theta_h)\) as \(f\).</div>
+									\[
+									\operatorname{KL}(p\|q)
+									:=\int\!\left(p\log\frac pq-p+q\right)\ge0 .
+									\]
+									\[
+									\operatorname{KL}(f\|\pi^\obs)
+									=
+									\underbrace{\operatorname{KL}(f\|\mathcal M[f])}_{\text{unobserved shape}}
+									+
+									\underbrace{\operatorname{KL}(\mathcal M[f]\|\pi^\obs)}_{\text{moment mismatch}} .
+									\]
+									<div class="muted">Using the full KL would keep pushing every non-Maxwellian \(f\) toward \(\pi^\obs\), even after its observed moments are correct.</div>
+								</div>
+								<div class="stackv" style="flex:1;">
+									<div class="card">
+										<h4>Keep only the moment term</h4>
+										\[
+										J_{\rm ent}[f]
+										:=\operatorname{KL}\!\left(
+										\mathcal M_{h,\varepsilon}[f]\,
+										\middle\|\,
+										\pi^\obs_\varepsilon
+										\right),
+										\quad
+										\Theta_h=T_h+\varepsilon,\quad
+										\Theta^\obs=T^\obs+\varepsilon .
+										\]
+										<div>\(J_{\rm ent}=0\) exactly when \((\rho_h,\bu_h,T_h)=(\rho^\obs,\bu^\obs,T^\obs)\): the whole moment-compatible family remains a zero set.</div>
+									</div>
+									<div class="card">
+										<h4>Weighted-Wasserstein feedback</h4>
+										\[
+										\begin{aligned}
+										\bb_{C,\bx}
+										&amp;=-\gamma\frac{\nabla_\bx\Psi_\varepsilon}
+										{1+|\bv-\bu^\obs|^2/V_*^2},
+										\qquad
+										\Psi_\varepsilon=\frac{\delta J_{\rm ent}}{\delta f},\\
+										\bb_{C,\bv}
+										&amp;=-\gamma K_h*\!\left[
+										\frac{\bv-\bu^\obs}{\Theta^\obs}
+										-\frac{\bv-\bu_h}{\Theta_h}
+										\right].
+										\end{aligned}
+										\]
+									</div>
+								</div>
+							</div>
+							<div class="note orange">
+								<b>Why shape is preserved.</b> \(\bb_{C,\bv}\) is affine in \(\bv\): it translates and rescales velocity to correct \(\bu\) and \(T\), while leaving the unresolved non-Maxwellian shape term \(\operatorname{KL}(f\|\mathcal M[f])\) unchanged.
+							</div>
+						</div>
+					</div>
+					<aside class="notes">Here relative entropy is used only after projecting the current and observed moments to their local Maxwellians. The generalized KL is nonnegative even when the two densities have different total mass. Its Pythagorean splitting separates non-Maxwellian shape from moment mismatch. Method C defines the scalar objective \(J_{\rm ent}\), denoted \(\mathcal G_\varepsilon\) in the paper, as the KL between the two local Maxwellians; this is unrelated to the metric tensor \(G_t\) on the Method A slide. A temperature floor \(\varepsilon\) keeps logarithms and inverse temperatures well defined. The same weighted metric as Method A is used for the spatial channel. The velocity channel is affine in \(\bv\), so it corrects the observed bulk velocity and temperature without directly changing the unresolved velocity-space shape.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, moment-shape splitting of relative entropy and entropic Method C.<br>[/Sources]</aside>
+				</section>
+
+			<section data-menu-title="II · detail — Methods A/B/C + well-posedness" style="--part:#C9520E;" class="detail-slide">
+				<div class="slide">
+					<div class="eyebrow">Moment nudging</div>
+					<h2>All three schemes are well posed</h2>
+					<div class="body small">
+						<div class="cols" style="align-items:stretch;">
+							<div class="card" style="flex:1;">
+								<h4><span class="accent">A</span> · Lyapunov structure</h4>
+								\[
+								\frac{\intd}{\intd t}J_M[f_t]
+								=-\|\operatorname{grad}_G J_M\|^2\le0 .
+								\]
+								<span class="muted">One mismatch, one weighted gradient flow.</span>
+							</div>
+							<div class="card" style="flex:1;">
+								<h4><span class="accent">B</span> · No quadratic position drift</h4>
+								Direction splitting removes the problematic
+								\[
+								|\bv|^2\nabla_\bx(K_h*r_2)
+								\]
+								from the position update.
+							</div>
+							<div class="card" style="flex:1;">
+								<h4><span class="accent">C</span> · Closed moment balances</h4>
+								\[
+								\dot{\bar{\bu}}
+								=-\frac{\gamma}{T^\obs}\big(\bar{\bu}-\bu^\obs\big).
+								\]
+								<span class="muted">Affine velocity maps are shape preserving.</span>
+							</div>
+						</div>
+						<div class="thm">
+							<span class="lbl">Proposition</span><span class="ttl">Global well-posedness for A, B and C</span>
+							<div class="stmt">
+								With Lenard–Bernstein collisions, smooth positive kernels and observations, and finite initial second moment, the \(N_p\)-particle SDE has a <b>unique global strong solution</b> for every method \(a\in\{A,B,C\}\) and every feedback strength.
+							</div>
+						</div>
+					</div>
+				</div>
+				<aside class="notes">Full assumptions for the proposition: the deposition and observation kernels are \(W^{2,\infty}\), \(K_h\ge\kappa_h&gt;0\); the observed fields are \(W^{2,\infty}\) with \(\rho^\obs\ge\rho_{\min}&gt;0\); and \(\mathbb E\,m_2(0)&lt;\infty\). The conclusion holds for every scaling parameter. All three methods compare at the moment level and correct at the particle level; their affine-in-velocity structure prevents finite-time blow-up.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, global well-posedness result.<br>[/Sources]</aside>
+			</section>
+
+			<section data-menu-title="II · detail — 1D1V — setup" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging — numerical setup · 1D1V</div>
+						<h2>Same temperature, different current and shape</h2>
+						<div class="body xs">
+							<div class="experiment-model definition">
+								<div class="model-name">Undriven Vlasov–Poisson–Dougherty</div>
+								<div class="model-line">\(\partial_t h+v\,\partial_x h+E[h]\,\partial_v h=Q_{\mathrm D}[h].\)</div>
+								<div class="model-line">\(-\partial_{xx}\phi=\rho[h]-1,\qquad E=-\partial_x\phi.\)</div>
+								<div class="model-line">\(Q_{\mathrm D}[h]=\nu\,\partial_v\!\left((v-u[h])h+T[h]\,\partial_vh\right).\)</div>
+								<div class="model-line">\(\rho[h]=\int h\,\mathrm dv,\qquad u[h]=\rho[h]^{-1}\!\int vh\,\mathrm dv,\qquad T[h]=\rho[h]^{-1}\!\int (v-u[h])^2h\,\mathrm dv.\)</div>
+							</div>
+							<div class="initial-grid fill">
+								<div class="initial-panel">
+									<h3>Truth · Maxwellian current wave</h3>
+									\[
+									\begin{aligned}
+									f_0^\dagger(x,v)&amp;=\mathcal M_{1,u_0^\dagger(x),T_0}(v),\\
+									u_0^\dagger(x)&amp;=0.25+0.8\sin(x/2),\qquad T_0=0.5.
+									\end{aligned}
+									\]
+									\[
+									\mathcal M_{1,u,T}(v)=\frac{1}{\sqrt{2\pi T}}
+									\exp\!\left[-\frac{(v-u)^2}{2T}\right].
+									\]
+									<div class="setup-meaning">Unit density · single Gaussian velocity shape.</div>
+								</div>
+								<div class="initial-panel prior">
+									<h3>Prior · shifted bimodal current wave</h3>
+									\[
+									g_0(x,v)=\tfrac12\mathcal M_{1,u_0(x)-a,\theta}(v)
+									+\tfrac12\mathcal M_{1,u_0(x)+a,\theta}(v),
+									\]
+									\[
+									\begin{aligned}
+									u_0(x)&amp;=-0.25-0.3\sin(x/2+\pi/3),\\
+									a&amp;=0.55,\qquad \theta=T_0-a^2=0.1975.
+									\end{aligned}
+									\]
+									<div class="setup-meaning">Same \(\rho_0=1\) and \(T_0=0.5\); wrong mean flow, amplitude, phase, and velocity-space shape.</div>
+								</div>
+							</div>
+							<div class="setup-meta">
+								<span><b>Observed</b> \((\rho,u,T)(x,t)\), every step</span>
+								<span><b>Grid</b> \(L=4\pi,\ N_p=10^5,\ N_x=128\)</span>
+								<span><b>Run</b> \(\Delta t=0.002,\ T_{\rm fin}=15,\ \nu=0.5\)</span>
+								<span><b>Feedback</b> \(\gamma_{1,2,3}=\gamma=3,\ V_*=1\) (A,C)</span>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+						The collision substep conserves mass, momentum, and kinetic energy cell by cell, so it relaxes the bimodal velocity shape without directly correcting the collision-invariant moments. The Vlasov transport can still evolve the local fields. No assimilation and Methods A/B/C all start from the same prior. Method C uses \(\varepsilon=10^{-3}\).<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, undriven 1D1V conservative-collision experiment, initial conditions and numerical parameters.<br>[/Sources]
+					</aside>
+				</section>
+				<section data-menu-title="II · detail — 1D1V — results" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · 1D1V</div>
+						<h2>Moment errors collapse; shape relaxes more slowly</h2>
+						<div class="body xs">
+							<figure class="result-hero framed result-with-ratios">
+								<img src="./figure/vp/cc_abc_1d.png">
+								<figcaption>Methods A/B/C rapidly reduce the moment errors relative to no assimilation.</figcaption>
+							</figure>
+							<div class="ratio-band push">
+								<div class="ratio-context">
+									<b>Mean error / no assimilation</b>
+									\(R_*^S(10,15)\), averaged over \(t\in[10,15]\) and three seeds.
+								</div>
+								<table class="num compact">
+									<thead><tr><th>Method</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th><th>\(R_f\)</th></tr></thead>
+									<tbody>
+										<tr><td>A</td><td>0.015</td><td>0.005</td><td>0.045</td><td class="best">0.444</td></tr>
+										<tr><td>B</td><td class="best">0.008</td><td>0.016</td><td>0.061</td><td>0.447</td></tr>
+										<tr><td>C</td><td>0.012</td><td class="best">0.002</td><td class="best">0.019</td><td>0.446</td></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+							Without assimilation, the moment errors remain far above the assimilated errors over the reported window. The Dougherty collision substep itself conserves mass, momentum, and energy cell by cell, while Vlasov transport still evolves the local fields. With feedback, Method C reaches \(R_u=0.002\) and \(R_T=0.019\); the best full-distribution ratio is only \(R_f=0.444\). The gap is the point: the feedback fixes the measured moments, while collisions erase the unobserved bimodal shape at their own rate. The truth is a Maxwellian current wave; the prior has an out-of-phase current and two streams at \(\pm0.55\). \(N_p=10^5\), \(\nu=0.5\), three seeds.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, 1D1V moment-relaxation experiment and figure.<br>[/Sources]
+					</aside>
+				</section>
+				<section data-menu-title="II · detail — 2D2V — setup" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging — numerical setup · 2D2V</div>
+						<h2>The prior reverses, shifts, and weakens the vortex</h2>
+						<div class="body xs">
+							<div class="experiment-model definition">
+								<div class="model-name">Undriven 2D2V Vlasov–Poisson–Dougherty</div>
+								<div class="model-line">\(\partial_t h+\bv\!\cdot\!\nabla_\bx h+\bE[h]\!\cdot\!\nabla_\bv h=Q_{\mathrm D}[h].\)</div>
+								<div class="model-line">\(-\Delta_\bx\phi=\rho[h]-1,\qquad \bE=-\nabla_\bx\phi.\)</div>
+								<div class="model-line">\(Q_{\mathrm D}[h]=\nu\,\nabla_\bv\!\cdot\!\left((\bv-\bu[h])h+T[h]\,\nabla_\bv h\right).\)</div>
+								<div class="model-line">\(\rho[h]=\int h\,\mathrm d\bv,\quad \bu[h]=\rho[h]^{-1}\!\int \bv h\,\mathrm d\bv,\quad T[h]=(2\rho[h])^{-1}\!\int|\bv-\bu[h]|^2h\,\mathrm d\bv.\)</div>
+							</div>
+							<div class="initial-grid fill">
+								<div class="initial-panel">
+									<h3>Truth · Taylor–Green Maxwellian</h3>
+									\[
+									f_0^\dagger(\bx,\bv)
+									=\mathcal M_{1,\bu_0^\dagger(\bx),0.5}(\bv),
+									\]
+									\[
+									\begin{aligned}
+									u_{0,x}^\dagger(x,y)&amp;=0.25+\sin x\cos y,\\
+									u_{0,y}^\dagger(x,y)&amp;=-\cos x\sin y .
+									\end{aligned}
+									\]
+									<div class="setup-meaning">Mean flow \((0.25,0)\) · unit vortex amplitude · isotropic covariance \(0.5I_2\).</div>
+								</div>
+								<div class="initial-panel prior">
+									<h3>Prior · anisotropic Gaussian</h3>
+									\[
+							\begin{aligned}
+							g_0(\bx,\bv)
+							&amp;=\frac{\exp\!\left[-\tfrac12(\bv-\bu_0)^\top
+							\Sigma_0^{-1}(\bv-\bu_0)\right]}
+							{2\pi\sqrt{\det\Sigma_0}},\\
+							\Sigma_0&amp;=\operatorname{diag}(0.8,0.2),
+							\end{aligned}
+									\]
+									\[
+									\begin{aligned}
+									u_{0,x}&amp;=-0.25-0.45\sin(x+\pi/3)\cos(y+\pi/4),\\
+									u_{0,y}&amp;=\phantom{-}0.15+0.45\cos(x+\pi/3)\sin(y+\pi/4).
+									\end{aligned}
+									\]
+									<div class="setup-meaning">Wrong mean flow, phase, rotation, amplitude, and velocity anisotropy; but \(\tfrac12\operatorname{tr}\Sigma_0=0.5\), so the scalar temperature is initially correct.</div>
+								</div>
+							</div>
+							<div class="setup-meta">
+								<span><b>Observed</b> \((\rho,\bu,T)(x,y,t)\), every step</span>
+								<span><b>Grid</b> \(N_p=2\times10^5,\ 32^2\)</span>
+								<span><b>Run</b> \(\Delta t=0.002,\ T_{\rm fin}=12,\ \nu=0.5\)</span>
+								<span><b>Domain</b> \([0,2\pi)^2\)</span>
+								<span><b>Feedback</b> \(\gamma_{1,2,3}=\gamma=3,\ V_*=1\) (A,C)</span>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+						The no-assimilation run and A/B/C all start from this same prior. The continuum prior is a centered Gaussian around \(\bu_0\) with covariance \(\Sigma_0\); the particle implementation conditions the peculiar velocities cell by cell before recoloring them to the target covariance. The full benchmark uses three independent particle initializations and feedback at every time step; Method C uses \(\varepsilon=10^{-3}\).<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-dimensional Taylor–Green relaxation initial conditions and numerical parameters.<br>[/Sources]
+					</aside>
+				</section>
+				<section data-menu-title="II · detail — 2D2V — results" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · 2D2V</div>
+						<h2>Method A follows the vortex through relaxation</h2>
+						<div class="body xs">
+							<figure class="result-hero framed tg-animation result-with-ratios">
+								<img src="./figure/vp/taylor_green_truth_none_A.gif?v=2" data-pdf-src="./figure/pdf_static/taylor_green_t1.png" alt="Animated Taylor–Green relaxation comparing the truth, no assimilation, and Method A">
+								<figcaption>Method A recovers the true vortex cells and follows their collisional relaxation.</figcaption>
+							</figure>
+							<div class="ratio-band push">
+								<div class="ratio-context">
+									<b>Late-time benchmark</b>
+									\(R_*^S(8,12)\): mean error / no assimilation over \(t\in[8,12]\) and three seeds.
+								</div>
+								<table class="num compact">
+									<thead><tr><th>Method</th><th>\(R_\rho\)</th><th>\(R_u\)</th><th>\(R_T\)</th></tr></thead>
+									<tbody>
+										<tr><td>A</td><td>0.293</td><td class="best">0.019</td><td>0.039</td></tr>
+										<tr><td>B</td><td class="best">0.266</td><td>0.027</td><td>0.044</td></tr>
+										<tr><td>C</td><td>0.393</td><td>0.020</td><td class="best">0.032</td></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+						The truth begins from a Taylor–Green vortex. The prior is weaker, phase shifted, counter rotating, and has the wrong mean flow. Method A first recovers the correct vortex cells and then follows their collisional relaxation. The feedback uses the same \(\gamma=3\) and \(V_*=1\) as the 1D experiment, without retuning. These are the 31 native saved states at \(t=0,0.1,\ldots,3\), shown on one fixed symmetric color scale; there is no temporal interpolation. The fields are deposited on the native \(32\times32\) grid and displayed with bilinear spatial interpolation. The animation uses representative seed 0, whereas the table reports the full \(T_{\rm fin}=12\) benchmark averaged over \(t\in[8,12]\) and three seeds. \(N_p=2\times10^5\), \(\Delta t=0.002\), \(\nu=0.5\), with the conservative Dougherty map. By \(t=3\), the truth enstrophy is 0.79% of its initial value.<br><br>[Sources]<br>User-owned simulation output: /ocean/projects/mth210003p/lyuliyao/DA/plasma/results/taylor_green_31frames_20260824_151805/output, including manifest.json, taylor_green_ux_fields_31.npz, and the 31-frame GIF; Slurm Job 44314797.<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-dimensional Taylor–Green relaxation experiment.<br>Code and configuration: https://github.com/Lyuliyao/data_assimilation_for_plasma, commit d32dd42ee131d20380055e3e8102f6e5a2120a33.<br>[/Sources]
+					</aside>
+				</section>
+<section data-menu-title="II · detail — Two-stream — truth" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging — numerical setup · limit case</div>
+						<h2>The two-stream truth is far from equilibrium</h2>
+						<div class="body xs">
+							<div class="experiment-model definition">
+								<div class="model-name">Self-consistent 1D1V Vlasov–Poisson–BGK · no external driver</div>
+								<div class="model-line">\(\partial_t h+v\,\partial_x h+E[h]\,\partial_v h=Q_{\mathrm{BGK}}[h].\)</div>
+								<div class="model-line">\(-\partial_{xx}\phi=\rho[h]-1,\qquad E=-\partial_x\phi.\)</div>
+								<div class="model-line">\(Q_{\mathrm{BGK}}[h]=\nu\bigl(\mathcal M[h]-h\bigr),\qquad \mathcal M[h]=\dfrac{\rho[h]}{\sqrt{2\pi T[h]}}\exp\!\left[-\dfrac{(v-u[h])^2}{2T[h]}\right].\)</div>
+								<div class="model-line">\(\rho[h]=\int h\,\mathrm dv,\qquad u[h]=\rho[h]^{-1}\!\int vh\,\mathrm dv,\qquad T[h]=\rho[h]^{-1}\!\int(v-u[h])^2h\,\mathrm dv.\)</div>
+							</div>
+							<div class="initial-panel">
+								<h3>Truth · unstable two-stream state</h3>
+								\[
+								f_0^\dagger(x,v)=\frac{1}{\sqrt{2\pi}}\,v^2e^{-v^2/2}
+								\bigl(1+0.05\cos(x/2)\bigr),
+								\qquad \rho_0^\dagger(x)=1+0.05\cos(x/2),\quad u_0^\dagger=0,\quad T_0^\dagger=3.
+								\]
+							</div>
+							<div class="setup-meta">
+								<span><b>Observed</b> \((\rho,u,T)(x,t)\), every step</span>
+								<span><b>Domain</b> \(L=4\pi,\ \alpha=0.05,\ k_0=0.5\)</span>
+								<span><b>Grid</b> \(N_p=5\times10^5,\ N_x=128\)</span>
+								<span><b>Run</b> \(\Delta t=0.05,\ T_{\rm fin}=30\)</span>
+								<span><b>Truth BGK</b> \(\nu=0.05\)</span>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">
+							The BGK operator relaxes toward the local Maxwellian carrying the same density, bulk velocity, and temperature as \(h\). Here the true state is deliberately far from that equilibrium: its velocity marginal is bimodal and the seeded density modulation triggers the two-stream instability. The reference uses \(\nu=0.05\) and no external driver.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, Vlasov–Poisson model, BGK operator, and two-stream limitation experiment.<br>[/Sources]
+					</aside>
+				</section>
+				<section data-menu-title="II · detail — Two-stream — priors" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging — numerical setup · limit case</div>
+						<h2>Same wrong \((u,T)\), different velocity shapes</h2>
+						<div class="body xs">
+							<div class="experiment-model" style="font-size:18px;">
+								<b>Truth:</b> \((u_0^\dagger,T_0^\dagger)=(0,3)\).  
+								<b>Both priors:</b> \((u_0,T_0)=(0.3,2)\).
+							</div>
+							<div class="initial-grid fill">
+								<div class="initial-panel prior">
+									<h3>Prior 1 · Maxwellian</h3>
+									\[
+									g_0^{\mathrm M}(x,v)=\mathcal M_{1,0.3,2}(v).
+									\]
+									<div class="setup-meaning">Uniform in \(x\) · single-Gaussian velocity shape · no seeded density modulation.</div>
+								</div>
+								<div class="initial-panel prior">
+									<h3>Prior 2 · affine two-stream</h3>
+									\[
+									g_0^{\mathrm{2s}}=(\operatorname{Id}_x,A)_\# f_0^\dagger,
+									\qquad A(v)=0.3+\sqrt{2/3}\,v .
+									\]
+									<div class="setup-meaning">The seeded density modulation and two-stream velocity shape are retained.</div>
+								</div>
+							</div>
+							<div class="setup-meta">
+								<span><b>Prior 1 BGK</b> \(\nu=0.05\)</span>
+								<span><b>Prior 2 BGK</b> \(\nu=0.01\)</span>
+								<span><b>Feedback</b> unit scalings, \(V_*=1\) (A,C)</span>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">The two assimilating initializations deliberately share the same wrong bulk velocity and temperature, \((u,T)=(0.3,2)\), against the true \((0,3)\). Prior 1 is the spatially uniform Maxwellian and uses \(\nu=0.05\). Prior 2 is the velocity-only affine pushforward of the true two-stream state, so it retains the seeded density modulation and bimodal shape; it uses the weaker \(\nu=0.01\). The next slide compares the two branches through their final velocity marginals, followed by the Prior 2 + Method A animation.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, limitation experiment with Maxwellian and affine two-stream priors.<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II · detail — Two-stream — limitation" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · limit case</div>
+						<h2>Prior 1 corrects the moments—but stays single-peaked</h2>
+						<div class="body xs">
+							<figure class="result-hero framed marginal-comparison">
+								<img src="./figure/vp/e_obstruction_vkde.png" alt="Final velocity marginals from Maxwellian and two-stream priors">
+								<figcaption>A Maxwellian prior stays single-peaked; a two-stream prior preserves the missing bimodality.</figcaption>
+							</figure>
+							<div class="cols push" style="gap:30px; align-items:start;">
+								<div class="initial-panel prior" style="flex:1;">
+									<h3>Maxwellian prior</h3>
+									A/B/C improve \((u,T)\), but the marginal remains single-peaked and misses the bimodal truth.
+								</div>
+								<div class="initial-panel prior" style="flex:1;">
+									<h3>Two-stream prior</h3>
+									A/B/C preserve the two peaks; the missing velocity-space shape was already present in the prior.
+								</div>
+							</div>
+						</div>
+					</div>
+					<aside class="notes">This is the direct visual answer for Prior 1. Starting from the Maxwellian, moment feedback synchronizes bulk velocity and temperature but the final marginal remains single peaked. Starting from the affine two-stream prior with the same wrong \((u,T)\), the nudged marginals retain the bimodal shape and lie near the truth. The paper reports \(R_u=0.21\), \(R_T=0.13\) for A/B from the Maxwellian prior, but only modest phase-space improvement \(R_f=0.65\)–\(0.71\). From the two-stream prior, \(R_f=0.48\), \(0.48\), and \(0.72\) for A, B, and C.<br><br>[Sources]<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-stream limitation experiment and final velocity-marginal figure \(e_{\rm obstruction,\,vkde}\).<br>[/Sources]</aside>
+				</section>
+				<section data-menu-title="II · detail — Two-stream — tracking" style="--part:#C9520E;" class="detail-slide">
+					<div class="slide">
+						<div class="eyebrow">Moment nudging · limit case</div>
+						<h2>With the right shape, Method A tracks the vortex</h2>
+						<div class="body xs">
+							<div class="limit-layout">
+								<figure class="result-hero framed">
+									<img src="./figure/vp/e_obstruction_truth_A.gif?v=2" data-pdf-src="./figure/pdf_static/two_stream_t20.png" alt="Animated truth and Method A phase-space densities from the two-stream prior">
+									<figcaption>With the correct prior shape, Method A tracks the evolving phase-space vortex.</figcaption>
+								</figure>
+							<div class="stackv">
+								<div class="card">
+									<div class="limit-label">Observed</div>
+									<b>The moments synchronize.</b><br>
+									The feedback corrects the wrong \((u,T)=(0.3,2)\) toward the truth \((0,3)\).
+								</div>
+								<div class="card">
+									<div class="limit-label">Not observed</div>
+									<b>The shape must come from the prior.</b><br>
+									A two-stream prior develops the vortex; a Maxwellian prior cannot become bimodal from moment data alone.
+								</div>
+								<div class="note orange">
+									<b>Boundary.</b> With the right shape in the prior, Method A tracks the full distribution at \(R_f=0.48\); the feedback does not invent that shape.
+								</div>
+							</div>
+						</div>
+						</div>
+					</div>
+					<aside class="notes">The animation uses Prior 2 with Method A and 31 saved simulation frames at \(t=0,1,\ldots,30\); there is no temporal interpolation. Each particle state is projected directly onto the same \((x,v)\) bins at its simulation time, and all panels share one global color scale. Because the two-stream velocity-space shape is already present in the prior, moment feedback can correct the wrong \((u,T)\) while the self-consistent instability develops and tracks the truth. Method A reaches \(R_f=0.48\) for this branch.<br><br>[Sources]<br>User-owned simulation output: /ocean/projects/mth210003p/lyuliyao/DA/plasma/results/exp_obstruction_two_stream_31frames_20260824_144735/output, including manifest.json, phase_space_grids_31.npz, and the 31-frame GIF; Slurm Job 44313025.<br>Wasserstein Moment Nudging for Data Assimilation in Vlasov–Poisson Systems, user-provided manuscript, two-stream obstruction experiment.<br>Code and configuration: https://github.com/Lyuliyao/data_assimilation_for_plasma, commit d32dd42ee131d20380055e3e8102f6e5a2120a33.<br>[/Sources]</aside>
+				</section>
+
+			</section><section data-menu-title="5. Future — magnetic fields" style="--part:#6B5FA7;">
+  <div class="slide">
+    <div class="eyebrow">5 · Future work</div>
+    <h2>From Vlasov–Maxwell to gyrokinetics in a strong magnetic field</h2>
+    <div class="body xs">
+      <div class="note blue mtight"><b>Strong-field ordering.</b> When the Larmor radius is much smaller than the device scale, \(\epsilon=\rho_L/L\ll1\), fast gyromotion can be averaged out.</div>
+      <div class="cols" style="align-items:stretch; gap:22px;">
+        <div class="card" style="flex:1;">
+          <div class="eyebrow">Vlasov–Maxwell</div>
+          <h4>Evolve the full particle distribution and electromagnetic fields</h4>
+          \[
+          \partial_t f_s+\bv\!\cdot\!\nabla_\bx f_s
+          +\frac{q_s}{m_s}(\bE+\bv\times\bB)\!\cdot\!\nabla_\bv f_s=Q_s[f],
+          \]
+          \[
+          \partial_t\bB=-\nabla\times\bE,
+          \qquad
+          \varepsilon_0\partial_t\bE=\varepsilon_0c^2\nabla\times\bB-\mathbf J.
+          \]
+          <div class="note blue"><b>DA task:</b> update particles and measured \((\bE,\bB)\) together while retaining Gauss constraints and charge continuity.</div>
+        </div>
+        <div class="card" style="flex:1;">
+          <div class="eyebrow">Gyrokinetics · \(\rho_L/L\ll1\)</div>
+          <h4>Evolve a gyro-averaged 5D state \(h_s(\mathbf R,v_\parallel,\mu,t)\)</h4>
+          \[
+          \partial_t h_s+\dot{\mathbf R}_s\!\cdot\!\nabla_{\mathbf R} h_s
+          +\dot v_{\parallel s}\,\partial_{v_\parallel}h_s
+          =C_s[h]+S_s,
+          \]
+          \[
+          -\nabla_\perp\!\cdot\!(\varepsilon_\perp\nabla_\perp\phi)
+          =\sum_s q_s\int\langle h_s\rangle_{\mathbf r}\,d^3\bv .
+          \]
+          <div class="note blue"><b>DA task:</b> map diagnostics to gyro-averaged moments, then nudge guiding centers \((\mathbf R,v_\parallel,\mu)\) while maintaining quasineutrality.</div>
+        </div>
+      </div>
+      <div class="tiny faint push"><b>Concrete extension:</b> observation residual → constrained feedback for both kinetic variables and self-consistent fields.</div>
+    </div>
+  </div>
+  <aside class="notes">There are two concrete extensions. Vlasov–Maxwell retains the full Lorentz force and evolves particles together with electric and magnetic fields. The data-assimilation update must therefore correct particles and fields without violating Maxwell constraints. In a strongly magnetized regime, rho-L over L is small and gyrokinetics averages the fast gyrophase, leaving the five-dimensional guiding-center state R, parallel velocity, and magnetic moment. Its field equation is quasineutrality. The corresponding feedback should act on guiding centers and gyro-averaged observable moments while maintaining that field constraint.<br><br>[Sources]<br>Future directions specified by the user; standard Vlasov–Maxwell and electrostatic gyrokinetic formulations.<br>[/Sources]</aside>
+</section><section data-menu-title="6. Future — boundaries and species" style="--part:#6B5FA7;">
+  <div class="slide">
+    <div class="eyebrow">6 · Future work</div>
+    <h2>Boundaries and multiple species</h2>
+    <div class="body small">
+      <div class="cols" style="align-items:stretch;">
+        <div class="card" style="flex:1;">
+          <div class="eyebrow">Bounded domains</div>
+          <h4>Make the nudge compatible with the wall</h4>
+          <ul class="tight">
+            <li>inflow, outflow, absorbing, or reflecting boundaries</li>
+            <li>plasma–wall interaction and sheath effects</li>
+            <li>control particle flux without pushing particles outside</li>
+          </ul>
+        </div>
+        <div class="card" style="flex:1;">
+          <div class="eyebrow">Multiple species</div>
+          <h4>Coupled feedback through a shared field</h4>
+          \[
+          -\Delta\phi=\sum_s q_s\rho_s-\rho_0,
+          \qquad f_s=f_s(t,\bx,\bv),
+          \qquad (q_s,m_s)\ \text{species dependent}.
+          \]
+          <ul class="tight">
+            <li>species-resolved versus aggregate observations</li>
+            <li>different time scales for electrons and ions</li>
+            <li>identifiability of coupled moment feedback</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">Two extensions remain on this page. Boundaries require the particle feedback to respect wall and flux conditions. Multiple species introduce different masses, charges, and time scales while all species are coupled through the same self-consistent field.<br><br>[Sources]<br>Future directions specified by the user; standard multispecies Poisson coupling.<br>[/Sources]</aside>
+</section><section data-menu-title="7. Future — sparse observation surrogate" style="--part:#6B5FA7;">
+  <div class="slide">
+    <div class="eyebrow">7 · Future work</div>
+    <h2 style="font-size:50px;">Learn an observation surrogate for sparse diagnostics</h2>
+    <div class="body small">
+      <div class="flow mtight" style="align-items:stretch; gap:16px;">
+        <div class="node" style="flex:1;"><div class="eyebrow">Input</div><b>Sparse diagnostic data</b><br><span class="muted">A few sensor locations, times, and channels</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Learned observer</div><b>Observation surrogate</b><br><span class="muted">Interpolate measurable quantities</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Output</div><b>Macroscopic fields</b><br><span class="muted">\((\widehat\rho,\widehat\bu,\widehat T)\)</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Assimilation</div><b>Moment nudging</b><br><span class="muted">Use the reconstructed fields</span></div>
+      </div>
+      <div class="cols" style="align-items:stretch; gap:22px;">
+        <div class="card" style="flex:1;">
+          <div class="eyebrow">Proposed observation model</div>
+          <h4>Recover observable fields from sparse samples</h4>
+          \[
+          \widehat{\mathcal H}_\theta:
+          \{(\bx_m,t_m,y_m)\}_{m=1}^{M}
+          \longmapsto
+          \big(\widehat\rho_t,\widehat\bu_t,\widehat T_t\big).
+          \]
+          <ul class="tight">
+            <li>train with simulations and available diagnostic data</li>
+            <li>enforce agreement at measured sensor locations</li>
+            <li>respect spatial, temporal, and physical structure</li>
+          </ul>
+        </div>
+        <div class="card" style="flex:1;">
+          <div class="eyebrow">Role separation</div>
+          <h4>Observation reconstruction and state correction are different steps</h4>
+          <div class="note blue"><b>Observation surrogate:</b> interpolate \(n_e,T_e,T_i\), rotation, or other measured moment fields across space and time.</div>
+          <div class="note" style="margin-top:14px;"><b>Moment nudging:</b> convert the reconstructed field residual into feedback on the PIC particles.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">This page concerns only sparse observations. The proposed surrogate learns an observation operator from irregular sensor values and locations to continuous macroscopic fields. Its role is interpolation of measurable quantities. The moment-nudging model remains responsible for converting the reconstructed field residual into feedback on the PIC particles.<br><br>[Sources]<br>Future direction specified by the user; equation on this slide is a proposed research formulation.<br>[/Sources]</aside>
+</section><section data-menu-title="8. Future — multi-step control" style="--part:#6B5FA7;">
+  <div class="slide">
+    <div class="eyebrow">8 · Future work</div>
+    <h2>Use control or reinforcement learning across multiple time steps</h2>
+    <div class="body small">
+      <div class="cols mtight" style="align-items:stretch; gap:22px;">
+        <div class="card" style="flex:0.78;">
+          <div class="eyebrow">Current nudging</div>
+          <h4>React to the residual at the current time</h4>
+          \[
+          r_t=y_t-\mathcal H[f_t],
+          \qquad
+          \bb_t^{\rm nudge}=\mathcal B(r_t).
+          \]
+          <p class="muted">The update does not explicitly account for how today's correction changes future residuals.</p>
+        </div>
+        <div class="card" style="flex:1.22;">
+          <div class="eyebrow">Finite-horizon control / RL</div>
+          <h4>Choose feedback using residual history and a VP/PIC rollout</h4>
+          \[
+          \mathbf a_t=\pi_\theta(r_{t-L:t}),
+          \qquad
+          \min_{\pi}\ \mathbb E\!\sum_{k=0}^{K}\gamma^k
+          \left[
+          \|\mathcal H[f_{t+k}^{\pi}]-y_{t+k}\|^2
+          +\beta\|\mathbf a_{t+k}\|^2
+          \right].
+          \]
+        </div>
+      </div>
+      <div class="flow" style="align-items:stretch; gap:15px; margin-top:18px;">
+        <div class="node" style="flex:1;"><div class="eyebrow">Context</div><b>Residual history</b><br><span class="muted">\(r_{t-L},\ldots,r_t\)</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Decision</div><b>Feedback policy</b><br><span class="muted">particle or field correction \(\mathbf a_t\)</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Dynamics</div><b>VP/PIC rollout</b><br><span class="muted">propagate delayed effects</span></div>
+        <div class="arrow">→</div>
+        <div class="node" style="flex:1;"><div class="eyebrow">Objective</div><b>Future tracking error</b><br><span class="muted">balance accuracy and control effort</span></div>
+      </div>
+      <div class="note blue push"><b>Why multi-step?</b> The plasma response is delayed and correlated in time; a finite-horizon policy can trade a larger correction now for smaller residuals later.</div>
+    </div>
+  </div>
+  <aside class="notes">This is independent of the observation-surrogate idea. Current nudging uses only the residual at the present time. A control or reinforcement-learning formulation instead conditions on residual history and evaluates actions through a finite VP or PIC rollout. The objective balances future observation mismatch against feedback effort, allowing the policy to learn delayed responses and correlations across several observation times.<br><br>[Sources]<br>Future direction specified by the user; equations on this slide are a proposed research formulation.<br>[/Sources]</aside>
+</section></div>
+	</div>
+
+	<script src="./vendor/reveal/dist/reveal.js"></script>
+	<script src="./vendor/reveal/plugin/notes/notes.js"></script>
+	<script src="./vendor/reveal/plugin/markdown/markdown.js"></script>
+	<script src="./vendor/reveal/plugin/highlight/highlight.js"></script>
+	<script>
+		// The interactive HTML keeps animations; ?static=1 replaces them with
+		// deterministic representative frames for PDF export.
+		(function () {
+			const staticMedia = new URLSearchParams(window.location.search).get('static') === '1';
+			if (!staticMedia) return;
+			document.documentElement.classList.add('static-media');
+			document.querySelectorAll('img[data-pdf-src]').forEach((image) => {
+				image.src = image.dataset.pdfSrc;
+			});
+			document.querySelectorAll('video[data-pdf-src]').forEach((video) => {
+				const image = document.createElement('img');
+				image.src = video.dataset.pdfSrc;
+				image.alt = video.dataset.pdfAlt || 'Saved animation frame';
+				image.className = video.className;
+				image.style.cssText = video.style.cssText;
+				image.loading = 'eager';
+				video.replaceWith(image);
+			});
+		})();
+
+
+		Reveal.initialize({
+			width: 1280,
+			height: 720,
+			margin: 0,
+			center: false,
+			controls: true,
+			controlsLayout: 'edges',
+			controlsBackArrows: 'faded',
+			navigationMode: 'default',
+			progress: true,
+			slideNumber: false,
+			pdfSeparateFragments: false,
+			pdfMaxPagesPerSlide: 1,
+			hash: true,
+			transition: 'fade',
+			transitionSpeed: 'fast',
+			backgroundTransition: 'fade',
+			plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+		});
+
+		// Per-slide footer: short title on the left, position on the right.
+		(function () {
+			const tops = Array.from(document.querySelectorAll('.reveal .slides > section'));
+			const total = tops.length;
+			tops.forEach((top, h) => {
+				const slides = top.classList.contains('stack') || top.querySelector(':scope > section')
+					? Array.from(top.querySelectorAll(':scope > section')) : [top];
+				slides.forEach((s, v) => {
+					if (s.classList.contains('cover') || s.classList.contains('divider') || s.classList.contains('closing')) return;
+					const f = document.createElement('div');
+					f.className = 'foot';
+					const pos = v > 0 ? `${h + 1}.${v}` : `${h + 1}`;
+					f.innerHTML = `<span>Vlasov–Poisson Data Assimilation &nbsp;·&nbsp; Liyao Lyu, USTC</span><span class="n">${pos} / ${total}</span>`;
+					s.appendChild(f);
+				});
+			});
+		})();
+
+		// Lightweight figure selectors: keep one large scientific comparison visible at a time.
+		(function () {
+			document.querySelectorAll('[data-figure-selector]').forEach((selector) => {
+				const image = selector.querySelector('.figure-selector-image');
+				const caption = selector.querySelector('.figure-selector-caption');
+				selector.querySelectorAll('.figure-option').forEach((button) => {
+					button.addEventListener('click', (event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						selector.querySelectorAll('.figure-option').forEach((item) => {
+							item.classList.toggle('active', item === button);
+							item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
+						});
+						image.src = button.dataset.src;
+						image.alt = button.dataset.alt || '';
+						caption.innerHTML = button.dataset.caption || '';
+						if (window.MathJax && MathJax.Hub) MathJax.Hub.Queue(['Typeset', MathJax.Hub, caption]);
+						requestAnimationFrame(() => Reveal.layout());
+					});
+				});
+			});
+		})();
+	</script>
+</body>
+</html>

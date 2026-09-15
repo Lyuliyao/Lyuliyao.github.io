@@ -24,6 +24,12 @@
       els[i].hidden = els[i].getAttribute('data-lang') !== lang;
     }
 
+    ['alt', 'aria-label', 'content'].forEach(function (attribute) {
+      document.querySelectorAll('[data-' + attribute + '-' + lang + ']').forEach(function (element) {
+        element.setAttribute(attribute, element.getAttribute('data-' + attribute + '-' + lang));
+      });
+    });
+
     var toggle = document.getElementById('langToggle');
     if (toggle) {
       toggle.setAttribute('aria-pressed', lang === 'zh' ? 'true' : 'false');

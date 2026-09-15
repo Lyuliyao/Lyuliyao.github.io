@@ -846,3 +846,48 @@ a.pub-link {
   padding: 0;
 }
 .week-card li { margin: 0.35em 0; }
+
+/* Homepage: research, recruitment, and compact career history. */
+body.home #banner { grid-template-columns: minmax(0, 1.6fr) minmax(0, 0.8fr); align-items: start; }
+body.home #banner .position { font-weight: 600; color: var(--home-accent); margin: 0 0 0.8rem; }
+body.home #banner .research-summary { font-size: 1.05em; margin-bottom: 0.8rem; }
+body.home #banner .recruitment-summary { margin-bottom: 1.4rem; }
+body.home #banner .affiliation-heading { font-size: 1.1em; margin: 0 0 0.7rem; }
+body.home #banner .affiliation-heading ~ p { font-size: 0.95em; margin-bottom: 0.8rem; }
+body.home #banner .image.object { margin: 0; width: 100%; }
+body.home #banner .image.object img { height: auto; display: block; }
+body.home #openings .notice { margin-bottom: 1rem; }
+body.home .experience-list { list-style: none; padding: 0; }
+body.home .experience-list li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--home-border); }
+body.home .experience-list h3 { font-size: 1.1em; margin: 0 0 0.3rem; }
+body.home .experience-list p { margin: 0; }
+body.home .experience-date { color: var(--home-accent); font-weight: 600; }
+body.home #sidebar .contact { padding: 0; list-style: none; }
+body.home #sidebar .contact li { padding-left: 0; overflow-wrap: anywhere; }
+body.home .home-footer { padding: 2rem 0; font-size: 0.85em; }
+body.home .visitor-map { max-width: 240px; }
+body.home .visitor-map summary { cursor: pointer; padding: 0.7rem 0; }
+body.home .visitor-map img, body.home .visitor-map iframe { max-width: 100%; }
+body.home #header .mobile-menu-link { display: none; flex: 0 0 auto; }
+body.home .lang-toggle { min-height: 44px; }
+@media screen and (max-width: 980px) {
+  body.home #header .mobile-menu-link { display: inline-flex; align-items: center; min-height: 44px; margin-left: auto; }
+  body.home #header .logo { flex: 1; }
+  body.home #banner { display: block; }
+  body.home #banner .content > header { padding-right: 100px; min-height: 85px; display: flex; align-items: center; }
+  body.home #banner .image.object { position: absolute; top: 2rem; right: 1.5rem; width: 80px; height: 80px; border-radius: 50%; transform: none; }
+  body.home #banner .image.object img { height: 100%; aspect-ratio: 1; object-position: 65% 35%; }
+  body.home #banner { padding: 1.5rem; }
+  body.home #main > .inner > section:not(#banner) { margin-top: 1.25rem; }
+}
+@media screen and (max-width: 480px) {
+  body.home #main > .inner { padding: 0 1rem 2rem; }
+  body.home #banner { padding: 1.25rem; }
+  body.home #banner h1 { font-size: 2.2rem; }
+  body.home .experience-list li { grid-template-columns: 1fr; gap: 0.3rem; }
+  body.home ul.quick-links { gap: 0.4rem; }
+  body.home ul.quick-links a { padding: 0.4rem 0.7rem; min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.home #banner .content > *, body.home #banner .image.object { animation: none; }
+}

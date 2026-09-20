@@ -19,5 +19,9 @@
   "lyu2025generative": {"NSF PAR": "https://par.nsf.gov/biblio/10610686"},
   "she2025unified": {"arXiv": "https://arxiv.org/abs/2509.07264"},
   "lyu2025stochastic": {"arXiv": "https://arxiv.org/abs/2510.27615"},
-  "lyuconsensus": {"OpenReview": "https://openreview.net/forum?id=W7dN3SQKkH"}
+  "lyuconsensus": {"OpenReview": "https://openreview.net/forum?id=W7dN3SQKkH"},
+  "lyu2026mvnn": {"arXiv": "https://arxiv.org/abs/2604.00333"},
+  "lyu2026multiscale": {"arXiv": "https://arxiv.org/abs/2606.06809"},
+  "lyu2026wasserstein": {"arXiv": "https://arxiv.org/abs/2608.21725"},
+  "lyu2026enhanced": {"arXiv": "https://arxiv.org/abs/2605.03080"}
 }

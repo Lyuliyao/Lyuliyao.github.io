@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>Structure-Preserving Machine Learning of Closures: From Coarse-Grained Dynamics to Density Functionals</title>
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/serif.css">
+		<style>
+		.tight-math mjx-container[jax="CHTML"][display="true"],
+		.tight-math .MathJax_Display {
+		margin: 0.2em 0 !important;
+		}
+		div.highlight {
+			background-color:#FFF9C4;
+			text-align: left;
+			 margin-top: 20px;
+			 padding: 15px;
+			 border-radius: 8px;
+			 box-shadow: 2px 2px 10px #ccc;
+		}
+		div.model {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin: 20px 0;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 5px;
+		}
+		div.model .name {
+			margin: 0;
+			flex: 1;
+			color: #444;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			padding-right: 20px;
+		}
+		div.model .equation { flex: 2; }
+		figcaption {
+			color: black;
+			font-style: italic;
+			padding: 2px;
+			font-size:large;
+			text-align: center;
+		}
+		.particle { fill: #1976D2; stroke: black; stroke-width: 1; }
+		.bond { stroke: black; stroke-width: 2; }
+		cite { font-size: 0.4em; display: block; color:#444 }
+		.theorem, .proposition { border: 1px solid #000; padding: 10px; margin: 10px 0; }
+		.theorem { background-color: #f0f0f0; }
+		.proposition { background-color: #e0e0e0; }
+		.theorem h4, .proposition h4 { margin: 0; font-size: 1em; }
+		.content { margin-top: 5px; font-size: 1em; }
+
+		/* ---- additions for this deck ---- */
+		.reveal h3 { margin-bottom: 0.4em; }
+		.reveal .smalltext { font-size: 0.75em; }
+		.reveal .footnote {
+			margin-top: 14px;
+			text-align: left; font-size: 0.55em; opacity: 0.8;
+		}
+		.reveal table.compare {
+			font-size: 0.6em; border-collapse: collapse; margin: 0 auto;
+		}
+		.reveal table.compare th, .reveal table.compare td {
+			border: 1px solid #999; padding: 6px 10px; text-align: center; vertical-align: middle;
+		}
+		.reveal table.compare th { background: #ECEFF1; }
+		.reveal table.compare td.rowhead { text-align: left; font-weight: bold; background: #FAFAFA; white-space: nowrap; }
+		.reveal table.compare .ours { color: #E65100; font-weight: bold; }
+		.reveal .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+		.reveal .two-col-wide { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: center; }
+		.reveal .two-col > div, .reveal .two-col-wide > div { min-width: 0; }
+		.reveal .left { text-align: left; }
+		.reveal .keybox {
+			background: #E3F2FD; border-left: 6px solid #1976D2; text-align: left;
+			padding: 10px 16px; border-radius: 6px; margin: 10px 0; font-size: 0.85em;
+		}
+		.reveal .keybox.orange { background: #FFF3E0; border-left-color: #E65100; }
+		.reveal .keybox.green { background: #E8F5E9; border-left-color: #2E7D32; }
+		.reveal .part-header { text-align: left; }
+		.reveal .part-header .partno { color: #E65100; font-size: 0.8em; letter-spacing: 0.1em; text-transform: uppercase; }
+		.reveal .part-header h2 { color: #2c3e50; }
+		.reveal .pill { display:inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.7em; margin: 2px; }
+		.reveal .pill.blue { background:#E3F2FD; color:#0D47A1; }
+		.reveal .pill.orange { background:#FFF3E0; color:#E65100; }
+		.reveal .pill.green { background:#E8F5E9; color:#1B5E20; }
+		.reveal img.fig { max-height: 560px; border-radius: 6px; box-shadow: 0 4px 18px rgba(0,0,0,0.18); background: white; }
+		.reveal ul li { margin-bottom: 0.25em; }
+		.reveal .err { font-family: monospace; }
+		.reveal .lead { font-size: 0.9em; color: #34495e; margin: 10px 0 24px; }
+		.reveal .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin: 0 10px; }
+		.reveal .cards.two { grid-template-columns: repeat(2, 1fr); }
+		.reveal .card {
+			background: #FAFAFA; border-radius: 10px; border-top: 6px solid #1976D2;
+			padding: 14px 18px; text-align: center; font-size: 0.62em; line-height: 1.35;
+			box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+		}
+		.reveal .card.orange { border-top-color: #E65100; }
+		.reveal .card.green { border-top-color: #2E7D32; }
+		.reveal .card .head { font-weight: bold; color: #2c3e50; font-size: 1.15em; }
+		.reveal .card .big { font-size: 2.0em; margin: 14px 0 6px; color: #2c3e50; }
+		.reveal .card .sub { color: #555; }
+		.reveal .card.left { text-align: left; }
+		.reveal .caption { font-size: 0.6em; color: #34495e; margin-top: 10px; }
+		.reveal .bigeq { font-size: 1.15em; }
+		.reveal li .pill { font-size: 0.9em; }
+		</style>
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Register.StartupHook("TeX color Ready", function() {
+				MathJax.Extension["TeX/color"].colors["myred"] = '#E65100';
+		   });
+			MathJax.Hub.Config({
+			  TeX: {
+				Macros: {
+					bm: ["{\\mathbf{#1}}", 1],
+					mb: ["{\\mathbf{#1}}", 1],
+			   diff: "\\mathop{}\\!\\mathrm{d}",
+			   MLMN: "\\mathcal{L}_\\mathcal{N}",
+			   bz: "\\mathbf{z}",
+			   bZ: "\\mathbf{Z}",
+			   bp: "\\mathbf{p}",
+			   bq: "\\mathbf{q}",
+			   bP: "\\mathbf{P}",
+			   bQ: "\\mathbf{Q}",
+			   bV: "\\mathbf{V}",
+			   br: "\\mathbf{r}",
+			   bs: "\\mathbf{s}",
+			   bF: "\\mathbf{F}",
+			   bn: "\\mathbf{n}",
+			   CM: "\\mathcal M_\\beta",
+			   l: "\\left",
+			   r: "\\right",
+			   intd: "\\mathrm{d}",
+			   mbm:"\\mathbf{m}",
+			   Fex:"F_{\\rm ex}",
+			   Fid:"F_{\\rm id}",
+			   FC:"F_{\\rm C}",
+			   lB:"l_B",
+				}
+			  }
+			});
+		  </script>
+		<script type="text/javascript">
+		window.PlotlyConfig = {MathJaxConfig: 'local'};
+		</script>
+		<script src="https://cdn.plot.ly/plotly-2.9.0.js"></script>
+		<script src="./figure/md.js"></script>
+		<script src="./figure/title.js"></script>
+	</head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-CQSV68665C"></script>
+	<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-CQSV68665C');
+	</script>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+
+<!-- ====================================================================== -->
+<!-- 0. TITLE                                                                -->
+<!-- ====================================================================== -->
+				<section data-menu-title="Title">
+					<h2 style="font-size: 1.35em; color: #2c3e50; margin-top: 60px;">
+						Structure-Preserving Machine Learning of Closures
+					</h2>
+					<h3 style="font-size: 0.95em; color: #34495e; font-weight: 400;">
+						from coarse-grained molecular dynamics to density functionals
+					</h3>
+					<div style="margin-top: 50px; font-size: 1.0em; color: #34495e; line-height: 1.5;">
+						<span style="font-size: 1.3em; font-weight: bold; color: #2c3e50;">Liyao Lyu</span><br>
+						Department of Mathematics<br>
+						<b>University of California, Los Angeles</b><br>
+						<span style="font-size: 0.8em;">Part I is joint work with Huan Lei (Michigan State University)</span>
+					</div>
+					<div style="margin-top: 50px;">
+						<span class="pill blue">I. Coarse-grained MD</span>
+						<span class="pill orange">II. Neural density functional</span>
+						<span class="pill green">III. Kinetic heat-flux closure</span>
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Thank the host. One sentence: my work is about learning the unknown closure of a reduced model from fine-scale simulations, while building in the exact structure the reduced model must have.</li>
+							<li>Three examples today: dynamics (CGMD, main), equilibrium structure (neural DFT, main), and a brief look at a kinetic closure for plasmas.</li>
+						</ul>
+					</aside>
+				</section>
+
+<!-- ====================================================================== -->
+<!-- 1. BACKGROUND: multiscale modeling                                      -->
+<!-- ====================================================================== -->
+				<section data-auto-animate data-menu-title="Multi-scale modeling:Background">
+					<h3>
+						<div style="display:inline">Multi-scale modeling:</div>
+						<div style="display:inline">Background</div>
+					</h3>
+					<div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+						<div class="fragment fade-in-then-semi-out"  data-fragment-index="1" style="width:500px">
+							<figure>
+								<p><img src="./figure/Dirac.png" style="width:300px; object-fit: cover;" alt="Dirac"></p>
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left;">
+									Dirac, Paul Adrien Maurice. Quantum mechanics of many-electron systems.
+								</div>
+							</figure>
+						</div>
+						<div style="text-align: left;">
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="1"  style="margin-bottom: 50px; margin-right: 100px;">
+								The right physical principle for most of what we are interested in is already provided by the principles of quantum mechanics (QM). <br>
+							</div>
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
+								The ability to reduce everything to simple fundamental laws does not imply the ability to start from those laws and reconstruct the universe.
+							</div>
+							<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="margin-left:100px;">
+								The constructionist hypothesis breaks down when confronted with <span style="color:#E65100">the twin difficulties of scale and complexity.</span>
+							</div>
+						</div>
+						<div class="fragment fade-in-then-semi-out"  data-fragment-index="2"  style="width:500px">
+							<figure>
+								<p><img src="./figure/Andersonphoto-removebg.png" style="width:300px; object-fit: cover;" alt="Anderson"></p>
+								<div style="opacity: 0.5; font-size: 0.6em; text-align: left; position: absolute;">
+									Anderson, Philip W. More Is Different: Broken symmetry and the nature of the hierarchical structure of science.
+								</div>
+							</figure>
+						</div>
+					</div>
+					<div class="fragment fade-in-then-semi-out"  data-fragment-index="3" style="text-align: left; margin-left:100px;">
+						<br>
+						<span style="color:#E65100">Scale - High Dimensionality - Curse of Dimensionality </span> <br>
+						<span style="color:#E65100">Complexity - Empirical Model - Oversimplification</span>
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Dirac: the laws are known. Anderson: knowing them does not let us reconstruct the phenomena, because of scale and complexity.</li>
+							<li>Scale: too many degrees of freedom. Complexity: the reduced models we write by hand oversimplify.</li>
+							<li>Machine learning attacks both, but only if the learned model keeps the structure of the exact theory.</li>
+						</ul>
+					</aside>
+				</section>
+
+<!-- ====================================================================== -->
+<!-- 2. ROADMAP: one problem, three scales                                   -->
+<!-- ====================================================================== -->
+				<section data-menu-title="Roadmap">
+					<h3>One idea, three closures</h3>
+					<p class="lead">reduced model &nbsp;=&nbsp; <b>exact structure</b> (known) &nbsp;+&nbsp; <span style="color:#E65100"><b>closure</b></span> (unknown)</p>
+					<div class="cards">
+						<div class="card">
+							<div class="head" style="color:#0D47A1">I. Coarse-grained MD</div>
+							<div class="sub">all-atom MD &rarr; Langevin dynamics</div>
+							<div class="big">\(\mathbf K(\bQ,t)\)</div>
+							<div class="sub">memory kernel</div>
+						</div>
+						<div class="card orange">
+							<div class="head" style="color:#E65100">II. Density functional</div>
+							<div class="sub">polymer-electrolyte MD &rarr; \(F[\bn]\)</div>
+							<div class="big">\(\Fex[\bn]\)</div>
+							<div class="sub">excess free energy</div>
+						</div>
+						<div class="card green">
+							<div class="head" style="color:#1B5E20">III. Kinetic closure</div>
+							<div class="sub">particle-in-cell &rarr; fluid equation</div>
+							<div class="big">\(J\)</div>
+							<div class="sub">heat flux</div>
+						</div>
+					</div>
+					<div class="keybox fragment fade-in" style="margin-top: 36px; font-size: 0.8em;">
+						Learn the closure from fine-scale data. <b>Build the structure in</b>, so the model works where there is no data.
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Every part has the same shape: a fine-scale model we trust, a reduced model with a known structure, an unknown closure, and a transfer test.</li>
+							<li>Structure built in. I: translation, rotation, permutation symmetry, extensivity, second fluctuation-dissipation theorem. II: integrability, Noether identities, perfect screening, exact energy identity in the Bjerrum length. III: memory, free-energy dissipation, similarity (scaling symmetry).</li>
+							<li>Transfer tests. I: collective transport, larger systems, nonequilibrium flows. II: larger boxes, 2D fields, unseen concentration and permittivity. III: other temperatures.</li>
+							<li>Time: about 12 min on I, 14 on II, 4 on III.</li>
+						</ul>
+					</aside>
+				</section>
+
+<!-- ====================================================================== -->
+<!-- PART I: CGMD                                                            -->
+<!-- ====================================================================== -->
+				<section data-menu-title="Part I: Coarse-Grained Molecular Dynamics"
+						style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 100%;">
+					<div class="partno" style="color:#E65100; font-size: 0.7em; letter-spacing: 0.1em; margin-top: 10px;">PART I</div>
+					<h1 id="title-text2" style="margin-top: 0px; font-size: 1.3em; color: #2c3e50; font-weight: 700;"></h1>
+					<svg id="MD1" width="750" height="300" style="margin-top: 20px; border: none;"></svg>
+					<button id="updateValues1"
+							style="margin-top: 10px; padding: 8px 15px; border: none; border-radius: 5px; font-style: serif; font-size: 1.0em; font-weight: bold; color: #2c3e50;"></button>
+					<div>
+						<script>
+						title("MD1", "updateValues1", 30, 0.75);
+						</script>
+					</div>
+					<div style="text-align: center; font-size: 1.0em; color: #34495e; margin-top: 10px; line-height: 1.4;">
+						<span id="Cooperator" style="font-weight: bold;"></span>
+					</div>
+					<script>
+						function typeText(elementId, text, speed) {
+						let i = 0;
+						function type() {
+							if (i < text.length) {
+							document.getElementById(elementId).innerHTML += text.charAt(i);
+							i++;
+							setTimeout(type, speed);
+							}
+						}
+						type();
+						}
+						document.addEventListener("DOMContentLoaded", function () {
+						typeText("title-text2", "Coarse-Grained Molecular Dynamics with Many-Body Non-Markovian Memory", 30);
+						setTimeout(() => typeText("Cooperator", "Joint work with Huan Lei (MSU)", 30), 2500);
+						});
+					</script>
+					<aside class="notes">
+						<ul>
+						<li>How do we bridge atomistic simulations to mesoscale phenomena?</li>
+						<li>Atomistic simulations track every atom but are too expensive for large systems. Coarse-grained (CG) models keep collective variables, e.g. centers of mass (dashed circles), instead of atoms (solid circles).</li>
+						<li>Existing CG models oversimplify memory effects. We keep the many-body, non-Markovian memory while staying efficient.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Mori-Zwanzig Formalism</h3>
+					<div style="text-align: left;">
+						<p>In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b> follow:</p>
+					</div>
+					<div data-id="MZCG">
+						\[
+						\begin{aligned}
+						\dot{\mathbf{Q}} &= \mathbf M^{-1} \mathbf{P}, \\
+						\dot{\mathbf{P}} &=
+						\underbrace{-\nabla U(\mathbf{Q})}_{\text{Conservative Force}}
+						- \underbrace{\int_0^t {\mathbf{K}(\mathbf{Q}(s), t-s) }\mathbf{V}(s) ds}_{\text{Memory Contribution}}
+						+ \underbrace{\mathbf{R}(t)}_{\text{Random Force}}.
+						\end{aligned}
+						\]
+					</div>
+					<div style="display: flex; justify-content: center; margin-top: 10px;">
+						<ul class="fragment fade-in" style="list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(200px, 1000px)); ">
+							<li><b>\( \mathbf{Q} \)</b>: Center of mass</li>
+							<li><b>\( \mathbf{P} \)</b>: Total momentum</li>
+							<li><b>\( \mathbf{V} \)</b>: Velocity</li>
+							<li><b>\( \mathbf{M} \)</b>: Mass matrix</li>
+						</ul>
+					</div>
+					<div style="text-align: left;display: flex; margin-top: 10px; margin-bottom: 20px">
+						<ul>
+							<li class="fragment fade-in-then-semi-out">The Mori-Zwanzig formalism is <span style="color:#E65100">general</span>.</li>
+							<li class="fragment fade-in-then-semi-out">In practice, one has to resort to <span style="color:#E65100">simple and ad hoc</span> approximations.</li>
+							<li class="fragment fade-in-then-semi-out">Oversimplification of Memory Contribution <span style="color:#E65100">under-explored</span>.</li>
+						</ul>
+					</div>
+					<div class="footnote">Zwanzig, Robert. Nonequilibrium statistical mechanics. Oxford University Press, 2001.</div>
+					<aside class="notes">
+						<ul>
+							<li>MZ gives the exact form: conservative force, memory, random force. It does not give closed-form expressions: the memory kernel as a function of Q is unknown. This is the closure.</li>
+							<li>Much effort on the conservative force (many-body potentials); the memory kernel is typically reduced to pairwise or isotropic. Our results show the many-body, state-dependent nature is essential for transport and hydrodynamic correlations.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Ad hoc Approximations</h3>
+					<div style="text-align: left; font-size: 1.1em; color: #2c3e50;">
+						<p class="fragment fade-in" data-fragment-index="1">
+							In the <b>Mori-Zwanzig formalism</b>, the dynamics of the <b>coarse-grained (CG) variables</b> are unknown.
+							Many existing models make <b>simplifying approximations</b>:
+						</p>
+					</div>
+					<div style="justify-content: center; margin-top: 10px; font-size: 0.8em">
+						<ul style="list-style: none; padding: 0; display: grid; grid-template-columns: minmax(150px, 500px) minmax(300px, 600px); gap: 15px; justify-content: center;">
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="3"><b>Markovian-Pairwise</b></li>
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="3">\( \sum_{j} \mathbf{K}(Q_{ij}) \mathbf{V}_j . \)</li>
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="4"><b>Non-Markovian Isotropic</b></li>
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="4">\( \int_0^t \mathbf{K}(t-s) \mathbf{V}(s). \)</li>
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="5"><b>Non-Markovian Pairwise (NM-DPD)</b></li>
+							<li class="fragment fade-in-then-semi-out" data-fragment-index="5">\( \sum_j \int_0^t \mathbf{K}(Q_{ij}, t-s) \mathbf{V}_{ij}(s) \, ds. \)</li>
+							<li class="fragment fade-in" data-fragment-index="6"><b style="color: #E65100;font-size:1.2em">🚀 Non-Markovian Manybody (Our Model)</b></li>
+							<li class="fragment fade-in" data-fragment-index="6" style="border-left: 5px solid #E65100; padding-left: 10px;font-size: 1.2em;">
+								\( \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds, \)
+							</li>
+						</ul>
+						<div class="fragment fade-in-then-semi-out" data-fragment-index="7" style="text-align: left; font-size: 1.2em; margin-top: 10px; margin-bottom: 20px;">
+							where \( \bm{\Xi}\) is neural network encode the <b style="color: #E65100;">manybody</b> and \( \bm{\Lambda} \) are learnable parameters encode the <b style="color: #E65100;">Non-Markovian</b>.
+						</div>
+					</div>
+					<div class="footnote"><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>. Construction of coarse-grained molecular dynamics with many-body non-Markovian memory. <em>Physical Review Letters</em>, 2023.</div>
+					<aside class="notes">
+						<ul>
+							<li>First ignores time dependence, second assumes isotropic, third combines pairwise and time dependence.</li>
+							<li>We introduce many-body memory: the kernel depends on the collective arrangement of particles. Essential for collective behavior.</li>
+							<li>More expressive, but unrestricted parameterizations risk violating physical laws, so we enforce symmetry constraints.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Important New Issues</h3>
+					<div class="two-col-grid">
+						<div id="symmetry-text">
+							<ul>
+								<li>
+									<p class="fragment fade" data-fragment-index="1">
+										To accurately model many-body dynamics, our neural network must respect <b>physical symmetries</b>:
+									</p>
+									<ol>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="2">
+											Translation Invariance:\(\mathbf{\Xi}(\bQ_1 +\mathbf{b},\cdots,\bQ_M +\mathbf{b}) = \mathbf{\Xi}(\bQ_1,\cdots,\bQ_M)\)<br>
+										</li>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="3">
+											Rotation Symmetry:  \(\mathbf{\Xi}_{ij}(\mathrm{U}\bQ_1,\cdots,\mathrm{U}\bQ_M) = \mathrm{U}\mathbf{\Xi}_{ij}(\bQ_1,\cdots,\bQ_M)\mathrm{U}^T\)<br>
+										</li>
+										<li class="fragment fade-in-then-semi-out" data-fragment-index="4">
+											Permutation  Symmetries: \(\mathbf{\Xi}_{ij}(\bQ_{\sigma(1)},\cdots,\bQ_{\sigma(M)}) = \mathbf{\Xi}_{\sigma(i)\sigma(j)}(\bQ_1,\cdots,\bQ_M)\)
+										</li>
+									</ol>
+								</li>
+								<li class="fragment fade-in-then-semi-out" data-fragment-index="6"> Extensive </li>
+							</ul>
+						</div>
+						<div id="symmetry-demo"
+						class="fragment fade-in-then-out" data-fragment-index="5" style="display: flex; justify-content: space-around; margin-left:10px; text-align:center;">
+							<div>
+								<svg id="canvas1"></svg>
+								<p style="font-size: 40px; height:1; margin: 0 0;text-align:center">\(\mathbf{\Xi}\)(<span id="input11"></span> , <span id="input12"></span> , <span id="input13"></span>)</p>
+								<div class="matrix">
+								<table style="font-size: 40px;">
+									<tr>
+										<td>&Xi;<span id="gamma111"><sub>1</sub></span><span id="gamma112"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma113"><sub>1</sub></span><span id="gamma121"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma114"><sub>1</sub></span><span id="gamma131"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma122"><sub>2</sub></span><span id="gamma115"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma123"><sub>2</sub></span><span id="gamma125"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma124"><sub>2</sub></span><span id="gamma132"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma133"><sub>3</sub></span><span id="gamma116"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma134"><sub>3</sub></span><span id="gamma126"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma135"><sub>3</sub></span><span id="gamma136"><sub>3</sub></span></td>
+									</tr>
+								</table>
+								</div>
+								<button id="clearButton1">Clear</button>
+							</div>
+							<div>
+								<svg id="canvas2"></svg>
+								<p style="font-size: 40px; height:1; margin: 0 0; text-align:center">\(\mathbf{\Xi}\)(<span id="input21"></span> , <span id="input22"></span> , <span id="input23"></span>)</p>
+								<div class="matrix">
+								<table style="font-size: 40px;">
+									<tr>
+										<td>&Xi;<span id="gamma211"><sub>1</sub></span><span id="gamma212"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma213"><sub>1</sub></span><span id="gamma221"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma214"><sub>1</sub></span><span id="gamma231"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma222"><sub>2</sub></span><span id="gamma215"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma223"><sub>2</sub></span><span id="gamma225"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma224"><sub>2</sub></span><span id="gamma232"><sub>3</sub></span></td>
+									</tr>
+									<tr>
+										<td>&Xi;<span id="gamma233"><sub>3</sub></span><span id="gamma216"><sub>1</sub></span></td>
+										<td>&Xi;<span id="gamma234"><sub>3</sub></span><span id="gamma226"><sub>2</sub></span></td>
+										<td>&Xi;<span id="gamma235"><sub>3</sub></span><span id="gamma236"><sub>3</sub></span></td>
+									</tr>
+								</table>
+								</div>
+								<button id="clearButton2">Clear</button>
+							</div>
+							<script src="./figure/permutation.js"></script>
+						</div>
+					</div>
+					<style>
+						.two-col-grid {
+							display: grid;
+							grid-template-columns: var(--left, 0.52fr) var(--right, 0.48fr);
+							align-items: start;
+							gap: 16px;
+							overflow: hidden;
+						}
+						.two-col-grid > #symmetry-text,
+						.two-col-grid > #symmetry-demo { min-width: 0; }
+						.two-col-grid, #symmetry-text, #symmetry-demo, #symmetry-demo svg, #symmetry-demo table {
+							transition: grid-template-columns 420ms ease, font-size 420ms ease, box-shadow 420ms ease, filter 420ms ease, max-width 420ms ease, width 420ms ease;
+						}
+						#symmetry-text { font-size: 1.0em; }
+						#symmetry-demo { font-size: 1.0em; }
+						#symmetry-demo svg { width: 100%; height: auto; max-width: 280px; }
+						#symmetry-demo table { width: 100%; max-width: 520px; }
+						section:has(#symmetry-demo.current-fragment) .two-col-grid { --left: 0.34fr; --right: 0.66fr; }
+						section:has(#symmetry-demo.current-fragment) #symmetry-text { font-size: 0.92em; opacity: 0.65; }
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo { font-size: 1.10em; box-shadow: 0 8px 28px rgba(0,0,0,0.18); filter: saturate(1.05); }
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo svg { max-width: 360px; }
+						section:has(#symmetry-demo.current-fragment) #symmetry-demo table { max-width: 640px; }
+						@media (max-width: 1100px) {
+							section:has(#symmetry-demo.current-fragment) .two-col-grid { --left: 0.40fr; --right: 0.60fr; }
+							section:has(#symmetry-demo.current-fragment) #symmetry-demo svg { max-width: 320px; }
+						}
+					</style>
+					<aside class="notes">
+						<ul>
+							<li>Translation: shift every molecule by b, the kernel is unchanged. Rotation: rotate the molecules, the kernel rotates accordingly. Permutation: relabeling.</li>
+							<li>Extensive: a model learned on a small periodic system applies to a larger system at the same density. This lets us simulate phenomena not affordable atomistically.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Neural Network Representation</h3>
+					<div style="text-align:left; margin-bottom: 0.0em;" class="tight-math">
+						<b style="color:#E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
+						\[
+						\dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)}
+						\bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t),
+						\]
+					</div>
+					<div class="nn-grid">
+						<div>
+							<ul>
+								<li class="fragment fade-in;tight-math" data-fragment-index="2">
+								Introducing coordinate feature \(\hat{\mathbf Q}^k_i\):
+								\( \hat{ \mathbf Q}^k_i = \mathbf{Q}_i \oplus \sum_{l\in\mathcal{N}_i} f^k(|\mathbf{Q}_{il}|)\,\mathbf{Q}_{il} \)
+								</li>
+								<li class="fragment fade-in" data-fragment-index="3">
+								Compute the distance on the feature:
+								\( \hat{\mathbf{Q}}_{ij}^{k} = \hat{\mathbf{Q}}_i^{k} - \hat{\mathbf{Q}}_j^{k} \)
+								</li>
+								<li class="fragment fade-in" data-fragment-index="4">
+								Construct the state dependent part of the memory kernel:
+								\( \boldsymbol{\Xi}^n_{ij} = \sum_{k=1}^K h_{n,k}(\hat{ \mathbf Q}_{ij}^T \hat{ \mathbf Q}_{ij}) \hat{ \mathbf Q}_{ij}^k \otimes \hat{ \mathbf Q}_{ij}^k \)
+								</li>
+							</ul>
+						</div>
+						<div id="nn-figs" class="nn-figstack" style="text-align: center;">
+							<figure class="fragment fade-in-then-out" data-fragment-index="2">
+							<img src="./figure/Q.png" class="nn-img">
+							</figure>
+							<figure class="fragment fade-in" data-fragment-index="3">
+							<img src="./figure/hatQ.png" class="nn-img">
+							</figure>
+						</div>
+						<style>
+							.nn-grid { display: grid; grid-template-columns: 60% 40%; gap: 20px; align-items: start; min-height: 60vh; }
+							section.focus-left .nn-grid { grid-template-columns: 100% 0%; }
+							section.focus-left #nn-figs { display: none; }
+							.nn-grid > div { min-width: 0; }
+							.nn-figstack { min-height: 60vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+							.nn-figstack figure { display: none; margin: 0; max-width: 100%; max-height: 100%; }
+							.nn-figstack figure.visible, .nn-figstack figure.current-fragment { display: flex; align-items: center; justify-content: center; }
+							.nn-img { display: block; max-width: 100%; max-height: 100%; border-radius: 8px; box-shadow: 0 4px 18px rgba(0,0,0,0.25); }
+							@media (max-width: 1100px) { .nn-grid { grid-template-columns: 45% 55%; } }
+						</style>
+						<script>
+						(function () {
+						Reveal.on('fragmentshown', e => {
+							if (e.fragment && e.fragment.getAttribute('data-fragment-index') === '3') {
+							const sec = Reveal.getCurrentSlide();
+							sec.classList.add('focus-left');
+							}
+						});
+						Reveal.on('fragmenthidden', e => {
+							if (e.fragment && e.fragment.getAttribute('data-fragment-index') === '3') {
+							const sec = Reveal.getCurrentSlide();
+							sec.classList.remove('focus-left');
+							}
+						});
+						})();
+						</script>
+					</div>
+					<aside class="notes">
+						<ul>
+						<li>Introduce \(\hat Q\) features from local neighbor info \(Q_{il}\). These inherit symmetry by construction.</li>
+						<li>Then compute feature distances and build state-dependent kernels. We can prove the symmetry constraints hold.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate>
+					<h3>Simulation of the Coarse-Grained Models</h3>
+					<div style="text-align: left;">
+						<b style="color: #E65100;">🚀 Non-Markovian Manybody (Our Model)</b>
+						<p class="tight-math" style="margin-top: 0.5em; text-align: center;">
+							\( \dot{\mathbf{P}} = \mathbf{F}^C - \bm{\Xi}(\mathbf{Q}) \int_0^t e^{- \bm{\Lambda} (t-s)} \bm{\Xi}(\mathbf{Q})^T \mathbf{V}_{ij}(s) \, ds + \mathbf{R}(t), \)
+						</p>
+					</div>
+					<div style="text-align: left;">
+						<ul>
+							<li class="fragment fade-in" data-fragment-index="1">
+								The construction easy to do simulation.
+								\[
+								\begin{aligned}
+								\dot{\mb Q} &= \mb M^{-1}\mb P \\
+								\dot{\mb P} &= -\nabla U(\mb Q) + \bm \Xi(\mb Q)\bm\zeta \\
+								\dot{\bm\zeta} &= - \bm \Xi(\mb Q)^T \mb V - \bm\Lambda \bm\zeta + \bm \xi(t).
+								\end{aligned}
+								\]
+							</li>
+						</ul>
+						<div class="highlight fragment fade-in" data-fragment-index="2">
+							<h4 style="color: #E65100; margin-bottom: 5px;">🔑  Thermodynamic Consistency</h4>
+							By choosing the white noise \(\bm\xi(t)\) following
+								\( \left\langle  \bm \xi(t) \bm \xi(t') \right\rangle = \beta^{-1}(\bm\Lambda + \bm\Lambda^T) \delta(t-t'), \)
+								model  retains the consistent invariant distribution
+								\( \rho_{\rm eq}(\mb Q, \mb P, \bm\xi) \propto \exp[{-\beta(U(\mb Q) + \mb P^T \mb M^{-1} \mb P/2 + \bm \zeta^T \bm\zeta/2})]. \)
+						</div>
+					</div>
+					<aside class="notes">
+						<ul>
+						<li>The stochastic integro-differential equation becomes a stochastic differential equation with an auxiliary variable.</li>
+						<li>With the noise obeying the second fluctuation-dissipation theorem, the equilibrium distribution is the Boltzmann distribution, determined by the conservative term alone: the memory term captures dynamics without spoiling statics.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate data-menu-title="VACF">
+					<h3>Numerical Result</h3>
+					<div style="display: flex; justify-content: center; align-items: center;" class="fragment fade-in-then-out">
+						<div style="text-align:left">
+								Velocity auto correlation function (VACF)
+							<p style=" font-size:0.8em">
+									\[ c(t)=\frac{\lt V_i(t) \cdot V_i(0) \gt }{ \lt V_i(0) \cdot V_i(0) \gt } \]
+							</p>
+							<div style="text-align:left; font-size:0.8em" data-id="table">
+								<table border="1">
+									<tr><th>Model</th><th>Temporal</th><th>Spatial</th></tr>
+									<tr><td style="white-space: nowrap;">M-DPD</td><td>Markovian</td><td>Pairwise</td></tr>
+									<tr><td style="white-space: nowrap;">NM-GLE</td><td style="white-space: nowrap;">Non-Markovian</td><td>Isotropic</td></tr>
+									<tr><td style="white-space: nowrap;">NM-DPD</td><td style="white-space: nowrap;">Non-Markovian</td><td>Pairwise</td></tr>
+									<tr><td style="color:#E65100; white-space: nowrap;">NM-MB</td><td style="white-space: nowrap;">Non-Markovian</td><td>Manybody</td></tr>
+								</table>
+							</div>
+						</div>
+						<div id=vacf class="plotly-graph-div" style="height:450; width:450;"></div>
+						<script type="text/javascript" src="./text/vacf.js"></script>
+					</div>
+					<aside class="notes">
+						<ul><li>VACF: our model (NM-MB) and the state-independent GLE both match, because GLE fits the kernel to the VACF. Matching VACF does not mean recovering the dynamics.</li></ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate data-menu-title="VCCF">
+					<h3>Numerical Result</h3>
+					<div style="display: flex; justify-content: center; align-items: center; gap: 30px;">
+						<div style="text-align:left; flex: 0 1 540px; min-width: 0;">
+								Velocity cross correlation function (VCCF)
+							<p style="font-size:0.7em">
+								\[ C^{xx}(t; r_0) = \mathbb{E}[\mathbf{V}_i(0)\cdot\mathbf{V}_j(t) \vert Q_{ij}(0) = r_0] \]
+							</p>
+						</div>
+						<div id=vccf class="plotly-graph-div" style="flex: 0 0 auto;"></div>
+						<script type="text/javascript" src="./text/vccf.js"></script>
+					</div>
+					<aside class="notes">
+						<ul><li>VCCF: momentum transfer rate at a fixed distance. GLE falls short; our model captures the main contribution. NM-DPD is decent because VCCF is its fitting target.</li></ul>
+					</aside>
+				</section>
+
+				<section data-auto-animate data-menu-title="VHF">
+					<h3>Numerical Result</h3>
+					<div style="display: flex; justify-content: center; align-items: center; gap: 30px;">
+						<div style="text-align:left; flex: 0 1 540px; min-width: 0;">
+							van Hove function (VHF)
+							<p style="font-size: 0.62em;">
+								\( G(r, t) \propto \frac{1}{M^2} \sum_{j\neq i}^M \delta(\Vert \mathbf{Q}_i(t) - \mathbf{Q}_j(0)\Vert - r) \).
+							</p>
+						</div>
+						<div id=vhf class="plotly-graph-div" style="flex: 0 0 auto;"></div>
+						<script type="text/javascript" src="./text/vhf.js"></script>
+					</div>
+					<aside class="notes">
+						<ul><li>VHF: time evolution of the RDF. Both NM-DPD and NM-GLE fall short; our model holds.</li></ul>
+					</aside>
+				</section>
+
+				<section>
+					<section data-auto-animate data-menu-title="Hydromode (long.)">
+						<h3>Numerical Result</h3>
+						<div style="display: flex; justify-content: center; align-items: center; gap: 30px;">
+							<div style="text-align:left; flex: 0 1 470px; min-width: 0;">
+									normalized correlations of the <br> <b>Longitudinal</b> Hydrodynamic Modes
+								<p style=" font-size:0.8em">
+									\[
+									\begin{split}
+									C_L(t) &= \langle \tilde{u}_1(t)\tilde{u}_1(0)\rangle \\
+									\tilde{\mb u} &= \frac{1}{M}\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
+									\end{split}
+									\]
+								</p>
+							</div>
+							<div id=long_corr class="plotly-graph-div" style="flex: 0 0 auto;"></div>
+							<script type="text/javascript" src="./text/long_corr.js"></script>
+						</div>
+						<aside class="notes">
+							Wave propagation modes: coefficients of the linearized Navier-Stokes equation in the spectral domain. Longitudinal: NM-DPD and our model both do well, as the conservative term dominates.
+						</aside>
+					</section>
+					<section data-auto-animate data-menu-title="Hydromode (trans.)">
+						<h3>Numerical Result</h3>
+						<div style="display: flex; justify-content: center; align-items: center; gap: 30px;">
+							<div style="text-align:left; flex: 0 1 470px; min-width: 0;">
+									normalized correlations of the <br> <b>Transverse</b> Hydrodynamic Modes
+								<p>
+									\[
+									\begin{split}
+									C_T(t) &= \langle \tilde{u}_2(t)\tilde{u}_2(0)\rangle \\
+									\tilde{\mb u} &= \frac{1}{M}\sum_{j=1}^M \mb V_j {\rm e}^{i\mb k \cdot \mb Q_j}
+									\end{split}
+									\]
+								</p>
+							</div>
+							<div id=trans_corr class="plotly-graph-div" style="flex: 0 0 auto;"></div>
+							<script type="text/javascript" src="./text/trans_corr.js"></script>
+						</div>
+						<aside class="notes">
+							Transverse modes: our model clearly outperforms the others. This is where the many-body memory matters.
+						</aside>
+					</section>
+				</section>
+
+				<section data-menu-title="Nonequilibrium">
+					<h3>Nonequilibrium: does an equilibrium-trained model still work?</h3>
+					<p class="left" style="font-size:0.8em;">Under an external field \(V_{\rm ext}\), the exact kernel is an average over the conditional distribution</p>
+					<div class="bigeq">
+						\[ \rho_{V_{\rm ext}}(\bz\,|\,\bZ)\ \propto\ \delta\big(\phi(\bz)-\bZ\big)\,\rho_{V_{\rm ext}}(\bz) \]
+					</div>
+					<p class="left" style="font-size:0.8em;">so it changes with the field and with time: \(\mathbf K(\bQ,t,s)\).</p>
+					<div class="keybox orange fragment fade-in" style="margin-top: 26px;">
+						<b>Fix:</b> enlarge the set of CG variables until
+						\( \rho_{V_{\rm ext}}(\bz|\bZ)\approx\rho_0(\bz|\bZ) \).
+						One model trained at equilibrium then works for different fields.
+					</div>
+					<div class="footnote"><b>Liyao Lyu</b>, Huan Lei<sup>*</sup>. On the Generalization Ability of Coarse-Grained Molecular Dynamics Models for Nonequilibrium Processes. <em>Multiscale Modeling &amp; Simulation</em>, 2025.</div>
+					<aside class="notes">
+						<ul>
+							<li>For a given configuration Q, the MZ kernel is K(Q,t) = P_Z[(e^{QLt} Q L P)(Q L P)^T], with the projection P_Z f(z) = E[f(z) | phi(z) = Z]. The expectation is over the conditional distribution, which under an external field differs from equilibrium and changes in time. The kernel becomes K(Q,t,s). A model trained for one field and time cannot be reused for another (Grabert 1982).</li>
+							<li>Fix: keep the projection on the equilibrium marginal, but enlarge the CG variable set so that the conditional distribution under the field is close to the equilibrium one. Then the kernel is again K(Q, t-s) and the model generalizes across external fields. Next two slides: reverse Poiseuille flow and vortex flow.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Reverse Poiseuille flow">
+					<h3>Numerical Result: reverse Poiseuille flow</h3>
+					<div style="display: flex; justify-content: center; align-items: center;">
+						<div id=velocity_profile class="plotly-graph-div" style="height:450; width:450;"></div>
+						<div id=shear_rate_vs_viscosity class="plotly-graph-div" style="height:450; width:450;"></div>
+						<script type="text/javascript" src="./text/velocity_profile.js"></script>
+						<script type="text/javascript" src="./text/shear_rate_vs_viscosity.js"></script>
+					</div>
+					<aside class="notes">
+						Trained at equilibrium, the CG model predicts the velocity profile of reverse Poiseuille flow and the shear-rate dependence of viscosity.
+					</aside>
+				</section>
+
+				<section data-menu-title="Vortex flow">
+					<h3>Numerical Result: Vortex flow</h3>
+					<div style="max-width: 900px; margin: 0 auto; text-align: center;">
+						<iframe id="velFrame" src="./html/vel_evol.html" loading="lazy"
+							style="width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0;"
+							allowfullscreen referrerpolicy="no-referrer"></iframe>
+					</div>
+					<aside class="notes">
+						Same model, a different external field: decaying vortex flow. No retraining.
+					</aside>
+				</section>
+
+				<section data-menu-title="Part I takeaway">
+					<h3>Part I: memory extends time, not space</h3>
+					<div class="cards two" style="margin-top: 40px;">
+						<div class="card green left" style="font-size:0.75em;">
+							<div class="head">&#10003; What we gain</div>
+							<p>Many-body memory + built-in structure recover transport, hydrodynamic modes and nonequilibrium flows.</p>
+						</div>
+						<div class="card orange left" style="font-size:0.75em;">
+							<div class="head">&#10007; What we do not</div>
+							<p>The model still tracks particles. Domain size and geometry stay at the MD scale.</p>
+						</div>
+					</div>
+					<p class="fragment fade-in" style="margin-top: 50px; font-size: 0.9em;">
+						&rArr; Part II: a <b>continuum</b> closure for larger, inhomogeneous systems
+					</p>
+					<aside class="notes">
+						<ul>
+							<li>Bridge. The equilibrium statistics of the CG model are set by the conservative term U(Q); memory adds dynamics on top. So CGMD extends time scales, but it keeps particles, and the domain stays MD-sized.</li>
+							<li>For electrodes, confinement and long-wavelength fields we need a density description. Its unknown is again a closure: the excess free energy. Same strategy, different exact structure.</li>
+						</ul>
+					</aside>
+				</section>
+
+<!-- ====================================================================== -->
+<!-- PART II: Neural density functional                                      -->
+<!-- ====================================================================== -->
+				<section data-menu-title="Part II: Neural density functional" class="part-header">
+					<div class="partno">Part II</div>
+					<h2 style="font-size:1.3em;">A neural density functional for the ions<br>of a polymer electrolyte</h2>
+					<div class="two-col" style="grid-template-columns: 0.8fr 1.2fr; margin-top: 20px;">
+						<div style="text-align:center;">
+							<img src="./figure/cdft_system.png" style="height: 380px;">
+						</div>
+						<ul class="left" style="font-size: 0.78em;">
+							<li>Salt in a polymer: solid electrolyte for Li batteries</li>
+							<li class="fragment fade-in">Low permittivity &rArr; strong ion correlations</li>
+							<li class="fragment fade-in">MD sees them, but only in small boxes</li>
+						</ul>
+					</div>
+					<div class="footnote"><b>Liyao Lyu</b>. A structure-preserving neural density functional for the ions of a polymer electrolyte across Coulomb coupling strengths. Preprint, 2025.</div>
+					<aside class="notes">
+						<ul>
+							<li>Salt-doped polymers are candidate solid electrolytes for lithium batteries: safer and mechanically stable.</li>
+							<li>Adding salt raises the number of carriers and also changes ion correlations: pairs, clusters, even negative cation transference numbers.</li>
+							<li>Two length scales: low permittivity gives a Bjerrum length of 8 to 30 monomer diameters; packing and chain solvation act at short range.</li>
+							<li>MD captures the correlations in small cells (and CGMD extends their time scales), but not the size or geometry of the domain. We want a continuum theory that keeps the molecular fidelity.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Classical DFT">
+					<h3>Classical DFT: one functional gives all equilibrium structure</h3>
+					<div class="bigeq" style="margin: 30px 0;">
+						\[
+						F[\bn]=\underbrace{\Fid[\bn]}_{\text{ideal gas}}+\underbrace{\FC[\bn]}_{\text{Coulomb mean field}}+\underbrace{\Fex[\bn]}_{\color{myred}{\text{unknown}}}
+						\]
+					</div>
+					<div class="cards two">
+						<div class="card fragment fade-in" style="font-size:0.75em;">
+							<div class="big" style="font-size:1.4em;">\(\dfrac{\delta F}{\delta n_\alpha}\)</div>
+							<div class="sub">density profiles in any external field</div>
+						</div>
+						<div class="card fragment fade-in" style="font-size:0.75em;">
+							<div class="big" style="font-size:1.4em;">\(\dfrac{\delta^2 F}{\delta n_\alpha\,\delta n_\beta}\)</div>
+							<div class="sub">bulk structure factors</div>
+						</div>
+					</div>
+					<div class="keybox orange fragment fade-in" style="margin-top: 30px;">
+						\(\Fex\) is the closure. It plays the role the memory kernel played in Part I.
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Ions described by their density profiles n = (n+, n-), with the polymer integrated out.</li>
+							<li>Equilibrium profiles minimize F + sum_alpha int V_alpha n_alpha at fixed particle numbers. Euler-Lagrange: kT ln(Lambda^3 n_alpha) + e_alpha phi + mu_ex_alpha + V_alpha = mu_alpha, with Poisson for phi.</li>
+							<li>First derivative gives profiles, second derivative gives bulk correlations. F_ex contains all correlations beyond the ideal gas and the Coulomb mean field, including the response of the chains to the ions.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Existing functionals">
+					<h3>No existing functional keeps all the structure</h3>
+					<table class="compare" style="font-size:0.6em; width:92%; margin-top: 20px;">
+						<tr>
+							<th style="text-align:left;"></th>
+							<th>Samm&uuml;ller<br><span style="font-weight:normal">learned \(c^{(1)}\)</span></th>
+							<th>Bui&ndash;Cox<br><span style="font-weight:normal">learned \(c^{(1)}\)</span></th>
+							<th>Dijkman<br><span style="font-weight:normal">learned \(\Fex\)</span></th>
+							<th>Cheng<br><span style="font-weight:normal">learned \(\Fex\)</span></th>
+							<th class="ours">This work</th>
+						</tr>
+						<tr><td class="rowhead">Integrable (a true free energy)</td><td>~</td><td>&#10007;</td><td>&#10003;</td><td>&#10003;</td><td class="ours">&#10003;</td></tr>
+						<tr><td class="rowhead">Continuous symmetry</td><td>~</td><td>~</td><td>&#10007;</td><td>~</td><td class="ours">&#10003;</td></tr>
+						<tr><td class="rowhead">Noether identities</td><td>~</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td class="ours">&#10003;</td></tr>
+						<tr><td class="rowhead">Long-range electrostatics</td><td>&#10007;</td><td>&#10003;</td><td>&#10007;</td><td>&#10007;</td><td class="ours">&#10003;</td></tr>
+						<tr><td class="rowhead">Nonplanar geometry</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10003;</td><td class="ours">&#10003;</td></tr>
+						<tr><td class="rowhead">Independent of the grid</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td>&#10007;</td><td class="ours">&#10003;</td></tr>
+					</table>
+					<p class="caption">&#10003; built in &nbsp;&nbsp; ~ only numerically or only on the grid &nbsp;&nbsp; &#10007; no</p>
+					<aside class="notes">
+						<ul>
+							<li>Analytical theories (fundamental measure theory for packing, mean spherical approximation for electrostatics) are built on charged hard spheres, with no solvation by chains; each term comes from a different reference system.</li>
+							<li>Learned functionals since 2023: Sammueller et al. and Bui-Cox learn the one-body direct correlation c1 locally (Bui-Cox with explicit electrostatics). Dijkman et al. and Cheng (equivariant on a cubic grid) learn F_ex directly.</li>
+							<li>A learned c1 need not derive from a free energy. Grid-based forms keep only discrete symmetries and fix the box. Sammueller: integrability and Noether verified numerically only. "~" under symmetry = grid symmetries only.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Our functional">
+					<h3>Our functional: learned radial kernels + a pointwise network</h3>
+					<div class="bigeq" style="margin: 20px 0 30px;">
+						\[
+						\Fex^\theta[\bn]=\underbrace{\tfrac12\textstyle\iint n\,u\,n}_{\text{pair term}}
+						+\int \Phi_\theta\big(\mathbf h(\br)\big)\,\intd\br,
+						\qquad \mathbf h=K_m\star n_\alpha
+						\]
+					</div>
+					<div class="cards" style="grid-template-columns: repeat(4, 1fr); gap: 16px;">
+						<div class="card fragment fade-in" style="font-size:0.6em;">
+							<div class="head">Integrable</div>
+							<p>a scalar \(F\), so \(\mu=\delta F/\delta n\) exactly</p>
+						</div>
+						<div class="card fragment fade-in" style="font-size:0.6em;">
+							<div class="head">Noether</div>
+							<p>all rotations and translations: zero net force and torque</p>
+						</div>
+						<div class="card fragment fade-in" style="font-size:0.6em;">
+							<div class="head">Screening</div>
+							<p>Coulomb exact, learned part short-ranged</p>
+						</div>
+						<div class="card fragment fade-in" style="font-size:0.6em;">
+							<div class="head">No grid</div>
+							<p>continuous kernels, works in any box</p>
+						</div>
+					</div>
+					<p class="fragment fade-in" style="margin-top: 30px; font-size: 0.8em;">Built in by construction, not learned.</p>
+					<aside class="notes">
+						<ul>
+							<li>Six learned radial kernels K_m average each density over several length scales; a small MLP Phi_theta acts pointwise on the 12 weighted densities h. Plus a quadratic pair term, which on its own is our "pair closure" baseline. About 20k parameters.</li>
+							<li>Integrability: the network represents the scalar F_ex, so mu_ex = dF/dn exactly, the Hessian is symmetric, free-energy differences are path independent.</li>
+							<li>Radial kernels + pointwise Phi: invariant under all translations, rotations, reflections. Total internal force and torque vanish for any profile (Noether).</li>
+							<li>Coulomb explicit, learned part short-ranged: electroneutrality and Stillinger-Lovett, S_ZZ(k)/2n = k^2/kappa_D^2 + O(k^4).</li>
+							<li>Kernels are continuous functions of distance; a discretization enters only at evaluation. Proofs in the SI. Compare Part I: there symmetry and FDT; here integrability, Noether, screening.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Coulomb coupling">
+					<h3>Permittivity enters through one exact identity</h3>
+					<div class="keybox" style="text-align:center; font-size: 1.0em; margin-top: 30px;">
+						\[ \frac{\partial F[\bn;\lB]}{\partial \lB}=k_BT\,\langle U_C\rangle_{\bn,\lB} \]
+						<div style="font-size:0.7em;">derivative in the Bjerrum length = Coulomb energy, measured in MD, never trained on</div>
+					</div>
+					<div class="fragment fade-in" style="margin-top: 30px;">
+						<p style="font-size:0.8em;">so we use a <b>coupling law</b> instead of feeding \(\lB\) to the network:</p>
+						<div class="bigeq">
+							\[ \Fex[\bn;\lB]=F_0[\bn]+\lambda\,F_1[\bn]+s(\lambda)\,F_2[\bn],\qquad \lambda=\lB/\lB^{(0)} \]
+						</div>
+						<span class="pill blue">\(\lambda F_1\): linear, strong coupling</span>
+						<span class="pill orange">\(s(\lambda)F_2\): saturates, ion pairing</span>
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Permittivity varies between polymers. In the CG energy, in units of kT, U_0 + l_B U_C with U_C = sum z_i z_j / r_ij. So the functionals form a one-parameter family F[n; l_B].</li>
+							<li>Coupling-constant integration (classical analogue of the adiabatic connection): dF/dl_B = kT &lt;U_C&gt;. The l_B-dependence of F_ex is the Coulomb correlation energy. Not arbitrary.</li>
+							<li>s(lambda) = 1 - exp(-lambda/lambda_s). lambda F_1 linear in l_B, as in the mean spherical approximation at strong coupling; s(lambda) F_2 saturates, as for ion pairing. The three share kernels and hidden layers.</li>
+							<li>In the bulk this gives a testable identity: dGamma(0)/dl_B = (n/2kT) d^2/dn^2 [u_C(n; l_B)/l_B], with u_C from zero-field MD. Shown in Result 4.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Force matching">
+					<h3>Training: match the force densities measured in MD</h3>
+					<img src="./figure/cdft_fig1.png" class="fig" style="max-height: 500px;">
+					<p class="caption" style="font-size: 0.75em;">
+						\( \mathbf f_\alpha(\br) = -n_\alpha(\br)\,\nabla\mu^{\rm int}_\alpha(\br;[\bn]) \) &nbsp;&nbsp; no chemical-potential labels needed
+					</p>
+					<aside class="notes">
+						<ul>
+							<li>(A) MD of a CG polymer electrolyte (Tsamopoulos and Wang, LAMMPS): 400 chains x 30 beads, cation/anion diameters 0.4 / 1.6 sigma, both solvated by monomers. Static planar potentials V_alpha(z) of a few kT, four families, wavelengths from the box length down to a few sigma.</li>
+							<li>(B) Gradient of Euler-Lagrange + first YBG equation: internal force density on species alpha equals -n grad mu_int. MD samples f directly; the constants mu_alpha drop out. Loss: inverse-variance weighted real-space residuals + Fourier residuals weighted by 1/k^2.</li>
+							<li>Data: 5 permittivities 7.5, 5, 4, 3, 2 (l_B = 8 to 30 sigma); 5 concentrations 0.01 to 0.08 cations per monomer; c = 0.05 never trained. 276 training runs, 86 held-out, 76 at c = 0.05. One functional across all five permittivities.</li>
+							<li>(C) Structure factors and number response never enter the loss: they test the learned curvature.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="CDFT result: density profiles">
+					<h3>Profiles within 1&ndash;2%, also at an untrained concentration</h3>
+					<img src="./figure/cdft_fig2.png" class="fig" style="max-height: 540px;">
+					<p class="caption">mean error at \(\varepsilon_r=2\): &nbsp; Poisson&ndash;Boltzmann 23% &nbsp;&middot;&nbsp; pair closure 5.4% &nbsp;&middot;&nbsp; <b style="color:#E65100">neural 1.6%</b></p>
+					<aside class="notes">
+						<ul>
+							<li>Rows: weakest and strongest coupling. Columns: held-out, never-trained concentration, held-out.</li>
+							<li>Mean relative L2 error over all test runs. eps_r = 7.5: PB 25%, pair 2.8%, neural 1.1%, neural at untrained c = 0.05: 0.80%. eps_r = 2: PB 23%, pair 5.4%, neural 1.6%, untrained c: 0.75%.</li>
+							<li>Mean field is far off. The pair closure (density-independent kernel) is fine at weak coupling but misses amplitude at strong coupling: one kernel cannot serve all concentrations.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="CDFT result: transfer in space">
+					<h3>Trained on planar profiles, works in larger boxes and in 2D</h3>
+					<img src="./figure/cdft_fig3.png" class="fig" style="max-height: 540px;">
+					<p class="caption">4&times; box: 0.3&ndash;0.5% error &nbsp;&middot;&nbsp; 2D fields: 1.7&ndash;3.3%, at the level of MD noise</p>
+					<aside class="notes">
+						<ul>
+							<li>No parameter refers to a grid or box. Grid spacing 0.05 to 0.2 sigma changes mu_ex by less than 1e-4 of its variation across the box.</li>
+							<li>Boxes 2x and 4x the training length: errors 0.9 to 1.7% and 0.3 to 0.5% (pair closure 3.0 to 5.5% and 1.7 to 2.0%).</li>
+							<li>Aperiodic 2D potentials (oblique plane waves + irregular Gaussian wells and barriers): 1.7 to 3.3%, MD noise 1.7 to 3.0%.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="CDFT result: bulk structure">
+					<h3>Bulk response: the pair closure gets the sign wrong</h3>
+					<img src="./figure/cdft_gamma.png" class="fig" style="width: 900px;">
+					<div class="keybox orange fragment fade-in" style="margin-top: 20px; font-size: 0.75em;">
+						Crossing \(\Gamma=1\) needs a density-dependent kernel. A quadratic closure cannot do it. This quantity is not in the loss.
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Gamma(k1) = 2n / S_NN(k1), the long-wavelength number response; Gamma = 1 for an ideal solution. From Ornstein-Zernike with the learned Hessian: S(k)^-1 = N^-1 + 4 pi l_B zz^T / k^2 + W(k)/kT.</li>
+							<li>At eps_r = 2, MD goes from 0.42 at c = 0.01 through 1 to 11.1 at c = 0.08: fluctuations enhanced at low salt (ion association), suppressed at high salt (Coulomb ordering). The functional follows; the pair closure puts c = 0.01 on the wrong side of 1.</li>
+							<li>Why: Gamma ~ 1 + (n/2kT) q^T W q. A quadratic closure has a density-independent W, so Gamma - 1 cannot change sign. The MD kernel changes sign at eps_r = 2 (-140 to +320 kT sigma^3).</li>
+							<li>Charge and number structure factors over 0.25 &lt; k sigma &lt; 2.1: relative RMS errors 2 to 7% (see fig. 4 A, B of the paper; also panel C on the previous overview figure).</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="CDFT result: transfer across coupling">
+					<h3>Transfers to a permittivity it has never seen</h3>
+					<img src="./figure/cdft_coupling.png" class="fig" style="width: 980px;">
+					<div class="two-col" style="font-size: 0.62em; margin-top: 14px; text-align: left;">
+						<div><b>(A)</b> left-out \(\varepsilon_r\): within MD error.<br>Without the coupling law: 11&ndash;23% error.</div>
+						<div><b>(B)</b> exact energy identity, checked on MD Coulomb energies never used in training.</div>
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Leave-one-permittivity-out (eps_r = 5, 4, 3): profile errors 1.2 to 1.5%, as good as held-out runs at trained permittivities; Gamma(k1) at 16 unseen state points within MD uncertainty. Without the coupling law one F_ex cannot describe four permittivities: errors 11 to 23%, one fifth of the Euler-Lagrange solves fail.</li>
+							<li>(B) dGamma(0)/dl_B from the functional vs second differences of MD Coulomb energies. The sign change (association at low density, ordering at high density) is reproduced, also at the left-out permittivity.</li>
+							<li>Physics (paper fig. 6 C-F): charge channel at ion contact scales with l_B (MSA-like), at the pair scale it saturates. The number response of the concentrated melt varies by less than 20% across permittivities: set by packing and solvation.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="CDFT: comparison">
+					<h3>Same data, same loss: structure beats architecture</h3>
+					<table class="compare" style="font-size:0.62em; width:95%; margin-top: 20px;">
+						<tr><th></th><th>one-body network<br><span style="font-weight:normal">(Samm&uuml;ller, Bui&ndash;Cox)</span></th><th>convolutional \(\Fex\)<br><span style="font-weight:normal">(Dijkman)</span></th><th>lattice \(\Fex\)<br><span style="font-weight:normal">(Cheng)</span></th><th class="ours">this work</th></tr>
+						<tr><td class="rowhead">accuracy</td><td>2nd best</td><td>solver rarely converges</td><td>solver fails 10&ndash;25%</td><td class="ours">best</td></tr>
+						<tr><td class="rowhead">with &frac14; of the data</td><td>error +&asymp;&frac23;</td><td>&mdash;</td><td>&mdash;</td><td class="ours">error +&asymp;&frac14;</td></tr>
+						<tr><td class="rowhead">exact identities</td><td>violated up to 55%</td><td>up to 6%</td><td>up to 6%</td><td class="ours">machine precision</td></tr>
+					</table>
+					<div class="keybox fragment fade-in" style="margin-top: 30px; font-size: 0.8em;">
+						Built-in structure means less to learn.
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>Three published forms adapted to two species + the analytic Coulomb term, trained by force matching on our data at fixed coupling (eps_r = 7.5 and 2). Fair comparison under one protocol, not the published methods with their own data.</li>
+							<li>With a quarter of the training runs our error rises by about a quarter, which is about the one-body network on all data; the one-body network's rises by about two thirds with some solver failures.</li>
+							<li>Exact identities: integrability (Jacobian asymmetry) up to 55% for the one-body net; Noether net-force error up to 14% one-body, 6% for the other two; ours at numerical precision.</li>
+							<li>Control on the truncated Lennard-Jones fluid of Cheng et al.: same ordering, our error less than half of the best alternative.</li>
+						</ul>
+					</aside>
+				</section>
+
+<!-- ====================================================================== -->
+<!-- PART III: Kinetic heat-flux closure (brief)                             -->
+<!-- ====================================================================== -->
+				<section data-menu-title="Part III: Kinetic closure" class="part-header">
+					<div class="partno">Part III (brief)</div>
+					<h2 style="font-size:1.3em;">Nonlocal electron heat flow in laser plasmas</h2>
+					<div class="two-col" style="grid-template-columns: 1.1fr 0.9fr; margin-top: 10px;">
+						<div><img src="./figure/plasma_fig1_physics.png" class="fig" style="max-height: 400px;"></div>
+						<ul class="left" style="font-size: 0.72em;">
+							<li>Kinetic simulation: accurate, too expensive for implosion codes</li>
+							<li class="fragment fade-in">A closure trained at one temperature must work across 10&times;</li>
+							<li class="fragment fade-in" style="line-height:1.6;">Kinetics has <span class="pill blue">memory</span> and <span class="pill orange">similarity</span> (left), and <span class="pill green">thermodynamics</span></li>
+						</ul>
+					</div>
+					<div class="footnote"><b>Liyao Lyu</b> et al. Memory, thermodynamics and similarity: learning nonlocal electron heat flow from kinetic simulations. In preparation, 2025.</div>
+					<aside class="notes">
+						<ul>
+							<li>Laser and inertial-fusion plasmas: electron mean free path comparable to the temperature-gradient length, so heat flow is nonlocal; Spitzer-Harm overestimates by large factors.</li>
+							<li>Vlasov-Fokker-Planck / particle-in-cell (OSIRIS) is right but too expensive for radiation-hydrodynamics codes. They use reduced closures (SNB) or, recently, learned maps T to J (neural operators), trained at a few conditions and applied across an order of magnitude in temperature during an implosion.</li>
+							<li>(a) Memory: |kappa(k, omega)| rises 40 to 46% above its static value near omega ~ nu_0; an instantaneous closure sits on the dashed line. (b) Similarity: exact scaling eps to a eps, x to a^2 x, t to a^{3/2} t; hot spots at T0 = 0.8 and 2 collapse onto T0 = 1 (deviation 1.0 to 1.2 x particle noise). Thermodynamics: energy conserved, entropy non-decreasing.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="MTS closure">
+					<h3>The MTS closure: all three properties built in</h3>
+					<img src="./figure/plasma_fig2_model.png" class="fig" style="max-height: 580px;">
+					<aside class="notes">
+						<ul>
+							<li>Augment the energy density e(x) with m = 3 internal fluxes q(x); heat flux J = l . mu_q. d_t (e, q) = (W - D)(mu_e, mu_q): W skew (reversible, Onsager-Casimir), D = diag(0, R - d_x G d_x) positive semidefinite.</li>
+							<li>Free energy phi = (1/2) e^2 nu(q/e)^2, nu convex (input-convex network), nu &gt;= 1, nu(0) = 1. So int e dx is conserved, dF/dt &lt;= 0, uniform state minimizes F: stable where there is no data.</li>
+							<li>Similarity: l = T^{1/2} l(Kn), R = T^{-3/2} R(Kn), G = T^{5/2} G(Kn), with the Knudsen number the only input. Data at one temperature determine the closure at every temperature.</li>
+							<li>Baselines: SNB (r = 2, 4), a Fourier neural operator trained on the same data, and the MT ablation, which keeps everything but replaces the scaling by learned functions of T.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Kinetic result: temperature transfer">
+					<h3>Trained at one temperature, accurate at all of them</h3>
+					<img src="./figure/plasma_fig4_temperature.png" class="fig" style="max-height: 440px;">
+					<div class="keybox green fragment fade-in" style="margin-top: 16px; font-size: 0.72em;">
+						Trained at \(T_0=1\) only. MTS: 2&ndash;4% error at every \(T_0\). Without similarity: frozen. Neural operator: diverges.
+					</div>
+					<aside class="notes">
+						<ul>
+							<li>All closures trained on 24 PIC runs at T0 = 1, deployed on a grid 16x coarser than PIC. At T0 = 1 on 22 unseen profiles: MTS 2 to 8% (median 4%), SNB 5 to 45%, FNO 4 to 30% and diverging on 7 of 22.</li>
+							<li>(a) Conductivity ratio rises to 1.9 at T0 = 2: MTS within 10% on 29 of 31 points; SNB has the right scaling but the wrong shape; MT has learned no temperature dependence.</li>
+							<li>(b, c) Hot spots at T0 = 0.8, sqrt 2, 2: MTS 2 to 4% everywhere. MT does not relax the hot spot at T0 = 2. FNO diverges on every run at T0 != 1.</li>
+							<li>Symmetry gives the transfer, thermodynamics keeps it stable, memory makes it accurate. 1D, no magnetic field so far.</li>
+						</ul>
+					</aside>
+				</section>
+
+<!-- ====================================================================== -->
+<!-- SUMMARY                                                                 -->
+<!-- ====================================================================== -->
+				<section data-menu-title="Summary">
+					<h3>Learn the closure, keep the structure</h3>
+					<div class="cards" style="margin-top: 20px;">
+						<div class="card">
+							<div class="head" style="color:#0D47A1">I. Coarse-grained MD</div>
+							<div class="big" style="font-size:1.6em;">\(\mathbf K(\bQ,t)\)</div>
+							<div class="sub">symmetry &middot; extensivity &middot; FDT</div>
+							<p><b>&rArr; hydrodynamics, flows</b></p>
+						</div>
+						<div class="card orange">
+							<div class="head" style="color:#E65100">II. Density functional</div>
+							<div class="big" style="font-size:1.6em;">\(\Fex[\bn;\lB]\)</div>
+							<div class="sub">integrable &middot; Noether &middot; screening &middot; energy identity</div>
+							<p><b>&rArr; larger boxes, 2D, new \(\varepsilon_r\)</b></p>
+						</div>
+						<div class="card green">
+							<div class="head" style="color:#1B5E20">III. Kinetic closure</div>
+							<div class="big" style="font-size:1.6em;">\(J\)</div>
+							<div class="sub">memory &middot; thermodynamics &middot; similarity</div>
+							<p><b>&rArr; across temperatures</b></p>
+						</div>
+					</div>
+					<div class="keybox fragment fade-in" style="margin-top: 30px; font-size: 0.8em;">
+						Expressivity is cheap. Exact structure is what makes a learned closure work off its training data.
+					</div>
+					<p class="fragment fade-in" style="font-size: 0.65em; color:#34495e;">Next: dynamics of polymer electrolytes, combining the Part I memory with the Part II functional.</p>
+					<aside class="notes">
+						<ul>
+							<li>Return to the three cards from the start, now with what the structure bought.</li>
+							<li>I: transport and hydrodynamic modes that pairwise or isotropic kernels miss; generalization to flows. II: transfer to 4x boxes, 2D fields, unseen concentration and permittivity; 4x less data than the best alternative. III: transfer across temperature with 2 to 4% error where the same model without symmetry freezes and a neural operator diverges.</li>
+							<li>Outlook: learned mu_alpha[n] drive fluxes in dynamical DFT, mobilities learnable from MD (connects I and II); explicit polymer density for electrodes and confinement; kinetic closures in higher dimensions and with magnetic fields.</li>
+						</ul>
+					</aside>
+				</section>
+
+				<section data-menu-title="Thank you">
+					<h2 style="margin-top:80px;">Thank you</h2>
+					<div class="left" style="font-size:0.6em; margin: 40px auto 0; max-width: 1000px;">
+						<ul>
+							<li><b>L. Lyu</b>, H. Lei. Construction of coarse-grained molecular dynamics with many-body non-Markovian memory. <em>Phys. Rev. Lett.</em>, 2023.</li>
+							<li><b>L. Lyu</b>, H. Lei. On the generalization ability of coarse-grained molecular dynamics models for nonequilibrium processes. <em>Multiscale Model. Simul.</em>, 2025.</li>
+							<li><b>L. Lyu</b>. A structure-preserving neural density functional for the ions of a polymer electrolyte across Coulomb coupling strengths. Preprint, 2025. <span style="opacity:0.7">github.com/Lyuliyao/NDFT-polymer-electrolyte</span></li>
+							<li><b>L. Lyu</b> et al. Memory, thermodynamics and similarity: learning nonlocal electron heat flow from kinetic simulations. In preparation, 2025.</li>
+						</ul>
+					</div>
+					<p style="margin-top:40px; font-size:0.8em; color:#34495e;">lyuliyao@math.ucla.edu</p>
+				</section>
+
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			Reveal.initialize({
+				slideNumber: 'c/t',
+				width: 1200,
+				height: 800,
+				margin: 0,
+				padding: 0,
+				menu: {
+					titleSelector: 'h1, h2, h3',
+					hideMissingTitles: true
+				},
+				hash: true,
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
